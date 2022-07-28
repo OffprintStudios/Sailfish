@@ -5,7 +5,15 @@ const config = {
 		extend: {}
 	},
 
-	plugins: []
+	darkMode: 'class',
+
+	plugins: [
+		require('@tailwindcss/aspect-ratio'),
+		require('@tailwindcss/forms'),
+		require('@tailwindcss/typography'),
+		require('@tailwindcss/line-clamp'),
+		require('tailwindcss-opentype'),
+	]
 };
 
 module.exports = config;

@@ -28,15 +28,6 @@
       }
     },
     {
-      "identity" : "bson",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/OpenKitten/BSON.git",
-      "state" : {
-        "revision" : "40956d97c36aa166b8baea5add897864e1568a78",
-        "version" : "7.0.29"
-      }
-    },
-    {
       "identity" : "console-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/console-kit.git",
@@ -64,12 +55,12 @@
       }
     },
     {
-      "identity" : "fluent-mongo-driver",
+      "identity" : "fluent-postgres-driver",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/vapor/fluent-mongo-driver.git",
+      "location" : "https://github.com/vapor/fluent-postgres-driver.git",
       "state" : {
-        "revision" : "e96cf416e4a224cf9f104c930abaa8b69fb4d8cd",
-        "version" : "1.1.2"
+        "revision" : "a8b2839ea86c44a35c17f66eb0885f9e5b51a531",
+        "version" : "2.4.0"
       }
     },
     {
@@ -91,15 +82,6 @@
       }
     },
     {
-      "identity" : "mongokitten",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/OpenKitten/MongoKitten.git",
-      "state" : {
-        "revision" : "c3ca3bec61fec81c06d2275df8cde2dee72d1cab",
-        "version" : "6.7.5"
-      }
-    },
-    {
       "identity" : "multipart-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/multipart-kit.git",
@@ -109,21 +91,30 @@
       }
     },
     {
-      "identity" : "niodns",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/OpenKitten/NioDNS.git",
-      "state" : {
-        "revision" : "5d1c701127f1d399cfb27c38aeb40bfde40df004",
-        "version" : "2.1.1"
-      }
-    },
-    {
       "identity" : "phc-winner-argon2",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/P-H-C/phc-winner-argon2.git",
       "state" : {
         "branch" : "master",
         "revision" : "f57e61e19229e23c4445b85494dbf7c07de721cb"
+      }
+    },
+    {
+      "identity" : "postgres-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor/postgres-kit.git",
+      "state" : {
+        "revision" : "10797f400ff0054cce59a035b3ac37376c0ea4f7",
+        "version" : "2.8.0"
+      }
+    },
+    {
+      "identity" : "postgres-nio",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor/postgres-nio.git",
+      "state" : {
+        "revision" : "d648c5b4594ffbc2f6173318f70f5531e05ccb4e",
+        "version" : "1.11.0"
       }
     },
     {

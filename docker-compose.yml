@@ -59,9 +59,9 @@ services:
     deploy:
       replicas: 0
   db:
-    image: mongo:latest
+    image: postgres:latest
     volumes:
       - db_data:/data/db
     restart: unless-stopped
     ports:
-      - '27017:27017'
+      - '5432:5432'

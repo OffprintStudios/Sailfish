@@ -1,18 +1,69 @@
 import Fluent
-import FluentMongoDriver
+import FluentPostgresDriver
 import Vapor
+import QueuesRedisDriver
+import JWT
 
 // configures your application
 public func configure(_ app: Application) throws {
-    // uncomment to serve files from /Public folder
-    // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
+    app.logger.notice("Starting Sailfish API...")
 
-    try app.databases.use(.mongo(
-        connectionString: Environment.get("DATABASE_URL") ?? "mongodb://localhost:27017/vapor_database"
-    ), as: .mongo)
+    // Setting up JWT signing
+    app.logger.notice("Assigning secret key...")
+    app.jwt.signers.use(.hs256(key: Environment.get("JWT_SECRET") ?? "aSecret"))
 
-    app.migrations.add(CreateTodo())
+    // Setting up database connection
+    app.logger.notice("Setting up database connection...")
+    let databaseUrl = Environment.get("POSTGRES_URL") ?? "postgresql://postgres@localhost/darterfish"
+    try app.databases.use(.postgres(url: databaseUrl), as: .psql)
 
-    // register routes
+    // Running migrations
+    app.logger.notice("Running migrations...")
+    app.migrations.add(CreateAccount())
+    app.migrations.add(CreateProfile())
+    app.migrations.add(CreateSession())
+    app.migrations.add(CreateInviteCode())
+
+    // Setting up queues
+    app.logger.notice("Setting up queues...")
+    try app.queues.use(.redis(url: Environment.get("REDIS_URL") ?? "redis://localhost:6379"))
+
+    // CORS configuration
+    app.logger.notice("Assigning CORS configuration...")
+    let corsConfiguration = CORSMiddleware.Configuration(
+        allowedOrigin: CORSMiddleware.AllowOriginSetting.any([
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "https://offprint.net",
+            "https://www.offprint.net",
+        ]),
+        allowedMethods: [.GET, .POST, .PUT, .PATCH, .OPTIONS],
+        allowedHeaders: [
+            .accept,
+            .authorization,
+            .contentType,
+            .origin,
+            .xRequestedWith,
+            .userAgent,
+            .accessControlAllowOrigin
+        ]
+    )
+    let cors = CORSMiddleware(configuration: corsConfiguration)
+    app.middleware.use(cors, at: .beginning)
+
+    // Register routes
+    app.logger.notice("Acknowledging routes...")
     try routes(app)
+
+    // Show all routes
+    for route in app.routes.all {
+        let pathArr = route.path.map { item in
+            String(item.description)
+        }
+        app.logger.info("Route acknowledged: /\(pathArr.joined(separator: "/")) (\(route.method.rawValue))")
+    }
+
+    // Starting the queue
+    app.logger.notice("Restarting any available queues...")
+    try app.queues.startInProcessJobs(on: .default)
 }
