@@ -11,6 +11,9 @@ final class InviteCode: Model, Content {
     @ID(key: .id)
     var id: UUID?
 
+    @Field(key: "code")
+    var code: String
+
     @Field(key: "used")
     var used: Bool
 
@@ -19,8 +22,9 @@ final class InviteCode: Model, Content {
 
     init() { }
 
-    init(id: UUID? = nil) {
+    init(id: UUID? = nil, code: String) {
         self.id = id
+        self.code = code
         used = false
         byWho = nil
     }

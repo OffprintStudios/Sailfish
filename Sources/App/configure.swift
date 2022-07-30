@@ -25,8 +25,8 @@ public func configure(_ app: Application) throws {
     app.migrations.add(CreateInviteCode())
 
     // Setting up queues
-    app.logger.notice("Setting up queues...")
-    try app.queues.use(.redis(url: Environment.get("REDIS_URL") ?? "redis://localhost:6379"))
+    // app.logger.notice("Setting up queues...")
+    // try app.queues.use(.redis(url: Environment.get("REDIS_URL") ?? "redis://localhost:6379"))
 
     // CORS configuration
     app.logger.notice("Assigning CORS configuration...")
@@ -64,6 +64,6 @@ public func configure(_ app: Application) throws {
     }
 
     // Starting the queue
-    app.logger.notice("Restarting any available queues...")
-    try app.queues.startInProcessJobs(on: .default)
+//    app.logger.notice("Restarting any available queues...")
+//    try app.queues.startInProcessJobs(on: .default)
 }

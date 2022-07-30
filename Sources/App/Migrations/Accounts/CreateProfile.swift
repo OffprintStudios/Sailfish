@@ -15,6 +15,7 @@ struct CreateProfile: AsyncMigration {
             .field("stats", .dictionary(of: .int), .required)
             .field("created_at", .datetime)
             .field("updated_at", .datetime)
+            .field("deleted_at", .datetime)
             .unique(on: "username")
             .create()
     }

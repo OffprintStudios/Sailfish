@@ -11,17 +11,17 @@ struct AuthController: RouteCollection {
         auth.post("register") { request async throws -> Session.ClientPackage in
             try Account.RegisterForm.validate(content: request)
             let registerForm = try request.content.decode(Account.RegisterForm.self)
-            return try await AuthService.register(via: request, with: registerForm)
+            return try await request.authService.register(with: registerForm)
         }
 
         auth.post("login") { request async throws -> Session.ClientPackage in
             try Account.LoginForm.validate(content: request)
             let loginForm = try request.content.decode(Account.LoginForm.self)
-            return try await AuthService.login(via: request, with: loginForm)
+            return try await request.authService.login(with: loginForm)
         }
 
         auth.get("logout") { request async throws in
-            try await AuthService.logout(via: request, with: Response())
+            try await request.authService.logout()
         }
     }
 }

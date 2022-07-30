@@ -4,5 +4,5 @@ import type { Profile } from "./profile";
 export interface ClientPackage {
 	account: Account;
 	profiles: Profile[];
-	accessKey: string;
+	token: string;
 }

@@ -32,9 +32,12 @@ final class Profile: Model, Content {
     @Timestamp(key: "updated_at", on: .update)
     var updatedAt: Date?
 
+    @Timestamp(key: "deleted_at", on: .delete)
+    var deletedAt: Date?
+
     init() { }
 
-    init(id: UUID? = nil, with formData: ProfileForm) {
+    init(id: UUID? = nil, from formData: ProfileForm) {
         self.id = id
         username = formData.username
         avatar = "https://images.offprint.net/avatars/avatar.png"
@@ -74,17 +77,12 @@ extension Profile {
         }
     }
 
-    struct ProfileForm: Codable {
+    struct ProfileForm: Content {
         var username: String
         var pronouns: [Pronouns]
-    }
-
-    struct ChangeUsername: Codable {
-        var newUsername: String
-    }
-
-    struct ChangeTagline: Codable {
-        var newTagline: String
+        var presence: Presence
+        var bio: String?
+        var tagline: String?
     }
 
     enum Presence: String, Codable {
@@ -106,5 +104,7 @@ extension Profile {
 extension Profile.ProfileForm: Validatable {
     static func validations(_ validations: inout Validations) {
         validations.add("username", as: String.self, is: .count(3...32))
+        validations.add("bio", as: String.self, is: .count(3...240))
+        validations.add("tagline", as: String.self, is: .count(3...32))
     }
 }

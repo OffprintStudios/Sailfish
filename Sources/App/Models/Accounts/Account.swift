@@ -48,7 +48,7 @@ final class Account: Model, Content {
 
         self.id = id
         email = formData.email
-        password = hashedPassword.encodedString()
+        password = hashedPassword.encodedString().trimmingCharacters(in: CharacterSet(charactersIn: "\0"))
         roles = [.user]
         termsAgree = formData.termsAgree
         emailConfirmed = false

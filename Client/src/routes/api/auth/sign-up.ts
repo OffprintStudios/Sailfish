@@ -7,11 +7,11 @@ import cookie from "cookie";
 
 type OutputType = Account | ResponseError;
 
-export const post: RequestHandler<OutputType> = async ({ request }) => {
+export const POST: RequestHandler<OutputType> = async ({ request }) => {
 	const formInfo: LoginForm = await request.json();
 	const response = await postReq<ClientPackage>('/auth/register', formInfo);
 
-	if (!(response as ClientPackage).accessKey) {
+	if (!(response as ClientPackage).token) {
 		return {
 			status: 422,
 			body: response as ResponseError,
@@ -32,7 +32,7 @@ export const post: RequestHandler<OutputType> = async ({ request }) => {
 				'set-cookie': [
 					cookie.serialize(
 						'accessKey',
-						(response as ClientPackage).accessKey,
+						(response as ClientPackage).token,
 						{
 							path: '/',
 							httpOnly: true,
