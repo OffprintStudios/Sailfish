@@ -17,9 +17,6 @@ struct AuthService {
     /// Creates a new account, saves it to the database, then returns a valid long session
     /// for this user.
     ///
-    /// - Parameters:
-    ///   - registerForm: a Data Transfer Object containing the necessary details to make an account
-    /// - Returns: a `Session.ClientPackage` object
     /// - Throws: when a new account fails to be created for any reason, or when a session fails to be created
     func register(with registerForm: Account.RegisterForm) async throws -> Session.ClientPackage {
         // TODO: check for invite code before account creation
@@ -31,9 +28,6 @@ struct AuthService {
     /// Logs in an existing user by first verifying that the account exists, then verifying the password
     /// matches our records.
     ///
-    /// - Parameters:
-    ///   - loginForm: a Data Transfer Object containing the necessary details to log in
-    /// - Returns: a `Session.ClientPackage` object
     /// - Throws: if login fails for any reason, or if creating a session fails for any reason
     func login(with loginForm: Account.LoginForm) async throws -> Session.ClientPackage {
         guard let existingAccount = try await Account.query(on: request.db).filter(\.$email == loginForm.email).first() else {
@@ -58,7 +52,6 @@ struct AuthService {
     /// Logs out a user and erases their session. Any cookie erasure should happen on the client,
     /// so we only check to see if the `Authorization` header has been passed one final time.
     ///
-    /// - Returns:
     /// - Throws:
     func logout() async throws -> Response {
         let res = Response()
@@ -76,12 +69,30 @@ struct AuthService {
         return res
     }
 
+
+    /// Retrieves a user's account from `request.user`. If `withProfile` is true, we also retrieve
+    /// the associated profile. Otherwise, `profile` is `nil`
+    ///
+    /// - Throws: if `request.user` doesn't have either an account or a profile, or if it simply doesn't
+    /// have an account
+    func getUser(withProfile: Bool = false) throws -> (account: Account, profile: Profile?) {
+        if withProfile {
+            if let account = request.user?.account, let profile = request.user?.profile {
+                return (account, profile)
+            } else {
+                throw Abort(.unauthorized)
+            }
+        } else {
+            if let account = request.user?.account {
+                return (account, nil)
+            } else {
+                throw Abort(.unauthorized)
+            }
+        }
+    }
+
     /// Creates a new session for the specified account, saving it to the database.
     ///
-    /// - Parameters:
-    ///   - account: the account requesting a new session
-    ///   - session: determines whether or not to create a short or a long session
-    /// - Returns: a new `ClientPackage`
     /// - Throws: when a new session fails to be created, or when signing the JWT fails
     private func createSession(for account: Account, session: Bool) async throws -> Session.ClientPackage {
         let sessionId = UUID()

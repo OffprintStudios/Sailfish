@@ -14,6 +14,8 @@ export const GET: RequestHandler<OutputType> = async ({ request }) => {
 		}
 	});
 
+	console.log(response);
+
 	if ((response as ResponseError).error) {
 		console.log(response);
 		return {

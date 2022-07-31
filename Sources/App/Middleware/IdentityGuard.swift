@@ -6,7 +6,7 @@ import Vapor
 import Fluent
 
 struct IdentityGuard: AsyncMiddleware {
-    var requiredRoles: Set<Account.Roles>
+    var requiredRoles: [Account.Roles]
     var checkProfile: Bool
 
     func respond(to request: Request, chainingTo next: AsyncResponder) async throws -> Response {
@@ -19,7 +19,7 @@ struct IdentityGuard: AsyncMiddleware {
             throw Abort(.internalServerError)
         }
 
-        if canAccess(needs: requiredRoles, has: Set(account.roles)) {
+        if canAccess(needs: requiredRoles, has: account.roles) {
             if checkProfile {
                 guard let profileId: String = request.query["profileId"] else {
                     throw Abort(.badRequest)
@@ -45,8 +45,8 @@ struct IdentityGuard: AsyncMiddleware {
         }
     }
 
-    init(needs requiredRoles: [Account.Roles], checkProfile: Bool = true) {
-        self.requiredRoles = Set(requiredRoles)
+    init(needs requiredRoles: [Account.Roles], checkProfile: Bool = false) {
+        self.requiredRoles = requiredRoles
         self.checkProfile = checkProfile
     }
 }
