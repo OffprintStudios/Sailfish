@@ -57,7 +57,7 @@
 							on:click={() => switchTab(AccountPanel, GuideTabs.AccountTab)}
 							class:active={$guide.currTab === GuideTabs.AccountTab}
 						>
-							<Avatar src={$account.currProfile.profile.avatar} borderWidth="1px" size="42px" />
+							<Avatar src={$account.currProfile.avatar} borderWidth="1px" size="42px" />
 						</button>
 					{:else}
 						<button

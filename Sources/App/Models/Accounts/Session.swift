@@ -66,6 +66,7 @@ extension Session {
 
     struct ClientPackage: Content {
         var account: ClientAccount
+        var profiles: [Profile]
         var token: String
     }
 }

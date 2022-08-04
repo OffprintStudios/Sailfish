@@ -10,6 +10,7 @@
 	export let title = '';
 	export let asLink = false;
 	export let href = '';
+	export let thisButton = null;
 
 	let isDisabled: boolean;
 	$: isDisabled = disabled || loading;
@@ -40,6 +41,7 @@
 		disabled={isDisabled}
 		tabindex="0"
 		on:click
+		bind:this={thisButton}
 	>
 		{#if loading}
 			<Loader5Line class="button-icon animate-spin" />

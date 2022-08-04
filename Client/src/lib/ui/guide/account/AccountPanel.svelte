@@ -13,6 +13,7 @@
 		LogoutCircleRLine,
 		QuillPenLine
 	} from "svelte-remixicon";
+	import { nextPage } from "../guide.state";
 </script>
 
 {#if $account.account === null}
@@ -24,19 +25,19 @@
 		<div class="content-container">
 			<div class="panel-section">
 				<div class="profile-block bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
-					<div class="max-h-[6rem] min-h-[6rem] overflow-hidden w-full">
-						{#if $account.currProfile.profile.coverPic}
-							<img src={$account.currProfile.profile.coverPic} class="h-full w-full object-cover" alt="profile avatar" />
+					<div class="max-h-[6rem] min-h-[6rem] overflow-hidden w-full relative">
+						{#if $account.currProfile.info.coverPic !== null && $account.currProfile.info.coverPic !== undefined}
+							<img src={$account.currProfile.info.coverPic} class="h-full w-full object-cover" alt="profile avatar" />
 						{:else}
-							<div class="h-full w-full" style="background: var(--accent);"></div>
+							<div class="h-full w-full absolute" style="background: var(--accent);"></div>
 						{/if}
 					</div>
 					<div class="py-2 px-4 flex items-center">
-						<Avatar src={$account.currProfile.profile.avatar} borderWidth="1px" size="64px" />
+						<Avatar src={$account.currProfile.avatar} borderWidth="1px" size="64px" />
 						<div class="ml-2 flex-1">
 							<h4 class="text-2xl">
-								<a class="text-ellipsis overflow-hidden" href="/profile/{$account.currProfile._id}">
-									{$account.currProfile.screenName}
+								<a class="text-ellipsis overflow-hidden" href="/profile/{$account.currProfile.id}">
+									{$account.currProfile.username}
 								</a>
 							</h4>
 							<RoleBadge roles={$account.account.roles} size="large" />
@@ -45,7 +46,7 @@
 					<div class="w-full flex items-center justify-center border-t border-zinc-300 dark:border-zinc-500 mt-0.5">
 						<a
 							class="stat-box hover:bg-zinc-300 dark:hover:bg-zinc-600"
-							href="/profile/{$account.currProfile._id}/works"
+							href="/profile/{$account.currProfile.id}/works"
 						>
 							<div class="stat">
 								<QuillPenLine size="18.4px" class="mr-1" />
@@ -55,7 +56,7 @@
 						</a>
 						<a
 							class="stat-box border-l border-r border-zinc-300 dark:border-zinc-500 hover:bg-zinc-300 dark:hover:bg-zinc-600"
-							href="/profile/{$account.currProfile._id}/blogs"
+							href="/profile/{$account.currProfile.id}/blogs"
 						>
 							<div class="stat">
 								<CupLine size="18.4px" class="mr-1" />
@@ -65,7 +66,7 @@
 						</a>
 						<a
 							class="stat-box hover:bg-zinc-300 dark:hover:bg-zinc-600"
-							href="/profile/{$account.currProfile._id}/following"
+							href="/profile/{$account.currProfile.id}/following"
 						>
 							<div class="stat">
 								<EyeLine size="18.4px" class="mr-1" />
@@ -78,17 +79,17 @@
 			</div>
 
 			<div class="panel-section">
-				<a href="/create/new-prose" class="nav-button">
+				<a href="/create/prose" class="nav-button">
 					<BookLine size="24px" />
 					<span>Create Prose</span>
 					<Link class="text-zinc-400" />
 				</a>
-				<a href="/create/new-poetry" class="nav-button">
+				<a href="/create/poetry" class="nav-button">
 					<QuillPenLine size="24px" />
 					<span>Create Poetry</span>
 					<Link class="text-zinc-400" />
 				</a>
-				<a href="/create/new-blog" class="nav-button">
+				<a href="/create/blog" class="nav-button">
 					<CupLine size="24px" />
 					<span>Create Blog</span>
 					<Link class="text-zinc-400" />
@@ -96,7 +97,7 @@
 			</div>
 
 			<div class="panel-section">
-				<button class="nav-button">
+				<button class="nav-button" on:click={() => nextPage(SwitchProfilePanel)}>
 					<ArrowLeftRightLine size="24px" />
 					<span>Switch profile</span>
 					<ArrowRightSLine class="text-zinc-400" />

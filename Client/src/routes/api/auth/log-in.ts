@@ -1,11 +1,11 @@
 import type { RequestHandler } from "./__types/log-in";
 import type { ResponseError } from "$lib/http";
 import { postReq } from "$lib/http";
-import type { Account, ClientPackage } from "$lib/models/accounts";
+import type { ClientPackage } from "$lib/models/accounts";
 import type { LoginForm } from "$lib/models/accounts/forms";
 import cookie from "cookie";
 
-type OutputType = Account | ResponseError;
+type OutputType = ClientPackage | ResponseError;
 
 export const POST: RequestHandler<OutputType> = async ({ request }) => {
 	const formInfo: LoginForm = await request.json();
@@ -26,7 +26,7 @@ export const POST: RequestHandler<OutputType> = async ({ request }) => {
 	} else {
 		return {
 			status: 200,
-			body: (response as ClientPackage).account,
+			body: response as ClientPackage,
 			headers: {
 				'content-type': 'application/json',
 				'set-cookie': [

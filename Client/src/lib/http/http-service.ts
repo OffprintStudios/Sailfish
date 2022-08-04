@@ -19,6 +19,7 @@ export async function getReq<T = unknown>(url: string, config?: HttpConfig): Pro
 			if (error.isAxiosError) {
 				return error.data;
 			} else {
+				console.log(error);
 				return {
 					statusCode: 500,
 					message: `An unknown error has occurred. Please try again in a little bit.`,

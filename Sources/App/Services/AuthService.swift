@@ -111,7 +111,9 @@ struct AuthService {
             )
         )
 
-        return Session.ClientPackage(account: .init(from: account) , token: token)
+        let profiles = try await account.$profiles.get(on: request.db)
+
+        return Session.ClientPackage(account: .init(from: account), profiles: profiles, token: token)
     }
 
     /// Gets the user agent from request headers.

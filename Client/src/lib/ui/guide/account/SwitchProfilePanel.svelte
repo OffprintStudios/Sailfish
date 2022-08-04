@@ -2,22 +2,35 @@
 	import { createForm } from "felte";
 	import { account } from "$lib/state/account.state";
 	import { Avatar, Button } from "$lib/ui/util";
-	import type { Profile, ProfileForm } from "$lib/models/accounts";
-	import { TextField, TextArea } from "$lib/ui/forms";
-	import { AddBoxLine, CheckLine, CloseLine } from "svelte-remixicon";
-	import { Presence } from "$lib/models/accounts";
+	import type { ProfileForm } from "$lib/models/accounts";
+	import { Presence, Pronouns } from "$lib/models/accounts";
+	import { TextArea, TextField } from "$lib/ui/forms";
+	import { AddBoxLine, CheckLine, CloseLine, ArrowLeftSLine } from "svelte-remixicon";
+	import { guide, prevPage } from "../guide.state";
+	import toast from "svelte-french-toast";
 
 	let showAddForm = false;
 
 	const { form, errors, isSubmitting } = createForm({
-		onSubmit: async (values) => {
+		onSubmit: async (values, context) => {
 			const formInfo: ProfileForm = {
 				username: values.username,
-				pronouns: [],
+				pronouns: [Pronouns.AnyAll],
 				presence: Presence.Offline,
 				bio: values.bio,
 			};
-			//TODO: implement profile creation
+			await fetch('/api/accounts/create-profile', { method: 'POST', body: JSON.stringify(formInfo), credentials: 'include' })
+				.then(async (response) => {
+					const data = await response.json();
+					if (response.status === 200) {
+						$account.profiles = [...$account.profiles, data];
+						toast.success('Profile added!');
+						context.reset();
+						showAddForm = false;
+					} else {
+						toast.error('Something went wrong! Try again in a little bit.');
+					}
+				})
 		},
 		validate: () => {
 			// TODO: implement errors
@@ -32,84 +45,78 @@
 			bio: null,
 		}
 	});
-
-	async function fetchProfiles(): Promise<Profile[]> {
-		const response = await fetch('/api/accounts/fetch-profiles');
-		return await response.json();
-	}
 </script>
 
 <div class="panel-container">
+	{#if $guide.routing.length > 1}
+		<div class="topbar">
+			<div class="left-button">
+				<Button on:click={prevPage}>
+					<ArrowLeftSLine class="button-icon" />
+					<span class="button-text">Account</span>
+				</Button>
+			</div>
+		</div>
+	{/if}
 	<div class="title-block">
 		<h1>Select Profile</h1>
 	</div>
 	<div class="content-container">
-		{#await fetchProfiles()}
-			<div class="empty">
-				<h3 class="text-2xl">Loading...</h3>
+		{#each $account.profiles as profile}
+			<div
+				class="profile-box border-zinc-600 dark:border-white"
+				on:click={() => $account.currProfile = profile}
+			>
+				<Avatar src={profile.avatar} size="64px" />
+				<div class="user-info-container">
+					<h3>{profile.username}</h3>
+				</div>
 			</div>
-		{:then profiles}
-			{#each profiles as profile}
-				<div
-					class="profile-box border-zinc-600 dark:border-white"
-					on:click={() => $account.currProfile = profile}
-				>
-					<Avatar src={profile.avatar} size="64px" />
-					<div class="user-info-container">
-						<h3>{profile.username}</h3>
-					</div>
-				</div>
-			{/each}
-			{#if profiles.length < 3}
-				<div
-					class="add-profile-box border-zinc-600 dark:border-white"
-					class:auto-height={showAddForm}
-				>
-					{#if showAddForm}
-						<form use:form>
-							<TextField
-								name="username"
-								type="text"
-								title="Username"
-								placeholder="A New Face"
-								errorMessage={$errors.username}
-							/>
-							<TextArea
-								name="bio"
-								title="Bio"
-								placeholder="Just another somebody"
-								errorMessage={$errors.bio}
-							/>
-							<div class="flex items-center justify-center">
-								<Button type="submit" loading={$isSubmitting} loadingText="Saving...">
-									<CheckLine class="button-icon" />
-									<span class="button-text">Submit</span>
-								</Button>
-								<div class="mx-0.5"></div>
-								<Button type="button" on:click={() => (showAddForm = false)}>
-									<CloseLine class="button-icon" />
-									<span class="button-text">Cancel</span>
-								</Button>
-							</div>
-						</form>
-					{:else}
-						<button class="absolute w-full h-full" on:click={() => (showAddForm = !showAddForm)}></button>
-						<AddBoxLine size="24px" class="mr-2" />
-						<span class="uppercase font-bold tracking-widest text-xs">Add profile</span>
-					{/if}
-				</div>
-			{:else}
-				<div class="empty">
-					<h3 class="text-2xl">You've hit the limit!</h3>
-					<p class="text-sm">Only three profiles per account, sorry folks!</p>
-				</div>
-			{/if}
-		{:catch err}
-			<div class="empty">
-				<h3 class="text-2xl">Something went wrong!</h3>
-				<p class="text-sm">Please try again in a little bit.</p>
+		{/each}
+		{#if $account.profiles.length < 3}
+			<div
+				class="add-profile-box border-zinc-600 dark:border-white"
+				class:auto-height={showAddForm}
+			>
+				{#if showAddForm}
+					<form use:form>
+						<TextField
+							name="username"
+							type="text"
+							title="Username"
+							placeholder="A New Face"
+							errorMessage={$errors.username}
+						/>
+						<TextArea
+							name="bio"
+							title="Bio"
+							placeholder="Just another somebody"
+							errorMessage={$errors.bio}
+						/>
+						<div class="flex items-center justify-center">
+							<Button type="submit" loading={$isSubmitting} loadingText="Saving...">
+								<CheckLine class="button-icon" />
+								<span class="button-text">Submit</span>
+							</Button>
+							<div class="mx-0.5"></div>
+							<Button type="button" on:click={() => (showAddForm = false)}>
+								<CloseLine class="button-icon" />
+								<span class="button-text">Cancel</span>
+							</Button>
+						</div>
+					</form>
+				{:else}
+					<button class="absolute w-full h-full" on:click={() => (showAddForm = !showAddForm)}></button>
+					<AddBoxLine size="24px" class="mr-2" />
+					<span class="uppercase font-bold tracking-widest text-xs">Add profile</span>
+				{/if}
 			</div>
-		{/await}
+		{:else}
+			<div class="empty">
+				<h3 class="text-2xl">You've hit the limit!</h3>
+				<p class="text-sm">Only three profiles per account, sorry folks!</p>
+			</div>
+		{/if}
 	</div>
 </div>
 

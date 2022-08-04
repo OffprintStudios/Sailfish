@@ -28,7 +28,8 @@
 					if (response.status === 422) {
 						toast.error(data.message);
 					} else if (response.status === 200) {
-						$account.account = data;
+						$account.account = data.account;
+						$account.profiles = data.profiles;
 						prevPage();
 					} else {
 						toast.error('Something went wrong! Try again in a little bit.');

@@ -12,11 +12,10 @@ export const GET: RequestHandler<OutputType> = async ({ request }) => {
 		headers: {
 			'Authorization': `Bearer ${cookies["accessKey"]}`
 		}
-	});
-
-	console.log(response);
-
-	if ((response as ResponseError).error) {
+	}).catch(err => {
+		console.log(err);
+	})
+	if (!(response as Profile[]).length) {
 		console.log(response);
 		return {
 			status: 500,
@@ -25,7 +24,6 @@ export const GET: RequestHandler<OutputType> = async ({ request }) => {
 			}
 		};
 	}
-
 	return {
 		status: 200,
 		body: response as Profile[],

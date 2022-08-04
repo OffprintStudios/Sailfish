@@ -4,11 +4,13 @@ import type { Account, Profile } from "../models/accounts";
 
 interface AccountState {
 	account: Account | null;
+	profiles: Profile[];
 	currProfile: Profile | null;
 }
 
 const defaultAccountState: AccountState = {
 	account: null,
+	profiles: [],
 	currProfile: null,
 };
 
