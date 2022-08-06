@@ -9,10 +9,8 @@ struct AccountController: RouteCollection {
         let accounts = routes.grouped(IdentityGuard(needs: [.user])).grouped("accounts")
 
         accounts.get("fetch-profile", ":profileId") { request async throws -> Profile in
-            guard let profileUuid = UUID(uuidString: request.parameters.get("profileId")!) else {
-                throw Abort(.internalServerError)
-            }
-            return try await request.accountService.fetchProfile(id: profileUuid)
+            let profileId = request.parameters.get("profileId")!
+            return try await request.accountService.fetchProfile(profileId)
         }
 
         accounts.get("fetch-profiles") { request async throws -> [Profile] in
@@ -26,19 +24,15 @@ struct AccountController: RouteCollection {
         }
 
         accounts.patch("update-profile", ":profileId") { request async throws -> Profile in
-            guard let profileUuid = UUID(uuidString: request.parameters.get("profileId")!) else {
-                throw Abort(.internalServerError)
-            }
+            let profileId = request.parameters.get("profileId")!
             try Profile.ProfileForm.validate(content: request)
             let profileForm = try request.content.decode(Profile.ProfileForm.self)
-            return try await request.accountService.updateProfile(profileUuid, with: profileForm)
+            return try await request.accountService.updateProfile(profileId, with: profileForm)
         }
 
         accounts.delete("delete-profile", ":profileId") { request async throws -> String in
-            guard let profileUuid = UUID(uuidString: request.parameters.get("profileId")!) else {
-                throw Abort(.internalServerError)
-            }
-            try await request.accountService.deleteProfile(profileUuid)
+            let profileId = request.parameters.get("profileId")!
+            try await request.accountService.deleteProfile(profileId)
             return "Ok"
         }
     }

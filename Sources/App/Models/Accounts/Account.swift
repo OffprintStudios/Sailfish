@@ -5,12 +5,13 @@
 import Vapor
 import Fluent
 import Argon2Swift
+import NanoID
 
 final class Account: Model, Content {
     static let schema = "accounts"
 
-    @ID(key: .id)
-    var id: UUID?
+    @ID(custom: "id", generatedBy: .user)
+    var id: String?
 
     @Field(key: "email")
     var email: String
@@ -41,12 +42,17 @@ final class Account: Model, Content {
 
     init() { }
 
-    init(id: UUID? = nil, formData: RegisterForm) throws {
+    init(id: String? = nil, formData: RegisterForm) throws {
         guard let hashedPassword = try? Argon2Swift.hashPasswordString(password: formData.password, salt: Salt.newSalt(), type: Argon2Type.id) else {
             throw Abort(.internalServerError)
         }
 
-        self.id = id
+        if let hasId = id {
+            self.id = hasId
+        } else {
+            self.id = NanoID.with(size: NANO_ID_SIZE)
+        }
+
         email = formData.email
         password = hashedPassword.encodedString().trimmingCharacters(in: CharacterSet(charactersIn: "\0"))
         roles = [.user]

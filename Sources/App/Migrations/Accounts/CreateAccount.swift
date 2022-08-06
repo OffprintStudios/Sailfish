@@ -7,7 +7,7 @@ import Fluent
 struct CreateAccount: AsyncMigration {
     func prepare(on database: Database) async throws {
         return try await database.schema("accounts")
-            .id()
+            .field("id", .string, .identifier(auto: false))
             .field("email", .string, .required)
             .field("password", .string, .required)
             .field("roles", .array(of: .string), .required)

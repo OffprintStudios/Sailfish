@@ -23,6 +23,7 @@ public func configure(_ app: Application) throws {
     app.migrations.add(CreateProfile())
     app.migrations.add(CreateSession())
     app.migrations.add(CreateInviteCode())
+    app.migrations.add(CreateBlog())
 
     // Setting up queues
     // app.logger.notice("Setting up queues...")

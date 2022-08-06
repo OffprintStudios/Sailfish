@@ -5,7 +5,7 @@
 import Vapor
 
 struct ClientAccount: Codable {
-    var id: UUID?
+    var id: String?
     var roles: [Account.Roles]
     var termsAgree: Bool
     var emailConfirmed: Bool

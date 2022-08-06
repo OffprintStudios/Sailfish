@@ -14,7 +14,8 @@ let package = Package(
         .package(url: "https://github.com/vapor/jwt.git", from: "4.0.0"),
         .package(url: "https://github.com/tmthecoder/Argon2Swift.git", branch: "main"),
         .package(url: "https://github.com/malcommac/UAParserSwift.git", from: "1.0.1"),
-        .package(url: "https://github.com/vapor/queues-redis-driver.git", from: "1.0.0")
+        .package(url: "https://github.com/vapor/queues-redis-driver.git", from: "1.0.0"),
+        .package(url: "https://github.com/OffprintStudios/NanoID.git", from: "1.0.0")
     ],
     targets: [
         .target(
@@ -26,7 +27,8 @@ let package = Package(
                 .product(name: "JWT", package: "jwt"),
                 .product(name: "Argon2Swift", package: "Argon2Swift"),
                 .product(name: "UAParserSwift", package: "UAParserSwift"),
-                .product(name: "QueuesRedisDriver", package: "queues-redis-driver")
+                .product(name: "QueuesRedisDriver", package: "queues-redis-driver"),
+                .product(name: "NanoID", package: "NanoID")
             ],
             swiftSettings: [
                 // Enable better optimizations when building in Release configuration. Despite the use of

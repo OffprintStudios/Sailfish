@@ -4,12 +4,13 @@
 
 import Vapor
 import Fluent
+import NanoID
 
 final class Profile: Model, Content {
     static let schema = "profiles"
 
-    @ID(key: .id)
-    var id: UUID?
+    @ID(custom: "id", generatedBy: .user)
+    var id: String?
 
     @Parent(key: "account_id")
     var account: Account
@@ -26,6 +27,9 @@ final class Profile: Model, Content {
     @Field(key: "stats")
     var stats: ProfileStats
 
+    @Children(for: \.$author)
+    var blogs: [Blog]
+
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
 
@@ -37,8 +41,13 @@ final class Profile: Model, Content {
 
     init() { }
 
-    init(id: UUID? = nil, from formData: ProfileForm) {
-        self.id = id
+    init(id: String? = nil, from formData: ProfileForm) {
+        if let hasId = id {
+            self.id = hasId
+        } else {
+            self.id = NanoID.with(size: NANO_ID_SIZE)
+        }
+
         username = formData.username
         avatar = "https://images.offprint.net/avatars/avatar.png"
         info = .init(pronouns: formData.pronouns)

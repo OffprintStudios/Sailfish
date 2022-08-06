@@ -6,10 +6,15 @@ import Foundation
 import Vapor
 import Fluent
 
+/// Offprint Account Service
+///
+/// Contains functions dedicated to the processing of account-related requests, such as
+/// information updates, profile creation, and more.
 struct AccountService {
     let request: Request
 
-    func fetchProfile(id: UUID) async throws -> Profile {
+    /// Fetches a user's profile by its ID
+    func fetchProfile(_ id: String) async throws -> Profile {
         let account = try request.authService.getUser().account
         guard let profile = try await account.$profiles.query(on: request.db).filter(\.$id == id).first() else {
             throw Abort(.notFound)
@@ -17,11 +22,13 @@ struct AccountService {
         return profile
     }
 
+    /// Fetches all profiles belonging to a user
     func fetchProfiles() async throws -> [Profile] {
         let account = try request.authService.getUser().account
         return try await account.$profiles.get(on: request.db)
     }
 
+    /// Creates a new profile for a user
     func createProfile(with profileForm: Profile.ProfileForm) async throws -> Profile {
         let account = try request.authService.getUser().account
         let newProfile = Profile(from: profileForm)
@@ -29,7 +36,8 @@ struct AccountService {
         return newProfile
     }
 
-    func updateProfile(_ id: UUID, with profileForm: Profile.ProfileForm) async throws -> Profile {
+    /// Updates an existing profile
+    func updateProfile(_ id: String, with profileForm: Profile.ProfileForm) async throws -> Profile {
         let account = try request.authService.getUser().account
         guard let profile = try await account.$profiles.query(on: request.db).filter(\.$id == id).first() else {
             throw Abort(.notFound)
@@ -51,7 +59,8 @@ struct AccountService {
         return profile
     }
 
-    func deleteProfile(_ id: UUID) async throws {
+    /// Soft-deletes a given profile
+    func deleteProfile(_ id: String) async throws {
         let account = try request.authService.getUser().account
         try await account.$profiles.query(on: request.db).filter(\.$id == id).delete()
     }
