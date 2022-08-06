@@ -21,7 +21,7 @@ volumes:
 
 x-shared_environment: &shared_environment
   LOG_LEVEL: ${LOG_LEVEL:-debug}
-  DATABASE_URL: mongodb://db:27017/vapor_database
+  POSTGRES_URL: postgresql://postgres@db:27017/vapor_database
   
 services:
   app:
