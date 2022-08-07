@@ -4,10 +4,13 @@
 	export let size = '12rem';
 	export let borderWidth = '4px';
 	export let title = 'avatar';
+	export let onAccentBg = false;
 </script>
 
 <div
-	class="rounded-full border-zinc-300 dark:border-white bg-zinc-300 dark:bg-white overflow-hidden"
+	class="rounded-full dark:border-white bg-zinc-300 dark:bg-white overflow-hidden"
+	class:border-zinc-300={!onAccentBg}
+	class:border-white={onAccentBg}
 	style="min-height: {size}; min-width: {size}; max-height: {size}; max-width: {size}; border-width: {borderWidth}"
 	{title}
 >

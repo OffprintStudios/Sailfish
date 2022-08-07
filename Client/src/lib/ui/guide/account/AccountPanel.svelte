@@ -14,6 +14,7 @@
 		QuillPenLine
 	} from "svelte-remixicon";
 	import { nextPage } from "../guide.state";
+	import { slugify } from "$lib/util/functions";
 </script>
 
 {#if $account.account === null}
@@ -36,7 +37,7 @@
 						<Avatar src={$account.currProfile.avatar} borderWidth="1px" size="64px" />
 						<div class="ml-2 flex-1">
 							<h4 class="text-2xl">
-								<a class="text-ellipsis overflow-hidden" href="/profile/{$account.currProfile.id}">
+								<a class="text-ellipsis overflow-hidden" href="/profile/{$account.currProfile.id}/{slugify($account.currProfile.username)}">
 									{$account.currProfile.username}
 								</a>
 							</h4>

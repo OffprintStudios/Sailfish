@@ -9,7 +9,7 @@ struct ProfileController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let profiles = routes.grouped("profiles")
 
-        profiles.get("fetch-profile", ":profileId") { request async throws -> Profile in
+        profiles.get("fetch-profile", ":profileId") { request async throws -> ClientProfile in
             let profileId = request.parameters.get("profileId")!
             return try await request.profileService.fetchProfile(profileId)
         }
