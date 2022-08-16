@@ -7,6 +7,7 @@
 	export let placeholder = 'Text Input';
 	export let value = null;
 	export let errorMessage;
+	export let autocomplete = 'off';
 </script>
 
 <div class="text-field">
@@ -23,6 +24,7 @@
 		{title}
 		{placeholder}
 		{value}
+		autocomplete={autocomplete}
 		class="bg-zinc-300 dark:bg-zinc-700 dark:placeholder-zinc-400 dark:highlight-shadowed"
 		class:error={!!errorMessage}
 		on:change

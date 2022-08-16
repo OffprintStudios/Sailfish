@@ -1,12 +1,9 @@
-import type { RequestHandler } from "./__types/create-profile";
-import type { ResponseError } from "$lib/http";
+import type { RequestHandler } from "./$types";
 import type { Profile, ProfileForm } from "$lib/models/accounts";
 import { postReq } from "$lib/http";
 import cookie from "cookie";
 
-type OutputType = Profile | ResponseError;
-
-export const POST: RequestHandler<OutputType> = async ({ request }) => {
+export const POST: RequestHandler = async ({ request }) => {
 	const formInfo: ProfileForm = await request.json();
 	const cookies = cookie.parse(request.headers.get('cookie') || '');
 	const response = await postReq<Profile>('/accounts/create-profile', formInfo, {
@@ -16,18 +13,8 @@ export const POST: RequestHandler<OutputType> = async ({ request }) => {
 	});
 	if (!(response as Profile).id) {
 		console.log(response);
-		return {
-			status: 500,
-			headers: {
-				'content-type': 'application/json',
-			}
-		};
+		return new Response(null, { status: 500, statusText: 'Something went wrong!' });
 	}
-	return {
-		status: 200,
-		body: response as Profile,
-		headers: {
-			'content-type': 'application/json',
-		}
-	};
+
+	return new Response(JSON.stringify(response as Profile), { status: 200 });
 }

@@ -14,7 +14,7 @@
 		QuillPenLine
 	} from "svelte-remixicon";
 	import { nextPage } from "../guide.state";
-	import { slugify } from "$lib/util/functions";
+	import { slugify, abbreviate } from "$lib/util/functions";
 </script>
 
 {#if $account.account === null}
@@ -47,31 +47,31 @@
 					<div class="w-full flex items-center justify-center border-t border-zinc-300 dark:border-zinc-500 mt-0.5">
 						<a
 							class="stat-box hover:bg-zinc-300 dark:hover:bg-zinc-600"
-							href="/profile/{$account.currProfile.id}/works"
+							href="/profile/{$account.currProfile.id}/{slugify($account.currProfile.username)}/works"
 						>
 							<div class="stat">
 								<QuillPenLine size="18.4px" class="mr-1" />
-								<span class="select-none">{$account.currProfile.stats.works}</span>
+								<span class="select-none">{abbreviate($account.currProfile.stats.works)}</span>
 							</div>
 							<div class="stat-label">Works</div>
 						</a>
 						<a
 							class="stat-box border-l border-r border-zinc-300 dark:border-zinc-500 hover:bg-zinc-300 dark:hover:bg-zinc-600"
-							href="/profile/{$account.currProfile.id}/blogs"
+							href="/profile/{$account.currProfile.id}/{slugify($account.currProfile.username)}/blogs"
 						>
 							<div class="stat">
 								<CupLine size="18.4px" class="mr-1" />
-								<span class="select-none">{$account.currProfile.stats.blogs}</span>
+								<span class="select-none">{abbreviate($account.currProfile.stats.blogs)}</span>
 							</div>
 							<div class="stat-label">Blogs</div>
 						</a>
 						<a
 							class="stat-box hover:bg-zinc-300 dark:hover:bg-zinc-600"
-							href="/profile/{$account.currProfile.id}/following"
+							href="/profile/{$account.currProfile.id}/{slugify($account.currProfile.username)}/following"
 						>
 							<div class="stat">
 								<EyeLine size="18.4px" class="mr-1" />
-								<span class="select-none">{$account.currProfile.stats.followers}</span>
+								<span class="select-none">{abbreviate($account.currProfile.stats.followers)}</span>
 							</div>
 							<div class="stat-label">Follows</div>
 						</a>
@@ -80,17 +80,17 @@
 			</div>
 
 			<div class="panel-section">
-				<a href="/create/prose" class="nav-button">
+				<a href="/profile/{$account.currProfile.id}/{slugify($account.currProfile.username)}/works" class="nav-button">
 					<BookLine size="24px" />
 					<span>Create Prose</span>
 					<Link class="text-zinc-400" />
 				</a>
-				<a href="/create/poetry" class="nav-button">
+				<a href="/profile/{$account.currProfile.id}/{slugify($account.currProfile.username)}/works" class="nav-button">
 					<QuillPenLine size="24px" />
 					<span>Create Poetry</span>
 					<Link class="text-zinc-400" />
 				</a>
-				<a href="/create/blog" class="nav-button">
+				<a href="/profile/{$account.currProfile.id}/{slugify($account.currProfile.username)}/blogs" class="nav-button">
 					<CupLine size="24px" />
 					<span>Create Blog</span>
 					<Link class="text-zinc-400" />

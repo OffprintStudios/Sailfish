@@ -63,6 +63,7 @@
 				type="email"
 				title="Email address"
 				placeholder="somebody@example.net"
+				autocomplete="email"
 				errorMessage={$errors.email}
 			/>
 			<TextField
@@ -70,6 +71,7 @@
 				type="password"
 				title="Password"
 				placeholder="••••••••••"
+				autocomplete="current-password"
 				errorMessage={$errors.password}
 			/>
 			<div class="my-4">
