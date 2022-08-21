@@ -31,7 +31,7 @@ struct AccountService {
     /// Creates a new profile for a user
     func createProfile(with profileForm: Profile.ProfileForm) async throws -> Profile {
         let account = try request.authService.getUser().account
-        let newProfile = Profile(from: profileForm)
+        let newProfile = try Profile(from: profileForm)
         try await account.$profiles.create(newProfile, on: request.db)
         return newProfile
     }
@@ -39,7 +39,7 @@ struct AccountService {
     /// Updates an existing profile
     func updateProfile(_ id: String, with profileForm: Profile.ProfileForm) async throws -> Profile {
         let account = try request.authService.getUser().account
-        guard let profile = try await account.$profiles.query(on: request.db).filter(\.$id == id).first() else {
+        guard let profile: Profile = try await account.$profiles.query(on: request.db).filter(\.$id == id).first() else {
             throw Abort(.notFound)
         }
 

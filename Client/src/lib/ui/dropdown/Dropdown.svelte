@@ -55,10 +55,10 @@
 
 <style lang="scss">
 	:global(div.dropdown-items) {
-		@apply absolute rounded-lg z-10 p-1 min-w-[12rem] max-w-[24rem] bg-zinc-300;
+		@apply absolute rounded-lg z-10 p-1 min-w-[12rem] max-w-[24rem] bg-zinc-200;
 		box-shadow: var(--dropshadow);
 		:global(a), :global(button) {
-			@apply flex items-center w-full p-2 rounded-lg transition transform no-underline hover:bg-zinc-400;
+			@apply flex items-center w-full p-2 rounded-lg transition transform no-underline hover:bg-zinc-300;
 			color: var(--text-color);
 			:global(span) {
 				@apply text-sm;

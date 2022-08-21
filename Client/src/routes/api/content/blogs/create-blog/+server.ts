@@ -1,7 +1,7 @@
 import type { RequestHandler } from "./$types";
-import type { Blog, BlogForm } from "$lib/models/content";
+import type { Blog, BlogForm } from "../../../../../lib/models/content";
 import cookie from "cookie";
-import { postReq } from "$lib/http";
+import { postReq } from "../../../../../lib/http";
 
 export const POST: RequestHandler = async ({ request, url }) => {
 	const profileId = url.searchParams.get('profileId');
@@ -9,9 +9,9 @@ export const POST: RequestHandler = async ({ request, url }) => {
 	const cookies = cookie.parse(request.headers.get('cookie') || '');
 
 	if (!profileId) {
-		return new Response(null, { status: 500 });
+		return new Response(null, { status: 422 });
 	} else {
-		const response = await postReq<Blog>('/blogs/create-blog', formInfo, {
+		const response = await postReq<Blog>(`/blogs/create-blog?profileId=${profileId}`, formInfo, {
 			headers: {
 				'Authorization': `Bearer ${cookies["accessKey"]}`
 			}

@@ -5,7 +5,7 @@ import type { ClientPackage } from "$lib/models/accounts";
 import type { LoginForm } from "$lib/models/accounts/forms";
 import cookie from "cookie";
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, setHeaders }) => {
 	const formInfo: LoginForm = await request.json();
 	const response = await postReq<ClientPackage>('/auth/login', formInfo);
 
@@ -20,12 +20,11 @@ export const POST: RequestHandler = async ({ request }) => {
 			expires: new Date(Date.now() + 2592000)
 		});
 
-		return new Response(JSON.stringify(response as ClientPackage), {
-			status: 200,
-			headers: {
-				'content-type': 'application/json',
-				'set-cookie': accessKey,
-			}
+		setHeaders({
+			'content-type': 'application/json',
+			'set-cookie': [accessKey],
 		});
+
+		return new Response(JSON.stringify(response as ClientPackage), { status: 200 });
 	}
 }

@@ -3,8 +3,8 @@
 //
 
 enum ContentFilter: String, Codable {
-    case restricted
-    case mature
-    case explicit
-    case everything
+    case restricted = "restricted"
+    case mature = "mature"
+    case explicit = "explicit"
+    case everything = "everything"
 }

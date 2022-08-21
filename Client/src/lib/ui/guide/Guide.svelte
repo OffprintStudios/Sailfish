@@ -101,7 +101,9 @@
 		</div>
 	{/if}
 
-	<slot />
+	<div class="h-full lg:h-screen overflow-y-auto">
+		<slot />
+	</div>
 </div>
 
 <style lang="scss">

@@ -5,6 +5,7 @@
 import Vapor
 import Fluent
 import NanoID
+import SwiftSoup
 
 final class Blog: Model, Content {
     static let schema = "blogs"
@@ -30,8 +31,8 @@ final class Blog: Model, Content {
     @Field(key: "stats")
     var stats: BlogStats
 
-    @Field(key: "status")
-    var status: ApprovalStatus
+    @Field(key: "news_post")
+    var newsPost: Bool
 
     @OptionalField(key: "published_on")
     var publishedOn: Date?
@@ -47,19 +48,23 @@ final class Blog: Model, Content {
 
     init() { }
 
-    init(id: String? = nil, from formData: BlogForm) {
+    init(id: String? = nil, from formData: BlogForm) throws {
         if let hasId = id {
             self.id = hasId
         } else {
             self.id = NanoID.with(size: NANO_ID_SIZE)
         }
 
-        title = formData.title
-        desc = formData.desc
-        body = formData.body
+        title = try SwiftSoup.clean(formData.title, Whitelist.none())!
+        if let hasDesc = formData.desc {
+            desc = try SwiftSoup.clean(hasDesc, Whitelist.none())!
+        } else {
+            desc = nil
+        }
+        body = try SwiftSoup.clean(formData.body, Whitelist.relaxed())!
         rating = formData.rating
         stats = .init()
-        status = .draft
+        newsPost = false
         publishedOn = nil
     }
 }

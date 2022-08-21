@@ -116,9 +116,8 @@ struct AuthService {
         return Session.ClientPackage(account: .init(from: account), profiles: profiles, token: token)
     }
 
-    /// Gets the user agent from request headers.
-    ///
-    /// - Returns: an object containing the device info for the user's new session
+    /// Gets the user agent from request headers and returns a `DeviceInfo` object containing browser, ip address, and
+    /// operating system information.
     private func getUserAgent() -> Session.DeviceInfo {
         let parsedInfo = UAParser(agent: request.headers.first(name: .userAgent).unsafelyUnwrapped)
         return Session.DeviceInfo(

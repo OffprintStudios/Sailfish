@@ -5,6 +5,7 @@
 import Vapor
 import Fluent
 import NanoID
+import SwiftSoup
 
 final class Profile: Model, Content {
     static let schema = "profiles"
@@ -41,14 +42,14 @@ final class Profile: Model, Content {
 
     init() { }
 
-    init(id: String? = nil, from formData: ProfileForm) {
+    init(id: String? = nil, from formData: ProfileForm) throws {
         if let hasId = id {
             self.id = hasId
         } else {
             self.id = NanoID.with(size: NANO_ID_SIZE)
         }
 
-        username = formData.username
+        username = try SwiftSoup.clean(formData.username, Whitelist.none())!
         avatar = "https://images.offprint.net/avatars/avatar.png"
         info = .init(pronouns: formData.pronouns)
         stats = .init()

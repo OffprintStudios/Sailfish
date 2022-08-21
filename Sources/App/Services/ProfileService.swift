@@ -8,6 +8,7 @@ import Fluent
 struct ProfileService {
     let request: Request
 
+    /// Fetches a profile given its ID. If no profile exists, throw a `notFound` error.
     func fetchProfile(_ id: String) async throws -> ClientProfile {
         guard let profile = try await Profile.query(on: request.db)
             .filter(\.$id == id)

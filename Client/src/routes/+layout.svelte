@@ -4,10 +4,19 @@
 	import { app } from "$lib/state/app.state";
 	import { Guide } from "$lib/ui/guide";
 	import { Toaster } from "svelte-french-toast";
+	import { account } from "$lib/state/account.state";
+
+	export let data: { hasKey: boolean } = { hasKey: false };
+
+	if (!data.hasKey) {
+		$account.account = null;
+		$account.currProfile = null;
+		$account.profiles = [];
+	}
 </script>
 
 <main
-	class="flex flex-col h-full lg:overflow-y-hidden lg:flex-row lg:h-full {$app.theme}"
+	class="flex flex-col h-full lg:overflow-y-hidden lg:flex-row lg:h-screen {$app.theme}"
 	class:light={$app.darkMode === false}
 	class:dark={$app.darkMode === true}
 >
