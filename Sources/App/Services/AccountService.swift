@@ -5,6 +5,7 @@
 import Foundation
 import Vapor
 import Fluent
+import SwiftSoup
 
 /// Offprint Account Service
 ///
@@ -43,16 +44,16 @@ struct AccountService {
             throw Abort(.notFound)
         }
 
-        profile.username = profileForm.username
+        profile.username = try SwiftSoup.clean(profileForm.username, .none())!
         profile.info.pronouns = profileForm.pronouns
         profile.info.presence = profileForm.presence
 
         if let bio = profileForm.bio {
-            profile.info.bio = bio
+            profile.info.bio = try SwiftSoup.clean(bio, .none())!
         }
 
         if let tagline = profileForm.tagline {
-            profile.info.tagline = tagline
+            profile.info.tagline = try SwiftSoup.clean(tagline, .none())!
         }
 
         try await profile.save(on: request.db)

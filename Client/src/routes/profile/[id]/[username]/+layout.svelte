@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores";
-	import { Home5Line, CupLine, QuillPenLine, BarChart2Line, ImageEditLine, ServiceLine, Flag2Line, CloseCircleLine, LineChartLine } from "svelte-remixicon";
+	import { Home5Line, CupLine, QuillPenLine, BarChart2Line, ImageEditLine, ServiceLine, Flag2Line, CloseCircleLine, PieChartLine } from "svelte-remixicon";
 	import { Avatar, RoleBadge } from "$lib/ui/util";
 	import { slugify } from "$lib/util/functions";
 	import { Button } from "$lib/ui/util";
@@ -117,7 +117,7 @@
 				{#if $account.currProfile.id === data.id}
 					<div class="h-full mx-1 border border-zinc-300 dark:border-zinc-500"><!--spacer--></div>
 					<button class="link hover:bg-zinc-300 dark:hover:bg-zinc-600">
-						<span class="link-icon"><LineChartLine size={iconSize} /></span>
+						<span class="link-icon"><PieChartLine size={iconSize} /></span>
 						<span class="link-name">Stats</span>
 					</button>
 				{:else}

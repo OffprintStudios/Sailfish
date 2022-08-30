@@ -18,13 +18,9 @@ struct BlogController: RouteCollection {
         blogs.get("fetch-blogs") { request async throws -> Page<Blog> in
             let query = try request.query.decode(FetchBlogsQuery.self)
             if let authorId = query.authorId, let status = query.status {
-                if status == .draft {
-                    return try await request.blogService.fetchBlogs(for: authorId, filter: query.filter ?? .restricted)
-                } else {
-                    return try await request.blogService.fetchBlogs(for: authorId, from: .now, filter: query.filter ?? .restricted)
-                }
+                return try await request.blogService.fetchBlogs(for: authorId, status: status, filter: query.filter ?? .restricted)
             } else if let authorId = query.authorId {
-                return try await request.blogService.fetchBlogs(for: authorId, filter: query.filter ?? .restricted)
+                return try await request.blogService.fetchBlogs(for: authorId, status: .published, filter: query.filter ?? .restricted)
             } else {
                 return try await request.blogService.fetchBlogs(filter: query.filter ?? .restricted)
             }
@@ -45,7 +41,8 @@ struct BlogController: RouteCollection {
 
         blogsWithAuth.patch("publish-blog", ":blogId") { request async throws -> Blog in
             let blogId = request.parameters.get("blogId")!
-            return try await request.blogService.publishBlog(blogId, on: .now)
+            let blogForm = try request.content.decode(Blog.PublishBlogForm.self)
+            return try await request.blogService.publishBlog(blogId, on: blogForm.pubDate)
         }
 
         blogsWithAuth.delete("delete-blog", ":blogId") { request async throws -> String in

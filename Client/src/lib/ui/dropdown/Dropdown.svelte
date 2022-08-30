@@ -31,7 +31,7 @@
 	}
 </script>
 
-<div class="relative">
+<div class="relative z-[2]">
 	<Button
 		kind={kind === 'normal' ? 'normal' : 'primary'}
 		isActive={open}
@@ -43,7 +43,7 @@
 	{#if open}
 		<div
 			class="dropdown-items"
-			transition:slide|local="{{ delay: 0, duration: 250 }}"
+			transition:slide|local="{{ delay: 0, duration: 150 }}"
 			bind:this={dropdown}
 			use:clickOutside
 			on:outclick={determineOpenState}

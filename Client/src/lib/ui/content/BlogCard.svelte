@@ -10,19 +10,20 @@
 	export let showAvatar = false;
 </script>
 
-<div class="blog-card bg-zinc-200 dark:bg-zinc-700">
+<div class="blog-card bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 hover:dark:bg-zinc-600">
+	<a
+		class="absolute top-0 right-0 left-0 bottom-0 z-[2]"
+		href="/profile/{blog.author.id}/{slugify(blog.author.username)}/blog/{blog.id}/{slugify(blog.title)}"
+	>
+		<!--nothing goes here-->
+	</a>
 	<div class="blog-header">
 		{#if showAvatar}
 			<Avatar src={blog.author.avatar} size="50px" borderWidth="1px" />
 		{/if}
 		<div class="flex-1" class:ml-4={showAvatar}>
-			<h3 class="font-medium text-2xl">
-				<a
-					class="text-white no-underline"
-					href="/profile/{blog.author.id}/{slugify(blog.author.username)}/blog/{blog.id}/{slugify(blog.title)}"
-				>
-					{blog.title}
-				</a>
+			<h3 class="text-white font-medium text-2xl">
+				{blog.title}
 			</h3>
 			<span class="flex items-center text-white text-xs">
 				<Time timestamp={blog.createdAt} />
@@ -33,7 +34,7 @@
 				<More2Fill size="18px" class="button-icon no-text text-white" />
 			</svelte:fragment>
 			<svelte:fragment slot="items">
-				{#if $account.account && $account.currProfile.id === blog.author.id}
+				{#if $account.account && $account.currProfile && $account.currProfile.id === blog.author.id}
 					<button>
 						<Edit2Line size="18px" class="mr-2" />
 						<span>Edit</span>
@@ -84,7 +85,7 @@
 
 <style lang="scss">
 	div.blog-card {
-		@apply block rounded-lg overflow-hidden no-underline transition;
+		@apply block rounded-lg overflow-hidden no-underline transition relative;
 		color: var(--text-color);
 		div.blog-header {
 			@apply flex items-center px-4 py-3.5;

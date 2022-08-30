@@ -28,27 +28,43 @@ struct BlogService {
             .paginate(for: request)
     }
 
-    /// Fetches a paginated list of published blogs specific to an author and based on the provided Content Filter.
-    /// If a `publishDate` is provided, it fetches any already-published posts. If none is provided, it only fetches
-    /// drafts.
-    func fetchBlogs(for authorId: String, from publishDate: Date? = nil, filter: ContentFilter) async throws -> Page<Blog> {
-        if let pubDate = publishDate {
-            return try await Blog.query(on: request.db)
-                .with(\.$author)
-                .filter(\.$author.$id == authorId)
-                .filter(\.$rating ~~ determineRatings(from: filter))
-                .filter(\.$publishedOn <= pubDate)
-                .sort(\.$publishedOn)
-                .paginate(for: request)
-        } else {
-            return try await Blog.query(on: request.db)
-                .with(\.$author)
-                .filter(\.$author.$id == authorId)
-                .filter(\.$rating ~~ determineRatings(from: filter))
+    /// Fetches a paginated list of blogs specific to an author and based on the provided Content Filter. If the provided
+    /// `status` is `.draft`, returns only drafts. If the provided `status` is `.published`, returns only published posts.
+    /// Otherwise, this will return any pending posts, i.e. posts with publish dates that have not yet occurred.
+    func fetchBlogs(for authorId: String, status: ApprovalStatus, filter: ContentFilter) async throws -> Page<Blog> {
+        let query = Blog.query(on: request.db)
+            .with(\.$author)
+            .filter(\.$author.$id == authorId)
+            .filter(\.$rating ~~ determineRatings(from: filter))
+
+        switch status {
+        case .draft:
+            return try await query
                 .filter(\.$publishedOn == nil)
                 .sort(\.$createdAt)
                 .paginate(for: request)
+        case .published:
+            return try await query
+                .filter(\.$publishedOn <= .now)
+                .sort(\.$publishedOn)
+                .paginate(for: request)
+        default:
+            return try await query
+                .filter(\.$publishedOn > .now)
+                .sort(\.$publishedOn)
+                .paginate(for: request)
         }
+    }
+
+    /// Fetches newsposts.
+    func fetchNews() async throws -> Page<Blog> {
+        try await Blog.query(on: request.db)
+            .with(\.$author)
+            .filter(\.$newsPost == true)
+            .filter(\.$rating ~~ [.everyone, .teen])
+            .filter(\.$publishedOn <= .now)
+            .sort(\.$publishedOn)
+            .paginate(for: request)
     }
 
     /// Creates a blog given the provided `formInfo`.
@@ -78,19 +94,29 @@ struct BlogService {
         return blog
     }
 
-    /// Publishes a blog by updating its `publishedOn` field. If `publishedOn` already contains a value, it's `nil`'d.
-    /// If it doesn't, it's given the value of `publishDate`.
-    func publishBlog(_ id: String, on publishDate: Date) async throws -> Blog {
+    /// Publishes a blog by updating its `publishedOn` field with the specified `publishDate`.
+    func publishBlog(_ id: String, on publishDate: Date? = nil) async throws -> Blog {
         let profile = try request.authService.getUser(withProfile: true).profile!
         guard let blog: Blog = try await profile.$blogs.query(on: request.db).filter(\.$id == id).first() else {
             throw Abort(.notFound)
         }
 
-        if blog.publishedOn != nil {
-            blog.publishedOn = nil
-        } else {
-            blog.publishedOn = publishDate
+        blog.publishedOn = publishDate
+
+        try await blog.save(on: request.db)
+        return blog
+    }
+
+    /// Converts a blog to a news post. Also forces a rating conversion to Everyone, though this should be enforced with
+    /// site policy.
+    func convertToNewsPost(_ id: String) async throws -> Blog {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        guard let blog: Blog = try await profile.$blogs.query(on: request.db).filter(\.$id == id).first() else {
+            throw Abort(.notFound)
         }
+
+        blog.newsPost = !blog.newsPost
+        blog.rating = .everyone
 
         try await blog.save(on: request.db)
         return blog

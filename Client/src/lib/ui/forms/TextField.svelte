@@ -25,7 +25,7 @@
 		{placeholder}
 		{value}
 		autocomplete={autocomplete}
-		class="bg-zinc-300 dark:bg-zinc-700 dark:placeholder-zinc-400 dark:highlight-shadowed"
+		class="bg-zinc-200 dark:bg-zinc-700 dark:placeholder-zinc-400 dark:highlight-shadowed"
 		class:error={!!errorMessage}
 		on:change
 		on:keypress

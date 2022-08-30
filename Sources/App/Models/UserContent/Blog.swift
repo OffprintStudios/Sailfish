@@ -25,6 +25,9 @@ final class Blog: Model, Content {
     @Field(key: "body")
     var body: String
 
+    @OptionalField(key: "cover")
+    var cover: String?
+
     @Field(key: "rating")
     var rating: ContentRating
 
@@ -62,6 +65,7 @@ final class Blog: Model, Content {
             desc = nil
         }
         body = try SwiftSoup.clean(formData.body, Whitelist.relaxed())!
+        cover = nil
         rating = formData.rating
         stats = .init()
         newsPost = false
@@ -87,6 +91,10 @@ extension Blog {
         var desc: String?
         var body: String
         var rating: ContentRating
+    }
+
+    struct PublishBlogForm: Content {
+        var pubDate: Date?
     }
 }
 

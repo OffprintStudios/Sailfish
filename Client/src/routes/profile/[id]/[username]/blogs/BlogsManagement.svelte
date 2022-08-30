@@ -62,9 +62,12 @@
 				);
 				return await response.json();
 			}
-			default:
-				console.log('Default hit!');
-				break;
+			default: {
+				const response = await fetch(
+					`/api/content/blogs/fetch-blogs?profileId=${$account.currProfile.id}&status=${ApprovalStatus.pending}&filter=${ContentFilter.everything}`
+				);
+				return await response.json();
+			}
 		}
 	}
 </script>
