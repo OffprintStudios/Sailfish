@@ -7,11 +7,16 @@
 		PaletteLine,
 		ShieldUserLine,
 		UserSettingsLine,
-		Window2Line
+		Window2Line,
+		UserSmileLine,
+		NotificationBadgeLine,
+		GroupLine,
+		LinksLine,
 	} from "svelte-remixicon";
 	import { nextPage } from "../guide.state";
 	import { AboutPanel, FiltersPanel, LocalizationPanel, ThemesPanel } from "./general";
-	import { AccountInfoPanel, SecurityPrivacyPanel, SessionsPanel } from "./account";
+	import { AccountInfoPanel, SecurityPrivacyPanel, SessionsPanel, ConnectionsPanel } from "./account";
+	import { ProfileInfoPanel, NotificationsPanel, SocialPanel } from "./profile";
 	import { account } from "$lib/state/account.state";
 
 	const iconSize = "24px";
@@ -63,6 +68,33 @@
 					<button class="nav-button" on:click={() => nextPage(SecurityPrivacyPanel)}>
 						<ShieldUserLine size={iconSize} />
 						<span>Security & Privacy</span>
+						<ArrowRightSLine class="text-zinc-400" />
+					</button>
+					<button class="nav-button" on:click={() => nextPage(ConnectionsPanel)}>
+						<LinksLine size={iconSize} />
+						<span>Connections</span>
+						<ArrowRightSLine class="text-zinc-400" />
+					</button>
+				</div>
+			</div>
+		{/if}
+		{#if $account.account !== null && $account.currProfile !== null}
+			<div class="panel-section">
+				<h3>Profile</h3>
+				<div>
+					<button class="nav-button" on:click={() => nextPage(ProfileInfoPanel)}>
+						<UserSmileLine size={iconSize} />
+						<span>Profile Info</span>
+						<ArrowRightSLine class="text-zinc-400" />
+					</button>
+					<button class="nav-button" on:click={() => nextPage(NotificationsPanel)}>
+						<NotificationBadgeLine size={iconSize} />
+						<span>Notifications</span>
+						<ArrowRightSLine class="text-zinc-400" />
+					</button>
+					<button class="nav-button" on:click={() => nextPage(SocialPanel)}>
+						<GroupLine size={iconSize} />
+						<span>Social</span>
 						<ArrowRightSLine class="text-zinc-400" />
 					</button>
 				</div>

@@ -5,3 +5,4 @@ export { Presence } from './presence';
 export { Pronouns } from './pronouns';
 export { Roles } from './roles';
 export * from './forms';
+export type { Session } from './session';

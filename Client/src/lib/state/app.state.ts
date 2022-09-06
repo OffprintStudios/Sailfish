@@ -1,4 +1,4 @@
-import { browser } from "$app/env";
+import { browser } from "$app/environment";
 import { writable } from "svelte/store";
 import { CardSize, ContentFilter, ThemePref } from "$lib/util/constants";
 
@@ -12,7 +12,7 @@ interface AppState {
 
 const defaultAppState: AppState = {
 	isOfAge: false,
-	filter: ContentFilter.Default,
+	filter: ContentFilter.restricted,
 	theme: ThemePref.Crimson,
 	darkMode: false,
 	cardSize: CardSize.Medium,
@@ -66,16 +66,16 @@ export function setFilter(enableMature: boolean, enableExplicit: boolean): void 
 }
 
 function determineContentFilter(enableMature: boolean, enableExplicit: boolean): ContentFilter {
-	let filterSetting: ContentFilter = ContentFilter.Default;
+	let filterSetting: ContentFilter = ContentFilter.restricted;
 
 	if (enableMature === true && enableExplicit === false) {
-		filterSetting = ContentFilter.MatureEnabled;
+		filterSetting = ContentFilter.mature;
 	} else if (enableMature === false && enableExplicit === true) {
-		filterSetting = ContentFilter.ExplicitEnabled;
+		filterSetting = ContentFilter.explicit;
 	} else if (enableMature === true && enableExplicit === true) {
-		filterSetting = ContentFilter.Everything;
+		filterSetting = ContentFilter.everything;
 	} else if (enableMature === false && enableExplicit === false) {
-		filterSetting = ContentFilter.Default;
+		filterSetting = ContentFilter.restricted;
 	}
 
 	return filterSetting;

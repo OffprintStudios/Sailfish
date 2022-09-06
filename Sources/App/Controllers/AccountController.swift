@@ -30,10 +30,10 @@ struct AccountController: RouteCollection {
             return try await request.accountService.updateProfile(profileId, with: profileForm)
         }
 
-        accounts.delete("delete-profile", ":profileId") { request async throws -> String in
+        accounts.delete("delete-profile", ":profileId") { request async throws -> Response in
             let profileId = request.parameters.get("profileId")!
             try await request.accountService.deleteProfile(profileId)
-            return "Ok"
+            return Response(status: .ok)
         }
     }
 }

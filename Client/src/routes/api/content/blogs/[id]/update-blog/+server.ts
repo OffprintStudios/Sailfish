@@ -1,9 +1,9 @@
 import type { RequestHandler } from "./$types";
 import type { Blog, BlogForm } from "$lib/models/content";
 import cookie from "cookie";
-import { postReq } from "$lib/http";
+import { patchReq } from "$lib/http";
 
-export const POST: RequestHandler = async ({ request, url }) => {
+export const PATCH: RequestHandler = async ({ request, url, params }) => {
 	const profileId = url.searchParams.get('profileId');
 	const formInfo: BlogForm = await request.json();
 	const cookies = cookie.parse(request.headers.get('cookie') || '');
@@ -11,11 +11,12 @@ export const POST: RequestHandler = async ({ request, url }) => {
 	if (!profileId) {
 		return new Response(null, { status: 422 });
 	} else {
-		const response = await postReq<Blog>(`/blogs/create-blog?profileId=${profileId}`, formInfo, {
+		const response = await patchReq<Blog>(`/blogs/update-blog/${params.id}?profileId=${profileId}`, formInfo, {
 			headers: {
 				'Authorization': `Bearer ${cookies["accessKey"]}`
 			}
 		});
+
 		if (!(response as Blog).id) {
 			console.log(response);
 			return new Response(null, { status: 500 });

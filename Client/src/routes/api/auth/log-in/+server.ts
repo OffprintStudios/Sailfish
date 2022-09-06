@@ -7,7 +7,11 @@ import cookie from "cookie";
 
 export const POST: RequestHandler = async ({ request, setHeaders }) => {
 	const formInfo: LoginForm = await request.json();
-	const response = await postReq<ClientPackage>('/auth/login', formInfo);
+	const response = await postReq<ClientPackage>('/auth/login', formInfo, {
+		headers: {
+			'User-Agent': request.headers.get('User-Agent') ?? false
+		}
+	});
 
 	if (!(response as ClientPackage).token) {
 		return new Response(JSON.stringify(response as ResponseError), { status: 422 });

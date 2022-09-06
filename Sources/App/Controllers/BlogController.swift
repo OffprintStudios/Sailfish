@@ -45,10 +45,10 @@ struct BlogController: RouteCollection {
             return try await request.blogService.publishBlog(blogId, on: blogForm.pubDate)
         }
 
-        blogsWithAuth.delete("delete-blog", ":blogId") { request async throws -> String in
+        blogsWithAuth.delete("delete-blog", ":blogId") { request async throws -> Response in
             let blogId = request.parameters.get("blogId")!
             try await request.blogService.deleteBlog(blogId)
-            return "Ok"
+            return Response(status: .ok)
         }
     }
 }
