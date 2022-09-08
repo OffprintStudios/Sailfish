@@ -16,8 +16,8 @@ struct SessionService {
     func createSession(for account: Account, session: Bool) async throws -> Session.ClientPackage {
         let sessionId = UUID()
         let expiration = session
-            ? Date(timeInterval: LONG_SESSION, since: .now)
-            : Date(timeInterval: SHORT_SESSION, since: .now)
+            ? Date(timeInterval: LONG_SESSION, since: Date())
+            : Date(timeInterval: SHORT_SESSION, since: Date())
         let newSession = Session(id: sessionId, via: getUserAgent(), expires: expiration)
         try await account.$sessions.create(newSession, on: request.db)
 

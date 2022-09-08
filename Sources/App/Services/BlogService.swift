@@ -2,6 +2,7 @@
 // Created by Alyx Mote on 8/5/22.
 //
 
+import Foundation
 import Vapor
 import Fluent
 import SwiftSoup
@@ -23,7 +24,7 @@ struct BlogService {
         try await Blog.query(on: request.db)
             .with(\.$author)
             .filter(\.$rating ~~ determineRatings(from: filter))
-            .filter(\.$publishedOn <= Date.now)
+            .filter(\.$publishedOn <= Date())
             .sort(\.$publishedOn)
             .paginate(for: request)
     }
@@ -45,12 +46,12 @@ struct BlogService {
                 .paginate(for: request)
         case .published:
             return try await query
-                .filter(\.$publishedOn <= .now)
+                .filter(\.$publishedOn <= Date())
                 .sort(\.$publishedOn)
                 .paginate(for: request)
         default:
             return try await query
-                .filter(\.$publishedOn > .now)
+                .filter(\.$publishedOn > Date())
                 .sort(\.$publishedOn)
                 .paginate(for: request)
         }
@@ -62,7 +63,7 @@ struct BlogService {
             .with(\.$author)
             .filter(\.$newsPost == true)
             .filter(\.$rating ~~ [.everyone, .teen])
-            .filter(\.$publishedOn <= .now)
+            .filter(\.$publishedOn <= Date())
             .sort(\.$publishedOn)
             .paginate(for: request)
     }
