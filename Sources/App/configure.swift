@@ -5,7 +5,7 @@ import QueuesRedisDriver
 import JWT
 
 // configures your application
-public func configure(_ app: Application) async throws {
+public func configure(_ app: Application) throws {
     app.logger.notice("Starting Sailfish API...")
 
     // Setting up JWT signing
@@ -24,7 +24,7 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(CreateSession())
     app.migrations.add(CreateInviteCode())
     app.migrations.add(CreateBlog())
-    try await app.autoMigrate()
+    try app.autoMigrate().wait()
 
     // Setting up queues
     // app.logger.notice("Setting up queues...")
