@@ -44,7 +44,7 @@ final class Account: Model, Content {
 
     init(id: String? = nil, formData: RegisterForm) throws {
         guard let hashedPassword = try? Argon2Swift.hashPasswordString(password: formData.password, salt: Salt.newSalt(), type: Argon2Type.id) else {
-            throw Abort(.internalServerError)
+            throw Abort(.internalServerError, reason: "Failed to create your account. Contact an administrator for assistance.")
         }
 
         if let hasId = id {

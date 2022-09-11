@@ -13,7 +13,7 @@ struct BlogService {
     /// Fetches a blog post given its ID. If no such post exists, throws a `notFound` error.
     func fetchBlog(_ id: String) async throws -> Blog {
         guard let blog: Blog = try await Blog.query(on: request.db).with(\.$author).filter(\.$id == id).first() else {
-            throw Abort(.notFound)
+            throw Abort(.notFound, reason: "Blog not found. Are you sure you're looking for the right one?")
         }
 
         return blog;
@@ -81,7 +81,7 @@ struct BlogService {
     func updateBlog(_ id: String, with formInfo: Blog.BlogForm) async throws -> Blog {
         let profile = try request.authService.getUser(withProfile: true).profile!
         guard let blog: Blog = try await profile.$blogs.query(on: request.db).filter(\.$id == id).first() else {
-            throw Abort(.notFound)
+            throw Abort(.notFound, reason: "Could not find blog to update. Are you sure it exists?")
         }
 
         blog.title = try SwiftSoup.clean(formInfo.title, Whitelist.none())!
@@ -99,7 +99,7 @@ struct BlogService {
     func publishBlog(_ id: String, on publishDate: Date? = nil) async throws -> Blog {
         let profile = try request.authService.getUser(withProfile: true).profile!
         guard let blog: Blog = try await profile.$blogs.query(on: request.db).filter(\.$id == id).first() else {
-            throw Abort(.notFound)
+            throw Abort(.notFound, reason: "Could not find blog to update. Are you sure it exists?")
         }
 
         blog.publishedOn = publishDate
@@ -113,7 +113,7 @@ struct BlogService {
     func convertToNewsPost(_ id: String) async throws -> Blog {
         let profile = try request.authService.getUser(withProfile: true).profile!
         guard let blog: Blog = try await profile.$blogs.query(on: request.db).filter(\.$id == id).first() else {
-            throw Abort(.notFound)
+            throw Abort(.notFound, reason: "Could not find blog to update. Are you sure it exists?")
         }
 
         blog.newsPost = !blog.newsPost
@@ -128,7 +128,7 @@ struct BlogService {
     func deleteBlog(_ id: String) async throws {
         let profile = try request.authService.getUser(withProfile: true).profile!
         guard let blog = try await profile.$blogs.query(on: request.db).filter(\.$id == id).first() else {
-            throw Abort(.notFound)
+            throw Abort(.notFound, reason: "Could not find blog to delete. Are you sure it exists?")
         }
 
         try await blog.delete(on: request.db)

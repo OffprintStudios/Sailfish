@@ -18,7 +18,7 @@ struct AccountService {
     func fetchProfile(_ id: String) async throws -> Profile {
         let account = try request.authService.getUser().account
         guard let profile = try await account.$profiles.query(on: request.db).filter(\.$id == id).first() else {
-            throw Abort(.notFound)
+            throw Abort(.notFound, reason: "Could not find the specified profile.")
         }
         return profile
     }
@@ -41,11 +41,10 @@ struct AccountService {
     func updateProfile(_ id: String, with profileForm: Profile.ProfileForm) async throws -> Profile {
         let account = try request.authService.getUser().account
         guard let profile: Profile = try await account.$profiles.query(on: request.db).filter(\.$id == id).first() else {
-            throw Abort(.notFound)
+            throw Abort(.notFound, reason: "Could not find profile you wish to update.")
         }
 
         profile.username = try SwiftSoup.clean(profileForm.username, .none())!
-        profile.info.pronouns = profileForm.pronouns
         profile.info.presence = profileForm.presence
 
         if let bio = profileForm.bio {

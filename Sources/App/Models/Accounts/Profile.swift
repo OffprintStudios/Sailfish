@@ -51,7 +51,7 @@ final class Profile: Model, Content {
 
         username = try SwiftSoup.clean(formData.username, Whitelist.none())!
         avatar = "https://images.offprint.net/avatars/avatar.png"
-        info = .init(pronouns: formData.pronouns)
+        info = .init()
         stats = .init()
     }
 }
@@ -61,14 +61,12 @@ extension Profile {
         var bio: String?
         var tagline: String?
         var coverPic: String?
-        var pronouns: [Pronouns]
         var presence: Presence
 
-        init(pronouns: [Pronouns]) {
+        init() {
             bio = nil
             tagline = nil
             coverPic = nil
-            self.pronouns = pronouns
             presence = .offline
         }
     }
@@ -89,7 +87,6 @@ extension Profile {
 
     struct ProfileForm: Content {
         var username: String
-        var pronouns: [Pronouns]
         var presence: Presence
         var bio: String?
         var tagline: String?
@@ -100,14 +97,6 @@ extension Profile {
         case offline = "Offline"
         case away = "Away"
         case doNotDisturb = "Do Not Disturb"
-    }
-
-    enum Pronouns: String, Codable {
-        case sheHer = "She/Her"
-        case heHim = "He/Him"
-        case theyThem = "They/Them"
-        case zeZir = "Ze/Zir"
-        case anyAll = "Any/All"
     }
 }
 

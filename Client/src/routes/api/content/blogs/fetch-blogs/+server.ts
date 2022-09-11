@@ -1,8 +1,8 @@
 import type { RequestHandler } from "./$types";
-import { getReq } from "../../../../../lib/http";
-import type { Blog, ApprovalStatus } from "../../../../../lib/models/content";
-import type { ContentFilter } from "../../../../../lib/util/constants";
-import type { PaginateResults } from "../../../../../lib/util/types";
+import { getReq } from "$lib/http";
+import type { Blog, ApprovalStatus } from "$lib/models/content";
+import type { ContentFilter } from "$lib/util/constants";
+import type { PaginateResults } from "$lib/util/types";
 
 export const GET: RequestHandler = async ({ url }) => {
 	const authorId = url.searchParams.get("profileId");

@@ -17,9 +17,8 @@ export async function getReq<T = unknown>(url: string, config?: HttpConfig): Pro
 		.then(res => res.data)
 		.catch(error => {
 			if (error.isAxiosError) {
-				return error.data;
+				return getError(error);
 			} else {
-				console.log(error);
 				return {
 					statusCode: 500,
 					message: `An unknown error has occurred. Please try again in a little bit.`,
@@ -34,7 +33,7 @@ export async function delReq<T = unknown>(url: string, config?: HttpConfig): Pro
 		.then(res => res.data)
 		.catch(error => {
 			if (error.isAxiosError) {
-				return error.data;
+				return getError(error);
 			} else {
 				return {
 					statusCode: 500,
@@ -50,7 +49,7 @@ export async function postReq<T = unknown>(url: string, data: unknown, config?: 
 		.then(res => res.data)
 		.catch(error => {
 			if (error.isAxiosError) {
-				return error.data;
+				return getError(error);
 			} else {
 				return {
 					statusCode: 500,
@@ -66,7 +65,7 @@ export async function putReq<T = unknown>(url: string, data: unknown, config?: H
 		.then(res => res.data)
 		.catch(error => {
 			if (error.isAxiosError) {
-				return error.data;
+				return getError(error);
 			} else {
 				return {
 					statusCode: 500,
@@ -82,7 +81,7 @@ export async function patchReq<T = unknown>(url: string, data: unknown, config?:
 		.then(res => res.data)
 		.catch(error => {
 			if (error.isAxiosError) {
-				return error.data;
+				return getError(error);
 			} else {
 				return {
 					statusCode: 500,
@@ -98,7 +97,7 @@ export async function headReq<T = unknown>(url: string, config?: HttpConfig): Pr
 		.then(res => res.data)
 		.catch(error => {
 			if (error.isAxiosError) {
-				return error.data;
+				return getError(error);
 			} else {
 				return {
 					statusCode: 500,
@@ -107,4 +106,12 @@ export async function headReq<T = unknown>(url: string, config?: HttpConfig): Pr
 				};
 			}
 		});
+}
+
+function getError(err: any): ResponseError {
+	return {
+		statusCode: err.response.status,
+		message: err.response.data.reason ?? err.response.statusText,
+		error: err.response.statusText,
+	}
 }

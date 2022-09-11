@@ -1,14 +1,12 @@
 import type { RequestHandler } from "./$types";
 import type { Profile, ProfileForm } from "$lib/models/accounts";
 import { postReq } from "$lib/http";
-import cookie from "cookie";
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, cookies }) => {
 	const formInfo: ProfileForm = await request.json();
-	const cookies = cookie.parse(request.headers.get('cookie') || '');
 	const response = await postReq<Profile>('/accounts/create-profile', formInfo, {
 		headers: {
-			'Authorization': `Bearer ${cookies["accessKey"]}`
+			'Authorization': `Bearer ${cookies.get('accessKey')}`
 		}
 	});
 	if (!(response as Profile).id) {

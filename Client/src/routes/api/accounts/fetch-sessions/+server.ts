@@ -1,13 +1,11 @@
 import type { RequestHandler } from "./$types";
 import type { Session } from "$lib/models/accounts";
 import { getReq } from "$lib/http";
-import cookie from "cookie";
 
-export const GET: RequestHandler = async ({ request }) => {
-	const cookies = cookie.parse(request.headers.get('cookie') || '');
+export const GET: RequestHandler = async ({ cookies }) => {
 	const response = await getReq<Session[]>(`/sessions/fetch-sessions`, {
 		headers: {
-			'Authorization': `Bearer ${cookies["accessKey"]}`
+			'Authorization': `Bearer ${cookies.get('accessKey')}`
 		}
 	});
 	if ((response as Session[]).length >= 0) {

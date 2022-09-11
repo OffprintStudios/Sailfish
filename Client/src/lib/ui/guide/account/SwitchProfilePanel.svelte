@@ -3,7 +3,7 @@
 	import { account } from "$lib/state/account.state";
 	import { Avatar, Button } from "$lib/ui/util";
 	import type { ProfileForm } from "$lib/models/accounts";
-	import { Presence, Pronouns } from "$lib/models/accounts";
+	import { Presence } from "$lib/models/accounts";
 	import { TextArea, TextField } from "$lib/ui/forms";
 	import { AddBoxLine, CheckLine, CloseLine, ArrowLeftSLine } from "svelte-remixicon";
 	import { guide, prevPage } from "../guide.state";
@@ -15,7 +15,6 @@
 		onSubmit: async (values, context) => {
 			const formInfo: ProfileForm = {
 				username: values.username,
-				pronouns: [Pronouns.AnyAll],
 				presence: Presence.Offline,
 				bio: values.bio,
 			};

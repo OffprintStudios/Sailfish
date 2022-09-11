@@ -30,7 +30,7 @@ struct AuthService {
     /// - Throws: if login fails for any reason, or if creating a session fails for any reason
     func login(with loginForm: Account.LoginForm) async throws -> Session.ClientPackage {
         guard let existingAccount = try await Account.query(on: request.db).filter(\.$email == loginForm.email).first() else {
-            throw Abort(.notFound)
+            throw Abort(.notFound, reason: "Your email or password don't match our records.")
         }
 
         guard let compareResult = try? Argon2Swift.verifyHashString(
@@ -38,13 +38,13 @@ struct AuthService {
             hash: existingAccount.password,
             type: Argon2Type.id
         ) else {
-            throw Abort(.notFound)
+            throw Abort(.notFound, reason: "Your email or password don't match our records.")
         }
 
         if compareResult == true {
             return try await request.sessionService.createSession(for: existingAccount, session: loginForm.rememberMe)
         } else {
-            throw Abort(.notFound)
+            throw Abort(.notFound, reason: "Your email or password don't match our records.")
         }
     }
 
@@ -54,11 +54,11 @@ struct AuthService {
         let res = Response()
 
         guard let verifiedToken = try? request.jwt.verify(as: Session.TokenPayload.self) else {
-            throw Abort(.badRequest)
+            throw Abort(.badRequest, reason: "Something went wrong.")
         }
 
         guard let account = try await Account.find(verifiedToken.accountId, on: request.db) else {
-            throw Abort(.notFound)
+            throw Abort(.notFound, reason: "Something went wrong.")
         }
 
         try await account.$sessions.query(on: request.db).filter(\.$id == verifiedToken.accessKey).delete()
@@ -77,13 +77,13 @@ struct AuthService {
             if let account = request.user?.account, let profile = request.user?.profile {
                 return (account, profile)
             } else {
-                throw Abort(.unauthorized)
+                throw Abort(.unauthorized, reason: "You don't have permission to do that.")
             }
         } else {
             if let account = request.user?.account {
                 return (account, nil)
             } else {
-                throw Abort(.unauthorized)
+                throw Abort(.unauthorized, reason: "You don't have permission to do that.")
             }
         }
     }

@@ -14,7 +14,7 @@ struct ProfileService {
             .filter(\.$id == id)
             .with(\.$account)
             .first() else {
-            throw Abort(.notFound)
+            throw Abort(.notFound, reason: "Could not find profile. Are you sure it exists?")
         }
         return ClientProfile(from: profile)
     }
