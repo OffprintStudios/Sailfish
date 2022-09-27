@@ -15,6 +15,7 @@ export interface Blog {
 		comments: number;
 	}
 	publishedOn?: Date;
+	editedOn?: Date;
 	readonly createdAt: Date;
 	readonly updatedAt: Date;
 	readonly deletedAt: Date;

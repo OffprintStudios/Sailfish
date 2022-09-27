@@ -1,11 +1,13 @@
 <script lang="ts">
-	import { computePosition, flip, offset, shift } from '@floating-ui/dom';
+	import { computePosition, flip, offset, shift } from "@floating-ui/dom";
+	import type { Placement } from "@floating-ui/dom";
 	import { slide } from 'svelte/transition';
 	import { Button } from "$lib/ui/util"
 	import { clickOutside } from '$lib/util/functions'
 
 	export let kind: 'primary' | 'normal' = 'normal';
 	export let open = false;
+	export let position: Placement = 'bottom-start';
 
 	function determineOpenState() {
 		open = !open;
@@ -17,7 +19,7 @@
 	$: {
 		if (button) {
 			computePosition(button, dropdown, {
-				placement: 'bottom-start',
+				placement: position,
 				middleware: [offset({ mainAxis: 6 }), flip(), shift({ padding: 5 })]
 			}).then(({ x, y }) => {
 				Object.assign(dropdown.style, {
@@ -63,6 +65,9 @@
 			:global(span) {
 				@apply text-sm;
 			}
+		}
+		:global(span.label) {
+			@apply text-xs uppercase font-bold tracking-wider px-2 py-1.5 relative mb-2;
 		}
 		:global(div.divider) {
 			@apply w-11/12 mx-auto my-2 border-b;

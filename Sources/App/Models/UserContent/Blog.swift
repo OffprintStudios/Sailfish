@@ -2,6 +2,7 @@
 // Created by Alyx Mote on 8/5/22.
 //
 
+import Foundation
 import Vapor
 import Fluent
 import NanoID
@@ -37,6 +38,9 @@ final class Blog: Model, Content {
     @Field(key: "news_post")
     var newsPost: Bool
 
+    @OptionalField(key: "edited_on")
+    var editedOn: Date?
+
     @OptionalField(key: "published_on")
     var publishedOn: Date?
 
@@ -67,9 +71,10 @@ final class Blog: Model, Content {
         body = try SwiftSoup.clean(formData.body, Whitelist.relaxed())!
         cover = nil
         rating = formData.rating
-        stats = .init()
+        stats = .init(words: try SwiftSoup.clean(formData.body, Whitelist.none())!.split { !$0.isLetter }.count)
         newsPost = false
         publishedOn = nil
+        editedOn = nil
     }
 }
 
@@ -79,10 +84,10 @@ extension Blog {
         var views: Int
         var comments: Int
 
-        init() {
-            words = 0
-            views = 0
-            comments = 0
+        init(words: Int = 0, views: Int = 0, comments: Int = 0) {
+            self.words = words
+            self.views = views
+            self.comments = comments
         }
     }
 
@@ -104,5 +109,11 @@ extension Blog.BlogForm: Validatable {
         validations.add("desc", as: String.self, is: .count(3...240), required: false)
         validations.add("body", as: String.self, is: .count(3...), required: true)
         validations.add("rating", as: String.self, is: .in("Everyone", "Teen", "Mature", "Explicit"), required: true)
+    }
+}
+
+extension Blog.PublishBlogForm: Validatable {
+    static func validations(_ validations: inout Validations) {
+        validations.add("pubDate", as: Date.self, is: .valid, required: false)
     }
 }

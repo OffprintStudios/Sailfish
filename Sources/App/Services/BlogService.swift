@@ -90,6 +90,8 @@ struct BlogService {
         }
         blog.body = try SwiftSoup.clean(formInfo.body, Whitelist.relaxed())!
         blog.rating = formInfo.rating
+        blog.stats.words = try SwiftSoup.clean(formInfo.body, Whitelist.none())!.split { !$0.isLetter }.count
+        blog.editedOn = Date()
 
         try await blog.save(on: request.db)
         return blog

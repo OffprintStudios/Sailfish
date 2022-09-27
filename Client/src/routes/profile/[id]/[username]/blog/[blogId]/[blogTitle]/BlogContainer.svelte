@@ -3,24 +3,31 @@
 		AlarmWarningLine,
 		Calendar2Line,
 		CalendarCheckLine,
+		CalendarEventLine,
+		CalendarTodoLine,
 		ChatNewLine,
 		CloseLine,
 		DeleteBinLine,
-		Edit2Line,
+		Edit2Line, ImageAddLine, ImageEditLine,
 		Save2Line,
-		StarLine
+		StarLine,
+		EditBoxLine,
 	} from "svelte-remixicon";
 	import { createForm } from "felte";
+	import { goto } from "$app/navigation";
 	import { Editor, TextField } from "$lib/ui/forms";
 	import { Button, Time } from "$lib/ui/util";
-	import { abbreviate, pluralize } from "$lib/util/functions";
-	import type { Blog, BlogForm } from "$lib/models/content";
+	import { abbreviate, pluralize, slugify } from "$lib/util/functions";
+	import type { Blog, BlogForm, PublishBlogForm } from "$lib/models/content";
 	import { ContentRating } from "$lib/models/content";
 	import { account } from "$lib/state/account.state";
 	import toast from "svelte-french-toast";
+	import { Dropdown } from "$lib/ui/dropdown";
+	import type { ResponseError } from "$lib/http";
+	import { openPopup } from "$lib/ui/popup";
+	import { default as DeleteBlogPrompt } from './DeleteBlogPrompt.svelte';
 
 	export let blog: Blog;
-
 	const iconSize = '24px';
 	let isEditing = false;
 
@@ -49,11 +56,68 @@
 			if (response.status === 200) {
 				toast.success("Changes saved");
 				blog = await response.json();
+				isEditing = false;
 			} else {
-				toast.error("Something went wrong! Try again in a little bit.");
+				const responseError: ResponseError = await response.json();
+				toast.error(`${responseError.statusCode}: ${responseError.message}`);
 			}
 		},
 	});
+
+	async function publishBlog(date: Date = new Date()) {
+		const pubBlog: PublishBlogForm = {
+			pubDate: date.toISOString(). split('.')[0] + 'Z'
+		};
+
+		const response = await fetch(`/api/content/blogs/${blog.id}/publish-blog?profileId=${$account.currProfile?.id}`, {
+			method: 'PATCH',
+			body: JSON.stringify(pubBlog),
+		});
+
+		if (response.status === 200) {
+			toast.success("Changes saved");
+			blog = await response.json();
+		} else {
+			const responseError: ResponseError = await response.json();
+			toast.error(`${responseError.statusCode}: ${responseError.message}`);
+		}
+	}
+
+	async function unpublishBlog() {
+		const pubBlog: PublishBlogForm = {
+			pubDate: null
+		};
+
+		const response = await fetch(`/api/content/blogs/${blog.id}/publish-blog?profileId=${$account.currProfile?.id}`, {
+			method: 'PATCH',
+			body: JSON.stringify(pubBlog),
+		});
+
+		if (response.status === 200) {
+			toast.success("Changes saved");
+			blog = await response.json();
+		} else {
+			const responseError: ResponseError = await response.json();
+			toast.error(`${responseError.statusCode}: ${responseError.message}`);
+		}
+	}
+
+	async function deleteBlog() {
+		openPopup(DeleteBlogPrompt, {
+			async onConfirm() {
+				const response = await fetch(`/api/content/blogs/${blog.id}/delete-blog?profileId=${$account.currProfile?.id}`, {
+					method: 'DELETE',
+				});
+
+				if (response.status === 200) {
+					toast.success("Blog deleted");
+					await goto(`/profile/${blog.author.id}/${slugify(blog.author.username)}/blogs`);
+				} else {
+					toast.error(`${response.status}: Something went wrong! Try again in a little bit.`);
+				}
+			}
+		});
+	}
 </script>
 
 <div class="mx-auto max-w-4xl flex flex-col my-12 md:flex-row">
@@ -62,18 +126,18 @@
 			<Calendar2Line size="36px" class="mb-2" />
 			{#if blog.publishedOn}
 					<span class="month-and-day">
-						{new Date(blog.createdAt).toLocaleString('default', { month: 'short' })} {new Date(blog.createdAt).getDay()}
+						{new Date(blog.publishedOn).toLocaleString('default', { month: 'short' })} {new Date(blog.publishedOn).getDate()}
 					</span>
-				<span class="year">{new Date(blog.createdAt).getFullYear()}</span>
+				<span class="year">{new Date(blog.publishedOn).getFullYear()}</span>
 			{:else}
 					<span class="month-and-day">
-						{new Date(blog.createdAt).toLocaleString('default', { month: 'short' })} {new Date(blog.createdAt).getDay()}
+						{new Date(blog.createdAt).toLocaleString('default', { month: 'short' })} {new Date(blog.createdAt).getDate()}
 					</span>
 				<span class="year">{new Date(blog.createdAt).getFullYear()}</span>
 			{/if}
 		</div>
-		<div class="toolbox bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
-			{#if $account.account && $account.currProfile && $account.currProfile.id === blog.author.id}
+		{#if $account.account && $account.currProfile && $account.currProfile.id === blog.author.id}
+			<div class="toolbox bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
 				{#if isEditing}
 					<Button classes="md:w-full md:justify-center" on:click={submitForm} loading={$isSubmitting} loadingText="Saving">
 						<Save2Line class="button-icon" />
@@ -95,17 +159,38 @@
 						<span class="button-text">Edit</span>
 					</Button>
 					<div class="my-0.5"><!--spacer--></div>
-					<Button classes="md:w-full md:justify-center">
-						<CalendarCheckLine class="button-icon" />
-						<span class="button-text">Publish</span>
-					</Button>
+					{#if blog.publishedOn}
+						<Button classes="md:w-full md:justify-center" on:click={() => unpublishBlog()}>
+							<EditBoxLine class="button-icon" />
+							<span class="button-text">Draft</span>
+						</Button>
+					{:else}
+						<Dropdown position="right-start">
+							<svelte:fragment slot="button">
+								<CalendarCheckLine class="button-icon" />
+								<span class="button-text">Publish</span>
+							</svelte:fragment>
+							<svelte:fragment slot="items">
+								<button type="button" on:click={() => publishBlog()}>
+									<CalendarEventLine class="mr-2" />
+									<span>Publish Now</span>
+								</button>
+								<button type="button" on:click={() => toast.error("This feature is not yet supported.")}>
+									<CalendarTodoLine class="mr-2" />
+									<span>Publish Later</span>
+								</button>
+							</svelte:fragment>
+						</Dropdown>
+					{/if}
 					<div class="my-0.5"><!--spacer--></div>
-					<Button classes="md:w-full md:justify-center">
+					<Button classes="md:w-full md:justify-center" on:click={() => deleteBlog()}>
 						<DeleteBinLine class="button-icon" />
 						<span class="button-text">Delete</span>
 					</Button>
 				{/if}
+			</div>
 			{:else if $account.account && $account.currProfile}
+			<div class="toolbox bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
 				<Button classes="md:w-full md:justify-center">
 					<StarLine class="button-icon" />
 					<span class="button-text">Favorite</span>
@@ -120,8 +205,8 @@
 					<AlarmWarningLine class="button-icon" />
 					<span class="button-text">Report</span>
 				</Button>
-			{/if}
-		</div>
+			</div>
+		{/if}
 		<div class="flex flex-col rounded-xl bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed p-2">
 			<div class="stat-block">
 				<span class="stat-name">Views</span>
@@ -151,7 +236,31 @@
 				<Editor label="Content" bind:value={$data.body} />
 			</form>
 		{:else}
-			<h1 class="text-4xl font-medium">{blog.title}</h1>
+			<div class="header-block">
+				{#if blog.cover}
+					{#if $account.account && $account.currProfile && $account.currProfile.id === blog.author.id}
+						<div class="absolute top-1 right-1">
+							<Button kind="primary">
+								<ImageEditLine class="button-icon no-text" />
+							</Button>
+						</div>
+					{/if}
+					<div class="blog-cover">
+						<img src={blog.cover} alt="cover" />
+					</div>
+				{:else}
+					{#if $account.account && $account.currProfile && $account.currProfile.id === blog.author.id}
+						<div class="absolute top-1 right-1">
+							<Button kind="primary">
+								<ImageAddLine class="button-icon no-text" />
+							</Button>
+						</div>
+					{/if}
+				{/if}
+				<div class="blog-header">
+					<h1 class="text-4xl font-medium">{blog.title}</h1>
+				</div>
+			</div>
 			<div class="flex md:hidden items-center text-xs mb-4">
 				<Time timestamp={blog.publishedOn ? blog.publishedOn : blog.createdAt} />
 				<span class="mx-1">•</span>
@@ -173,13 +282,16 @@
 				</Button>
 			</div>
 			<div class="blog-body">{@html blog.body}</div>
+			{#if blog.editedOn}
+				<span class="text-xs italic border-t pt-4">Last edited <Time timestamp={blog.editedOn} relative="true" /></span>
+			{/if}
 		{/if}
 	</div>
 </div>
 
 <style lang="scss">
 	div.blog-container {
-		@apply rounded-xl flex flex-col px-2 md:px-12 py-2;
+		@apply rounded-xl flex flex-col px-2 md:px-12;
 	}
 	div.stat-block {
 		@apply flex flex-col items-center justify-center border-b-2 border-zinc-300 py-4 last:pb-2 last:border-0;
@@ -209,5 +321,15 @@
 	}
 	div.blog-body {
 		@apply text-[16px];
+	}
+	div.header-block {
+		@apply relative mb-6 rounded-xl overflow-hidden w-full;
+		background: var(--accent);
+		div.blog-header {
+			@apply px-4 py-6;
+			h1 {
+				@apply text-white text-4xl font-medium;
+			}
+		}
 	}
 </style>

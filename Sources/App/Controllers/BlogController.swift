@@ -41,6 +41,7 @@ struct BlogController: RouteCollection {
 
         blogsWithAuth.patch("publish-blog", ":blogId") { request async throws -> Blog in
             let blogId = request.parameters.get("blogId")!
+            try Blog.PublishBlogForm.validate(content: request)
             let blogForm = try request.content.decode(Blog.PublishBlogForm.self)
             return try await request.blogService.publishBlog(blogId, on: blogForm.pubDate)
         }

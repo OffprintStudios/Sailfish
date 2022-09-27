@@ -67,7 +67,7 @@
 						</a>
 						<a
 							class="stat-box hover:bg-zinc-300 dark:hover:bg-zinc-600"
-							href="/profile/{$account.currProfile.id}/{slugify($account.currProfile.username)}/following"
+							href="/profile/{$account.currProfile.id}/{slugify($account.currProfile.username)}/followers"
 						>
 							<div class="stat">
 								<EyeLine size="18.4px" class="mr-1" />
@@ -82,12 +82,7 @@
 			<div class="panel-section">
 				<a href="/profile/{$account.currProfile.id}/{slugify($account.currProfile.username)}/works" class="nav-button">
 					<BookLine size="24px" />
-					<span>Create Prose</span>
-					<Link class="text-zinc-400" />
-				</a>
-				<a href="/profile/{$account.currProfile.id}/{slugify($account.currProfile.username)}/works" class="nav-button">
-					<QuillPenLine size="24px" />
-					<span>Create Poetry</span>
+					<span>Create Work</span>
 					<Link class="text-zinc-400" />
 				</a>
 				<a href="/profile/{$account.currProfile.id}/{slugify($account.currProfile.username)}/blogs" class="nav-button">

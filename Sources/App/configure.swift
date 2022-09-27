@@ -24,7 +24,11 @@ public func configure(_ app: Application) throws {
     app.migrations.add(CreateSession())
     app.migrations.add(CreateInviteCode())
     app.migrations.add(CreateBlog())
-    try app.autoMigrate().wait()
+    app.migrations.add(AddFieldEditedOn())
+
+    Task {
+        try await app.autoMigrate()
+    }
 
     // Setting up queues
     // app.logger.notice("Setting up queues...")

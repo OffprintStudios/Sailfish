@@ -1,18 +1,19 @@
 <script lang="ts">
 	import { page, navigating } from "$app/stores";
 	import {
-		Compass3Fill,
-		Compass3Line,
 		Home5Fill,
 		Home5Line,
 		SearchEyeFill,
 		SearchEyeLine,
-		TeamFill,
-		TeamLine,
 		BookOpenFill,
 		Book2Line,
+		BookmarkLine,
+		BookmarkFill,
+		User5Line,
+		User5Fill,
 	} from "svelte-remixicon";
 	import { guide, openGuide, closeGuide } from "../guide";
+	import { account } from "../../state/account.state";
 
 	const iconSize = "24px";
 
@@ -42,6 +43,39 @@
 			<span class="link-name">Guide</span>
 		</button>
 	{/if}
+	{#if $account.account && $account.currProfile}
+		<div class="w-10/12 mx-auto border-b border-white my-2"><!--separator--></div>
+		<a
+			class="link"
+			class:active={$page.url.pathname === '/library' && $guide.open === false}
+			href="/library"
+		>
+			<span class="link-icon">
+				{#if $page.url.pathname === '/library'}
+					<BookmarkFill size={iconSize} />
+				{:else}
+					<BookmarkLine size={iconSize} />
+				{/if}
+			</span>
+			<span class="link-name">Library</span>
+		</a>
+		<a
+			class="link"
+			class:active={$page.url.pathname === '/follows' && $guide.open === false}
+			href="/follows"
+		>
+			<span class="link-icon">
+				{#if $page.url.pathname === '/follows'}
+					<User5Fill size={iconSize} />
+				{:else}
+					<User5Line size={iconSize} />
+				{/if}
+			</span>
+			<span class="link-name">
+				Follows
+			</span>
+		</a>
+	{/if}
 	<div class="w-10/12 mx-auto border-b border-white my-2"><!--separator--></div>
 	<a
 		class="link"
@@ -70,34 +104,6 @@
         	{/if}
       	</span>
 		<span class="link-name">Search</span>
-	</a>
-	<a
-		class="link"
-		class:active={$page.url.pathname.startsWith('/explore') && $guide.open === false}
-		href="/explore"
-	>
-      	<span class="link-icon">
-        	{#if $page.url.pathname === '/explore'}
-          		<Compass3Fill size={iconSize} />
-        	{:else}
-          		<Compass3Line size={iconSize} />
-			{/if}
-      	</span>
-		<span class="link-name">Explore</span>
-	</a>
-	<a
-		class="link"
-		class:active={$page.url.pathname.startsWith('/social') && $guide.open === false}
-		href="/social"
-	>
-      	<span class="link-icon">
-        	{#if $page.url.pathname === '/social'}
-				<TeamFill size={iconSize} />
-        	{:else}
-          		<TeamLine size={iconSize} />
-        	{/if}
-      	</span>
-		<span class="link-name">Social</span>
 	</a>
 </nav>
 

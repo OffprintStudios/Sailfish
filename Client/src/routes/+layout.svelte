@@ -5,6 +5,7 @@
 	import { Guide } from "$lib/ui/guide";
 	import { Toaster } from "svelte-french-toast";
 	import { account } from "$lib/state/account.state";
+	import { Popup } from "$lib/ui/popup";
 
 	export let data: { hasKey: boolean } = { hasKey: false };
 
@@ -15,6 +16,7 @@
 	}
 </script>
 
+<Popup />
 <main
 	class="flex flex-col h-full lg:overflow-y-hidden lg:flex-row lg:h-screen {$app.theme}"
 	class:light={$app.darkMode === false}

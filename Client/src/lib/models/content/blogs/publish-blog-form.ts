@@ -1,3 +1,3 @@
 export interface PublishBlogForm {
-	readonly pubDate: Date
+	readonly pubDate: string | null;
 }

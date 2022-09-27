@@ -15,7 +15,7 @@ export const DELETE: RequestHandler = async ({ url, params, cookies }) => {
 		});
 
 		return new Response(null, {
-			status: (response as ResponseError).error ? 500 : 200,
+			status: (response as ResponseError).error ? (response as ResponseError).statusCode : 200,
 		});
 	}
 }
