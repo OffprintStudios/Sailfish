@@ -1,8 +1,10 @@
 <script lang="ts">
+	import { page } from "$app/stores";
 	import { slugify } from "$lib/util/functions";
 	import { profileState } from "$lib/state/profile.state";
 	import { account } from "$lib/state/account.state";
 	import BlogsManagement from "./BlogsManagement.svelte";
+	import BlogsList from "./BlogsList.svelte";
 </script>
 
 <svelte:head>
@@ -35,5 +37,8 @@
 {#if $account.account && $account.currProfile && $account.currProfile.id === $profileState.id}
 	<BlogsManagement />
 {:else}
-	blogs list
+	<BlogsList
+		page={+$page.url.searchParams.get('page') ?? 1}
+		per={+$page.url.searchParams.get('per') ?? 10}
+	/>
 {/if}

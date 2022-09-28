@@ -92,7 +92,7 @@
 			background: var(--accent);
 		}
 		div.blog-preview {
-			@apply px-6 line-clamp-[8] max-h-[18rem];
+			@apply px-6 line-clamp-[8] max-h-[14rem];
 		}
 		div.blog-stats {
 			@apply flex items-center rounded-xl mx-2 my-2.5 px-2 py-1;

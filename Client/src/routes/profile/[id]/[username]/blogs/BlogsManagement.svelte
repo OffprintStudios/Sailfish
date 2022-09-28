@@ -5,11 +5,12 @@
 	import { Button } from "$lib/ui/util";
 	import { Editor, TextField } from "$lib/ui/forms";
 	import type { BlogForm } from "$lib/models/content";
-	import { ApprovalStatus, ContentRating } from "$lib/models/content";
+	import { ContentRating } from "$lib/models/content";
 	import { account } from "$lib/state/account.state";
 	import toast from "svelte-french-toast";
-	import { ContentFilter } from "$lib/util/constants";
-	import { BlogCard } from "$lib/ui/content";
+	import DraftBlogsList from "./DraftBlogsList.svelte";
+	import PendingBlogsList from "./PendingBlogsList.svelte";
+	import PublishedBlogsList from "./PublishedBlogsList.svelte";
 
 	enum BlogTabs {
 		Drafts,
@@ -18,12 +19,14 @@
 	}
 
 	let currTab = BlogTabs.Drafts;
+	let currComponent = DraftBlogsList;
 	let showForm = false;
 
-	const { form, errors, data, createSubmitHandler, isSubmitting, isDirty, reset } = createForm();
+	const { form, errors, data, createSubmitHandler, isSubmitting } = createForm();
 
 	const submitHandler = createSubmitHandler({
 		async onSubmit(values, { reset }) {
+			currComponent = null;
 			const formInfo: BlogForm = {
 				title: values.title,
 				body: values.body,
@@ -34,40 +37,37 @@
 			if (response.status === 200) {
 				reset();
 				showForm = false;
-				console.log(response);
+				currComponent = DraftBlogsList;
 			} else {
 				toast.error('Something went wrong! Try again in a little bit.');
+				showForm = false;
+				currComponent = DraftBlogsList;
 			}
 		},
 	})
 
-	function closeForm() {
-		if (!$isDirty) {
-			reset();
+	function toggleForm() {
+		if (showForm === true) {
 			showForm = false;
+			currComponent = DraftBlogsList;
+		} else {
+			showForm = true;
+			currComponent = null;
 		}
 	}
 
-	async function fetchBlogs() {
-		switch (currTab) {
-			case BlogTabs.Drafts: {
-				const response = await fetch(
-					`/api/content/blogs/fetch-blogs?profileId=${$account.currProfile.id}&status=${ApprovalStatus.draft}&filter=${ContentFilter.everything}`
-				);
-				return await response.json();
-			}
-			case BlogTabs.Published: {
-				const response = await fetch(
-					`/api/content/blogs/fetch-blogs?profileId=${$account.currProfile.id}&status=${ApprovalStatus.published}&filter=${ContentFilter.everything}`
-				);
-				return await response.json();
-			}
-			default: {
-				const response = await fetch(
-					`/api/content/blogs/fetch-blogs?profileId=${$account.currProfile.id}&status=${ApprovalStatus.pending}&filter=${ContentFilter.everything}`
-				);
-				return await response.json();
-			}
+	function switchTab(newTab: BlogTabs) {
+		currTab = newTab;
+		switch (newTab) {
+			case BlogTabs.Drafts:
+				currComponent = DraftBlogsList;
+				break;
+			case BlogTabs.Pending:
+				currComponent = PendingBlogsList;
+				break;
+			case BlogTabs.Published:
+				currComponent = PublishedBlogsList;
+				break;
 		}
 	}
 </script>
@@ -77,7 +77,7 @@
 		class="tab-button"
 		disabled={showForm}
 		class:active={currTab === BlogTabs.Drafts}
-		on:click={() => currTab = BlogTabs.Drafts}
+		on:click={() => switchTab(BlogTabs.Drafts)}
 	>
 		Drafts
 	</button>
@@ -85,7 +85,7 @@
 		class="tab-button"
 		disabled={showForm}
 		class:active={currTab === BlogTabs.Pending}
-		on:click={() => currTab = BlogTabs.Pending}
+		on:click={() => switchTab(BlogTabs.Pending)}
 	>
 		Pending
 	</button>
@@ -93,7 +93,7 @@
 		class="tab-button"
 		disabled={showForm}
 		class:active={currTab === BlogTabs.Published}
-		on:click={() => currTab = BlogTabs.Published}
+		on:click={() => switchTab(BlogTabs.Published)}
 	>
 		Published
 	</button>
@@ -105,14 +105,14 @@
 				<span class="button-text">Save</span>
 			</Button>
 			<div class="mx-0.5"><!--spacer--></div>
-			<Button on:click={closeForm}>
+			<Button on:click={toggleForm}>
 				<CloseLine class="button-icon" />
 				<span class="button-text">Cancel</span>
 			</Button>
 		</div>
 	{:else}
 		<div in:fade|local={{ delay: 0, duration: 200 }}>
-			<Button on:click={() => showForm = !showForm}>
+			<Button on:click={toggleForm}>
 				<AddFill class="button-icon" />
 				<span class="button-text">New Blog</span>
 			</Button>
@@ -134,31 +134,7 @@
 	</form>
 {/if}
 
-{#key currTab}
-	{#await fetchBlogs()}
-		<div class="empty">
-			<h3>Loading...</h3>
-		</div>
-	{:then blogs}
-		<div class="my-6 w-11/12 mx-auto">
-			{#each blogs.items as blog}
-				<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-					<BlogCard blog={blog} />
-				</div>
-			{:else}
-				<div class="empty">
-					<h3>You haven't added anything yet.</h3>
-					<p>Make or publish a blog and it'll show up here.</p>
-				</div>
-			{/each}
-		</div>
-	{:catch error}
-		<div class="empty">
-			<h3>An error has occurred!</h3>
-			<p>Could not fetch blogs. Please try again in a little bit.</p>
-		</div>
-	{/await}
-{/key}
+<svelte:component this={currComponent} />
 
 <style lang="scss">
 	div.blogs-tools {
