@@ -8,6 +8,10 @@ import JWT
 public func configure(_ app: Application) throws {
     app.logger.notice("Starting Sailfish API...")
 
+    // Setting port
+    let port = Int(Environment.get("PORT") ?? "8080")!
+    app.http.server.configuration.port = port
+
     // Setting up JWT signing
     app.logger.notice("Assigning secret key...")
     app.jwt.signers.use(.hs256(key: Environment.get("JWT_SECRET") ?? "aSecret"))
