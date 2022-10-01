@@ -14,7 +14,7 @@ public func configure(_ app: Application) throws {
 
     // Setting up database connection
     app.logger.notice("Setting up database connection...")
-    let databaseUrl = Environment.get("POSTGRES_URL") ?? "postgresql://postgres@localhost/sailfish"
+    let databaseUrl = Environment.get("DATABASE_URL") ?? "postgresql://postgres@localhost/sailfish"
     try app.databases.use(.postgres(url: databaseUrl), as: .psql)
 
     // Adding migrations
