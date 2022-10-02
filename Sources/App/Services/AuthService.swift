@@ -18,7 +18,6 @@ struct AuthService {
     ///
     /// - Throws: when a new account fails to be created for any reason, or when a session fails to be created
     func register(with registerForm: Account.RegisterForm) async throws -> Session.ClientPackage {
-        // TODO: check for invite code before account creation
         let newAccount = try Account(formData: registerForm)
         try await newAccount.save(on: request.db)
         return try await request.sessionService.createSession(for: newAccount, session: true)

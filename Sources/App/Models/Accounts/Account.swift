@@ -66,7 +66,6 @@ extension Account {
         var email: String
         var password: String
         var termsAgree: Bool
-        var inviteCode: String
     }
 
     struct LoginForm: Content {
@@ -102,7 +101,6 @@ extension Account.RegisterForm: Validatable {
         validations.add("email", as: String.self, is: .email)
         validations.add("password", as: String.self, is: .alphanumeric)
         validations.add("password", as: String.self, is: .count(8...))
-        validations.add("inviteCode", as: String.self, is: !.empty)
     }
 }
 

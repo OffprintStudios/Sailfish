@@ -23,12 +23,19 @@ public func configure(_ app: Application) throws {
 
     // Adding migrations
     app.logger.notice("Adding migrations...")
-    app.migrations.add(CreateAccount())
-    app.migrations.add(CreateProfile())
-    app.migrations.add(CreateSession())
-    app.migrations.add(CreateInviteCode())
-    app.migrations.add(CreateBlog())
-    app.migrations.add(AddFieldEditedOn())
+    app.migrations.add([
+        CreateAccount(),
+        CreateProfile(),
+        CreateSession(),
+        CreateBlog(),
+        AddFieldEditedOn(),
+        CreateAccountReport(),
+        CreateAccountNote(),
+        CreateAccountWarning(),
+        CreateAccountBan(),
+        CreateAccountLog(),
+        CreateAccountMute(),
+    ])
 
     Task {
         try await app.autoMigrate()
