@@ -5,6 +5,16 @@
 import Vapor
 import Fluent
 
+/// Checks to see if the user making a request has the privileges necessary
+/// to complete it. If yes, the account object is attached to the request for
+/// use downstream. If not, a 401 Forbidden error is thrown.
+///
+/// Additionally, if the route requires a profile, this middleware will check
+/// if a `profileId` has been added to the route's query parameters and fetch it
+/// as is necessary. If no `profileId` is provided, however, a 401 Forbidden error
+/// is thrown.
+///
+/// This middleware should always be used first, before any others.
 struct IdentityGuard: AsyncMiddleware {
     var requiredRoles: [Account.Roles]
     var checkProfile: Bool

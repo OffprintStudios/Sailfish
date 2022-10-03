@@ -12,7 +12,7 @@ struct SessionController: RouteCollection {
             try await request.sessionService.fetchSessions()
         }
 
-        sessions.delete("delete-session", ":sessionId") { request async throws -> Response in
+        sessions.grouped(StatusGuard()).delete("delete-session", ":sessionId") { request async throws -> Response in
             let sessionId = request.parameters.get("sessionId", as: UUID.self)!
             try await request.sessionService.deleteSession(sessionId)
             return Response(status: .ok)

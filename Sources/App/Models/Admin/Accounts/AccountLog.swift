@@ -26,8 +26,9 @@ final class AccountLog: Model, Content {
 
     init() { }
 
-    init(id: UUID? = nil, eventInfo: LogForm) throws {
+    init(id: UUID? = nil, for accountId: Account.IDValue, eventInfo: LogForm) throws {
         self.id = id
+        self.$account.id = accountId
         event.type = eventInfo.type
         event.detail = eventInfo.detail
         if let taken = eventInfo.actionTaken,
@@ -46,20 +47,32 @@ extension AccountLog {
     enum EventType: String, Codable {
         case create = "CREATE"
         case update = "UPDATE"
+        case delete = "DELETE"
+    }
+
+    enum ActionType: String, Codable {
         case warn = "WARN"
         case mute = "MUTE"
         case tempban = "TEMPBAN"
         case ban = "BAN"
-        case delete = "DELETE"
     }
 
     struct LogForm: Codable {
         var type: EventType
         var detail: String
-        var actionTaken: String?
+        var actionTaken: ActionType?
         var actionBy: String?
         var actionReason: String?
         var actionDuration: Date?
+
+        init(type: EventType, detail: String, actionTaken: ActionType? = nil, actionBy: String? = nil, actionReason: String? = nil, actionDuration: Date? = nil) {
+            self.type = type
+            self.detail = detail
+            self.actionTaken = actionTaken
+            self.actionBy = actionBy
+            self.actionReason = actionReason
+            self.actionDuration = actionDuration
+        }
     }
 
     final class Event: Fields {
@@ -72,7 +85,7 @@ extension AccountLog {
 
     final class Action: Fields {
         @OptionalField(key: "taken")
-        var taken: String?
+        var taken: ActionType?
 
         @OptionalParent(key: "by")
         var by: Account?

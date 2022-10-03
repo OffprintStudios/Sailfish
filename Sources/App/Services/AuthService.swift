@@ -20,6 +20,7 @@ struct AuthService {
     func register(with registerForm: Account.RegisterForm) async throws -> Session.ClientPackage {
         let newAccount = try Account(formData: registerForm)
         try await newAccount.save(on: request.db)
+        try await request.auditLogService.create(newAccount.id!, reason: "Account Created")
         return try await request.sessionService.createSession(for: newAccount, session: true)
     }
 

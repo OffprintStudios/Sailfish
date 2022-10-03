@@ -8,7 +8,10 @@ import Fluent
 struct BlogController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let blogs = routes.grouped("blogs")
-        let blogsWithAuth = blogs.grouped(IdentityGuard(needs: [.user], checkProfile: true))
+        let blogsWithAuth = blogs.grouped([
+            IdentityGuard(needs: [.user], checkProfile: true),
+            StatusGuard()
+        ])
 
         blogs.get("fetch-blog", ":blogId") { request async throws -> Blog in
             let blogId = request.parameters.get("blogId")!
