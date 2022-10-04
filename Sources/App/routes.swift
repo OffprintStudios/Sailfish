@@ -5,6 +5,7 @@ func routes(_ app: Application) throws {
         "Sailfish Ready!"
     }
 
+    try app.register(collection: AdminController())
     try app.register(collection: AuthController())
     try app.register(collection: AccountController())
     try app.register(collection: SessionController())
