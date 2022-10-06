@@ -54,6 +54,38 @@ struct BlogController: RouteCollection {
             try await request.blogService.deleteBlog(blogId)
             return Response(status: .ok)
         }
+
+        blogsWithAuth.get("fetch-favorites") { request async throws -> Page<FavoriteBlog> in
+            guard let profile = try request.authService.getUser().profile else {
+                throw Abort(.unauthorized, reason: "No profile found to complete this request.")
+            }
+            return try await request.blogService.fetchFavorites(profileId: profile.id!)
+        }
+
+        blogsWithAuth.get("fetch-favorite") { request async throws -> FavoriteBlog in
+            guard let profile = try request.authService.getUser().profile else {
+                throw Abort(.unauthorized, reason: "No profile found to complete this request.")
+            }
+            let favoriteBlog = try request.content.decode(FavoriteBlogDTO.self)
+            return try await request.blogService.fetchFavorite(blogId: favoriteBlog.blogId, profileId: profile.id!)
+        }
+
+        blogsWithAuth.post("add-favorite") { request async throws -> FavoriteBlog in
+            guard let profile = try request.authService.getUser().profile else {
+                throw Abort(.unauthorized, reason: "No profile found to complete this request.")
+            }
+            let favoriteBlog = try request.content.decode(FavoriteBlogDTO.self)
+            return try await request.blogService.addFavorite(favoriteBlog.blogId, profileId: profile.id!)
+        }
+
+        blogsWithAuth.delete("remove-favorite") { request async throws -> Response in
+            guard let profile = try request.authService.getUser().profile else {
+                throw Abort(.unauthorized, reason: "No profile found to complete this request.")
+            }
+            let favoriteBlog = try request.content.decode(FavoriteBlogDTO.self)
+            try await request.blogService.removeFavorite(favoriteBlog.blogId, profileId: profile.id!)
+            return Response(status: .ok)
+        }
     }
 }
 
@@ -64,5 +96,9 @@ extension BlogController {
         var filter: ContentFilter?
         var page: Int?
         var per: Int?
+    }
+
+    struct FavoriteBlogDTO: Content {
+        var blogId: String
     }
 }

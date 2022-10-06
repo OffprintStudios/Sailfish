@@ -29,6 +29,7 @@ public func configure(_ app: Application) throws {
         CreateSession(),
         CreateBlog(),
         AddFieldEditedOn(),
+        CreateFavoriteBlog(),
         CreateAccountReport(),
         CreateAccountNote(),
         CreateAccountWarning(),

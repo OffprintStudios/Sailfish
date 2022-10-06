@@ -136,6 +136,41 @@ struct BlogService {
         try await blog.delete(on: request.db)
     }
 
+    /// Fetches all favorited blogs for a given profile
+    func fetchFavorites(profileId: String) async throws -> Page<FavoriteBlog> {
+        try await FavoriteBlog.query(on: request.db)
+            .with(\.$blog)
+            .filter(\.$profile.$id == profileId)
+            .paginate(for: request)
+    }
+
+    /// Fetches a single favorited blog for a given profile
+    func fetchFavorite(blogId: String, profileId: String) async throws -> FavoriteBlog {
+        if let blog = try await FavoriteBlog.query(on: request.db)
+            .filter(\.$blog.$id == blogId)
+            .filter(\.$profile.$id == profileId)
+            .first() {
+            return blog
+        } else {
+            throw Abort(.notFound, reason: "No favorite found.")
+        }
+    }
+
+    /// Adds a blog to a profile's list of favorites
+    func addFavorite(_ blogId: String, profileId: String) async throws -> FavoriteBlog {
+        let newFav = FavoriteBlog(blogId, for: profileId)
+        try await newFav.save(on: request.db)
+        return newFav
+    }
+
+    /// Removes a blog from a profile's list of favorites
+    func removeFavorite(_ blogId: String, profileId: String) async throws {
+        try await FavoriteBlog.query(on: request.db)
+            .filter(\.$blog.$id == blogId)
+            .filter(\.$profile.$id == profileId)
+            .delete()
+    }
+
     /// Determines the ratings appropriate for the specified `filter`.
     private func determineRatings(from filter: ContentFilter) -> [ContentRating] {
         switch filter {

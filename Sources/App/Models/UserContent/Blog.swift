@@ -82,11 +82,13 @@ extension Blog {
     struct BlogStats: Codable {
         var words: Int
         var views: Int
+        var favorites: Int
         var comments: Int
 
-        init(words: Int = 0, views: Int = 0, comments: Int = 0) {
+        init(words: Int = 0, views: Int = 0, favorites: Int = 0, comments: Int = 0) {
             self.words = words
             self.views = views
+            self.favorites = favorites
             self.comments = comments
         }
     }
