@@ -42,6 +42,12 @@ struct BlogController: RouteCollection {
             return try await request.blogService.updateBlog(blogId, with: blogForm)
         }
 
+        blogsWithAuth.patch("update-cover", ":blogId") { request async throws -> Blog in
+            let blogId = request.parameters.get("blogId")!
+            let form = try request.content.decode(CoverUrlDTO.self)
+            return try await request.blogService.updateCover(blogId, coverUrl: form.coverUrl)
+        }
+
         blogsWithAuth.patch("publish-blog", ":blogId") { request async throws -> Blog in
             let blogId = request.parameters.get("blogId")!
             try Blog.PublishBlogForm.validate(content: request)
@@ -96,5 +102,9 @@ extension BlogController {
         var filter: ContentFilter?
         var page: Int?
         var per: Int?
+    }
+
+    struct CoverUrlDTO: Content {
+        var coverUrl: String?
     }
 }

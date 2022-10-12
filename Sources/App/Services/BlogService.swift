@@ -97,6 +97,17 @@ struct BlogService {
         return blog
     }
 
+    /// Updates a blog's cover image.
+    func updateCover(_ id: String, coverUrl: String? = nil) async throws -> Blog {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        guard let blog: Blog = try await profile.$blogs.query(on: request.db).filter(\.$id == id).first() else {
+            throw Abort(.notFound, reason: "Could not find blog to update. Are you sure it exists?")
+        }
+        blog.cover = coverUrl
+        try await blog.save(on: request.db)
+        return blog
+    }
+
     /// Publishes a blog by updating its `publishedOn` field with the specified `publishDate`.
     func publishBlog(_ id: String, on publishDate: Date? = nil) async throws -> Blog {
         let profile = try request.authService.getUser(withProfile: true).profile!
@@ -169,20 +180,6 @@ struct BlogService {
             .filter(\.$blog.$id == blogId)
             .filter(\.$profile.$id == profileId)
             .delete()
-    }
-
-    /// Determines the ratings appropriate for the specified `filter`.
-    private func determineRatings(from filter: ContentFilter) -> [ContentRating] {
-        switch filter {
-        case .mature:
-            return [.everyone, .teen, .mature]
-        case .explicit:
-            return [.everyone, .teen, .explicit]
-        case .everything:
-            return [.everyone, .teen, .mature, .explicit]
-        default:
-            return [.everyone, .teen]
-        }
     }
 }
 
