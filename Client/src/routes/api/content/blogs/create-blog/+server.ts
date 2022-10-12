@@ -15,7 +15,6 @@ export const POST: RequestHandler = async ({ request, cookies, url }) => {
 			}
 		});
 		if (!(response as Blog).id) {
-			console.log(response);
 			return new Response(null, { status: 500 });
 		} else {
 			return new Response(JSON.stringify(response as Blog), {

@@ -193,7 +193,7 @@
 			<div class="toolbox bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
 				<Button classes="md:w-full md:justify-center">
 					<StarLine class="button-icon" />
-					<span class="button-text">Favorite</span>
+					<span class="button-text">Star</span>
 				</Button>
 				<div class="my-0.5"><!--spacer--></div>
 				<Button classes="md:w-full md:justify-center">

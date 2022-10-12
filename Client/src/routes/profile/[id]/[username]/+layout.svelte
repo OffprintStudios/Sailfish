@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores";
-	import { Home5Line, CupLine, QuillPenLine, BarChart2Line, ImageEditLine, ServiceLine, Flag2Line, CloseCircleLine, PieChartLine } from "svelte-remixicon";
+	import { Home5Line, CupLine, QuillPenLine, BarChart2Line, ImageEditLine, ServiceLine, AlarmWarningLine, CloseCircleLine, PieChartLine } from "svelte-remixicon";
 	import { Avatar, RoleBadge } from "$lib/ui/util";
 	import { slugify } from "$lib/util/functions";
 	import { Button } from "$lib/ui/util";
@@ -131,7 +131,7 @@
 						<span class="link-name">Block</span>
 					</button>
 					<button class="link hover:bg-zinc-300 dark:hover:bg-zinc-600">
-						<span class="link-icon"><Flag2Line size={iconSize} /></span>
+						<span class="link-icon"><AlarmWarningLine size={iconSize} /></span>
 						<span class="link-name">Report</span>
 					</button>
 				{/if}

@@ -16,7 +16,6 @@ export const GET: RequestHandler = async ({ url }) => {
 	);
 
 	if (!(response as PaginateResults<Blog>).metadata) {
-		console.log(response);
 		return new Response(null, { status: 500 });
 	} else {
 		return new Response(JSON.stringify(response as PaginateResults<Blog>), {

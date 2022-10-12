@@ -29,33 +29,35 @@
 				<Time timestamp={blog.createdAt} />
 			</span>
 		</div>
-		<Dropdown kind="primary">
-			<svelte:fragment slot="button">
-				<More2Fill size="18px" class="button-icon no-text text-white" />
-			</svelte:fragment>
-			<svelte:fragment slot="items">
-				{#if $account.account && $account.currProfile && $account.currProfile.id === blog.author.id}
-					<button>
-						<Edit2Line size="18px" class="mr-2" />
-						<span>Edit</span>
-					</button>
-					<button>
-						<ShareBoxLine size="18px" class="mr-2" />
-						<span>Share</span>
-					</button>
-					<div class="w-full my-1 border-b border-zinc-300"><!--divider--></div>
-					<button>
-						<DeleteBin2Line size="18px" class="mr-2" />
-						<span>Delete</span>
-					</button>
-				{:else}
-					<button>
-						<AlarmWarningLine size="18px" class="mr-2 relative -top-0.5" />
-						<span>Report</span>
-					</button>
-				{/if}
-			</svelte:fragment>
-		</Dropdown>
+		{#if $account.account && $account.currProfile}
+			<Dropdown kind="primary">
+				<svelte:fragment slot="button">
+					<More2Fill size="18px" class="button-icon no-text text-white" />
+				</svelte:fragment>
+				<svelte:fragment slot="items">
+					{#if $account.account && $account.currProfile && $account.currProfile.id === blog.author.id}
+						<button>
+							<Edit2Line size="18px" class="mr-2" />
+							<span>Edit</span>
+						</button>
+						<button>
+							<ShareBoxLine size="18px" class="mr-2" />
+							<span>Share</span>
+						</button>
+						<div class="w-full my-1 border-b border-zinc-300"><!--divider--></div>
+						<button>
+							<DeleteBin2Line size="18px" class="mr-2" />
+							<span>Delete</span>
+						</button>
+					{:else}
+						<button>
+							<AlarmWarningLine size="18px" class="mr-2 relative -top-0.5" />
+							<span>Report</span>
+						</button>
+					{/if}
+				</svelte:fragment>
+			</Dropdown>
+		{/if}
 	</div>
 	<div class="blog-preview">
 		{@html blog.body}
