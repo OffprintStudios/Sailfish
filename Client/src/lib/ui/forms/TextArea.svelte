@@ -6,6 +6,12 @@
 	export let value = null;
 	export let placeholder = 'A Placeholder';
 	export let errorMessage = null;
+	export let kind: 'primary' | 'normal' = 'normal';
+
+	let background = "bg-zinc-200 dark:bg-zinc-700";
+	if (kind === 'primary') {
+		background = "bg-zinc-300 dark:bg-zinc-600";
+	}
 </script>
 
 <div class="text-area">
@@ -21,7 +27,7 @@
 		{name}
 		{value}
 		{placeholder}
-		class="bg-zinc-300 dark:bg-zinc-700 dark:placeholder-zinc-400 dark:highlight-shadowed"
+		class="{background} dark:placeholder-zinc-400 dark:highlight-shadowed"
 		class:error={!!errorMessage}
 		on:change
 		on:keypress
