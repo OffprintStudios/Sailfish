@@ -261,7 +261,8 @@
 			@apply absolute rounded-xl px-2 py-2 z-50;
 			box-shadow: var(--dropshadow);
 			a.explore-option {
-				@apply px-4 py-3 flex items-center text-white hover:no-underline rounded-xl transition text-base;
+				@apply px-4 py-3 flex items-center hover:no-underline rounded-xl transition text-base;
+				color: var(--text-color);
 			}
 		}
 		div.account-dropdown {

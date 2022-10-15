@@ -4,7 +4,7 @@
 	import { closePopup, closePopupAndConfirm } from "$lib/ui/popup";
 </script>
 
-<div class="rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
+<div class="rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed" style="box-shadow: var(--dropshadow);">
 	<div class="p-4">
 		<h3 class="text-2xl">Log Out?</h3>
 		<p>

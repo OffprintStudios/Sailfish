@@ -110,7 +110,7 @@ export async function headReq<T = unknown>(url: string, config?: HttpConfig): Pr
 
 function getError(err: any): ResponseError {
 	return {
-		statusCode: err.response.status,
+		statusCode: err.response.status ?? 500,
 		message: err.response.data.reason ?? err.response.statusText,
 		error: err.response.statusText,
 	}

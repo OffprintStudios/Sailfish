@@ -13,7 +13,7 @@
 	let currTab = FormTabs.SelectProfile;
 </script>
 
-<div class="rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
+<div class="rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed" style="box-shadow: var(--dropshadow);">
 	<div class="flex items-center px-2 py-2 bg-zinc-300 dark:bg-zinc-600">
 		<button
 			class="tab-button"
