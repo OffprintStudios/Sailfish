@@ -1,15 +1,24 @@
 <script lang="ts">
 	import { CloseLine, Loader5Line } from "svelte-remixicon";
-	import { closePopup, popup } from "../popup";
+	import { closePopup, closePopupAndConfirm, popup } from "../popup";
 	import { Button } from "../util";
 	import { UploadService, UploadType } from "./upload.service";
+	import type { Blog } from "../../models/content";
 
 	const uploadService = new UploadService(UploadType.BlogBanner, $popup.data.blogId);
+
+	async function handleDrop(e) {
+		const response = await uploadService.handleDrop<Blog>(e);
+	}
+
+	async function handleFileSelected(e) {
+		const response = await uploadService.handleFileSelected<Blog>(e);
+	}
 </script>
 
 <div class="upload-container bg-zinc-300 dark:bg-zinc-700">
 	<div class="upload-header">
-		<h3>Upload Cover Art</h3>
+		<h3>Upload Banner</h3>
 		<Button on:click={closePopup}>
 			<CloseLine size="20px" class="button-icon no-text" />
 		</Button>
@@ -24,7 +33,7 @@
 	{:else}
 		<div
 			class="body-standby"
-			on:drop|preventDefault={(e) => uploadService.handleDrop(e)}
+			on:drop|preventDefault={(e) => handleDrop(e)}
 		>
 			<h3 class="font-medium text-2xl">Drag & Drop</h3>
 			<span class="text-sm">
@@ -42,3 +51,7 @@
 		</div>
 	{/if}
 </div>
+
+<style lang="scss">
+	@import "./UploadContainer";
+</style>

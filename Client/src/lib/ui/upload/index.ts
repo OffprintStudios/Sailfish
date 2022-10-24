@@ -3,3 +3,4 @@ export { default as UploadBlogBanner } from './UploadBlogBanner.svelte';
 export { default as UploadCoverArt } from './UploadCoverArt.svelte';
 export { default as UploadProfileCover } from './UploadProfileCover.svelte';
 export { default as UploadWorkBanner } from './UploadWorkBanner.svelte';
+export * from './upload.service';

@@ -1,2 +1,2 @@
 export { default as Nav } from './Nav.svelte';
-export { default as NewNav } from './NewNav.svelte';
+export { default as AltNav } from './AltNav.svelte';

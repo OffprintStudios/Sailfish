@@ -68,13 +68,13 @@ export class UploadService {
 	private async uploadImage<T>(image: File): Promise<T> {
 		this.isUploading = true;
 		const formData = new FormData();
-		formData.append(this.name, image)
+		formData.append('file', image)
 		const url = this.determineUrl();
 
 		return await fetch(url, {
 			method: 'POST',
 			headers: {
-				'content-type': 'application/json',
+				'content-type': 'multipart/form-data',
 			},
 			body: formData,
 		}).then(async data => {

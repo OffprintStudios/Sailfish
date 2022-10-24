@@ -26,6 +26,7 @@
 	import type { ResponseError } from "$lib/http";
 	import { openPopup } from "$lib/ui/popup";
 	import { default as DeleteBlogPrompt } from './DeleteBlogPrompt.svelte';
+	import { UploadBlogBanner } from "$lib/ui/upload";
 
 	export let blog: Blog;
 	const iconSize = '24px';
@@ -100,6 +101,16 @@
 			const responseError: ResponseError = await response.json();
 			toast.error(`${responseError.statusCode}: ${responseError.message}`);
 		}
+	}
+
+	async function updateCover() {
+		openPopup(UploadBlogBanner, {
+			async onConfirm() {
+
+			}
+		}, {
+			blogId: blog.id,
+		});
 	}
 
 	async function deleteBlog() {
@@ -240,7 +251,7 @@
 				{#if blog.cover}
 					{#if $account.account && $account.currProfile && $account.currProfile.id === blog.author.id}
 						<div class="absolute top-1 right-1">
-							<Button kind="primary">
+							<Button kind="primary" on:click={updateCover}>
 								<ImageEditLine class="button-icon no-text" />
 							</Button>
 						</div>
@@ -251,7 +262,7 @@
 				{:else}
 					{#if $account.account && $account.currProfile && $account.currProfile.id === blog.author.id}
 						<div class="absolute top-1 right-1">
-							<Button kind="primary">
+							<Button kind="primary" on:click={updateCover}>
 								<ImageAddLine class="button-icon no-text" />
 							</Button>
 						</div>
