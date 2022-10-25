@@ -10,17 +10,18 @@ export enum UploadType {
 	WorkBanner = "workbanner",
 }
 
-export class UploadService {
+export class UploadService<T> {
 	isUploading = false;
 	name = UploadType.CoverArt;
 	itemId = "";
+	result: T | null = null;
 
 	constructor(name: UploadType, itemId: string) {
 		this.name = name;
 		this.itemId = itemId;
 	}
 
-	async handleDrop<T>(event: DragEvent): Promise<T> {
+	async handleDrop(event: DragEvent): Promise<void> {
 		const items = event.dataTransfer?.items;
 		const files = event.dataTransfer?.files ?? [];
 		let file = null;
@@ -34,7 +35,7 @@ export class UploadService {
 			file = items[0].getAsFile();
 
 			if (file?.type === 'image/png' || file?.type === 'image/jpeg' ||file?.type === 'image/jpg') {
-				return await this.uploadImage<T>(file);
+				await this.processFile(file);
 			} else {
 				toast.error(`Unsupported file type ${file?.type}`);
 				throw Error("Unsupported file type");
@@ -47,7 +48,7 @@ export class UploadService {
 			file = files[0];
 
 			if (file?.type === 'image/png' || file?.type === 'image/jpeg' ||file?.type === 'image/jpg') {
-				return await this.uploadImage<T>(file);
+				await this.processFile(file);
 			} else {
 				toast.error(`Unsupported file type ${file?.type}`);
 				throw Error("Unsupported file type");
@@ -55,31 +56,41 @@ export class UploadService {
 		}
 	}
 
-	async handleFileSelected<T>(event: any): Promise<T> {
+	async handleFileSelected(event: any): Promise<void> {
 		const file = event.target.files[0];
 		if (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg') {
-			return await this.uploadImage<T>(file);
+			await this.processFile(file);
 		} else {
 			toast.error(`Unsupported file type '${file.type}'`);
 			throw Error("Unsupported file type");
 		}
 	}
 
-	private async uploadImage<T>(image: File): Promise<T> {
+	private async processFile(image: File): Promise<void> {
 		this.isUploading = true;
-		const formData = new FormData();
-		formData.append('file', image)
+		const reader = new FileReader();
+		reader.readAsDataURL(image);
+		reader.onload = async (event) => {
+			const fileUrl = (event.target?.result as string).split(',')[1];
+			await this.uploadImage(fileUrl);
+		}
+	}
+
+	private async uploadImage(imgUrl: string): Promise<void> {
 		const url = this.determineUrl();
+		const data = {
+			image: imgUrl,
+		};
 
 		return await fetch(url, {
 			method: 'POST',
 			headers: {
-				'content-type': 'multipart/form-data',
+				'content-type': 'application/json',
 			},
-			body: formData,
+			body: JSON.stringify(data),
 		}).then(async data => {
-			return await data.json() as T;
-		});
+			this.result = await data.json() as T;
+		})
 	}
 
 	private determineUrl() {
