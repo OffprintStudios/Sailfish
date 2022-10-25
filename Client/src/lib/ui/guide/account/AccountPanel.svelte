@@ -16,7 +16,7 @@
 	import { nextPage, closeGuide } from "../guide.state";
 	import { slugify, abbreviate } from "$lib/util/functions";
 	import { openPopup } from "../../popup";
-	import { LogOutAlert } from "../../auth";
+	import LogOutAlert from "./LogOutAlert.svelte";
 	import toast from "svelte-french-toast";
 
 	async function logOut() {

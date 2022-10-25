@@ -43,8 +43,36 @@
 			<span class="link-name">Guide</span>
 		</button>
 	{/if}
+	<div class="w-10/12 mx-auto border-b border-white my-2"><!--separator--></div>
+	<a
+		class="link"
+		class:active={$page.url.pathname === '/' && $guide.open === false}
+		href="/"
+	>
+      	<span class="link-icon">
+        	{#if $page.url.pathname === '/' && $guide.open === false}
+          		<CompassDiscoverFill size={iconSize} />
+        	{:else}
+          		<CompassDiscoverLine size={iconSize} />
+        	{/if}
+      	</span>
+		<span class="link-name">Explore</span>
+	</a>
+	<a
+		class="link"
+		class:active={$page.url.pathname.startsWith('/search') && $guide.open === false}
+		href="/search"
+	>
+      	<span class="link-icon">
+        	{#if $page.url.pathname === '/search' && $guide.open === false}
+          		<SearchEyeFill size={iconSize} />
+        	{:else}
+          		<SearchEyeLine size={iconSize} />
+        	{/if}
+      	</span>
+		<span class="link-name">Search</span>
+	</a>
 	{#if $account.account && $account.currProfile}
-		<div class="w-10/12 mx-auto border-b border-white my-2"><!--separator--></div>
 		<a
 			class="link"
 			class:active={$page.url.pathname === '/library' && $guide.open === false}
@@ -76,35 +104,6 @@
 			</span>
 		</a>
 	{/if}
-	<div class="w-10/12 mx-auto border-b border-white my-2"><!--separator--></div>
-	<a
-		class="link"
-		class:active={$page.url.pathname === '/' && $guide.open === false}
-		href="/"
-	>
-      	<span class="link-icon">
-        	{#if $page.url.pathname === '/' && $guide.open === false}
-          		<CompassDiscoverFill size={iconSize} />
-        	{:else}
-          		<CompassDiscoverLine size={iconSize} />
-        	{/if}
-      	</span>
-		<span class="link-name">Explore</span>
-	</a>
-	<a
-		class="link"
-		class:active={$page.url.pathname.startsWith('/search') && $guide.open === false}
-		href="/search"
-	>
-      	<span class="link-icon">
-        	{#if $page.url.pathname === '/search' && $guide.open === false}
-          		<SearchEyeFill size={iconSize} />
-        	{:else}
-          		<SearchEyeLine size={iconSize} />
-        	{/if}
-      	</span>
-		<span class="link-name">Search</span>
-	</a>
 </nav>
 
 <style lang="scss">
