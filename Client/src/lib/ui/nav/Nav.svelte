@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { page, navigating } from "$app/stores";
 	import {
-		Home5Fill,
-		Home5Line,
+		CompassDiscoverFill,
+		CompassDiscoverLine,
 		SearchEyeFill,
 		SearchEyeLine,
 		BookOpenFill,
 		Book2Line,
 		BookmarkLine,
 		BookmarkFill,
-		User5Line,
-		User5Fill,
+		NewspaperFill,
+		NewspaperLine,
 	} from "svelte-remixicon";
 	import { guide, openGuide, closeGuide } from "../guide";
 	import { account } from "../../state/account.state";
@@ -51,7 +51,7 @@
 			href="/library"
 		>
 			<span class="link-icon">
-				{#if $page.url.pathname === '/library'}
+				{#if $page.url.pathname === '/library' && $guide.open === false}
 					<BookmarkFill size={iconSize} />
 				{:else}
 					<BookmarkLine size={iconSize} />
@@ -61,18 +61,18 @@
 		</a>
 		<a
 			class="link"
-			class:active={$page.url.pathname === '/follows' && $guide.open === false}
+			class:active={$page.url.pathname === '/feed' && $guide.open === false}
 			href="/follows"
 		>
 			<span class="link-icon">
-				{#if $page.url.pathname === '/follows'}
-					<User5Fill size={iconSize} />
+				{#if $page.url.pathname === '/feed' && $guide.open === false}
+					<NewspaperFill size={iconSize} />
 				{:else}
-					<User5Line size={iconSize} />
+					<NewspaperLine size={iconSize} />
 				{/if}
 			</span>
 			<span class="link-name">
-				Follows
+				Feed
 			</span>
 		</a>
 	{/if}
@@ -83,13 +83,13 @@
 		href="/"
 	>
       	<span class="link-icon">
-        	{#if $page.url.pathname === '/'}
-          		<Home5Fill size={iconSize} />
+        	{#if $page.url.pathname === '/' && $guide.open === false}
+          		<CompassDiscoverFill size={iconSize} />
         	{:else}
-          		<Home5Line size={iconSize} />
+          		<CompassDiscoverLine size={iconSize} />
         	{/if}
       	</span>
-		<span class="link-name">Home</span>
+		<span class="link-name">Explore</span>
 	</a>
 	<a
 		class="link"
@@ -97,7 +97,7 @@
 		href="/search"
 	>
       	<span class="link-icon">
-        	{#if $page.url.pathname === '/search'}
+        	{#if $page.url.pathname === '/search' && $guide.open === false}
           		<SearchEyeFill size={iconSize} />
         	{:else}
           		<SearchEyeLine size={iconSize} />

@@ -13,8 +13,28 @@
 		LogoutCircleRLine,
 		QuillPenLine
 	} from "svelte-remixicon";
-	import { nextPage } from "../guide.state";
+	import { nextPage, closeGuide } from "../guide.state";
 	import { slugify, abbreviate } from "$lib/util/functions";
+	import { openPopup } from "../../popup";
+	import { LogOutAlert } from "../../auth";
+	import toast from "svelte-french-toast";
+
+	async function logOut() {
+		openPopup(LogOutAlert, {
+			async onConfirm() {
+				const response = await fetch(`/api/auth/log-out`, { method: 'GET' });
+				if (response.status === 200) {
+					toast.success("See you later!");
+					$account.account = null;
+					$account.currProfile = null;
+					$account.profiles = [];
+					closeGuide();
+				} else {
+					toast.error(`${response.status}: Something went wrong! Try again in a little bit.`);
+				}
+			}
+		})
+	}
 </script>
 
 {#if $account.account === null}
@@ -98,7 +118,7 @@
 					<span>Switch profile</span>
 					<ArrowRightSLine class="text-zinc-400" />
 				</button>
-				<button class="nav-button">
+				<button class="nav-button" on:click={logOut}>
 					<LogoutCircleRLine size="24px" />
 					<span>Log out</span>
 					<ArrowRightSLine class="text-zinc-400" />
