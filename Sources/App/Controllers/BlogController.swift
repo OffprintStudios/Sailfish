@@ -67,14 +67,14 @@ struct BlogController: RouteCollection {
         }
 
         blogsWithAuth.get("fetch-favorites") { request async throws -> Page<FavoriteBlog> in
-            guard let profile = try request.authService.getUser().profile else {
+            guard let profile = try request.authService.getUser(withProfile: true).profile else {
                 throw Abort(.unauthorized, reason: "No profile found to complete this request.")
             }
             return try await request.blogService.fetchFavorites(profileId: profile.id!)
         }
 
         blogsWithAuth.get("fetch-favorite", ":id") { request async throws -> FavoriteBlog in
-            guard let profile = try request.authService.getUser().profile else {
+            guard let profile = try request.authService.getUser(withProfile: true).profile else {
                 throw Abort(.unauthorized, reason: "No profile found to complete this request.")
             }
             let blogId = request.parameters.get("id")!
@@ -82,7 +82,7 @@ struct BlogController: RouteCollection {
         }
 
         blogsWithAuth.post("add-favorite", ":id") { request async throws -> FavoriteBlog in
-            guard let profile = try request.authService.getUser().profile else {
+            guard let profile = try request.authService.getUser(withProfile: true).profile else {
                 throw Abort(.unauthorized, reason: "No profile found to complete this request.")
             }
             let blogId = request.parameters.get("id")!
@@ -90,7 +90,7 @@ struct BlogController: RouteCollection {
         }
 
         blogsWithAuth.delete("remove-favorite", ":id") { request async throws -> Response in
-            guard let profile = try request.authService.getUser().profile else {
+            guard let profile = try request.authService.getUser(withProfile: true).profile else {
                 throw Abort(.unauthorized, reason: "No profile found to complete this request.")
             }
             let blogId = request.parameters.get("id")!

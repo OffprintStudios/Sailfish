@@ -90,7 +90,7 @@
 		<a
 			class="link"
 			class:active={$page.url.pathname === '/feed' && $guide.open === false}
-			href="/follows"
+			href="/feed"
 		>
 			<span class="link-icon">
 				{#if $page.url.pathname === '/feed' && $guide.open === false}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from "svelte";
 	import {
 		AlarmWarningLine,
 		Calendar2Line,
@@ -11,6 +12,7 @@
 		Edit2Line, ImageAddLine, ImageEditLine,
 		Save2Line,
 		StarLine,
+		StarFill,
 		EditBoxLine,
 	} from "svelte-remixicon";
 	import { createForm } from "felte";
@@ -18,7 +20,7 @@
 	import { Editor, TextField } from "$lib/ui/forms";
 	import { Button, Time } from "$lib/ui/util";
 	import { abbreviate, pluralize, slugify } from "$lib/util/functions";
-	import type { Blog, BlogForm, PublishBlogForm } from "$lib/models/content";
+	import type { Blog, BlogForm, FavoriteBlog, PublishBlogForm } from "$lib/models/content";
 	import { ContentRating } from "$lib/models/content";
 	import { account } from "$lib/state/account.state";
 	import toast from "svelte-french-toast";
@@ -31,6 +33,14 @@
 	export let blog: Blog;
 	const iconSize = '24px';
 	let isEditing = false;
+	let hasFavorited: FavoriteBlog = null;
+	let loadingFavorite = false;
+
+	onMount(async () => {
+		if ($account.account && $account.currProfile && $account.currProfile.id !== blog.author.id) {
+			await fetchFavorite();
+		}
+	});
 
 	const { form, data, createSubmitHandler, isSubmitting } = createForm({
 		initialValues: {
@@ -39,6 +49,47 @@
 			body: blog.body ?? null,
 		}
 	});
+
+	async function fetchFavorite() {
+		loadingFavorite = true;
+		const response = await fetch(`/api/content/blogs/${blog.id}/fetch-favorite?profileId=${$account.currProfile?.id}`, {
+			method: 'GET',
+		});
+
+		if (response.status === 200) {
+			hasFavorited = await response.json();
+		} else {
+			hasFavorited = null;
+		}
+		loadingFavorite = false;
+	}
+
+	async function favoriteBlog() {
+		loadingFavorite = true;
+		const response = await fetch(`/api/content/blogs/${blog.id}/favorite-blog?profileId=${$account.currProfile?.id}`, {
+			method: 'POST',
+		});
+
+		if (response.status === 200) {
+			hasFavorited = await response.json();
+		} else {
+			toast.error("Something went wrong! Try again in a little bit.");
+		}
+		loadingFavorite = false;
+	}
+
+	async function unfavoriteBlog() {
+		const response = await fetch(`/api/content/blogs/${blog.id}/unfavorite-blog?profileId=${$account.currProfile?.id}`, {
+			method: 'DELETE',
+		});
+
+		if (response.status === 200) {
+			hasFavorited = null;
+		} else {
+			toast.error("Something went wrong! Try again in a little bit.");
+		}
+		loadingFavorite = false;
+	}
 
 	const submitForm = createSubmitHandler({
 		async onSubmit(values) {
@@ -202,10 +253,17 @@
 			</div>
 			{:else if $account.account && $account.currProfile}
 			<div class="toolbox bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
-				<Button classes="md:w-full md:justify-center">
-					<StarLine class="button-icon" />
-					<span class="button-text">Star</span>
-				</Button>
+				{#if !!hasFavorited}
+					<Button classes="md:w-full md:justify-center" loading={loadingFavorite} loadingText="Wait..." on:click={() => unfavoriteBlog()}>
+						<StarFill class="button-icon" />
+						<span class="button-text">Remove</span>
+					</Button>
+				{:else}
+					<Button classes="md:w-full md:justify-center" loading={loadingFavorite} loadingText="Wait..." on:click={() => favoriteBlog()}>
+						<StarLine class="button-icon" />
+						<span class="button-text">Star</span>
+					</Button>
+				{/if}
 				<div class="my-0.5"><!--spacer--></div>
 				<Button classes="md:w-full md:justify-center">
 					<ChatNewLine class="button-icon" />

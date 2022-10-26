@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores";
-	import { Home5Line, CupLine, QuillPenLine, BarChart2Line, ImageEditLine, ServiceLine, AlarmWarningLine, CloseCircleLine, PieChartLine } from "svelte-remixicon";
+	import { Home5Line, CupLine, QuillPenLine, BarChart2Line, ImageEditLine, ImageAddLine, ServiceLine, AlarmWarningLine, CloseCircleLine, PieChartLine } from "svelte-remixicon";
 	import { Avatar, RoleBadge } from "$lib/ui/util";
 	import { slugify } from "$lib/util/functions";
 	import { Button } from "$lib/ui/util";
@@ -45,16 +45,25 @@
 <div class="w-11/12 mx-auto max-w-7xl mb-6">
 	<div class="profile-nav-container">
 		{#if data.info.coverPic}
-			<div class="profile-cover">
-				<img src={data.info.coverPic} alt="{data.username}'s Cover Picture" />
-			</div>
-		{:else}
-			<div class="profile-banner">
+			{#if $account.account && $account.currProfile && $account.currProfile.id === data.id}
 				<div class="absolute top-2 right-2">
 					<Button kind="primary">
 						<ImageEditLine class="button-icon no-text" size="20px" />
 					</Button>
 				</div>
+			{/if}
+			<div class="profile-cover">
+				<img src={data.info.coverPic} alt="{data.username}'s Cover Picture" />
+			</div>
+		{:else}
+			<div class="profile-banner">
+				{#if $account.account && $account.currProfile && $account.currProfile.id === data.id}
+					<div class="absolute top-2 right-2">
+						<Button kind="primary">
+							<ImageAddLine class="button-icon no-text" size="20px" />
+						</Button>
+					</div>
+				{/if}
 			</div>
 		{/if}
 		<div class="profile-nav bg-zinc-200 dark:bg-zinc-700">

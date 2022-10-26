@@ -20,7 +20,7 @@ export const GET: RequestHandler = async ({ url, params, cookies }) => {
 	);
 
 	if (!(response as FavoriteBlog).id) {
-		return new Response(null, { status: 200 });
+		return new Response(null, { status: 204 });
 	} else {
 		return new Response(JSON.stringify(response as FavoriteBlog), {
 			status: 200,
