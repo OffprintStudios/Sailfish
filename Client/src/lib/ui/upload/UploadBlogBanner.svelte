@@ -5,15 +5,26 @@
 	import { UploadService, UploadType } from "./upload.service";
 	import type { Blog } from "../../models/content";
 
-	const uploadService = new UploadService(UploadType.BlogBanner, $popup.data.blogId);
+	const uploadService = new UploadService<Blog>(UploadType.BlogBanner, $popup.data.blogId);
+	let uploading = false;
 
 	async function handleDrop(e) {
-		const response = await uploadService.handleDrop<Blog>(e);
+		await uploadService.handleDrop(e);
 	}
 
 	async function handleFileSelected(e) {
-		const response = await uploadService.handleFileSelected<Blog>(e);
+		await uploadService.handleFileSelected(e);
 	}
+
+	uploadService.isUploading.subscribe(val => {
+		uploading = val;
+	});
+
+	uploadService.result.subscribe(val => {
+		if (val !== null) {
+			closePopupAndConfirm(val);
+		}
+	})
 </script>
 
 <div class="upload-container bg-zinc-300 dark:bg-zinc-700">
@@ -23,7 +34,7 @@
 			<CloseLine size="20px" class="button-icon no-text" />
 		</Button>
 	</div>
-	{#if uploadService.isUploading}
+	{#if uploading}
 		<div class="w-96 h-48 flex flex-col items-center justify-center">
 			<div class="flex items-center justify-center">
 				<Loader5Line class="animate-spin mr-2" size="24px" />
@@ -43,7 +54,7 @@
 						class="hidden"
 						type="file"
 						accept=".jpg, .jpeg, .png"
-						on:change={(e) => uploadService.handleFileSelected(e)}
+						on:change={(e) => handleFileSelected(e)}
 					/>
                     <span class="file-input">click here</span>
                 </label> to pick something awesome

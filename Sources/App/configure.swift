@@ -3,6 +3,7 @@ import FluentPostgresDriver
 import Vapor
 import QueuesRedisDriver
 import JWT
+import SotoS3
 
 // configures your application
 public func configure(_ app: Application) throws {
@@ -68,6 +69,15 @@ public func configure(_ app: Application) throws {
     )
     let cors = CORSMiddleware(configuration: corsConfiguration)
     app.middleware.use(cors, at: .beginning)
+
+    // Configuring AWS
+    app.aws.client = AWSClient(
+        credentialProvider: .static(
+            accessKeyId: Environment.get("DIGITALOCEAN_SPACES_ACCESS_KEY") ?? "nil",
+            secretAccessKey: Environment.get("DIGITALOCEAN_SPACES_SECRET") ?? "nil"
+        ),
+        httpClientProvider: .createNew
+    )
 
     // Register routes
     app.logger.notice("Acknowledging routes...")

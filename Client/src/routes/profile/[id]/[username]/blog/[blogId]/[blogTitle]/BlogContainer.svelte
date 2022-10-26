@@ -105,8 +105,8 @@
 
 	async function updateCover() {
 		openPopup(UploadBlogBanner, {
-			async onConfirm() {
-
+			async onConfirm(data: Blog) {
+				blog = data;
 			}
 		}, {
 			blogId: blog.id,
@@ -256,8 +256,8 @@
 							</Button>
 						</div>
 					{/if}
-					<div class="blog-cover">
-						<img src={blog.cover} alt="cover" />
+					<div class="h-[12rem] overflow-hidden">
+						<img src={blog.cover} class="h-full w-full object-cover" alt="cover" />
 					</div>
 				{:else}
 					{#if $account.account && $account.currProfile && $account.currProfile.id === blog.author.id}

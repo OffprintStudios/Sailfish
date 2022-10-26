@@ -9,28 +9,19 @@ import SotoS3
 struct UtilityService {
     let request: Request
 
-    private let s3 = S3(
-        client: AWSClient(
-            credentialProvider: .static(
-                accessKeyId: Environment.get("DIGITALOCEAN_SPACES_ACCESS_KEY") ?? "nil",
-                secretAccessKey: Environment.get("DIGITALOCEAN_SPACES_SECRET") ?? "nil"
-            ),
-            httpClientProvider: .createNew
-        ),
-        endpoint: Environment.get("DIGITALOCEAN_SPACES_ENDPOINT") ?? "nil"
-    )
-
-    func uploadImage(file: File, itemId: String, folder: String) async throws -> String {
-        try validateImage(file)
-        let ext = try getExtension(file)
+    func uploadImage(_ image: UploadImage, itemId: String, folder: String) async throws -> String {
+        let ext = (image.mime == "image/jpg" || image.mime == "image/jpeg") ? "jpeg" : "png"
         let bucket = "\(Environment.get("DIGITALOCEAN_SPACES_NAME") ?? "nil")/\(folder)"
         let newFilename = "\(itemId)-\(UUID()).\(ext)"
+        let buffer = ByteBuffer(data: image.image)
+
+        let s3 = S3(client: request.aws.client, endpoint: Environment.get("DIGITALOCEAN_SPACES_ENDPOINT") ?? "nil")
 
         let imgRequest = S3.PutObjectRequest(
             acl: .publicRead,
-            body: AWSPayload.byteBuffer(file.data),
+            body: AWSPayload.byteBuffer(buffer),
             bucket: bucket,
-            contentType: file.multipart?.contentType,
+            contentType: image.mime,
             key: newFilename
         )
 
@@ -41,33 +32,13 @@ struct UtilityService {
             throw Abort(.internalServerError, reason: "Failed to process image upload")
         }
     }
+}
 
-    private func validateImage(_ file: File) throws {
-        if file.multipart != nil {
-            if let contentType = file.contentType {
-                if contentType.description != "image/jpg" && contentType.description != "image/jpeg" && contentType.description != "image/png" {
-                    throw Abort(.badRequest, reason: "Uploads must either be a JPEG or PNG image.")
-                } else {
-                    return
-                }
-            } else {
-                throw Abort(.badRequest, reason: "Uploads must either be a JPEG or PNG image.")
-            }
-        } else {
-            throw Abort(.badRequest, reason: "Uploads must either be a JPEG or PNG image.")
-        }
-    }
-
-    private func getExtension(_ file: File) throws -> String {
-        if let filetype = file.extension {
-            if filetype == "image/jpeg" || filetype == "image/jpg" {
-                return "jpg"
-            } else {
-                return "png"
-            }
-        } else {
-            throw Abort(.internalServerError, reason: "Could not find valid extension.")
-        }
+extension UtilityService {
+    struct UploadImage: Content {
+        var image: Data
+        var filename: String
+        var mime: String
     }
 }
 

@@ -1,6 +1,6 @@
 import toast from "svelte-french-toast";
 import { account } from "../../state/account.state";
-import { get } from "svelte/store";
+import { get, writable } from "svelte/store";
 
 export enum UploadType {
 	CoverArt = "coverart",
@@ -11,10 +11,10 @@ export enum UploadType {
 }
 
 export class UploadService<T> {
-	isUploading = false;
+	isUploading = writable<boolean>(false);
 	name = UploadType.CoverArt;
 	itemId = "";
-	result: T | null = null;
+	result = writable<T | null>(null);
 
 	constructor(name: UploadType, itemId: string) {
 		this.name = name;
@@ -67,19 +67,21 @@ export class UploadService<T> {
 	}
 
 	private async processFile(image: File): Promise<void> {
-		this.isUploading = true;
+		this.isUploading.set(true);
 		const reader = new FileReader();
 		reader.readAsDataURL(image);
 		reader.onload = async (event) => {
 			const fileUrl = (event.target?.result as string).split(',')[1];
-			await this.uploadImage(fileUrl);
+			await this.uploadImage(fileUrl, image.name, image.type);
 		}
 	}
 
-	private async uploadImage(imgUrl: string): Promise<void> {
+	private async uploadImage(image: string, filename: string, mime: string): Promise<void> {
 		const url = this.determineUrl();
-		const data = {
-			image: imgUrl,
+		const formData = {
+			image,
+			filename,
+			mime,
 		};
 
 		return await fetch(url, {
@@ -87,9 +89,10 @@ export class UploadService<T> {
 			headers: {
 				'content-type': 'application/json',
 			},
-			body: JSON.stringify(data),
+			body: JSON.stringify(formData),
 		}).then(async data => {
-			this.result = await data.json() as T;
+			this.result.set(await data.json() as T);
+			this.isUploading.set(false);
 		})
 	}
 

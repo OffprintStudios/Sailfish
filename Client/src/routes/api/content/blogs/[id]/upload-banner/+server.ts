@@ -5,18 +5,15 @@ import { patchReq } from "$lib/http";
 
 export const POST: RequestHandler = async ({ url, request, params, cookies }) => {
 	const profileId = url.searchParams.get('profileId');
-	const data: { image: string } = await request.json();
-
-	const formData = new FormData();
-	formData.append('image', data.image);
+	const data: { image: string, filename: string, mime: string } = await request.json();
 
 	if (!profileId) {
 		return new Response(null, { status: 422 });
 	}
 
-	return await patchReq<Blog>(`/blogs/update-cover/${params.id}?profileId=${profileId}`, formData, {
+	return await patchReq<Blog>(`/blogs/update-cover/${params.id}?profileId=${profileId}`, data, {
 		headers: {
-			'content-type': 'multipart/form-data',
+			'content-type': 'application/json',
 			'Authorization': `Bearer ${cookies.get('accessKey')}`
 		},
 		timeout: 1000 * 60 * 2,
