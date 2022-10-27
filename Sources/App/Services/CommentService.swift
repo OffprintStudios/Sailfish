@@ -17,7 +17,10 @@ struct CommentService {
     /// be used for content comments (e.g. blogs, stories, etc).
     func fetchOrCreateThread(_ threadId: String) async throws -> Thread {
         let thread = try await Thread.query(on: request.db)
-            .with(\.$blacklist)
+            .with(\.$createdBy)
+            .with(\.$blacklist) { blacklist in
+                blacklist.with(\.$profile)
+            }
             .filter(\.$id == threadId)
             .first()
 
