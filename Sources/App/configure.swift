@@ -37,6 +37,9 @@ public func configure(_ app: Application) throws {
         CreateAccountBan(),
         CreateAccountLog(),
         CreateAccountMute(),
+        CreateThread(),
+        CreateComment(),
+        CreateThreadBlacklist(),
     ])
 
     Task {
