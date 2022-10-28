@@ -68,7 +68,7 @@ final class Blog: Model, Content {
         } else {
             desc = nil
         }
-        body = try SwiftSoup.clean(formData.body, Whitelist.relaxed())!
+        body = try SwiftSoup.clean(formData.body, defaultWhitelist())!
         cover = nil
         rating = formData.rating
         stats = .init(words: try SwiftSoup.clean(formData.body, Whitelist.none())!.split { !$0.isLetter }.count)

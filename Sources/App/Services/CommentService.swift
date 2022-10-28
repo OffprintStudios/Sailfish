@@ -79,7 +79,7 @@ struct CommentService {
             .first()
 
         if let hasComment = comment {
-            hasComment.body = try SwiftSoup.clean(formInfo.body, Whitelist.relaxed())!
+            hasComment.body = try SwiftSoup.clean(formInfo.body, defaultWhitelist())!
             try await hasComment.save(on: request.db)
             return hasComment
         } else {

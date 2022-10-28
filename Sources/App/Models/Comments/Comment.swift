@@ -38,7 +38,7 @@ final class Comment: Model, Content {
         }
 
         self.$profile.id = profileId
-        body = try SwiftSoup.clean(formInfo.body, Whitelist.relaxed())!
+        body = try SwiftSoup.clean(formInfo.body, defaultWhitelist())!
     }
 }
 

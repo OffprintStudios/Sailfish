@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import SwiftSoup
 
 /// Detects whether or not a user can access something give a set of roles.
 func canAccess(needs requiredRoles: [Account.Roles], has rolesPresent: [Account.Roles]) -> Bool {
@@ -24,4 +25,12 @@ func determineRatings(from filter: ContentFilter) -> [ContentRating] {
     default:
         return [.everyone, .teen]
     }
+}
+
+/// Returns the default whitelist for body HTML. Use in place of `Whitelist.relaxed()`.
+func defaultWhitelist() throws -> Whitelist {
+    try Whitelist.relaxed()
+        .addTags("iframe")
+        .addAttributes("iframe", "width", "height", "allowfullscreen", "src", "start")
+        .addAttributes("div", "data-youtube-video", "contenteditable", "draggable", "class")
 }

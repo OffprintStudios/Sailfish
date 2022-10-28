@@ -88,7 +88,7 @@ struct BlogService {
         if let hasDesc = formInfo.desc {
             blog.desc = try SwiftSoup.clean(hasDesc, Whitelist.none())!
         }
-        blog.body = try SwiftSoup.clean(formInfo.body, Whitelist.relaxed())!
+        blog.body = try SwiftSoup.clean(formInfo.body, defaultWhitelist())!
         blog.rating = formInfo.rating
         blog.stats.words = try SwiftSoup.clean(formInfo.body, Whitelist.none())!.split { !$0.isLetter }.count
         blog.editedOn = Date()
