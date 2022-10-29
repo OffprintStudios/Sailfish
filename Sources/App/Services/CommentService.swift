@@ -41,6 +41,7 @@ struct CommentService {
         if let hasThread = thread {
             return try await hasThread.$comments.query(on: request.db)
                 .with(\.$profile)
+                .with(\.$history)
                 .paginate(for: request)
         } else {
             throw Abort(.notFound, reason: "The thread you're trying to find doesn't exist.")
@@ -79,7 +80,9 @@ struct CommentService {
             .first()
 
         if let hasComment = comment {
+            let newHistory = CommentHistory(oldBody: hasComment.body)
             hasComment.body = try SwiftSoup.clean(formInfo.body, defaultWhitelist())!
+            try await hasComment.$history.create(newHistory, on: request.db)
             try await hasComment.save(on: request.db)
             return hasComment
         } else {

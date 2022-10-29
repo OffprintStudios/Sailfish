@@ -22,6 +22,12 @@ final class Comment: Model, Content {
     @Field(key: "body")
     var body: String
 
+    @OptionalField(key: "spoiler")
+    var spoiler: Bool?
+
+    @Children(for: \.$comment)
+    var history: [CommentHistory]
+
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
 
@@ -39,6 +45,7 @@ final class Comment: Model, Content {
 
         self.$profile.id = profileId
         body = try SwiftSoup.clean(formInfo.body, defaultWhitelist())!
+        spoiler = formInfo.spoiler
     }
 }
 
@@ -46,5 +53,6 @@ extension Comment {
     struct CommentForm: Content {
         var threadId: String
         var body: String
+        var spoiler: Bool?
     }
 }

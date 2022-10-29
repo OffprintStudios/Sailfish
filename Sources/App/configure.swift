@@ -40,6 +40,8 @@ public func configure(_ app: Application) throws {
         CreateThread(),
         CreateComment(),
         CreateThreadBlacklist(),
+        AddCommentSpoilerField(),
+        CreateCommentHistory(),
     ])
 
     Task {
