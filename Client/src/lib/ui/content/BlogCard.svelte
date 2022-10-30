@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { TimeLine, LineChartLine, PenNibLine, DiscussLine, More2Fill, AlarmWarningLine, Edit2Line, DeleteBin2Line, ShareBoxLine } from "svelte-remixicon";
+	import { TimeLine, LineChartLine, PenNibLine, StarLine, More2Fill, AlarmWarningLine, Edit2Line, DeleteBin2Line, ShareBoxLine } from "svelte-remixicon";
 	import { account } from "$lib/state/account.state";
 	import type { Blog } from "$lib/models/content";
 	import { Time, Avatar } from "$lib/ui/util";
@@ -69,8 +69,8 @@
 		</span>
 		<span class="mx-1">•</span>
 		<span class="flex items-center">
-			<DiscussLine size="16px" class="mr-1" />
-			{blog.stats.comments} comment{pluralize(blog.stats.comments)}
+			<StarLine size="16px" class="mr-1" />
+			{blog.stats.favorites} fave{pluralize(blog.stats.favorites)}
 		</span>
 		<span class="mx-1">•</span>
 		<span class="flex items-center">

@@ -12,11 +12,16 @@ struct BlogService {
 
     /// Fetches a blog post given its ID. If no such post exists, throws a `notFound` error.
     func fetchBlog(_ id: String) async throws -> Blog {
-        guard let blog: Blog = try await Blog.query(on: request.db).with(\.$author).filter(\.$id == id).first() else {
-            throw Abort(.notFound, reason: "Blog not found. Are you sure you're looking for the right one?")
+        try await request.db.transaction { database in
+            guard let blog: Blog = try await Blog.query(on: database).with(\.$author).filter(\.$id == id).first() else {
+                throw Abort(.notFound, reason: "Blog not found. Are you sure you're looking for the right one?")
+            }
+            if blog.publishedOn != nil {
+                blog.stats.views += 1
+                try await blog.save(on: database)
+            }
+            return blog;
         }
-
-        return blog;
     }
 
     /// Fetches a paginated list of published blogs based on the provided Content Filter.
@@ -169,9 +174,21 @@ struct BlogService {
 
     /// Adds a blog to a profile's list of favorites
     func addFavorite(_ blogId: String, profileId: String) async throws -> FavoriteBlog {
-        let newFav = FavoriteBlog(blogId, for: profileId)
-        try await newFav.save(on: request.db)
-        return newFav
+        try await request.db.transaction { database in
+            let blog: Blog? = try await Blog.query(on: database).filter(\.$id == blogId).first()
+            if let hasBlog = blog {
+                let newFave = FavoriteBlog(blogId, for: profileId)
+                try await newFave.save(on: database)
+
+                let totalFaves: Int = try await FavoriteBlog.query(on: database).filter(\.$blog.$id == blogId).count()
+                hasBlog.stats.favorites = totalFaves
+                try await hasBlog.save(on: database)
+
+                return newFave
+            } else {
+                throw Abort(.notFound, reason: "The blog you're trying to add doesn't exist.")
+            }
+        }
     }
 
     /// Removes a blog from a profile's list of favorites

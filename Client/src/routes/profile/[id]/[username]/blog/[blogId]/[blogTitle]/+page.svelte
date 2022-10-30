@@ -4,6 +4,7 @@
 	import { slugify } from "$lib/util/functions";
 	import BlogContainer from "./BlogContainer.svelte";
 	import Thread from "$lib/ui/comments/Thread.svelte";
+	import { InfoBar } from "$lib/ui/util";
 
 	export let data: Blog;
 
@@ -37,6 +38,10 @@
 	/>
 	<meta property="twitter:image" content="{data.author.avatar}" />
 </svelte:head>
+
+{#if !data.publishedOn}
+	<InfoBar message="This blog is a draft. Faves and comments are disabled, and views will not be tracked." />
+{/if}
 
 <BlogContainer blog="{data}" />
 
