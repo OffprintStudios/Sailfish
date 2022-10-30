@@ -13,6 +13,7 @@ export interface Blog {
 		words: number;
 		views: number;
 		comments: number;
+		favorites: number;
 	}
 	publishedOn?: Date;
 	editedOn?: Date;

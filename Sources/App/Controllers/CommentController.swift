@@ -9,7 +9,7 @@ struct CommentController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let comments = routes.grouped("comments")
         let commentsWithAuth = comments.grouped([
-            IdentityGuard(needs: [.user]),
+            IdentityGuard(needs: [.user], checkProfile: true),
             StatusGuard()
         ])
 
@@ -24,6 +24,7 @@ struct CommentController: RouteCollection {
         }
 
         commentsWithAuth.post("add-comment") { request async throws -> Comment in
+            request.logger.info("Entering route...")
             let formInfo = try request.content.decode(Comment.CommentForm.self)
             return try await request.commentService.addComment(with: formInfo)
         }

@@ -1,16 +1,15 @@
-import type { Pronouns } from "./pronouns";
 import type { Presence } from "./presence";
+import type { Roles } from "./roles";
 
 export interface Profile {
 	readonly id: string;
-	readonly account: string;
+	readonly account: { id: string, roles: Roles[] };
 	username: string;
 	avatar: string;
 	info: {
 		bio?: string;
 		tagline?: string;
 		coverPic?: string;
-		pronouns: Pronouns[];
 		presence: Presence;
 	};
 	stats: {

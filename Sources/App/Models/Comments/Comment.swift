@@ -22,8 +22,8 @@ final class Comment: Model, Content {
     @Field(key: "body")
     var body: String
 
-    @OptionalField(key: "spoiler")
-    var spoiler: Bool?
+    @Field(key: "spoiler")
+    var spoiler: Bool
 
     @Children(for: \.$comment)
     var history: [CommentHistory]
@@ -53,6 +53,6 @@ extension Comment {
     struct CommentForm: Content {
         var threadId: String
         var body: String
-        var spoiler: Bool?
+        var spoiler: Bool
     }
 }

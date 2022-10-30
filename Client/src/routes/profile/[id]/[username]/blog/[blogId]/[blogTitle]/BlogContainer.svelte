@@ -282,8 +282,8 @@
 				<span class="stat-value">{abbreviate(blog.stats.views)}</span>
 			</div>
 			<div class="stat-block">
-				<span class="stat-name">Comments</span>
-				<span class="stat-value">{abbreviate(blog.stats.comments)}</span>
+				<span class="stat-name">Favorites</span>
+				<span class="stat-value">{abbreviate(blog.stats.favorites)}</span>
 			</div>
 			<div class="stat-block">
 				<span class="stat-name">Words</span>

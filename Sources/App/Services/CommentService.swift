@@ -42,6 +42,7 @@ struct CommentService {
             return try await hasThread.$comments.query(on: request.db)
                 .with(\.$profile)
                 .with(\.$history)
+                .sort(\.$createdAt, .ascending)
                 .paginate(for: request)
         } else {
             throw Abort(.notFound, reason: "The thread you're trying to find doesn't exist.")
@@ -55,12 +56,13 @@ struct CommentService {
         let profile = try request.authService.getUser(withProfile: true).profile!
         let thread = try await Thread.query(on: request.db)
             .filter(\.$id == formInfo.threadId)
-            .filter(\.$createdBy.$id == profile.id)
             .first()
         if let hasThread = thread {
             if hasThread.open == true {
                 let newComment = try Comment(by: profile.id!, with: formInfo)
                 try await hasThread.$comments.create(newComment, on: request.db)
+                try await newComment.$profile.load(on: request.db)
+                try await newComment.$history.load(on: request.db)
                 return newComment
             } else {
                 throw Abort(.forbidden, reason: "This thread is currently closed.")
@@ -75,6 +77,8 @@ struct CommentService {
     func editComment(_ id: String, with formInfo: Comment.CommentForm) async throws -> Comment {
         let profile = try request.authService.getUser(withProfile: true).profile!
         let comment = try await Comment.query(on: request.db)
+            .with(\.$profile)
+            .with(\.$history)
             .filter(\.$id == id)
             .filter(\.$profile.$id == profile.id!)
             .first()
@@ -82,6 +86,7 @@ struct CommentService {
         if let hasComment = comment {
             let newHistory = CommentHistory(oldBody: hasComment.body)
             hasComment.body = try SwiftSoup.clean(formInfo.body, defaultWhitelist())!
+            hasComment.spoiler = formInfo.spoiler
             try await hasComment.$history.create(newHistory, on: request.db)
             try await hasComment.save(on: request.db)
             return hasComment

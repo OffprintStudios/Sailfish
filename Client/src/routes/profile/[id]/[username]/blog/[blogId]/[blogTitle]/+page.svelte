@@ -1,9 +1,14 @@
 <script lang="ts">
+	import { page } from "$app/stores";
 	import type { Blog } from "$lib/models/content";
 	import { slugify } from "$lib/util/functions";
 	import BlogContainer from "./BlogContainer.svelte";
+	import Thread from "$lib/ui/comments/Thread.svelte";
 
 	export let data: Blog;
+
+	let pageNum = $page.url.searchParams.has("page") ? $page.url.searchParams.get("page") : 1;
+	let per = $page.url.searchParams.has("per") ? $page.url.searchParams.get("per") : 25;
 </script>
 
 <svelte:head>
@@ -34,3 +39,9 @@
 </svelte:head>
 
 <BlogContainer blog="{data}" />
+
+{#if data.publishedOn}
+	<div class="max-w-4xl mx-auto">
+		<Thread threadId={data.id} kind="content" page={pageNum} per={per} />
+	</div>
+{/if}
