@@ -34,7 +34,7 @@
 		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 			<BlogCard blog={blog} />
 		</div>
-		<Paginator currPage={page} totalPages={total} />
+		<Paginator currPage={page} perPage={per} totalItems={total} />
 	{:else}
 		<div class="empty">
 			<h3>No blogs yet</h3>

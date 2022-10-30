@@ -8,14 +8,12 @@ interface CommentsState {
 	loading: boolean;
 	thread: Thread | null;
 	page: PaginateResults<Comment> | null;
-	totalPages: number;
 }
 
 export const comments = writable<CommentsState>({
 	loading: false,
 	thread: null,
 	page: null,
-	totalPages: 0,
 });
 
 export async function fetchContentThread(contentId: string, page: number, per: number) {
@@ -31,16 +29,11 @@ export async function fetchContentThread(contentId: string, page: number, per: n
 		if (pageResponse.status === 200) {
 			const thread: Thread = await threadResponse.json();
 			const page: PaginateResults<Comment> = await pageResponse.json();
-			let totalPages = Math.floor(page.metadata.total / page.metadata.per);
-			if (totalPages === 0) {
-				totalPages = 1;
-			}
 
 			comments.update(() => ({
 				loading: false,
 				thread,
 				page,
-				totalPages,
 			}));
 		} else {
 			toast.error("Something went wrong fetching comments!")

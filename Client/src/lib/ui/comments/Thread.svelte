@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ChatNewLine, Settings4Line } from "svelte-remixicon";
+	import { ChatNewLine } from "svelte-remixicon";
 	import { onMount } from "svelte";
 	import { account } from "../../state/account.state";
 	import { comments, fetchContentThread } from "./comments.state";
@@ -46,7 +46,8 @@
 	{#if $comments.page?.items.length !== 0}
 		<Paginator
 			currPage={page}
-			totalPages={$comments.totalPages}
+			perPage={per}
+			totalItems={$comments.page.metadata.total}
 			on:change={(e) => changePage(e.detail)}
 		/>
 	{/if}
@@ -66,7 +67,8 @@
 	{#if $comments.page?.items.length !== 0}
 		<Paginator
 			currPage={page}
-			totalPages={$comments.totalPages}
+			perPage={per}
+			totalItems={$comments.page.metadata.total}
 			on:change={(e) => changePage(e.detail)}
 		/>
 	{/if}

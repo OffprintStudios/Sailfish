@@ -11,8 +11,8 @@
 	import { Paginator } from "$lib/ui/util";
 
 	let blogs: Blog[] = [];
-	let currPage = +$page.url.searchParams.get('page') ?? 1;
-	let per = +$page.url.searchParams.get('per') ?? 10;
+	let pageNum = $page.url.searchParams.has("page") ? $page.url.searchParams.get("page") : 1;
+	let per = $page.url.searchParams.has("per") ? $page.url.searchParams.get("per") : 10;
 	let total = 1;
 	let loading = false;
 
@@ -28,14 +28,14 @@
 			'profileId=' + $account.currProfile.id + '&' +
 			'status=' + ApprovalStatus.pending + '&' +
 			'filter=' + ContentFilter.everything + '&' +
-			'page=' + currPage + '&' +
+			'page=' + pageNum + '&' +
 			'per=' + per
 		);
 
 		if (response.status === 200) {
 			const result: PaginateResults<Blog> = await response.json();
 			blogs = result.items;
-			currPage = result.metadata.page;
+			pageNum = result.metadata.page;
 			per = result.metadata.per;
 			total = result.metadata.total;
 			loading = false;
@@ -56,7 +56,7 @@
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 				<BlogCard blog={blog} />
 			</div>
-			<Paginator currPage={currPage} totalPages={total} />
+			<Paginator currPage={pageNum} perPage={per} totalItems={total} />
 		{:else}
 			<div class="empty">
 				<h3>You haven't added anything yet.</h3>

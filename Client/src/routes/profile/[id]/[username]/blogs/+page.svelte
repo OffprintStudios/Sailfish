@@ -5,6 +5,9 @@
 	import { account } from "$lib/state/account.state";
 	import BlogsManagement from "./BlogsManagement.svelte";
 	import BlogsList from "./BlogsList.svelte";
+
+	let pageNum = $page.url.searchParams.has("page") ? $page.url.searchParams.get("page") : 1;
+	let per = $page.url.searchParams.has("per") ? $page.url.searchParams.get("per") : 25;
 </script>
 
 <svelte:head>
@@ -38,7 +41,7 @@
 	<BlogsManagement />
 {:else}
 	<BlogsList
-		page={+$page.url.searchParams.get('page') ?? 1}
-		per={+$page.url.searchParams.get('per') ?? 10}
+		page={pageNum}
+		per={per}
 	/>
 {/if}

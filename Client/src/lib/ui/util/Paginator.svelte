@@ -4,8 +4,13 @@
 
 	const PAGE_BUFFER = 2;
 	export let currPage: number;
-	export let totalPages: number;
+	export let perPage: number;
+	export let totalItems: number;
 
+	let totalPages = Math.floor(totalItems / perPage);
+	if (totalPages === 0) {
+		totalPages = 1;
+	}
 	const dispatch = createEventDispatcher();
 
 	function range(size, startAt = 0) {
