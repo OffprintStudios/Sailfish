@@ -42,6 +42,8 @@ public func configure(_ app: Application) throws {
         CreateThreadBlacklist(),
         AddCommentSpoilerField(),
         CreateCommentHistory(),
+        CreateNotification(),
+        CreateFollower()
     ])
 
     Task {
@@ -49,8 +51,16 @@ public func configure(_ app: Application) throws {
     }
 
     // Setting up queues
-    // app.logger.notice("Setting up queues...")
-    // try app.queues.use(.redis(url: Environment.get("REDIS_URL") ?? "redis://localhost:6379"))
+    app.logger.notice("Setting up queues...")
+    let redisConfig = try RedisConfiguration(
+        url: Environment.get("REDIS_URL") ?? "redis://127.0.0.1:6379",
+        pool: RedisConfiguration.PoolOptions(connectionRetryTimeout: .minutes(1))
+    )
+    try app.queues.use(.redis(redisConfig))
+
+    // Adding Jobs
+    app.logger.notice("Adding jobs...")
+    app.queues.add(AddNotificationJob())
 
     // CORS configuration
     app.logger.notice("Assigning CORS configuration...")
@@ -97,6 +107,6 @@ public func configure(_ app: Application) throws {
     }
 
     // Starting the queue
-//    app.logger.notice("Restarting any available queues...")
-//    try app.queues.startInProcessJobs(on: .default)
+    app.logger.notice("Restarting any available queues...")
+    try app.queues.startInProcessJobs(on: .default)
 }
