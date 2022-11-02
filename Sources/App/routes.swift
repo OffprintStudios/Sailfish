@@ -14,4 +14,5 @@ func routes(_ app: Application) throws {
     try app.register(collection: NewsController())
     try app.register(collection: CommentController())
     try app.register(collection: NotificationController())
+    try app.register(collection: FollowerController())
 }
