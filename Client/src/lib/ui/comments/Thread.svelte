@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { ChatNewLine } from "svelte-remixicon";
-	import { onMount } from "svelte";
+	import type { Thread, Comment as CommentModel } from "../../models/comments";
+	import type { Paginate } from "../../util/types";
 	import { account } from "../../state/account.state";
 	import { comments, fetchContentThread } from "./comments.state";
 	import { Paginator } from "../util";
@@ -9,20 +10,20 @@
 	import CommentForm from "./CommentForm.svelte";
 	import Comment from "./Comment.svelte";
 
-	export let threadId: string;
+	export let thread: Thread;
+	export let content: Paginate<CommentModel>;
 	export let kind: 'content' | 'forum' = 'content';
 	export let page = 1;
 	export let per = 25;
 
-	onMount(async () => {
-		if (kind === 'content') {
-			await fetchContentThread(threadId, page, per);
-		}
-	});
+	$comments.thread = thread;
+	$comments.page = content;
 
 	async function changePage(pageNum: number) {
 		page = pageNum;
-		await fetchContentThread(threadId, page, per);
+		if (kind === 'content') {
+			await fetchContentThread(thread.id, page, per);
+		}
 	}
 </script>
 
@@ -74,7 +75,7 @@
 	{/if}
 	{#if $account.account && $account.currProfile}
 		<div id="comment-form">
-			<CommentForm threadId={threadId} />
+			<CommentForm threadId={thread.id} />
 		</div>
 	{/if}
 {/if}

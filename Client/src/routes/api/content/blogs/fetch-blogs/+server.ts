@@ -2,7 +2,7 @@ import type { RequestHandler } from "./$types";
 import { getReq } from "$lib/http";
 import type { Blog, ApprovalStatus } from "$lib/models/content";
 import type { ContentFilter } from "$lib/util/constants";
-import type { PaginateResults } from "$lib/util/types";
+import type { Page } from "$lib/util/types";
 
 export const GET: RequestHandler = async ({ url }) => {
 	const authorId = url.searchParams.get("profileId");
@@ -11,14 +11,14 @@ export const GET: RequestHandler = async ({ url }) => {
 	const page: number = +(url.searchParams.get("page") ?? 1);
 	const per: number = +(url.searchParams.get("per") ?? 10);
 
-	const response = await getReq<PaginateResults<Blog>>(
+	const response = await getReq<Page<Blog>>(
 		`/blogs/fetch-blogs?authorId=${authorId}&status=${status}&filter=${filter}&page=${page}&per=${per}`
 	);
 
-	if (!(response as PaginateResults<Blog>).metadata) {
+	if (!(response as Page<Blog>).metadata) {
 		return new Response(null, { status: 500 });
 	} else {
-		return new Response(JSON.stringify(response as PaginateResults<Blog>), {
+		return new Response(JSON.stringify(response as Page<Blog>), {
 			status: 200,
 			headers: {
 				'content-type': 'application/json',

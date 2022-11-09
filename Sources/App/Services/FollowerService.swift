@@ -9,7 +9,7 @@ struct FollowerService {
     let request: Request
     
     func fetchFollowers(_ id: String) async throws -> Page<Follower> {
-        return try await Follower.query(on: request.db)
+        try await Follower.query(on: request.db)
             .with(\.$profile)
             .with(\.$subscribedTo)
             .filter(\.$subscribedTo.$id == id)
@@ -17,7 +17,7 @@ struct FollowerService {
     }
     
     func fetchFollowing(_ id: String) async throws -> Page<Follower> {
-        return try await Follower.query(on: request.db)
+        try await Follower.query(on: request.db)
             .with(\.$profile)
             .with(\.$subscribedTo)
             .filter(\.$profile.$id == id)

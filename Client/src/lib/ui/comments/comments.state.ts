@@ -1,5 +1,5 @@
-import type { PaginateResults } from "../../util/types";
-import type { BlacklistForm, Comment, CommentForm, Thread, ThreadBlacklist } from "../../models/comments";
+import type { Paginate } from "../../util/types";
+import type { BlacklistForm, Comment, CommentForm, Thread, ThreadBlacklist, ThreadPage } from "../../models/comments";
 import { writable } from "svelte/store";
 import { BASE_URL } from "../../http";
 import toast from "svelte-french-toast";
@@ -7,7 +7,7 @@ import toast from "svelte-french-toast";
 interface CommentsState {
 	loading: boolean;
 	thread: Thread | null;
-	page: PaginateResults<Comment> | null;
+	page: Paginate<Comment> | null;
 }
 
 export const comments = writable<CommentsState>({
@@ -18,26 +18,18 @@ export const comments = writable<CommentsState>({
 
 export async function fetchContentThread(contentId: string, page: number, per: number) {
 	comments.update((state) => ({...state, loading: true}));
-	const threadResponse = await fetch(`${BASE_URL}/comments/fetch-content-thread/${contentId}`, {
+	const response = await fetch(`${BASE_URL}/comments/fetch-content-thread/${contentId}?page=${page}&per=${per}`, {
 		method: 'GET'
 	});
-	if (threadResponse.status === 200) {
-		const pageResponse = await fetch(`${BASE_URL}/comments/fetch-comments/${contentId}?page=${page}&per=${per}`, {
-			method: 'GET'
-		});
-
-		if (pageResponse.status === 200) {
-			const thread: Thread = await threadResponse.json();
-			const page: PaginateResults<Comment> = await pageResponse.json();
-
-			comments.update(() => ({
-				loading: false,
-				thread,
-				page,
-			}));
-		} else {
-			toast.error("Something went wrong fetching comments!")
-		}
+	if (response.status === 200) {
+		const threadPage: ThreadPage = await response.json();
+		comments.update(() => ({
+			loading: false,
+			thread: threadPage.thread,
+			page: threadPage.page,
+		}));
+	} else {
+		toast.error("Something went wrong fetching comments!");
 	}
 }
 

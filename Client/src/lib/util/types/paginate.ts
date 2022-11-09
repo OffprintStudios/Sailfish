@@ -1,4 +1,4 @@
-export interface PaginateResults<T> {
+export interface Paginate<T> {
 	readonly items: T[];
 	readonly metadata: {
 		readonly page: number;

@@ -14,14 +14,9 @@ struct CommentController: RouteCollection {
             ThreadBlacklistGuard(),
         ])
 
-        comments.get("fetch-content-thread", ":threadId") { request async throws -> Thread in
+        comments.get("fetch-content-thread", ":threadId") { request async throws -> CommentService.ThreadPage in
             let threadId = request.parameters.get("threadId")!
             return try await request.commentService.fetchOrCreateThread(threadId)
-        }
-
-        comments.get("fetch-comments", ":threadId") { request async throws -> Page<Comment> in
-            let threadId = request.parameters.get("threadId")!
-            return try await request.commentService.fetchComments(threadId)
         }
 
         commentsWithAuth.post("add-comment") { request async throws -> Comment in

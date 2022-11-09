@@ -1,5 +1,5 @@
 import type { RequestHandler } from "./$types";
-import type { PaginateResults } from "$lib/util/types";
+import type { Page } from "$lib/util/types";
 import type { FavoriteBlog } from "$lib/models/content";
 import { getReq } from "$lib/http";
 
@@ -10,7 +10,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		return new Response(null, { status: 422 });
 	}
 
-	const response = await getReq<PaginateResults<FavoriteBlog>>(
+	const response = await getReq<Page<FavoriteBlog>>(
 		`/blogs/fetch-favorites?profileId=${profileId}`,
 		{
 			headers: {
@@ -19,7 +19,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		}
 	);
 
-	if (!(response as PaginateResults<FavoriteBlog>).items) {
+	if (!(response as Page<FavoriteBlog>).items) {
 		return new Response(null, {
 			status: 500
 		});

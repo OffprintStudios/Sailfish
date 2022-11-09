@@ -5,7 +5,7 @@
 	import { account } from "$lib/state/account.state";
 	import { ApprovalStatus } from "$lib/models/content";
 	import { ContentFilter } from "$lib/util/constants";
-	import type { PaginateResults } from "$lib/util/types";
+	import type { Paginate } from "$lib/util/types";
 	import { BlogCard } from "$lib/ui/content";
 	import toast from "svelte-french-toast";
 	import { Paginator } from "$lib/ui/util";
@@ -33,7 +33,7 @@
 		);
 
 		if (response.status === 200) {
-			const result: PaginateResults<Blog> = await response.json();
+			const result: Paginate<Blog> = await response.json();
 			blogs = result.items;
 			pageNum = result.metadata.page;
 			per = result.metadata.per;

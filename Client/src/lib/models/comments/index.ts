@@ -4,3 +4,4 @@ export type { CommentForm } from './comment-form';
 export type { ThreadBlacklist } from './thread-blacklist';
 export type { BlacklistForm } from './blacklist-form';
 export type { CommentHistory } from './comment-history';
+export type { ThreadPage } from './thread-page';

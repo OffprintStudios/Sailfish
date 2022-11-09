@@ -4,7 +4,7 @@
 	import { profileState } from "$lib/state/profile.state";
 	import { ApprovalStatus } from "$lib/models/content";
 	import { app } from "$lib/state/app.state";
-	import type { PaginateResults } from "$lib/util/types";
+	import type { Paginate } from "$lib/util/types";
 	import { Paginator } from "$lib/ui/util";
 	import { BlogCard } from "$lib/ui/content";
 
@@ -21,7 +21,7 @@
 		const response = await fetch(
 			`/api/content/blogs/fetch-blogs?profileId=${$profileState.id}&status=${ApprovalStatus.published}&filter=${$app.filter}&page=${page}&per=${per}`
 		);
-		const result: PaginateResults<Blog> = await response.json();
+		const result: Paginate<Blog> = await response.json();
 		blogs = result.items;
 		page = result.metadata.page;
 		per = result.metadata.per;

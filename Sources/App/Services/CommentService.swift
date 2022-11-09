@@ -15,7 +15,7 @@ struct CommentService {
 
     /// Fetches a thread of comments. If no thread exists, this will create one. This should only
     /// be used for content comments (e.g. blogs, stories, etc).
-    func fetchOrCreateThread(_ threadId: String) async throws -> Thread {
+    func fetchOrCreateThread(_ threadId: String) async throws -> ThreadPage {
         let thread = try await Thread.query(on: request.db)
             .with(\.$createdBy)
             .with(\.$blacklist) { blacklist in
@@ -25,27 +25,21 @@ struct CommentService {
             .first()
 
         if let hasThread = thread {
-            return hasThread
-        } else {
-            let newThread = Thread(id: threadId)
-            try await newThread.save(on: request.db)
-            return newThread
-        }
-    }
-
-    /// Fetches comments for a given thread ID.
-    func fetchComments(_ threadId: String) async throws -> Page<Comment> {
-        let thread = try await Thread.query(on: request.db)
-            .filter(\.$id == threadId)
-            .first()
-        if let hasThread = thread {
-            return try await hasThread.$comments.query(on: request.db)
+            let comments: Page<Comment> = try await hasThread.$comments.query(on: request.db)
                 .with(\.$profile)
                 .with(\.$history)
                 .sort(\.$createdAt, .ascending)
                 .paginate(for: request)
+            return .init(thread: hasThread, page: comments)
         } else {
-            throw Abort(.notFound, reason: "The thread you're trying to find doesn't exist.")
+            let newThread = Thread(id: threadId)
+            try await newThread.save(on: request.db)
+            let comments: Page<Comment> = try await newThread.$comments.query(on: request.db)
+                .with(\.$profile)
+                .with(\.$history)
+                .sort(\.$createdAt, .ascending)
+                .paginate(for: request)
+            return .init(thread: newThread, page: comments)
         }
     }
 
@@ -125,6 +119,13 @@ struct CommentService {
         } else {
             throw Abort(.notFound, reason: "The thread you're trying to modify doesn't exist.")
         }
+    }
+}
+
+extension CommentService {
+    struct ThreadPage: Content {
+        var thread: Thread
+        var page: Page<Comment>
     }
 }
 
