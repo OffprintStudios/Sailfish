@@ -68,7 +68,7 @@
 	}
 </script>
 
-<div class="flex flex-col w-full min-h-[14rem] rounded-xl my-4 bg-zinc-200 dark:bg-zinc-700">
+<div class="flex flex-col w-full min-h-[14rem] rounded-xl my-4 bg-zinc-200 dark:bg-zinc-700" id="comment-{comment?.id}">
 	<div class="flex items-center border-b-2 border-transparent dark:border-zinc-600 px-2 py-0.5">
 		<Avatar src={comment?.profile.avatar} size="35px" borderWidth="2px" />
 		<div class="ml-2 flex-1">
@@ -189,7 +189,12 @@
 		<div class="flex items-center p-0.5 pb-1" in:fade|local={{ delay: 0, duration: 150 }}>
 			<div>
 				<!--TODO: add actual link here-->
-				<a class="block mx-2 relative text-xs">#{index}</a>
+				<a
+					class="block mx-2 relative text-xs"
+					href="#comment-{comment?.id}"
+				>
+					#{index}
+				</a>
 			</div>
 			<div class="flex-1 text-xs relative top-0.5 pb-1 italic">
 				{#if comment?.history.length !== 0}

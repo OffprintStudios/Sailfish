@@ -48,6 +48,12 @@
 
 {#if data.blog.publishedOn}
 	<div class="max-w-4xl mx-auto">
-		<Thread thread={data.page.thread} content={data.page.page} kind="content" page={pageNum} per={per} />
+		<Thread
+			thread={data.page.thread}
+			content={data.page.page}
+			kind="content"
+			page={pageNum}
+			per={per}
+		/>
 	</div>
 {/if}
