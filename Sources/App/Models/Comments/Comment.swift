@@ -27,6 +27,12 @@ final class Comment: Model, Content {
 
     @Children(for: \.$comment)
     var history: [CommentHistory]
+    
+    @Siblings(through: Reply.self, from: \.$repliesTo, to: \.$comment)
+    var replies: [Comment]
+    
+    @Siblings(through: Reply.self, from: \.$comment, to: \.$repliesTo)
+    var repliesTo: [Comment]
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?

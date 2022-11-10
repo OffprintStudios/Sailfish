@@ -43,7 +43,8 @@ public func configure(_ app: Application) throws {
         AddCommentSpoilerField(),
         CreateCommentHistory(),
         CreateNotification(),
-        CreateFollower()
+        CreateFollower(),
+        CreateReply(),
     ])
 
     Task {
