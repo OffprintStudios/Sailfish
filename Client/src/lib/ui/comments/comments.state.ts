@@ -8,12 +8,14 @@ interface CommentsState {
 	loading: boolean;
 	thread: Thread | null;
 	page: Paginate<Comment> | null;
+	replies: Comment[];
 }
 
 export const comments = writable<CommentsState>({
 	loading: false,
 	thread: null,
 	page: null,
+	replies: [],
 });
 
 export async function fetchContentThread(contentId: string, page: number, per: number) {

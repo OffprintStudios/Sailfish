@@ -75,11 +75,11 @@
 	{#if $account.account && $account.currProfile}
 		<a
 			class="link"
-			class:active={$page.url.pathname === '/library' && $guide.open === false}
+			class:active={$page.url.pathname.includes('/library') && $guide.open === false}
 			href="/library"
 		>
 			<span class="link-icon">
-				{#if $page.url.pathname === '/library' && $guide.open === false}
+				{#if $page.url.pathname.includes('/library') && $guide.open === false}
 					<BookmarkFill size={iconSize} />
 				{:else}
 					<BookmarkLine size={iconSize} />

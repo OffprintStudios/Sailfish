@@ -7,6 +7,8 @@ export interface Comment {
 	readonly profile: Profile;
 	body: string;
 	spoiler: boolean;
+	readonly replies: { id: string }[];
+	readonly repliedTo: { id: string }[];
 	readonly history: CommentHistory[];
 	readonly createdAt: Date;
 	readonly updatedAt: Date;

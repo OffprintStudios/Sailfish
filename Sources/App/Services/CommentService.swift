@@ -53,11 +53,21 @@ struct CommentService {
             .first()
         if let hasThread = thread {
             if hasThread.open == true {
-                let newComment = try Comment(by: profile.id!, with: formInfo)
-                try await hasThread.$comments.create(newComment, on: request.db)
-                try await newComment.$profile.load(on: request.db)
-                try await newComment.$history.load(on: request.db)
-                return newComment
+                return try await request.db.transaction { database in
+                    let newComment = try Comment(by: profile.id!, with: formInfo)
+                    try await hasThread.$comments.create(newComment, on: database)
+                    if formInfo.repliesTo.count > 0 {
+                        for reply in formInfo.repliesTo {
+                            guard let repliedTo: Comment = try await Comment.query(on: database).filter(\.$id == reply).first() else {
+                                throw Abort(.notFound, reason: "One of the comments you're replying to doesn't exist.")
+                            }
+                            try await newComment.$repliesTo.attach(repliedTo, on: database)
+                        }
+                    }
+                    try await newComment.$profile.load(on: database)
+                    try await newComment.$history.load(on: database)
+                    return newComment
+                }
             } else {
                 throw Abort(.forbidden, reason: "This thread is currently closed.")
             }

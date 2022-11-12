@@ -22,9 +22,7 @@ final class Reply: Model, Content {
     
     init() { }
     
-    init(id: UUID? = nil, commentId: String, repliesTo: String) {
+    init(id: UUID? = nil) {
         self.id = id
-        self.$comment.id = commentId
-        self.$repliesTo.id = repliesTo
     }
 }

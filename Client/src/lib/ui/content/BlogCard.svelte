@@ -10,7 +10,7 @@
 	export let showAvatar = false;
 </script>
 
-<div class="blog-card bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 hover:dark:bg-zinc-600">
+<div class="blog-card bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 hover:dark:bg-zinc-600" title={blog.title}>
 	<a
 		class="absolute top-0 right-0 left-0 bottom-0 z-[2]"
 		href="/profile/{blog.author.id}/{slugify(blog.author.username)}/blog/{blog.id}/{slugify(blog.title)}"
@@ -21,8 +21,8 @@
 		{#if showAvatar}
 			<Avatar src={blog.author.avatar} size="50px" borderWidth="1px" />
 		{/if}
-		<div class="flex-1" class:ml-4={showAvatar}>
-			<h3 class="text-white font-medium text-2xl">
+		<div class="flex-1 w-[275px]" class:ml-4={showAvatar}>
+			<h3 class="text-white font-medium text-2xl truncate">
 				{blog.title}
 			</h3>
 			<span class="flex items-center text-white text-xs">

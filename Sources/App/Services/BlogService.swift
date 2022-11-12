@@ -155,7 +155,9 @@ struct BlogService {
     /// Fetches all favorited blogs for a given profile
     func fetchFavorites(profileId: String) async throws -> Page<FavoriteBlog> {
         try await FavoriteBlog.query(on: request.db)
-            .with(\.$blog)
+            .with(\.$blog) { blog in
+                blog.with(\.$author)
+            }
             .filter(\.$profile.$id == profileId)
             .paginate(for: request)
     }

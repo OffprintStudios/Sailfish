@@ -60,5 +60,6 @@ extension Comment {
         var threadId: String
         var body: String
         var spoiler: Bool
+        var repliesTo: [String]
     }
 }

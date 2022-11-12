@@ -16,6 +16,7 @@
 		EyeOffLine,
 		CheckboxBlankCircleLine,
 		CheckboxCircleLine,
+		DoubleQuotesL,
 	} from "svelte-remixicon";
 	import { Editor } from "../forms";
 	import { account } from "../../state/account.state";
@@ -55,6 +56,7 @@
 				threadId: comment?.thread.id,
 				body: values.body,
 				spoiler: values.spoiler,
+				repliesTo: [],
 			};
 			await editComment(comment?.id, $account.currProfile?.id, formData).then(() => {
 				isEditing = false;
@@ -141,11 +143,16 @@
 				</Button>
 				<div class="mx-0.5"></div>
 			{/if}
-			<Dropdown>
+			<Dropdown position="bottom-end">
 				<svelte:fragment slot="button">
 					<More2Line class="button-icon no-text" />
 				</svelte:fragment>
 				<svelte:fragment slot="items">
+					<button type="button">
+						<DoubleQuotesL class="mr-2" />
+						<span>Add to multi-quote</span>
+					</button>
+					<div class="my-0.5"><!--spacer--></div>
 					<button type="button">
 						<AlarmWarningLine class="mr-2" />
 						<span>Report</span>

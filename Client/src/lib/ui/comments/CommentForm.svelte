@@ -15,6 +15,7 @@
 				threadId: threadId,
 				body: values.body,
 				spoiler: values.spoiler,
+				repliesTo: [],
 			};
 
 			await addComment($account.currProfile?.id, formData).then(() => {

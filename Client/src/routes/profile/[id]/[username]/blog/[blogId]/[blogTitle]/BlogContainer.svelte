@@ -256,12 +256,12 @@
 				{#if !!hasFavorited}
 					<Button classes="md:w-full md:justify-center" loading={loadingFavorite} loadingText="Wait..." on:click={() => unfavoriteBlog()}>
 						<StarFill class="button-icon" />
-						<span class="button-text">Remove</span>
+						<span class="button-text">Unfave</span>
 					</Button>
 				{:else}
 					<Button classes="md:w-full md:justify-center" loading={loadingFavorite} loadingText="Wait..." on:click={() => favoriteBlog()}>
 						<StarLine class="button-icon" />
-						<span class="button-text">Star</span>
+						<span class="button-text">Fave</span>
 					</Button>
 				{/if}
 				<div class="my-0.5"><!--spacer--></div>

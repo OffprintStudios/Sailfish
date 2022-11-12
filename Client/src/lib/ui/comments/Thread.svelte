@@ -25,6 +25,11 @@
 			await fetchContentThread(thread.id, page, per);
 		}
 	}
+
+	function reply(comment: Comment) {
+		let commentForm = document.getElementById("comment-form");
+		commentForm.scrollIntoView({ behavior: 'smooth' });
+	}
 </script>
 
 <div class="flex items-center w-full rounded-xl bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed px-2 py-2 mb-8 h-[77px]">
@@ -61,6 +66,7 @@
 			<Comment
 				{comment}
 				index={$comments.page?.metadata.per * ($comments.page?.metadata.page - 1) + (i + 1)}
+				on:reply={(e) => reply(e)}
 			/>
 		{/each}
 	{/if}
