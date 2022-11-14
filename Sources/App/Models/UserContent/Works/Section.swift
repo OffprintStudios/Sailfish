@@ -25,7 +25,7 @@ final class Section: Model, Content {
     var body: String
 
     @Field(key: "words")
-    var words: Int32
+    var words: UInt64
 
     @OptionalField(key: "note_top")
     var noteTop: String?
@@ -37,7 +37,7 @@ final class Section: Model, Content {
     var lang: Language
 
     @Field(key: "rank")
-    var rank: String
+    var rank: UInt64
 
     @OptionalField(key: "published_on")
     var publishedOn: Date?
@@ -53,8 +53,9 @@ final class Section: Model, Content {
 
     init() { }
 
-    init(id: String? = nil, with formInfo: SectionForm, rank: String) throws {
+    init(id: String? = nil, with formInfo: SectionForm, in volumeId: String? = nil, rank: UInt64) throws {
         self.id = generateId(with: id)
+        self.$volume.id = volumeId
         title = try SwiftSoup.clean(formInfo.title, .none())!
         body = try SwiftSoup.clean(formInfo.body, defaultWhitelist())!
         if let hasNoteTop = formInfo.noteTop {
@@ -64,6 +65,7 @@ final class Section: Model, Content {
             noteBottom = try SwiftSoup.clean(hasNoteBottom, defaultWhitelist())!
         }
         self.rank = rank
+        words = UInt64(try SwiftSoup.clean(formInfo.body, Whitelist.none())!.split { !$0.isLetter }.count)
     }
 }
 
@@ -73,5 +75,14 @@ extension Section {
         var body: String
         var noteTop: String?
         var noteBottom: String?
+    }
+}
+
+extension Section.SectionForm: Validatable {
+    static func validations(_ validations: inout Validations) {
+        validations.add("title", as: String.self, is: .count(3...120), required: true)
+        validations.add("body", as: String.self, is: .count(3...), required: true)
+        validations.add("noteTop", as: String.self, is: .count(3...), required: false)
+        validations.add("noteBottom", as: String.self, is: .count(3...), required: false)
     }
 }

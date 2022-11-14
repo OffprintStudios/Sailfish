@@ -14,14 +14,23 @@ struct WorkService {
     /// Fetches a work given its ID. If no such work exists, throws a `notFound` error.
     func fetchWork(_ id: String) async throws -> Work {
         try await request.db.transaction { database in
-            guard let work: Work = try await Work.query(on: database).with(\.$author).filter(\.$id == id).first() else {
+            let work = try await Work.query(on: database)
+                .with(\.$author)
+                .with(\.$tags) { tag in
+                    tag.with(\.$parent)
+                }
+                .filter(\.$id == id)
+                .first()
+            
+            if let hasWork = work {
+                if hasWork.publishedOn != nil {
+                    hasWork.views += 1
+                    try await hasWork.save(on: database)
+                }
+                return hasWork
+            } else {
                 throw Abort(.notFound, reason: "Work not found. Are you sure you're looking for the right one?")
             }
-            if work.publishedOn != nil {
-                work.views += 1
-                try await work.save(on: database)
-            }
-            return work
         }
     }
     
@@ -29,6 +38,9 @@ struct WorkService {
     func fetchWorks(filter: ContentFilter) async throws -> Page<Work> {
         try await Work.query(on: request.db)
             .with(\.$author)
+            .with(\.$tags) { tag in
+                tag.with(\.$parent)
+            }
             .filter(\.$rating ~~ determineRatings(from: filter))
             .filter(\.$publishedOn <= Date())
             .sort(\.$publishedOn, .descending)
@@ -41,6 +53,9 @@ struct WorkService {
     func fetchWorks(for authorId: String, published: Bool = false, filter: ContentFilter) async throws -> Page<Work> {
         let query = Work.query(on: request.db)
             .with(\.$author)
+            .with(\.$tags) { tag in
+                tag.with(\.$parent)
+            }
             .filter(\.$author.$id == authorId)
             .filter(\.$rating ~~ determineRatings(from: filter))
         
@@ -63,7 +78,17 @@ struct WorkService {
         let newWork = try Work(with: formInfo)
         return try await request.db.transaction { database in
             try await profile.$works.create(newWork, on: database)
-            try await newWork.$author.load(on: database)
+            
+            for tagId in formInfo.tags {
+                guard let tag: Tag = try await Tag.query(on: database).filter(\.$id == tagId).first() else {
+                    throw Abort(.notFound, reason: "One of the tags you tried to add does not exist. All tags must be valid.")
+                }
+                try await newWork.$tags.attach(tag, on: database)
+            }
+            
+            newWork.$author.value = profile
+            try await newWork.$tags.load(on: database)
+            
             return newWork
         }
     }
@@ -83,6 +108,17 @@ struct WorkService {
             work.status = formInfo.status
             work.kind = formInfo.kind
             try await work.save(on: database)
+            
+            try await work.$tags.detachAll(on: database)
+            for tagId in formInfo.tags {
+                guard let tag: Tag = try await Tag.query(on: database).filter(\.$id == tagId).first() else {
+                    throw Abort(.notFound, reason: "One of the tags you tried to add does not exist. All tags must be valid.")
+                }
+                try await work.$tags.attach(tag, method: .ifNotExists, on: database)
+            }
+            work.$author.value = profile
+            try await work.$tags.load(on: database)
+            
             return work
         }
     }
@@ -96,6 +132,8 @@ struct WorkService {
             }
             work.coverArt = coverUrl
             try await work.save(on: database)
+            work.$author.value = profile
+            try await work.$tags.load(on: database)
             return work
         }
     }
@@ -104,11 +142,12 @@ struct WorkService {
     func updateBannerArt(_ id: String, bannerUrl: String? = nil) async throws -> Work {
         let profile = try request.authService.getUser(withProfile: true).profile!
         return try await request.db.transaction { database in
-            guard let work: Work = try await profile.$works.query(on: database).filter(\.$id == id).first() else {
+            guard let work: Work = try await profile.$works.query(on: database).with(\.$tags, { $0.with(\.$parent)}).filter(\.$id == id).first() else {
                 throw Abort(.notFound, reason: "Could not find a work to update. Are you sure it exists?")
             }
             work.bannerArt = bannerUrl
             try await work.save(on: database)
+            work.$author.value = profile
             return work
         }
     }

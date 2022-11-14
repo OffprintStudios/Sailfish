@@ -59,6 +59,9 @@ final class Work: Model, Content {
     var comments: UInt64
     
     @Children(for: \.$work)
+    var volumes: [Volume]
+    
+    @Children(for: \.$work)
     var sections: [Section]
     
     @Field(key: "kind")
