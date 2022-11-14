@@ -20,24 +20,24 @@ struct BlogService {
                 blog.stats.views += 1
                 try await blog.save(on: database)
             }
-            return blog;
+            return blog
         }
     }
 
-    /// Fetches a paginated list of published blogs based on the provided Content Filter.
+    /// Fetches a paginated list of published blogs based on the provided `ContentFilter`.
     func fetchBlogs(filter: ContentFilter) async throws -> Page<Blog> {
         try await Blog.query(on: request.db)
             .with(\.$author)
             .filter(\.$rating ~~ determineRatings(from: filter))
             .filter(\.$publishedOn <= Date())
-            .sort(\.$publishedOn)
+            .sort(\.$publishedOn, .descending)
             .paginate(for: request)
     }
 
     /// Fetches a paginated list of blogs specific to an author and based on the provided Content Filter. If the provided
     /// `status` is `.draft`, returns only drafts. If the provided `status` is `.published`, returns only published posts.
     /// Otherwise, this will return any pending posts, i.e. posts with publish dates that have not yet occurred.
-    func fetchBlogs(for authorId: String, status: ApprovalStatus, filter: ContentFilter) async throws -> Page<Blog> {
+    func fetchBlogs(for authorId: String, status: PublishStatus, filter: ContentFilter) async throws -> Page<Blog> {
         let query = Blog.query(on: request.db)
             .with(\.$author)
             .filter(\.$author.$id == authorId)
@@ -47,17 +47,12 @@ struct BlogService {
         case .draft:
             return try await query
                 .filter(\.$publishedOn == nil)
-                .sort(\.$createdAt)
+                .sort(\.$createdAt, .descending)
                 .paginate(for: request)
         case .published:
             return try await query
                 .filter(\.$publishedOn <= Date())
-                .sort(\.$publishedOn)
-                .paginate(for: request)
-        default:
-            return try await query
-                .filter(\.$publishedOn > Date())
-                .sort(\.$publishedOn)
+                .sort(\.$publishedOn, .descending)
                 .paginate(for: request)
         }
     }
@@ -69,7 +64,7 @@ struct BlogService {
             .filter(\.$newsPost == true)
             .filter(\.$rating ~~ [.everyone, .teen])
             .filter(\.$publishedOn <= Date())
-            .sort(\.$publishedOn)
+            .sort(\.$publishedOn, .descending)
             .paginate(for: request)
     }
 
@@ -116,14 +111,18 @@ struct BlogService {
     /// Publishes a blog by updating its `publishedOn` field with the specified `publishDate`.
     func publishBlog(_ id: String, on publishDate: Date? = nil) async throws -> Blog {
         let profile = try request.authService.getUser(withProfile: true).profile!
-        guard let blog: Blog = try await profile.$blogs.query(on: request.db).filter(\.$id == id).first() else {
-            throw Abort(.notFound, reason: "Could not find blog to update. Are you sure it exists?")
+        return try await request.db.transaction { database in
+            guard let blog: Blog = try await profile.$blogs.query(on: database).filter(\.$id == id).first() else {
+                throw Abort(.notFound, reason: "Could not find blog to update. Are you sure it exists?")
+            }
+            blog.publishedOn = publishDate
+            try await blog.save(on: database)
+            
+            profile.stats.blogs = try await profile.$blogs.query(on: database).filter(\.$publishedOn <= Date()).count()
+            try await profile.save(on: database)
+            
+            return blog
         }
-
-        blog.publishedOn = publishDate
-
-        try await blog.save(on: request.db)
-        return blog
     }
 
     /// Converts a blog to a news post. Also forces a rating conversion to Everyone, though this should be enforced with
@@ -199,6 +198,11 @@ struct BlogService {
             .filter(\.$blog.$id == blogId)
             .filter(\.$profile.$id == profileId)
             .delete()
+    }
+        
+    enum PublishStatus: String, Codable {
+        case draft = "draft"
+        case published = "published"
     }
 }
 

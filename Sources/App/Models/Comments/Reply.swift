@@ -22,7 +22,9 @@ final class Reply: Model, Content {
     
     init() { }
     
-    init(id: UUID? = nil) {
+    init(id: UUID? = nil, comment: Comment, repliesTo: Comment) throws {
         self.id = id
+        self.$comment.id = try comment.requireID()
+        self.$repliesTo.id = try repliesTo.requireID()
     }
 }

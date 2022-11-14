@@ -30,6 +30,9 @@ final class Profile: Model, Content {
 
     @Children(for: \.$author)
     var blogs: [Blog]
+    
+    @Children(for: \.$author)
+    var works: [Work]
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?

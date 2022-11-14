@@ -18,6 +18,7 @@ let package = Package(
         .package(url: "https://github.com/OffprintStudios/NanoID.git", from: "1.0.0"),
         .package(url: "https://github.com/scinfu/SwiftSoup.git", from: "2.4.3"),
         .package(url: "https://github.com/soto-project/soto.git", from: "6.0.0"),
+        .package(url: "https://github.com/PinStudios/lexorank-swift", branch: "main")
     ],
     targets: [
         .target(
@@ -33,6 +34,7 @@ let package = Package(
                 .product(name: "NanoID", package: "NanoID"),
                 .product(name: "SwiftSoup", package: "SwiftSoup"),
                 .product(name: "SotoS3", package: "soto"),
+                .product(name: "LexoRank", package: "lexorank-swift")
             ],
             swiftSettings: [
                 // Enable better optimizations when building in Release configuration. Despite the use of

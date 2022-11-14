@@ -91,6 +91,15 @@
       }
     },
     {
+      "identity" : "lexorank-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/PinStudios/lexorank-swift",
+      "state" : {
+        "branch" : "main",
+        "revision" : "70a03a9688d1235f6ac2b9bd41f7ff682c3ea0e2"
+      }
+    },
+    {
       "identity" : "multipart-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/multipart-kit.git",

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import NanoID
 import SwiftSoup
 
 /// Detects whether or not a user can access something give a set of roles.
@@ -33,4 +34,13 @@ func defaultWhitelist() throws -> Whitelist {
         .addTags("iframe")
         .addAttributes("iframe", "width", "height", "allowfullscreen", "src", "start")
         .addAttributes("div", "data-youtube-video", "contenteditable", "draggable", "class")
+}
+
+/// Generates an ID based on whether or not an ID was already provided.
+func generateId(with id: String? = nil) -> String {
+    if let hasId = id {
+        return hasId
+    } else {
+        return NanoID.with(size: NANO_ID_SIZE)
+    }
 }

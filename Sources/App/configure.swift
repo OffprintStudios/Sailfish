@@ -45,6 +45,11 @@ public func configure(_ app: Application) throws {
         CreateNotification(),
         CreateFollower(),
         CreateReply(),
+        CreateTag(),
+        CreateWork(),
+        CreateVolume(),
+        CreateSection(),
+        CreateWorkTag()
     ])
 
     Task {
@@ -57,7 +62,7 @@ public func configure(_ app: Application) throws {
         url: Environment.get("REDIS_URL") ?? "redis://127.0.0.1:6379",
         pool: RedisConfiguration.PoolOptions(connectionRetryTimeout: .minutes(1))
     )
-    try app.queues.use(.redis(redisConfig))
+    app.queues.use(.redis(redisConfig))
 
     // Adding Jobs
     app.logger.notice("Adding jobs...")

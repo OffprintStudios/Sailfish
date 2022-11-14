@@ -103,7 +103,7 @@ struct BlogController: RouteCollection {
 extension BlogController {
     struct FetchBlogsQuery: Content {
         var authorId: String?
-        var status: ApprovalStatus?
+        var status: BlogService.PublishStatus?
         var filter: ContentFilter?
         var page: Int?
         var per: Int?
