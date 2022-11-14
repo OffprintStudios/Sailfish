@@ -31,7 +31,7 @@ struct TagService {
     func fetchTags(kinds: [Tag.Kind], withCounts: Bool = false) async throws -> [FetchTag] {
         let tags = try await Tag
             .query(on: request.db)
-            .with(\.$parent)
+            .with(\.$children)
             .filter(\.$kind ~~ kinds)
             .sort(\.$name, .ascending)
             .all()

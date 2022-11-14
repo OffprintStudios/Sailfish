@@ -148,6 +148,7 @@ struct SectionService {
     
     /// Moves a section between two other sections given their ranks.
     func moveSection(_ id: String, for workId: String, prev: UInt64, next: UInt64) async throws {
+        // TODO: this needs to be updated to check if the new rank is already taken before saving
         return try await request.db.transaction { database in
             let profile: Profile = try request.authService.getUser(withProfile: true).profile!
             guard let work: Work = try await profile.$works.query(on: database).filter(\.$id == workId).first() else {

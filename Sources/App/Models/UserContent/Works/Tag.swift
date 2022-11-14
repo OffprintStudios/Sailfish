@@ -62,3 +62,11 @@ extension Tag {
         case user = "User"
     }
 }
+
+extension Tag.TagForm: Validatable {
+    static func validations(_ validations: inout Validations) {
+        validations.add("name", as: String.self, is: !.empty, required: true)
+        validations.add("desc", as: String.self, is: .count(3...120), required: false)
+        validations.add("parentId", as: String.self, required: false)
+    }
+}
