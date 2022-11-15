@@ -45,6 +45,7 @@ final class Tag: Model, Content {
             desc = try SwiftSoup.clean(hasDesc, .none())!
         }
         self.$parent.id = formInfo.parentId
+        kind = formInfo.kind
     }
 }
 
@@ -53,6 +54,7 @@ extension Tag {
         var name: String
         var desc: String?
         var parentId: String?
+        var kind: Kind
     }
     
     enum Kind: String, Codable {
