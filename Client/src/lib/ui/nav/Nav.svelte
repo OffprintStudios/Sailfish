@@ -11,9 +11,13 @@
 		BookmarkFill,
 		NewspaperFill,
 		NewspaperLine,
+		Dashboard2Line,
+		Dashboard2Fill,
 	} from "svelte-remixicon";
 	import { guide, openGuide, closeGuide } from "../guide";
 	import { account } from "../../state/account.state";
+	import { hasRoles } from "../../util/functions";
+	import { Roles } from "$lib/models/accounts/index.js";
 
 	const iconSize = "24px";
 
@@ -44,6 +48,22 @@
 		</button>
 	{/if}
 	<div class="w-10/12 mx-auto border-b border-white my-2"><!--separator--></div>
+	{#if $account.account && $account.currProfile && hasRoles($account.account?.roles, [Roles.Admin, Roles.Moderator, Roles.WorkApprover])}
+		<a
+			class="link"
+			class:active={$page.url.pathname.startsWith('/dashboard') && $guide.open === false}
+			href="/dashboard"
+		>
+			<span class="link-icon">
+				{#if $page.url.pathname.startsWith('/dashboard') && $guide.open === false}
+					<Dashboard2Fill size={iconSize} />
+				{:else}
+					<Dashboard2Line size={iconSize} />
+				{/if}
+			</span>
+			<span class="link-name">Dash</span>
+		</a>
+	{/if}
 	<a
 		class="link"
 		class:active={$page.url.pathname === '/' && $guide.open === false}

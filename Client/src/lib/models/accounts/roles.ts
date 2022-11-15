@@ -1,8 +1,8 @@
 export enum Roles {
 	Admin = 'Admin',
 	Moderator = 'Moderator',
-	WorkApprover = 'WorkApprover',
-	ChatModerator = 'ChatModerator',
+	WorkApprover = 'Work Approver',
+	ChatModerator = 'Chat Moderator',
 	Maintainer = 'Maintainer',
 	Contributor = 'Contributor',
 	VIP = 'VIP',

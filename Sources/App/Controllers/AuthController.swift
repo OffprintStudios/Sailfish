@@ -23,5 +23,20 @@ struct AuthController: RouteCollection {
         auth.get("logout") { request async throws in
             try await request.authService.logout()
         }
+
+        auth.grouped(IdentityGuard(needs: [.user])).post("check-roles") { request async throws -> HasRoles in
+            let info = try request.content.decode(CheckRoles.self)
+            let account = try request.authService.getUser().account
+            return HasRoles(goodToGo: canAccess(needs: info.needs, has: account.roles))
+        }
+    }
+}
+
+extension AuthController {
+    struct CheckRoles: Content {
+        var needs: [Account.Roles]
+    }
+    struct HasRoles: Content {
+        var goodToGo: Bool
     }
 }
