@@ -46,7 +46,7 @@
 
 <div class="max-w-6xl mx-auto">
 	<div class="flex items-center">
-		<Button kind="primary" on:click={openAddTagForm}>
+		<Button kind="primary" on:click={() => openAddTagForm()}>
 			<AddBoxLine class="button-icon" />
 			<span class="button-text">Add Tag</span>
 		</Button>
@@ -98,7 +98,7 @@
 							<div transition:slide>
 								<div class="flex items-center mt-4">
 									<div class="p-2 max-w-[400px]">
-										{tag.tag.desc}
+										{tag.tag.desc ?? '[No description provided]'}
 									</div>
 									<div class="flex-1"><!--spacer--></div>
 									<NavLink type="button">
