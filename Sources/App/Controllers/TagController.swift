@@ -20,7 +20,9 @@ struct TagController: RouteCollection {
         
         tags.get("fetch-tags") { request async throws -> [TagService.FetchTag] in
             let query = try request.query.decode(FetchTagsQuery.self)
-            if let hasKind = query.kind, let hasCounts = query.withCounts {
+            if let hasKind = query.kind, let hasCounts = query.withCounts, let hasAscending = query.ascending {
+                return try await request.tagService.fetchTags(kinds: [hasKind], withCounts: hasCounts, ascending: hasAscending)
+            } else if let hasKind = query.kind, let hasCounts = query.withCounts {
                 return try await request.tagService.fetchTags(kinds: [hasKind], withCounts: hasCounts)
             } else {
                 return try await request.tagService.fetchTags(kinds: [.genre, .fandom])
@@ -52,5 +54,6 @@ extension TagController {
     struct FetchTagsQuery: Content {
         var kind: Tag.Kind?
         var withCounts: Bool?
+        var ascending: Bool?
     }
 }

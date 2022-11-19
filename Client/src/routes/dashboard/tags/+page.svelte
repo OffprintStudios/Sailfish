@@ -4,31 +4,35 @@
 	import { onMount } from "svelte";
 	import { Button } from "$lib/ui/util";
 	import type { Tag } from '$lib/models/tags';
-	import { AddBoxLine, SortAsc, DeleteBin2Line, Edit2Line, ArrowDownSLine, ArrowUpSLine } from "svelte-remixicon";
+	import { AddBoxLine, SortAsc, SortDesc, DeleteBin2Line, Edit2Line, ArrowDownSLine, ArrowUpSLine } from "svelte-remixicon";
 	import { openPopup } from "$lib/ui/popup";
 	import AddTagForm from "./AddTagForm.svelte";
 	import { NavLink } from "$lib/ui/nav";
 	import { Time } from '$lib/ui/util';
+	import UpdateTagForm from "./UpdateTagForm.svelte";
+	import DeleteTagPrompt from "./DeleteTagPrompt.svelte";
+	import toast from "svelte-french-toast";
 
 	let tags: {tag: Tag, works: number, isOpen: boolean}[] = [];
 	let currCategory = TagKind.fandom;
+	let ascending = true;
 
 	onMount(async () => {
-		await fetchPage(currCategory);
+		await fetchData(currCategory);
 	});
 
-	$: fetchPage(currCategory)
+	$: fetchData(currCategory)
 
-	async function fetchPage(tagKind: TagKind) {
-		const response = await fetch(`/api/content/tags/fetch-tags?kind=${tagKind}&withCounts=true`);
+	async function fetchData(tagKind: TagKind) {
+		const response = await fetch(`/api/content/tags/fetch-tags?kind=${tagKind}&withCounts=true&ascending=${ascending}`);
 		const val = await response.json();
 		tags = val.data;
 	}
 
-	async function openAddTagForm(parentId?: string) {
+	async function addTag(parentId?: string) {
 		openPopup(AddTagForm, {
 			async onConfirm() {
-				await fetchPage(currCategory);
+				await fetchData(currCategory);
 			}
 		}, {
 			parentId
@@ -42,19 +46,54 @@
 			}
 		});
 	}
+
+	async function switchDirection() {
+		ascending = !ascending;
+		await fetchData(currCategory);
+	}
+
+	async function updateTag(tag: Tag) {
+		openPopup(UpdateTagForm, {
+			async onConfirm() {
+				await fetchData(currCategory);
+			}
+		}, tag)
+	}
+
+	async function deleteTag(tagId: string) {
+		openPopup(DeleteTagPrompt, {
+			async onConfirm() {
+				const response = await fetch(`/api/content/tags/${tagId}/delete-tag`, {
+					method: 'DELETE'
+				});
+				if (response.status === 200) {
+					await fetchData(currCategory);
+				} else {
+					toast.error('Something went wrong! Try again in a little bit.');
+				}
+			}
+		})
+	}
 </script>
 
 <div class="max-w-6xl mx-auto">
 	<div class="flex items-center">
-		<Button kind="primary" on:click={() => openAddTagForm()}>
+		<Button kind="primary" on:click={() => addTag()}>
 			<AddBoxLine class="button-icon" />
 			<span class="button-text">Add Tag</span>
 		</Button>
 		<div class="mx-0.5"><!--spacer--></div>
-		<Button>
-			<SortAsc class="button-icon" />
-			<span class="button-text">Ascending</span>
-		</Button>
+		{#if ascending}
+			<Button on:click={switchDirection}>
+				<SortAsc class="button-icon" />
+				<span class="button-text">Ascending</span>
+			</Button>
+		{:else}
+			<Button on:click={switchDirection}>
+				<SortDesc class="button-icon" />
+				<span class="button-text">Descending</span>
+			</Button>
+		{/if}
 		<div class="flex-1"><!--spacer--></div>
 		<select class="w-[250px] border-transparent bg-zinc-200 dark:bg-zinc-700 rounded-xl dark:highlight-shadowed" bind:value={currCategory}>
 			<option value={TagKind.fandom}>{TagKind.fandom}</option>
@@ -105,15 +144,15 @@
 										<span class="font-bold text-2xl relative top-0.5" style="font-family: var(--header-text);">{tag.works}</span>
 										<span class="link-name relative -top-1">Works</span>
 									</NavLink>
-									<NavLink type="button" on:click={() => openAddTagForm(tag.tag.id)}>
+									<NavLink type="button" on:click={() => addTag(tag.tag.id)}>
 										<AddBoxLine class="link-icon" />
 										<span class="link-name">Child</span>
 									</NavLink>
-									<NavLink type="button">
+									<NavLink type="button" on:click={() => updateTag(tag.tag)}>
 										<Edit2Line class="link-icon" />
 										<span class="link-name">Edit</span>
 									</NavLink>
-									<NavLink type="button">
+									<NavLink type="button" on:click={() => deleteTag(tag.tag.id)}>
 										<DeleteBin2Line class="link-icon" />
 										<span class="link-name">Delete</span>
 									</NavLink>
@@ -143,10 +182,10 @@
 												<td><Time timestamp={child.tag.createdAt} /></td>
 												<td>
 													<div class="flex items-center justify-center">
-														<Button title="Edit">
+														<Button title="Edit" on:click={() => updateTag(child.tag)}>
 															<Edit2Line class="button-icon no-text" size="22px" />
 														</Button>
-														<Button title="Delete">
+														<Button title="Delete" on:click={() => deleteTag(child.tag.id)}>
 															<DeleteBin2Line class="button-icon no-text" size="22px" />
 														</Button>
 													</div>

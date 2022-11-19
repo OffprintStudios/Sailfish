@@ -28,12 +28,12 @@ struct TagService {
     }
     
     /// Fetches all tags by kind, along with the number of works per tag.
-    func fetchTags(kinds: [Tag.Kind], withCounts: Bool = false) async throws -> [FetchTag] {
+    func fetchTags(kinds: [Tag.Kind], withCounts: Bool = false, ascending: Bool = true) async throws -> [FetchTag] {
         let tags = try await Tag
             .query(on: request.db)
             .with(\.$parent)
             .filter(\.$kind ~~ kinds)
-            .sort(\.$name, .ascending)
+            .sort(\.$name, ascending ? .ascending : .descending)
             .all()
         
         if withCounts == true {
