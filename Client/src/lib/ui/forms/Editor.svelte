@@ -64,6 +64,12 @@
 	export let value: string;
 	export let errorMessage = null;
 	export let hasHeader = false;
+	export let kind: 'normal' | 'primary' = 'normal';
+
+	let background = "bg-zinc-200 dark:bg-zinc-700";
+	if (kind === 'primary') {
+		background = "bg-zinc-300 dark:bg-zinc-600";
+	}
 
 	onMount(() => {
 		editor = createEditor({
@@ -149,7 +155,7 @@
 {/if}
 <div
 	id="offprint-editor"
-	class="w-full flex flex-col rounded-b-lg bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
+	class="w-full flex flex-col rounded-b-lg {background}"
 	class:rounded-t-lg={!hasHeader}
 >
 	{#if $editor}

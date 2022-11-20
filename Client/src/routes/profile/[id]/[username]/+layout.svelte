@@ -15,33 +15,6 @@
 	const iconSize = "24px";
 </script>
 
-<svelte:head>
-	<title>{data.username}'s Profile &mdash; Offprint</title>
-	<!-- Primary Meta Tags -->
-	<meta name="title" content="{data.username}'s Profile" />
-	<meta name="description" content="{data.info.bio}" />
-
-	<!-- Open Graph / Facebook -->
-	<meta property="og:type" content="website" />
-	<meta property="og:url" content="https://offprint.net/profile/{data.id}/{slugify(data.username)}" />
-	<meta property="og:title" content="{data.username}'s Profile" />
-	<meta
-		property="og:description"
-		content="{data.info.bio}"
-	/>
-	<meta property="og:image" content="{data.avatar}" />
-
-	<!-- Twitter -->
-	<meta property="twitter:card" content="summary_large_image" />
-	<meta property="twitter:url" content="https://offprint.net/profile/{data.id}/{slugify(data.username)}" />
-	<meta property="twitter:title" content="{data.username}'s Profile" />
-	<meta
-		property="twitter:description"
-		content="{data.info.bio}"
-	/>
-	<meta property="twitter:image" content="{data.avatar}" />
-</svelte:head>
-
 <div class="w-11/12 mx-auto max-w-7xl mb-6">
 	<div class="profile-nav-container">
 		{#if data.info.coverPic}
@@ -70,8 +43,8 @@
 			<Avatar src={data.avatar} size="150px" borderWidth="2px" />
 			<div class="ml-4 self-center">
 				<div class="flex items-center">
-					<RoleBadge roles={data.account.roles} />
-					<h3>{data.username}</h3>
+					<h3 class="mr-2">{data.username}</h3>
+					<RoleBadge roles={data.account.roles} size="large" />
 				</div>
 				<div class="flex items-center text-xs">
 					<a
