@@ -27,12 +27,11 @@
 	export let category: Category = null;
 	export let rating: ContentRating = null;
 	export let tag: Tag = null;
-
-	console.log(tag);
 </script>
 
 <button
 	class="tag-pill"
+	type="button"
 	class:fandom={kind === TagKind.fandom}
 	class:warning={kind === TagKind.warning}
 	class:category={kind === TagKind.category}
@@ -100,7 +99,11 @@
 		{/if}
 	{:else if kind === TagKind.fandom && tag !== null}
         <span class="tag-label">
-            {tag.name}
+			{#if tag.parent}
+				{tag.parent.name}&mdash;{tag.name}
+			{:else}
+				{tag.name}
+			{/if}
         </span>
 	{/if}
 </button>

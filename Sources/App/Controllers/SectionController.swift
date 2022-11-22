@@ -106,7 +106,7 @@ extension SectionController {
         var workId: String?
         var volumeId: String?
         var published: Bool?
-        var prev: UInt64?
-        var next: UInt64?
+        var prev: Int64?
+        var next: Int64?
     }
 }

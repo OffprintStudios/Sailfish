@@ -1,24 +1,39 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { goto } from "$app/navigation";
 	import { profileState } from "$lib/state/profile.state";
 	import { account } from "$lib/state/account.state";
 	import { createForm } from "felte";
 	import { AddLine, QuillPenLine } from "svelte-remixicon";
-	import { Editor, RadioButton, TextField } from "$lib/ui/forms";
+	import { Editor, TextField } from "$lib/ui/forms";
 	import { ContentRating } from "$lib/models/content";
 	import { Button } from "$lib/ui/util";
 	import type { Tag } from "$lib/models/tags";
 	import { TagKind } from "$lib/models/tags";
-	import { Category, Kind, Status } from "$lib/models/content/works";
-	import type { WorkForm } from "$lib/models/content/works";
+	import { Category, Status, Kind } from "$lib/models/content/works";
+	import type { Work, WorkForm } from "$lib/models/content/works";
 	import { TagBadge } from "$lib/ui/content";
 	import toast from "svelte-french-toast";
+	import { slugify } from "$lib/util/functions";
 
 	let genres: {tag: Tag, isChosen: boolean}[] = [];
+	let selectedGenres: string[] = [];
+	let fandoms: {tag: Tag, isChosen: boolean}[] = [];
+	let selectedFandoms: string[] = [];
+
+	let loadingFandoms = false;
 
 	onMount(async () => {
 		await fetchGenres();
 	});
+
+	$: {
+		if ($data.category === Category.Fanwork) {
+			if (fandoms.length === 0) {
+				fetchFandoms();
+			}
+		}
+	}
 
 	async function fetchGenres() {
 		const response = await fetch(`/api/content/tags/fetch-tags?kind=${TagKind.genre}&withCounts=false&ascending=true`);
@@ -26,10 +41,18 @@
 		genres = val.data;
 	}
 
+	async function fetchFandoms() {
+		loadingFandoms = true;
+		const response = await fetch(`/api/content/tags/fetch-tags?kind=${TagKind.fandom}&withCounts=false&ascending=true`);
+		const val = await response.json();
+		fandoms = val.data;
+		loadingFandoms = false;
+	}
+
 	function selectGenre(genre: { tag: Tag, isChosen: boolean }) {
-		if ($data.tags.some(val => val === genre.tag.id)) {
+		if (selectedGenres.some(val => val === genre.tag.id)) {
 			genre.isChosen = false;
-			$data.tags = $data.tags.filter(val => val !== genre.tag.id);
+			selectedGenres = selectedGenres.filter(val => val !== genre.tag.id);
 			genres = genres.map(val => {
 				if (val.tag.id === genre.tag.id) {
 					return genre;
@@ -37,11 +60,11 @@
 					return val;
 				}
 			});
-		} else if ($data.tags.length === 3) {
+		} else if (selectedGenres.length === 3) {
 			toast.error(`You can't have more than 3 genre tags!`);
 		} else {
 			genre.isChosen = true;
-			$data.tags.push(genre.tag.id);
+			selectedGenres.push(genre.tag.id);
 			genres = genres.map(val => {
 				if (val.tag.id === genre.tag.id) {
 					return genre;
@@ -52,7 +75,86 @@
 		}
 	}
 
-	const { form, errors, data } = createForm<WorkForm>({
+	function selectFandom(fandom: { tag: Tag, isChosen: boolean }) {
+		if (selectedFandoms.some(val => val === fandom.tag.id)) {
+			fandom.isChosen = false;
+			selectedFandoms = selectedFandoms.filter(val => val !== fandom.tag.id);
+			fandoms = fandoms.map(val => {
+				if (val.tag.id === fandom.tag.id) {
+					return fandom;
+				} else {
+					return val;
+				}
+			});
+		} else {
+			fandom.isChosen = true;
+			selectedFandoms.push(fandom.tag.id);
+			fandoms = fandoms.map(val => {
+				if (val.tag.id === fandom.tag.id) {
+					return fandom;
+				} else {
+					return val;
+				}
+			});
+		}
+	}
+
+	const { form, errors, data, isSubmitting } = createForm<WorkForm>({
+		async onSubmit(values) {
+			if (values.category === Category.Original) {
+				values.tags = [...selectedGenres];
+			} else {
+				values.tags = [...selectedGenres, ...selectedFandoms];
+			}
+
+			const response = await fetch(`/api/content/works/create-work?profileId=${$account.currProfile?.id}`, {
+				body: JSON.stringify(values),
+				method: 'POST',
+				headers: {
+					'content-type': 'application/json'
+				}
+			});
+
+			if (response.status === 200) {
+				const work: Work = await response.json();
+				await goto(`/prose/${work.id}/${slugify(work.title)}`);
+			} else {
+				toast.error(`Something went wrong! Try again in a little bit.`);
+			}
+		},
+		validate(values) {
+			const errors = {
+				title: '',
+				shortDesc: '',
+				longDesc: '',
+				genres: '',
+				fandoms: '',
+			};
+
+			if (!values.title || values.title.length < 3 || values.title.length > 120) {
+				errors.title = `Your title needs to be between 3 and 120 characters.`;
+			}
+
+			if (!values.shortDesc || values.shortDesc.length < 3 || values.shortDesc.length > 240) {
+				errors.shortDesc = `Your short description needs to be between 3 and 240 characters.`;
+			}
+
+			if (!values.longDesc || values.longDesc.length < 3) {
+				errors.longDesc = `Your long description needs to be more than 3 characters.`;
+			}
+
+			if (selectedGenres.length < 1) {
+				errors.genres = `You must select at least one genre.`;
+			}
+
+			if (values.category === Category.Fanwork) {
+				if (selectedFandoms.length < 1) {
+					errors.fandoms = `You must select at least one fandom.`;
+				}
+			}
+
+			return errors;
+		},
 		initialValues: {
 			title: null,
 			shortDesc: null,
@@ -61,9 +163,14 @@
 			rating: ContentRating.Everyone,
 			status: Status.Incomplete,
 			tags: [],
+			kind: Kind.Prose,
 		}
 	});
 </script>
+
+<svelte:head>
+	<title>Create a New Work &mdash; Offprint</title>
+</svelte:head>
 
 {#if $account.account && $account.currProfile && $account.currProfile.id === $profileState.id}
 	<form class="max-w-4xl mx-auto rounded-xl overflow-hidden flex flex-col bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed" use:form>
@@ -157,7 +264,7 @@
 					What genres do you think apply here? Don't worry, you can always change this later.
 				</span>
 			</div>
-			<div class="w-3/4 px-2.5 py-2.5 flex justify-center  flex-wrap">
+			<div class="w-3/4 px-2.5 py-2.5 flex justify-center flex-wrap">
 				{#each genres as genre}
 					<div class="mx-[0.075rem] px-0.5 pb-1 rounded-lg border border-transparent" class:border-blue-300={genre.isChosen}>
 						<TagBadge tag={genre.tag} kind={genre.tag.kind} on:click={() => selectGenre(genre)} />
@@ -169,13 +276,21 @@
 			<div class="flex border-b border-zinc-400 dark:border-zinc-500">
 				<div class="w-1/4 flex flex-col items-end px-4 pt-2 pb-3 border-r border-zinc-400 dark:border-zinc-500">
 					<h3 class="text-lg" style="color: var(--text-color);">Fandoms</h3>
-					<span class="text-xs italic text-zinc-400 mb-1">3 max, 1 minimum</span>
+					<span class="text-xs italic text-zinc-400 mb-1">1 minimum</span>
 					<span class="text-xs italic text-zinc-400 text-right">
 					What worlds are you enhancing? Make sure to only include the most pertinent ones!
 				</span>
 				</div>
-				<div class="w-3/4 px-2.5 py-2.5">
-
+				<div class="w-3/4 px-2.5 py-2.5 flex justify-center flex-wrap h-[250px] overflow-y-auto">
+					{#if loadingFandoms}
+						<h5 class="font-medium text-lg">Loading...</h5>
+					{:else}
+						{#each fandoms as fandom}
+							<div class="mx-[0.075rem] px-0.5 pb-1 rounded-lg border border-transparent" class:border-blue-300={fandom.isChosen}>
+								<TagBadge tag={fandom.tag} kind={fandom.tag.kind} on:click={() => selectFandom(fandom)} />
+							</div>
+						{/each}
+					{/if}
 				</div>
 			</div>
 		{/if}
@@ -275,7 +390,7 @@
 			</div>
 		</div>
 		<div class="flex items-center justify-center bg-zinc-300 dark:bg-zinc-600 p-3">
-			<Button type="button">
+			<Button type="submit" loading={$isSubmitting} loadingText="Saving...">
 				<AddLine class="button-icon" />
 				<span class="button-text">Create And Save</span>
 			</Button>

@@ -25,7 +25,7 @@ final class Section: Model, Content {
     var body: String
 
     @Field(key: "words")
-    var words: UInt64
+    var words: Int64
 
     @OptionalField(key: "note_top")
     var noteTop: String?
@@ -37,7 +37,7 @@ final class Section: Model, Content {
     var lang: Language
 
     @Field(key: "rank")
-    var rank: UInt64
+    var rank: Int64
 
     @OptionalField(key: "published_on")
     var publishedOn: Date?
@@ -53,7 +53,7 @@ final class Section: Model, Content {
 
     init() { }
 
-    init(id: String? = nil, with formInfo: SectionForm, in volumeId: String? = nil, rank: UInt64) throws {
+    init(id: String? = nil, with formInfo: SectionForm, in volumeId: String? = nil, rank: Int64) throws {
         self.id = generateId(with: id)
         self.$volume.id = volumeId
         title = try SwiftSoup.clean(formInfo.title, .none())!
@@ -65,7 +65,7 @@ final class Section: Model, Content {
             noteBottom = try SwiftSoup.clean(hasNoteBottom, defaultWhitelist())!
         }
         self.rank = rank
-        words = UInt64(try SwiftSoup.clean(formInfo.body, Whitelist.none())!.split { !$0.isLetter }.count)
+        words = Int64(try SwiftSoup.clean(formInfo.body, Whitelist.none())!.split { !$0.isLetter }.count)
     }
 }
 

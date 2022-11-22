@@ -43,20 +43,20 @@ final class Work: Model, Content {
     @OptionalField(key: "banner_art")
     var bannerArt: String?
     
-    @Field(key: "works")
-    var words: UInt64
+    @Field(key: "words")
+    var words: Int64
     
     @Field(key: "views")
-    var views: UInt64
+    var views: Int64
     
     @Field(key: "likes")
-    var likes: UInt64
+    var likes: Int64
     
     @Field(key: "dislikes")
-    var dislikes: UInt64
+    var dislikes: Int64
     
     @Field(key: "comments")
-    var comments: UInt64
+    var comments: Int64
     
     @Children(for: \.$work)
     var volumes: [Volume]
@@ -95,6 +95,11 @@ final class Work: Model, Content {
         category = formData.category
         rating = formData.rating
         status = formData.status
+        words = 0
+        likes = 0
+        dislikes = 0
+        views = 0
+        comments = 0
         kind = formData.kind
         approvalStatus = .notSubmitted
     }

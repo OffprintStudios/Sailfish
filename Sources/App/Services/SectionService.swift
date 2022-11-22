@@ -102,7 +102,7 @@ struct SectionService {
             if let noteBottom = formInfo.noteBottom {
                 section.noteBottom = try SwiftSoup.clean(noteBottom, defaultWhitelist())!
             }
-            section.words = UInt64(try SwiftSoup.clean(formInfo.body, Whitelist.none())!.split { !$0.isLetter }.count)
+            section.words = Int64(try SwiftSoup.clean(formInfo.body, Whitelist.none())!.split { !$0.isLetter }.count)
             try await section.save(on: database)
             return section
         }
@@ -147,7 +147,7 @@ struct SectionService {
     }
     
     /// Moves a section between two other sections given their ranks.
-    func moveSection(_ id: String, for workId: String, prev: UInt64, next: UInt64) async throws {
+    func moveSection(_ id: String, for workId: String, prev: Int64, next: Int64) async throws {
         // TODO: this needs to be updated to check if the new rank is already taken before saving
         return try await request.db.transaction { database in
             let profile: Profile = try request.authService.getUser(withProfile: true).profile!

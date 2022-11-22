@@ -8,7 +8,7 @@ export interface WorkForm {
 	readonly shortDesc: string;
 	readonly longDesc: string;
 	readonly category: Category;
-	readonly tags: string[];
+	tags: string[];
 	readonly rating: ContentRating;
 	readonly status: Status;
 	readonly kind: Kind;
