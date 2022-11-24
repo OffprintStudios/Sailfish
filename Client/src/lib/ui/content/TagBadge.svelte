@@ -49,10 +49,10 @@
 	{#if kind === TagKind.category}
 		{#if category === Category.Fanwork}
 			<EmpathizeLine />
-			<span class="tag-label">Fanwork</span>
+			<span class="tag-label pr-0.5">Fanwork</span>
 		{:else if category === Category.Original}
 			<Loader2Line />
-			<span class="tag-label">Original</span>
+			<span class="tag-label pr-0.5">Original</span>
 		{/if}
 	{:else if kind === TagKind.genre}
 		{#if tag.name === 'Comedy'}
@@ -82,7 +82,7 @@
 		{:else if tag.name === 'Action/Adventure'}
 			<SwordLine />
 		{/if}
-		<span class="tag-label">{tag.name}</span>
+		<span class="tag-label pr-0.5">{tag.name}</span>
 	{:else if kind === TagKind.rating}
 		{#if rating === ContentRating.Everyone}
 			<span class="tag-label">Everyone</span>
@@ -110,9 +110,9 @@
 
 <style lang="scss">
 	button.tag-pill {
-		@apply px-1 py-0.5 flex items-center rounded-md mx-0.5 mt-1 text-white transition transform cursor-pointer h-[1.75rem];
+		@apply p-1 flex items-center rounded-lg mx-0.5 mt-1 text-white transition transform cursor-pointer h-[1.75rem];
 		:global(svg) {
-			@apply w-4 relative mr-1;
+			@apply w-4 relative mr-0.5;
 		}
 
 		span.tag-label {
