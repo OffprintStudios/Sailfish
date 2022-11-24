@@ -5,8 +5,7 @@
 	import WorkHeader from "./WorkHeader.svelte";
 	import WorkStats from "./WorkStats.svelte";
 	import WorkInfo from "./WorkInfo.svelte";
-	import VolumesList from "./VolumesList.svelte";
-	import SectionsList from "./SectionsList.svelte";
+	import ListContainer from "./ListContainer.svelte";
 
 	export let data: Work;
 </script>
@@ -49,9 +48,9 @@
 	{/if}
 	<div class="flex flex-row max-w-4xl mx-auto">
 		<WorkStats work={data} />
-		<div>
+		<div class="mx-6">
 			<WorkInfo work={data} />
-			<SectionsList work={data} />
+			<ListContainer work={data} />
 		</div>
 	</div>
 </div>

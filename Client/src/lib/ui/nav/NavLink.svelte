@@ -3,6 +3,8 @@
 
 	export let type: 'link' | 'button' = 'link';
 	export let href = null;
+	export let isActive = false;
+	export let hasMargin = true;
 </script>
 
 {#if type === 'link'}
@@ -10,18 +12,19 @@
 		class="link hover:no-underline hover:bg-zinc-300 dark:hover:bg-zinc-600"
 		{href}
 		class:active={$page.url.pathname === href}
+		class:mx-0.5={hasMargin}
 	>
 		<slot />
 	</a>
 {:else}
-	<button class="link hover:bg-zinc-300 dark:hover:bg-zinc-600" on:click>
+	<button class="link hover:bg-zinc-300 dark:hover:bg-zinc-600" class:mx-0.5={hasMargin} class:active={isActive} on:click>
 		<slot />
 	</button>
 {/if}
 
 <style lang="scss">
 	a.link, button.link {
-		@apply mx-0.5 rounded-lg transition transform;
+		@apply rounded-lg transition transform;
 		@apply flex flex-col items-center justify-center w-[61px] h-[61px] relative;
 		color: var(--text-color);
 		&:active {

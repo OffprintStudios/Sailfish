@@ -7,7 +7,7 @@
 	export let work: Work;
 </script>
 
-<div class="flex flex-col max-w-[108.16px] min-w-[108.16px] mr-6">
+<div class="flex flex-col max-w-[108.16px] min-w-[108.16px]">
 	<div class="date-block bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
 		<Calendar2Line size="36px" class="mb-2" />
 		{#if work.publishedOn}
