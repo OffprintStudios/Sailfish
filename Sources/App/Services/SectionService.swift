@@ -30,34 +30,39 @@ struct SectionService {
     }
     
     /// Fetches sections of a work sorted by their rank.
-    func fetchSections(for workId: String, in volumeId: String? = nil, published: Bool = false) async throws -> [Section] {
+    func fetchSections(for workId: String, in volumeId: String? = nil, published: Bool = false) async throws -> [SectionInfo] {
         return try await request.db.transaction { database in
             guard let work: Work = try await Work.query(on: database).filter(\.$id == workId).first() else {
                 throw Abort(.notFound, reason: "The work you're trying to query doesn't exist.")
             }
             
             let query = work.$sections.query(on: database)
-                .field(\.$id)
-                .field(\.$title)
-                .field(\.$words)
-                .field(\.$lang)
-                .field(\.$rank)
-                .field(\.$publishedOn)
-                .field(\.$createdAt)
                 .with(\.$volume)
                 .sort(\.$rank, .ascending)
             
             if let volId = volumeId {
                 if published == true {
-                    return try await query.filter(\.$volume.$id == volId).filter(\.$publishedOn <= Date()).all()
+                    let results: [Section] = try await query.filter(\.$volume.$id == volId).filter(\.$publishedOn <= Date()).all()
+                    return results.map { item in
+                        SectionInfo(from: item, with: item.volume)
+                    }
                 } else {
-                    return try await query.filter(\.$volume.$id == volId).all()
+                    let results: [Section] = try await query.filter(\.$volume.$id == volId).all()
+                    return results.map { item in
+                        SectionInfo(from: item, with: item.volume)
+                    }
                 }
             } else {
                 if published == true {
-                    return try await query.filter(\.$publishedOn <= Date()).all()
+                    let results: [Section] = try await query.filter(\.$publishedOn <= Date()).all()
+                    return results.map { item in
+                        SectionInfo(from: item)
+                    }
                 } else {
-                    return try await query.all()
+                    let results: [Section] = try await query.all()
+                    return results.map { item in
+                        SectionInfo(from: item)
+                    }
                 }
             }
         }
@@ -74,11 +79,11 @@ struct SectionService {
             
             if let highestRank = try await work.$sections.query(on: database).max(\.$rank) {
                 let newSection = try Section(with: formInfo, in: volumeId, rank: highestRank + 1000)
-                try await newSection.save(on: database)
+                try await work.$sections.create(newSection, on: database)
                 return newSection
             } else {
-                let newSection = try Section(with: formInfo, in: volumeId, rank: 1)
-                try await newSection.save(on: database)
+                let newSection = try Section(with: formInfo, in: volumeId, rank: 1000)
+                try await work.$sections.create(newSection, on: database)
                 return newSection
             }
         }
@@ -159,6 +164,30 @@ struct SectionService {
             }
             section.rank = (prev + next) / 2
             try await section.save(on: database)
+        }
+    }
+}
+
+extension SectionService {
+    struct SectionInfo: Content {
+        var id: String?
+        var title: String
+        var words: Int64
+        var lang: Language
+        var rank: Int64
+        var publishedOn: Date?
+        var createdAt: Date?
+        var volume: Volume?
+
+        init(from section: Section, with volume: Volume? = nil) {
+            id = section.id
+            title = section.title
+            words = section.words
+            lang = section.lang
+            rank = section.rank
+            publishedOn = section.publishedOn
+            createdAt = section.createdAt
+            self.volume = volume
         }
     }
 }

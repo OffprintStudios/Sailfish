@@ -21,7 +21,7 @@
 	}
 </script>
 
-<div class="w-full">
+<div class="w-full mt-6">
 	<div class="flex items-center">
 		<div class="flex items-center bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed overflow-hidden rounded-xl">
 			<button class="tab-button" class:active={currTab === ListTabs.sections} on:click={() => switchTab(ListTabs.sections)}>

@@ -48,7 +48,7 @@
 	{/if}
 	<div class="flex flex-row max-w-4xl mx-auto">
 		<WorkStats work={data} />
-		<div class="mx-6">
+		<div class="mx-6 flex-1">
 			<WorkInfo work={data} />
 			<ListContainer work={data} />
 		</div>

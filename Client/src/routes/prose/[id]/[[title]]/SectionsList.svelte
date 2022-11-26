@@ -2,14 +2,18 @@
 	import { onMount } from "svelte";
 	import { account } from "$lib/state/account.state";
 	import type { Section, Work } from "$lib/models/content/works";
-	import { CheckboxCircleLine, CheckboxBlankCircleLine, DeleteBinLine } from "svelte-remixicon";
+	import { CheckboxCircleLine, CheckboxBlankCircleLine, DeleteBinLine, Loader5Line } from "svelte-remixicon";
 	import { BASE_URL } from "$lib/http";
 	import { slugify, localeDate } from "$lib/util/functions";
 	import toast from "svelte-french-toast";
+	import DeleteSectionPrompt from "./DeleteSectionPrompt.svelte";
+	import { openPopup } from "$lib/ui/popup";
 
 	export let work: Work;
 	let sections: Section[] = [];
 	let loading = false;
+	let publishing = false;
+	let deleting = false;
 
 	onMount(async () => {
 		await fetchSections();
@@ -37,6 +41,45 @@
 			}
 		}
 	}
+
+	async function publishSection(id: string) {
+		publishing = true;
+		const response = await fetch(`/api/content/works/${work.id}/sections/${id}/publish-section?profileId=${$account.currProfile.id}`, {
+			method: 'PATCH',
+		});
+		if (response.status === 200) {
+			const section: Section = await response.json();
+			sections = sections.map(item => {
+				if (item.id === section.id) {
+					return section;
+				} else {
+					return item;
+				}
+			});
+			publishing = false;
+		} else {
+			toast.error(`Something went wrong! Try again in a little bit.`);
+			publishing = false;
+		}
+	}
+
+	async function deleteSection(id: string) {
+		openPopup(DeleteSectionPrompt, {
+			async onConfirm() {
+				deleting = true;
+				const response = await fetch(`/api/content/works/${work.id}/sections/${id}/delete-section?profileId=${$account.currProfile.id}`, {
+					method: 'DELETE'
+				});
+				if (response.status === 200) {
+					sections = sections.filter(item => item.id !== id);
+					deleting = false;
+				} else {
+					toast.error(`Something went wrong! Try again in a little bit.`);
+					deleting = false;
+				}
+			}
+		});
+	}
 </script>
 
 {#if loading}
@@ -54,17 +97,21 @@
 		{/if}
 	</div>
 {:else}
-	<ul class="mt-4">
+	<ul class="mt-4 w-full">
 		{#each sections as section}
 			<li class="section-item odd:bg-zinc-300 odd:dark:bg-zinc-700">
 				{#if $account.currProfile && $account.currProfile.id === work.author.id}
-					{#if section.publishedOn}
+					{#if publishing}
 						<button>
-							<CheckboxCircleLine class="button-icon no-text" />
+							<Loader5Line class="animate-spin" />
 						</button>
 					{:else}
-						<button>
-							<CheckboxBlankCircleLine class="button-icon no-text" />
+						<button on:click={() => publishSection(section.id)}>
+							{#if section.publishedOn}
+								<CheckboxCircleLine class="button-icon no-text" />
+							{:else}
+								<CheckboxBlankCircleLine class="button-icon no-text" />
+							{/if}
 						</button>
 					{/if}
 				{/if}
@@ -79,9 +126,15 @@
 					{/if}
 				</a>
 				{#if $account.currProfile && $account.currProfile.id === work.author.id}
-					<button>
-						<DeleteBinLine class="button-icon no-text" />
-					</button>
+					{#if deleting}
+						<button>
+							<Loader5Line class="animate-spin" />
+						</button>
+					{:else}
+						<button on:click={() => deleteSection(section.id)}>
+							<DeleteBinLine class="button-icon no-text" />
+						</button>
+					{/if}
 				{/if}
 			</li>
 		{/each}
@@ -91,5 +144,23 @@
 <style lang="scss">
 	li.section-item {
 		@apply w-full flex h-10;
+		a {
+			@apply flex-1 flex items-center no-underline text-sm transition transform h-full px-2;
+			color: var(--text-color);
+			span.title {
+				@apply flex-1;
+			}
+			&:hover {
+				background: var(--accent);
+				@apply text-white;
+			}
+		}
+		button {
+			@apply h-full px-3 flex items-center;
+			&:hover {
+				@apply text-white;
+				background: var(--accent);
+			}
+		}
 	}
 </style>

@@ -25,7 +25,7 @@ struct SectionController: RouteCollection {
             }
         }
         
-        sections.get("fetch-sections") { request async throws -> [Section] in
+        sections.get("fetch-sections") { request async throws -> [SectionService.SectionInfo] in
             let query = try request.query.decode(SectionQuery.self)
             if let workId = query.workId {
                 return try await request.sectionService.fetchSections(

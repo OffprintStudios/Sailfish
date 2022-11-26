@@ -66,6 +66,7 @@ final class Section: Model, Content {
         }
         self.rank = rank
         words = Int64(try SwiftSoup.clean(formInfo.body, Whitelist.none())!.split { !$0.isLetter }.count)
+        lang = .en
     }
 }
 
