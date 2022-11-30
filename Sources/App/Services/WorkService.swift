@@ -152,6 +152,16 @@ struct WorkService {
         }
     }
     
+    /// Updates a work's word count.
+    func updateWordCount(_ work: Work) async throws {
+        if let updatedWordCount = try await work.$sections.query(on: request.db).filter(\.$publishedOn <= Date()).sum(\.$words) {
+            try await request.db.transaction { database in
+                work.words = updatedWordCount
+                try await work.save(on: database)
+            }
+        }
+    }
+    
     // TODO: Add publishing functions here
     // func publishWork(_ id: String) {}
     

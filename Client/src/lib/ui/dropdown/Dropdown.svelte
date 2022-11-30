@@ -72,6 +72,10 @@
 		:global(div.divider) {
 			@apply w-11/12 mx-auto my-2 border-b;
 		}
+		:global(a.active), :global(button.active) {
+			@apply text-white;
+			background: var(--accent);
+		}
 	}
 
 	:global(.dark div.dropdown-items) {

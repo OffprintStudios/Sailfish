@@ -91,11 +91,11 @@ struct SectionService {
     
     /// Updates a section belonging to a work given the provided `formInfo`.
     func updateSection(_ id: String, for workId: String, with formInfo: Section.SectionForm) async throws -> Section {
-        return try await request.db.transaction { database in
-            let profile: Profile = try request.authService.getUser(withProfile: true).profile!
-            guard let work: Work = try await profile.$works.query(on: database).filter(\.$id == workId).first() else {
-                throw Abort(.notFound, reason: "The work you're trying to update doesn't exist.")
-            }
+        let profile: Profile = try request.authService.getUser(withProfile: true).profile!
+        guard let work: Work = try await profile.$works.query(on: request.db).filter(\.$id == workId).first() else {
+            throw Abort(.notFound, reason: "The work you're trying to update doesn't exist.")
+        }
+        let section = try await request.db.transaction { database in
             guard let section: Section = try await work.$sections.query(on: database).filter(\.$id == id).first() else {
                 throw Abort(.notFound, reason: "The section you're trying to edit doesn't exist.")
             }
@@ -111,15 +111,17 @@ struct SectionService {
             try await section.save(on: database)
             return section
         }
+        try await request.workService.updateWordCount(work)
+        return section
     }
     
     /// Publishes a section if unpublished, unpublishes a section if published. If a section becomes published here, the parent work will have its wordcount updated to reflect it.
     func publishSection(_ id: String, for workId: String) async throws -> Section {
-        return try await request.db.transaction { database in
-            let profile: Profile = try request.authService.getUser(withProfile: true).profile!
-            guard let work: Work = try await profile.$works.query(on: database).filter(\.$id == workId).first() else {
-                throw Abort(.notFound, reason: "The work you're trying to update doesn't exist.")
-            }
+        let profile: Profile = try request.authService.getUser(withProfile: true).profile!
+        guard let work: Work = try await profile.$works.query(on: request.db).filter(\.$id == workId).first() else {
+            throw Abort(.notFound, reason: "The work you're trying to update doesn't exist.")
+        }
+        let section = try await request.db.transaction { database in
             guard let section: Section = try await work.$sections.query(on: database).filter(\.$id == id).first() else {
                 throw Abort(.notFound, reason: "The section you're trying to edit doesn't exist.")
             }
@@ -129,26 +131,25 @@ struct SectionService {
                 section.publishedOn = Date()
             }
             try await section.save(on: database)
-            if let updatedWordCount = try await work.$sections.query(on: database).filter(\.$publishedOn <= Date()).sum(\.$words) {
-                work.words = updatedWordCount
-                try await work.save(on: database)
-            }
             return section
         }
+        try await request.workService.updateWordCount(work)
+        return section
     }
     
     /// Deletes a section from a work.
     func deleteSection(_ id: String, for workId: String) async throws {
+        let profile: Profile = try request.authService.getUser(withProfile: true).profile!
+        guard let work: Work = try await profile.$works.query(on: request.db).filter(\.$id == workId).first() else {
+            throw Abort(.notFound, reason: "The work you're trying to update doesn't exist.")
+        }
         try await request.db.transaction { database in
-            let profile: Profile = try request.authService.getUser(withProfile: true).profile!
-            guard let work: Work = try await profile.$works.query(on: database).filter(\.$id == workId).first() else {
-                throw Abort(.notFound, reason: "The work you're trying to update doesn't exist.")
-            }
             guard let section: Section = try await work.$sections.query(on: database).filter(\.$id == id).first() else {
                 throw Abort(.notFound, reason: "The section you're trying to edit doesn't exist.")
             }
             try await section.delete(on: database)
         }
+        try await request.workService.updateWordCount(work)
     }
     
     /// Moves a section between two other sections given their ranks.

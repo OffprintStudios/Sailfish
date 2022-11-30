@@ -15,8 +15,13 @@ struct CommentController: RouteCollection {
         ])
 
         comments.get("fetch-content-thread", ":threadId") { request async throws -> CommentService.ThreadPage in
+            struct WithSectionId: Content {
+                var sectionId: String?
+            }
+            
             let threadId = request.parameters.get("threadId")!
-            return try await request.commentService.fetchOrCreateThread(threadId)
+            let query = try request.query.decode(WithSectionId.self)
+            return try await request.commentService.fetchOrCreateThread(threadId, sectionId: query.sectionId)
         }
 
         commentsWithAuth.post("add-comment") { request async throws -> Comment in

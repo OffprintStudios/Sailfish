@@ -3,4 +3,5 @@ export interface CommentForm {
 	readonly body: string;
 	readonly spoiler: boolean;
 	readonly repliesTo: string[];
+	readonly sectionId?: string;
 }

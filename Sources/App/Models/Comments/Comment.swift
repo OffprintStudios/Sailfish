@@ -25,6 +25,9 @@ final class Comment: Model, Content {
     @Field(key: "spoiler")
     var spoiler: Bool
 
+    @OptionalParent(key: "section_id")
+    var section: Section?
+
     @Children(for: \.$comment)
     var history: [CommentHistory]
     
@@ -52,6 +55,7 @@ final class Comment: Model, Content {
         self.$profile.id = profileId
         body = try SwiftSoup.clean(formInfo.body, defaultWhitelist())!
         spoiler = formInfo.spoiler
+        self.$section.id = formInfo.sectionId
     }
 }
 
@@ -61,5 +65,6 @@ extension Comment {
         var body: String
         var spoiler: Bool
         var repliesTo: [String]
+        var sectionId: String?
     }
 }

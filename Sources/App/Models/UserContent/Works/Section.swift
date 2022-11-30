@@ -32,6 +32,9 @@ final class Section: Model, Content {
 
     @OptionalField(key: "note_bottom")
     var noteBottom: String?
+
+    @Children(for: \.$section)
+    var comments: [Comment]
     
     @Field(key: "lang")
     var lang: Language

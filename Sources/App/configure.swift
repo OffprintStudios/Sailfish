@@ -49,7 +49,8 @@ public func configure(_ app: Application) throws {
         CreateWork(),
         CreateVolume(),
         CreateSection(),
-        CreateWorkTag()
+        CreateWorkTag(),
+        AddCommentSectionField(),
     ])
 
     Task {
