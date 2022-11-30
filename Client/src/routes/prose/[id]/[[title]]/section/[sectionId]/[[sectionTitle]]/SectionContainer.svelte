@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from "svelte";
+	import { onMount, createEventDispatcher } from "svelte";
 	import { fade } from "svelte/transition";
 	import type { Section, Work } from "$lib/models/content/works";
 	import { slugify } from "$lib/util/functions";
@@ -19,6 +19,8 @@
 			return item;
 		}
 	});
+
+	const dispatch = createEventDispatcher();
 
 	onMount(() => {
 		setFont();
@@ -71,6 +73,10 @@
 				break;
 		}
 	}
+
+	function onEdit() {
+		dispatch('edit');
+	}
 </script>
 
 <div class="rounded-xl mb-6 dark:highlight-shadowed" style="background: var(--accent);">
@@ -84,7 +90,7 @@
 	</div>
 	<div class="flex items-center mt-2 p-2 border-t-2" style="border-color: var(--accent-light);">
 		{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
-			<Button kind="primary" asLink href="/prose/{work.id}/{slugify(work.title)}/section/{section.id}/{slugify(section.title)}/edit">
+			<Button kind="primary" on:click={onEdit}>
 				<Edit2Line class="button-icon" />
 				<span class="button-text">Edit</span>
 			</Button>

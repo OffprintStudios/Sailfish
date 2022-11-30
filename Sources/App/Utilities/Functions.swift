@@ -31,9 +31,10 @@ func determineRatings(from filter: ContentFilter) -> [ContentRating] {
 /// Returns the default whitelist for body HTML. Use in place of `Whitelist.relaxed()`.
 func defaultWhitelist() throws -> Whitelist {
     try Whitelist.relaxed()
-        .addTags("iframe")
+        .addTags("iframe", "hr")
         .addAttributes("iframe", "width", "height", "allowfullscreen", "src", "start")
         .addAttributes("div", "data-youtube-video", "contenteditable", "draggable", "class")
+        .addAttributes("hr", "contenteditable")
 }
 
 /// Generates an ID based on whether or not an ID was already provided.

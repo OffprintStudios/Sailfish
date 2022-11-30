@@ -2,15 +2,24 @@
 	import { afterNavigate } from "$app/navigation";
 	import type { Work, Section } from "$lib/models/content/works";
 	import SectionContainer from "./SectionContainer.svelte";
+	import EditSection from "./EditSection.svelte";
 	import { slugify } from "$lib/util/functions";
+	import { account } from "$lib/state/account.state";
 
 	export let data: { work: Work, section: Section, allSections: Section[] };
 
 	let containerTop;
+	let editMode = false;
 
 	afterNavigate(() => {
 		containerTop.scrollIntoView({ behavior: 'smooth' });
 	});
+
+	function toggleEditMode() {
+		if ($account.account && $account.currProfile && $account.currProfile.id === data.work.author.id) {
+			editMode = !editMode;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -42,5 +51,19 @@
 
 <div bind:this={containerTop}></div>
 <div class="max-w-4xl mx-auto my-6">
-	<SectionContainer work={data.work} section={data.section} allSections={data.allSections} />
+	{#if editMode}
+		<EditSection
+			work={data.work}
+			bind:section={data.section}
+			on:cancel={toggleEditMode}
+			on:save={toggleEditMode}
+		/>
+	{:else}
+		<SectionContainer
+			work={data.work}
+			section={data.section}
+			allSections={data.allSections}
+			on:edit={toggleEditMode}
+		/>
+	{/if}
 </div>
