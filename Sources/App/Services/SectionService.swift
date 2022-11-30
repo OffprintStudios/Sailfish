@@ -95,7 +95,7 @@ struct SectionService {
         guard let work: Work = try await profile.$works.query(on: request.db).filter(\.$id == workId).first() else {
             throw Abort(.notFound, reason: "The work you're trying to update doesn't exist.")
         }
-        let section = try await request.db.transaction { database in
+        let section: Section = try await request.db.transaction { database in
             guard let section: Section = try await work.$sections.query(on: database).filter(\.$id == id).first() else {
                 throw Abort(.notFound, reason: "The section you're trying to edit doesn't exist.")
             }
@@ -121,7 +121,7 @@ struct SectionService {
         guard let work: Work = try await profile.$works.query(on: request.db).filter(\.$id == workId).first() else {
             throw Abort(.notFound, reason: "The work you're trying to update doesn't exist.")
         }
-        let section = try await request.db.transaction { database in
+        let section: Section = try await request.db.transaction { database in
             guard let section: Section = try await work.$sections.query(on: database).filter(\.$id == id).first() else {
                 throw Abort(.notFound, reason: "The section you're trying to edit doesn't exist.")
             }
