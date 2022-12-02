@@ -21,7 +21,7 @@
 	<meta property="og:image" content="{$profileState.avatar}" />
 
 	<!-- Twitter -->
-	<meta property="twitter:card" content="summary_large_image" />
+	<meta property="twitter:card" content="summary" />
 	<meta property="twitter:url" content="https://offprint.net/profile/{$profileState.id}/{slugify($profileState.username)}" />
 	<meta property="twitter:title" content="{$profileState.username}'s Profile" />
 	<meta
