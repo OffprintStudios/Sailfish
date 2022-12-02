@@ -75,6 +75,7 @@ public func configure(_ app: Application) async throws {
             "http://127.0.0.1:3000",
             "https://offprint.net",
             "https://www.offprint.net",
+            "https://staging.offprint.net",
         ]),
         allowedMethods: [.GET, .POST, .PUT, .PATCH, .OPTIONS],
         allowedHeaders: [
