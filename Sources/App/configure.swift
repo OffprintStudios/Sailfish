@@ -6,7 +6,7 @@ import JWT
 import SotoS3
 
 // configures your application
-public func configure(_ app: Application) throws {
+public func configure(_ app: Application) async throws {
     app.logger.notice("Starting Sailfish API...")
 
     // Setting port
@@ -53,7 +53,7 @@ public func configure(_ app: Application) throws {
         AddCommentSectionField(),
     ])
 
-    try app.autoMigrate().wait()
+    try await app.autoMigrate()
 
     // Setting up queues
     app.logger.notice("Setting up queues...")
