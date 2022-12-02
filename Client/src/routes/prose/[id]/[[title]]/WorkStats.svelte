@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Calendar2Line, Bookmark3Line, BarChart2Line, ShareBoxLine, AlarmWarningLine } from "svelte-remixicon";
+	import { Calendar2Line, BarChart2Line, ShareBoxLine, AlarmWarningLine } from "svelte-remixicon";
 	import type { Work } from "$lib/models/content/works";
 	import { Button } from "$lib/ui/util";
 	import { abbreviate } from "$lib/util/functions";

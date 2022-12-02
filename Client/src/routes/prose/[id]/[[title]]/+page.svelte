@@ -17,17 +17,20 @@
 	<meta name="description" content="{data.shortDesc}" />
 
 	<!-- Open Graph / Facebook -->
-	<meta property="og:type" content="website" />
+	<meta property="og:type" content="book" />
 	<meta property="og:url" content="https://offprint.net/prose/{data.id}/{slugify(data.title)}" />
 	<meta property="og:title" content="{data.title}" />
+	<meta property="book:author" content="https://offprint.net/profile/{data.author.id}/{slugify(data.author.username)}" />
 	<meta
 		property="og:description"
 		content="{data.shortDesc}"
 	/>
 	<meta property="og:image" content="{data.coverArt ?? data.author.avatar}" />
+	<meta property="og:site_name" content="Offprint" />
 
 	<!-- Twitter -->
-	<meta property="twitter:card" content="summary_large_image" />
+	<meta property="twitter:card" content="summary" />
+	<meta property="twitter:site" content="offprint" />
 	<meta property="twitter:url" content="https://offprint.net/prose/{data.id}/{slugify(data.title)}" />
 	<meta property="twitter:title" content="{data.title}" />
 	<meta
