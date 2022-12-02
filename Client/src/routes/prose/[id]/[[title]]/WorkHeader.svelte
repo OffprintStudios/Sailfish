@@ -59,7 +59,7 @@
 				</div>
 			{/if}
 		{/if}
-		<div class="flex-1 relative" class:pl-4={work.coverArt}>
+		<div class="flex-1 relative" class:pl-4={work.coverArt || ($account.account && $account.currProfile && $account.currProfile.id === work.author.id)}>
 			<h1 class="text-3xl text-ellipsis" style="color: var(--text-color);">
 				{work.title}
 			</h1>
