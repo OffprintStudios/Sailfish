@@ -10,7 +10,8 @@
 	<meta name="description" content="{$profileState.info.bio}" />
 
 	<!-- Open Graph / Facebook -->
-	<meta property="og:type" content="website" />
+	<meta property="og:type" content="profile" />
+	<meta property="profile:username" content="{$profileState.username}" />
 	<meta property="og:url" content="https://offprint.net/profile/{$profileState.id}/{slugify($profileState.username)}" />
 	<meta property="og:title" content="{$profileState.username}'s Profile" />
 	<meta
