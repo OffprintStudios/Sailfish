@@ -6,6 +6,8 @@
 	import { Button } from "$lib/ui/util";
 	import { slugify } from "$lib/util/functions";
 	import { AddBoxLine } from "svelte-remixicon";
+	import { openPopup } from "$lib/ui/popup";
+	import AddVolumeDialog from "./AddVolumeDialog.svelte";
 
 	export let work: Work;
 
@@ -18,6 +20,14 @@
 
 	function switchTab(tab: ListTabs) {
 		currTab = tab;
+	}
+
+	function addVolume() {
+		openPopup(AddVolumeDialog, {
+			async onConfirm() {}
+		}, {
+			workId: work.id
+		})
 	}
 </script>
 
@@ -41,7 +51,7 @@
 			{/if}
 		{:else}
 			{#if $account.currProfile && $account.currProfile.id === work.author.id}
-				<Button>
+				<Button on:click={addVolume}>
 					<AddBoxLine class="button-icon" />
 					<span class="button-text">Volume</span>
 				</Button>
