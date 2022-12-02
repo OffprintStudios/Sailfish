@@ -7,6 +7,7 @@
 	import { profileState } from "$lib/state/profile.state";
 	import { account } from "$lib/state/account.state";
 	import type { Profile } from "$lib/models/accounts";
+	import { NavLink } from "../../../../lib/ui/nav";
 
 	export let data: Profile;
 
@@ -41,12 +42,12 @@
 		{/if}
 		<div class="profile-nav bg-zinc-200 dark:bg-zinc-700">
 			<Avatar src={data.avatar} size="150px" borderWidth="2px" />
-			<div class="ml-4 self-center">
-				<div class="flex items-center">
-					<h3 class="mr-2">{data.username}</h3>
+			<div class="lg:ml-4 self-center">
+				<div class="flex flex-col lg:flex-row items-center">
+					<h3>{data.username}</h3>
 					<RoleBadge roles={data.account.roles} size="large" />
 				</div>
-				<div class="flex items-center text-xs">
+				<div class="flex items-center mt-2 lg:mt-0 text-xs">
 					<a
 						class="text-zinc-800 dark:text-white no-underline"
 						href="/profile/{data.id}/{slugify(data.username)}/followers"
@@ -63,38 +64,24 @@
 				</div>
 			</div>
 			<div class="flex-1"><!--spacer--></div>
-			<a
-				class="link hover:no-underline hover:bg-zinc-300 dark:hover:bg-zinc-600"
-				href="/profile/{data.id}/{slugify(data.username)}"
-				class:active={$page.url.pathname === `/profile/${data.id}/${slugify(data.username)}`}
-			>
-				<span class="link-icon"><Home5Line size={iconSize} /></span>
-				<span class="link-name">Home</span>
-			</a>
-			<a
-				class="link hover:no-underline hover:bg-zinc-300 dark:hover:bg-zinc-600"
-				href="/profile/{data.id}/{slugify(data.username)}/blogs"
-				class:active={$page.url.pathname === `/profile/${data.id}/${slugify(data.username)}/blogs`}
-			>
-				<span class="link-icon"><CupLine size={iconSize} /></span>
-				<span class="link-name">Blogs</span>
-			</a>
-			<a
-				class="link hover:no-underline hover:bg-zinc-300 dark:hover:bg-zinc-600"
-				href="/profile/{data.id}/{slugify(data.username)}/works"
-				class:active={$page.url.pathname === `/profile/${data.id}/${slugify(data.username)}/works`}
-			>
-				<span class="link-icon"><QuillPenLine size={iconSize} /></span>
-				<span class="link-name">Works</span>
-			</a>
-			<a
-				class="link hover:no-underline hover:bg-zinc-300 dark:hover:bg-zinc-600"
-				href="/profile/{data.id}/{slugify(data.username)}/shelves"
-				class:active={$page.url.pathname === `/profile/${data.id}/${slugify(data.username)}/shelves`}
-			>
-				<span class="link-icon"><BarChart2Line size={iconSize} /></span>
-				<span class="link-name">Shelves</span>
-			</a>
+			<div class="flex items-center justify-center mt-4 lg:mt-0 lg:justify-end">
+				<NavLink href="/profile/{data.id}/{slugify(data.username)}">
+					<Home5Line class="link-icon" />
+					<span class="link-name">Home</span>
+				</NavLink>
+				<NavLink href="/profile/{data.id}/{slugify(data.username)}/blogs">
+					<CupLine class="link-icon" />
+					<span class="link-name">Blogs</span>
+				</NavLink>
+				<NavLink href="/profile/{data.id}/{slugify(data.username)}/works">
+					<QuillPenLine class="link-icon" />
+					<span class="link-name">Works</span>
+				</NavLink>
+				<NavLink href="/profile/{data.id}/{slugify(data.username)}/shelves">
+					<BarChart2Line class="link-icon" />
+					<span class="link-name">Shelves</span>
+				</NavLink>
+			</div>
 			{#if $account.account && $account.currProfile}
 				{#if $account.currProfile.id === data.id}
 					<div class="h-full mx-1 border border-zinc-300 dark:border-zinc-500"><!--spacer--></div>
@@ -138,9 +125,9 @@
 			}
 		}
 		div.profile-nav {
-			@apply flex items-end px-1.5 py-2 rounded-b-xl h-[77px] relative z-10;
+			@apply flex flex-col items-center justify-center lg:flex-row lg:items-end lg:justify-end px-1.5 py-2 rounded-b-xl lg:h-[77px] relative z-10;
 			h3 {
-				@apply text-4xl;
+				@apply text-3xl lg:text-4xl lg:mr-2;
 			}
 			a.link, button.link {
 				@apply mx-0.5 rounded-lg transition transform;

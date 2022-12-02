@@ -47,7 +47,7 @@
 			<span class="link-name">Guide</span>
 		</button>
 	{/if}
-	<div class="w-10/12 mx-auto border-b border-white my-2"><!--separator--></div>
+	<div class="flex-1 lg:flex-initial lg:block lg:w-10/12 lg:mx-auto lg:border-b lg:border-white lg:my-2"><!--separator--></div>
 	{#if $account.account && $account.currProfile && hasRoles($account.account?.roles, [Roles.Admin, Roles.Moderator, Roles.WorkApprover])}
 		<a
 			class="link"
@@ -128,13 +128,13 @@
 
 <style lang="scss">
 	nav {
-		@apply flex lg:flex-col items-center w-full lg:w-[75px] z-50 relative lg:h-full py-2;
+		@apply flex lg:flex-col items-center w-full lg:w-[75px] z-50 relative lg:h-full px-2 lg:px-0 pt-1.5 pb-1 lg:py-2;
 		background: var(--accent);
 		box-shadow: var(--dropshadow);
 
 		a.link,
 		button.link {
-			@apply p-2 mx-2 mb-1 border-2 border-transparent rounded-lg transition transform text-white flex flex-col items-center justify-center w-[61px] h-[61px] relative;
+			@apply p-2 mx-0.5 lg:mx-2 mb-1 border-2 border-transparent rounded-lg transition transform text-white flex flex-col items-center justify-center lg:w-[61px] lg:h-[61px] relative;
 			&:hover {
 				@apply no-underline;
 				box-shadow: var(--dropshadow);
@@ -155,7 +155,7 @@
 			}
 
 			span.link-name {
-				@apply text-[0.6rem] uppercase font-bold tracking-wider;
+				@apply text-[0.6rem] uppercase font-bold tracking-wider hidden lg:block;
 			}
 		}
 	}

@@ -101,7 +101,7 @@
 		</div>
 	{/if}
 
-	<div class="h-full lg:h-screen overflow-y-auto">
+	<div class="h-full lg:h-screen lg:overflow-y-auto">
 		<slot />
 	</div>
 </div>
@@ -109,15 +109,18 @@
 <style lang="scss">
 	div.guide {
 		@apply h-screen z-40 min-w-full max-w-full md:min-w-[24rem] md:max-w-[24rem];
-		@apply overflow-hidden overflow-y-auto;
+		@apply lg:overflow-hidden lg:overflow-y-auto;
 		box-shadow: var(--dropshadow);
 		background: var(--background);
 
 		div.guide-nav {
-			@apply flex items-center justify-center pt-2 pb-4 sticky top-0 z-10;
-			background: linear-gradient(180.2deg, var(--background) 75%, rgba(255,0,0, 0) 100%);
+			@apply flex items-center justify-center mb-2 lg:mb-0 lg:pt-2 lg:pb-4 sticky top-0 z-10;
+			background: var(--accent);
+			@media (min-width: 1024px) {
+				background: linear-gradient(180.2deg, var(--background) 75%, rgba(255,0,0, 0) 100%);
+			}
 			button {
-				@apply flex flex-col items-center justify-center w-[70px] h-[62px] relative first:rounded-l-md last:rounded-r-md;
+				@apply flex flex-col items-center justify-center w-[60px] h-[52px] lg:w-[70px] lg:h-[62px] relative lg:first:rounded-l-md lg:last:rounded-r-md;
 				@apply transition transform text-white border-b-4 border-t-4 border-t-transparent border-b-transparent transition-all;
 				background: var(--accent);
 				&.active {

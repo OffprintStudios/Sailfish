@@ -1,5 +1,5 @@
 div.panel-container {
-  @apply max-w-[24rem];
+  @apply lg:max-w-[24rem];
   div.title-block {
     @apply flex flex-col items-center justify-center;
     h1 {
