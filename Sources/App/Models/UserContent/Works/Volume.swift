@@ -26,6 +26,9 @@ final class Volume: Model, Content {
     
     @OptionalField(key: "cover_art")
     var coverArt: String?
+
+    @OptionalField(key: "published_on")
+    var publishedOn: Date?
     
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?

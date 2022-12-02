@@ -18,7 +18,7 @@ struct VolumeController: RouteCollection {
         volumes.get("fetch-volumes") { request async throws -> [Volume] in
             let query = try request.query.decode(VolumeQuery.self)
             if let workId = query.workId {
-                return try await request.volumeService.fetchVolumes(for: workId)
+                return try await request.volumeService.fetchVolumes(for: workId, on: query.release)
             } else {
                 throw Abort(.badRequest, reason: noWorkIdReason)
             }
@@ -62,6 +62,16 @@ struct VolumeController: RouteCollection {
                 throw Abort(.badRequest, reason: noWorkIdReason)
             }
         }
+
+        volumesWithAuth.patch("publish-volume", ":id") { request async throws -> Volume in
+            let query = try request.query.decode(VolumeQuery.self)
+            if let workId = query.workId {
+                let id = request.parameters.get("id")!
+                return try await request.volumeService.publishVolume(id, for: workId, on: query.release)
+            } else {
+                throw Abort(.badRequest, reason: noWorkIdReason)
+            }
+        }
         
         volumesWithAuth.delete("delete-volume", ":id") { request async throws -> HTTPResponseStatus in
             let query = try request.query.decode(VolumeQuery.self)
@@ -79,5 +89,6 @@ struct VolumeController: RouteCollection {
 extension VolumeController {
     struct VolumeQuery: Content {
         var workId: String?
+        var release: Date?
     }
 }

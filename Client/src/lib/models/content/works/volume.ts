@@ -7,6 +7,7 @@ export interface Volume {
 	readonly desc: string;
 	readonly sections: Section[];
 	readonly coverArt?: string;
+	readonly publishedOn?: Date;
 	readonly createdAt: Date;
 	readonly updatedAt: Date;
 }
