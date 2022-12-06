@@ -25,7 +25,7 @@ struct AuthController: RouteCollection {
             return try await request.sessionService.refreshSession(with: info)
         }
 
-        auth.post("logout") { request async throws in
+        auth.post("logout") { request async throws -> Response in
             let logoutInfo = try request.content.decode(SessionService.SessionInfo.self)
             return try await request.authService.logout(with: logoutInfo)
         }
