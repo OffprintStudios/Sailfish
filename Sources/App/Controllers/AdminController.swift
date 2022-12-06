@@ -9,7 +9,7 @@ struct AdminController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let admin = routes.grouped("admin").grouped([
             IdentityGuard(needs: [.moderator, .admin]),
-            StatusGuard()
+            BannedGuard(),
         ])
 
         admin.get("fetch-users") { request async throws -> Page<Account> in

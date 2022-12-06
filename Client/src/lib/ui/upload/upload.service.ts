@@ -1,6 +1,7 @@
 import toast from "svelte-french-toast";
-import { account } from "../../state/account.state";
-import { get, writable } from "svelte/store";
+import { writable } from "svelte/store";
+import { postReq } from "../../http";
+import type { ResponseError } from "../../http";
 
 export enum UploadType {
 	CoverArt = "coverart",
@@ -14,11 +15,13 @@ export class UploadService<T> {
 	isUploading = writable<boolean>(false);
 	name = UploadType.CoverArt;
 	itemId = "";
+	profileId = "";
 	result = writable<T | null>(null);
 
-	constructor(name: UploadType, itemId: string) {
+	constructor(name: UploadType, itemId: string, profileId: string) {
 		this.name = name;
 		this.itemId = itemId;
+		this.profileId = profileId;
 	}
 
 	async handleDrop(event: DragEvent): Promise<void> {
@@ -84,30 +87,28 @@ export class UploadService<T> {
 			mime,
 		};
 
-		return await fetch(url, {
-			method: 'POST',
-			headers: {
-				'content-type': 'application/json',
-			},
-			body: JSON.stringify(formData),
-		}).then(async data => {
-			this.result.set(await data.json() as T);
+		const response = await postReq<T>(url, formData);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			this.result.set(response as T);
 			this.isUploading.set(false);
-		})
+		}
 	}
 
 	private determineUrl() {
 		switch(this.name) {
 			case UploadType.Avatar:
-				return `/api/accounts/upload-avatar?profileId=${get(account).currProfile?.id}`;
+				return `/accounts/upload-avatar?profileId=${this.profileId}`;
 			case UploadType.BlogBanner:
-				return `/api/content/blogs/${this.itemId}/upload-banner?profileId=${get(account).currProfile?.id}`;
+				return `/blogs/update-cover/${this.itemId}?profileId=${this.profileId}`;
 			case UploadType.CoverArt:
-				return `/api/content/works/${this.itemId}/upload-coverart?profileId=${get(account).currProfile?.id}`;
+				return `/works/upload-cover/${this.itemId}?profileId=${this.profileId}`;
 			case UploadType.ProfileBanner:
-				return `/api/accounts/upload-banner?profileId=${get(account).currProfile?.id}`;
+				return `/accounts/upload-banner?profileId=${this.profileId}`;
 			case UploadType.WorkBanner:
-				return `/api/content/works/${this.itemId}/upload-banner?profileId=${get(account).currProfile?.id}`
+				return `/works/upload-banner/${this.itemId}?profileId=${this.profileId}`
 		}
 	}
 }

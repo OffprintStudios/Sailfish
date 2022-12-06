@@ -10,7 +10,7 @@ struct BlogController: RouteCollection {
         let blogs = routes.grouped("blogs")
         let blogsWithAuth = blogs.grouped([
             IdentityGuard(needs: [.user], checkProfile: true),
-            StatusGuard()
+            BannedGuard(),
         ])
 
         blogs.get("fetch-blog", ":blogId") { request async throws -> Blog in

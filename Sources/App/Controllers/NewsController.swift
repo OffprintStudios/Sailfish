@@ -10,7 +10,8 @@ struct NewsController: RouteCollection {
         let news = routes.grouped("news")
         let newsWithAuth = news.grouped([
             IdentityGuard(needs: [.admin, .moderator, .contributor], checkProfile: true),
-            StatusGuard()
+            MutedGuard(),
+            BannedGuard(),
         ])
 
         news.get("fetch-posts") { request async throws -> Page<Blog> in

@@ -10,7 +10,8 @@ struct FollowerController: RouteCollection {
         let followers = routes.grouped("followers")
         let followersWithAuth = followers.grouped([
             IdentityGuard(needs: [.user], checkProfile: true),
-            StatusGuard()
+            MutedGuard(),
+            BannedGuard(),
         ])
 
         followers.get("fetch-followers", ":id") { request async throws -> Page<Follower> in

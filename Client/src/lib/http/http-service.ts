@@ -1,10 +1,12 @@
-// NOTE: USE ONLY FOR ENDPOINTS
+// NOTE: USE ONLY FOR CLIENT-SIDE COMPONENTS
 
-import type { AxiosInstance } from "axios";
+import type { AxiosInstance, AxiosRequestConfig } from "axios";
 import Axios from "axios";
-import type { HttpConfig } from "./http-config";
 import { BASE_URL } from "./base-url";
 import type { ResponseError } from "./response-error";
+import { account } from "../state/account.state";
+import { get } from 'svelte/store';
+import type { RefreshPackage } from "../models/accounts";
 
 export const http: AxiosInstance = Axios.create({
 	timeout: 1000 * 60, // Milliseconds * Seconds
@@ -12,7 +14,48 @@ export const http: AxiosInstance = Axios.create({
 	withCredentials: true,
 });
 
-export async function getReq<T = unknown>(url: string, config?: HttpConfig): Promise<T | ResponseError> {
+http.interceptors.request.use((request) => {
+	const token = get(account).token;
+	if (token) {
+		request.headers = {
+			'Authorization': `Bearer ${token}`
+		}
+	}
+	return request;
+})
+
+http.interceptors.response.use(
+	(response) => response,
+	async (error) => {
+		const status = error.response ? error.response.status : null;
+		if (status === 401) {
+			const user = get(account).account;
+			if (user) {
+				const refresh = await fetch(`/api/auth/refresh-token?accountId=${user.id}`, {
+					method: 'POST',
+				});
+				if (refresh.status === 200) {
+					const data: RefreshPackage = await refresh.json();
+					account.update((state) => ({
+						...state,
+						token: data.accessToken,
+					}));
+					return http.request(error.config);
+				} else {
+					account.update(() => ({
+						account: null,
+						profiles: [],
+						currProfile: null,
+						token: null,
+					}));
+				}
+			}
+		}
+		return Promise.reject(error);
+	}
+)
+
+export async function getReq<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T | ResponseError> {
 	return http.get<T>(`${BASE_URL}${url}`, config)
 		.then(res => res.data)
 		.catch(error => {
@@ -28,7 +71,7 @@ export async function getReq<T = unknown>(url: string, config?: HttpConfig): Pro
 		});
 }
 
-export async function delReq<T = unknown>(url: string, config?: HttpConfig): Promise<T | ResponseError> {
+export async function delReq<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T | ResponseError> {
 	return http.delete<T>(`${BASE_URL}${url}`, config)
 		.then(res => res.data)
 		.catch(error => {
@@ -44,7 +87,7 @@ export async function delReq<T = unknown>(url: string, config?: HttpConfig): Pro
 		});
 }
 
-export async function postReq<T = unknown>(url: string, data: unknown, config?: HttpConfig): Promise<T | ResponseError> {
+export async function postReq<T = unknown>(url: string, data: unknown, config?: AxiosRequestConfig): Promise<T | ResponseError> {
 	return http.post<T>(`${BASE_URL}${url}`, data, config)
 		.then(res => res.data)
 		.catch(error => {
@@ -60,7 +103,7 @@ export async function postReq<T = unknown>(url: string, data: unknown, config?: 
 		});
 }
 
-export async function putReq<T = unknown>(url: string, data: unknown, config?: HttpConfig): Promise<T | ResponseError> {
+export async function putReq<T = unknown>(url: string, data: unknown, config?: AxiosRequestConfig): Promise<T | ResponseError> {
 	return http.put<T>(`${BASE_URL}${url}`, data, config)
 		.then(res => res.data)
 		.catch(error => {
@@ -76,7 +119,7 @@ export async function putReq<T = unknown>(url: string, data: unknown, config?: H
 		});
 }
 
-export async function patchReq<T = unknown>(url: string, data: unknown, config?: HttpConfig): Promise<T | ResponseError> {
+export async function patchReq<T = unknown>(url: string, data: unknown, config?: AxiosRequestConfig): Promise<T | ResponseError> {
 	return http.patch<T>(`${BASE_URL}${url}`, data, config)
 		.then(res => res.data)
 		.catch(error => {
@@ -92,7 +135,7 @@ export async function patchReq<T = unknown>(url: string, data: unknown, config?:
 		});
 }
 
-export async function headReq<T = unknown>(url: string, config?: HttpConfig): Promise<T | ResponseError> {
+export async function headReq<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T | ResponseError> {
 	return http.head<T>(`${BASE_URL}${url}`, config)
 		.then(res => res.data)
 		.catch(error => {
@@ -109,6 +152,7 @@ export async function headReq<T = unknown>(url: string, config?: HttpConfig): Pr
 }
 
 function getError(err: any): ResponseError {
+	console.log(err);
 	return {
 		statusCode: err.response.status ?? 500,
 		message: err.response.data.reason ?? err.response.statusText,

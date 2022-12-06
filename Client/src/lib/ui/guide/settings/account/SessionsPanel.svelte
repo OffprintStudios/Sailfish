@@ -4,8 +4,12 @@
 	import { prevPage } from "../../guide.state";
 	import { onMount } from "svelte";
 	import type { Session } from "$lib/models/accounts";
+	import { getReq } from "$lib/http";
+	import type { ResponseError } from "$lib/http";
+	import toast from "svelte-french-toast";
 
 	let sessions: Session[] = [];
+	let loading = false;
 	const iconSize = '32px';
 
 	onMount(async () => {
@@ -13,13 +17,16 @@
 	});
 
 	async function fetchSessions() {
-		const response = await fetch('/api/accounts/fetch-sessions');
-		const body = await response.json();
-		if ((body as Session[]).length >= 0) {
-			sessions = body as Session[];
+		loading = true;
+		const response = await getReq<Session[]>(`/sessions/fetch-sessions`);
+
+		if ((response as ResponseError).statusCode) {
+			const error = response as ResponseError;
+			toast.error(error.message);
 		} else {
-			console.log(body);
+			sessions = response as Session[];
 		}
+		loading = false;
 	}
 
 	function getOS(osStr: string): string {
@@ -56,54 +63,61 @@
 			</Button>
 		</div>
 	</div>
-	<div class="content-container">
-		{#if sessions.length === 0}
-			<div class="empty">
-				<h3>No sessions found</h3>
-				<p>Strange. Shouldn't there be something here?</p>
-			</div>
-		{:else}
-			{#each sessions as session}
-				<div class="session-block bg-zinc-200 dark:bg-zinc-700">
+	{#if loading}
+		<div class="empty">
+			<h3>Loading...</h3>
+			<p>Stand by for awesome.</p>
+		</div>
+	{:else}
+		<div class="content-container">
+			{#if sessions.length === 0}
+				<div class="empty">
+					<h3>No sessions found</h3>
+					<p>Strange. Shouldn't there be something here?</p>
+				</div>
+			{:else}
+				{#each sessions as session}
+					<div class="session-block bg-zinc-200 dark:bg-zinc-700">
 					<span class="font-mono text-xs text-zinc-400 text-center mb-4">
 						<strong>ID:</strong> {session.id}
 					</span>
-					<div class="flex items-center justify-center">
-						<div class="flex flex-col items-center mx-2">
-							{#if getOS(session.deviceInfo.os) === 'macOS'}
-								<AppleFill size={iconSize} />
-								<span>macOS</span>
-							{:else if getOS(session.deviceInfo.os) === 'Windows'}
-								<WindowsFill size={iconSize} />
-								<span>Windows</span>
-							{:else}
-								<QuestionFill size={iconSize} />
-								<span>Unknown</span>
-							{/if}
-						</div>
-						<div class="flex flex-col items-center mx-2">
-							{#if getBrowser(session.deviceInfo.browser) === 'Chrome'}
-								<ChromeFill size={iconSize} />
-								<span>Chrome</span>
-							{:else if getBrowser(session.deviceInfo.browser) === 'Safari'}
-								<SafariFill size={iconSize} />
-								<span>Safari</span>
-							{:else if getBrowser(session.deviceInfo.browser) === 'Firefox'}
-								<FirefoxFill size={iconSize} />
-								<span>Firefox</span>
-							{:else if getBrowser(session.deviceInfo.browser) === 'Edge'}
-								<EdgeFill size={iconSize} />
-								<span>Edge</span>
-							{:else}
-								<QuestionFill size={iconSize} />
-								<span>Unknown</span>
-							{/if}
+						<div class="flex items-center justify-center">
+							<div class="flex flex-col items-center mx-2">
+								{#if getOS(session.deviceInfo.os) === 'macOS'}
+									<AppleFill size={iconSize} />
+									<span>macOS</span>
+								{:else if getOS(session.deviceInfo.os) === 'Windows'}
+									<WindowsFill size={iconSize} />
+									<span>Windows</span>
+								{:else}
+									<QuestionFill size={iconSize} />
+									<span>Unknown</span>
+								{/if}
+							</div>
+							<div class="flex flex-col items-center mx-2">
+								{#if getBrowser(session.deviceInfo.browser) === 'Chrome'}
+									<ChromeFill size={iconSize} />
+									<span>Chrome</span>
+								{:else if getBrowser(session.deviceInfo.browser) === 'Safari'}
+									<SafariFill size={iconSize} />
+									<span>Safari</span>
+								{:else if getBrowser(session.deviceInfo.browser) === 'Firefox'}
+									<FirefoxFill size={iconSize} />
+									<span>Firefox</span>
+								{:else if getBrowser(session.deviceInfo.browser) === 'Edge'}
+									<EdgeFill size={iconSize} />
+									<span>Edge</span>
+								{:else}
+									<QuestionFill size={iconSize} />
+									<span>Unknown</span>
+								{/if}
+							</div>
 						</div>
 					</div>
-				</div>
-			{/each}
-		{/if}
-	</div>
+				{/each}
+			{/if}
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">

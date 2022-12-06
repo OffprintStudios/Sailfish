@@ -8,6 +8,8 @@
 	import { TextField, Editor } from "$lib/ui/forms";
 	import { Button } from "$lib/ui/util";
 	import { slugify } from "$lib/util/functions";
+	import { postReq } from "$lib/http";
+	import type { ResponseError } from "$lib/http";
 	import toast from "svelte-french-toast";
 
 	const work: Work = $page.data as Work;
@@ -23,18 +25,12 @@
 				noteBottom: hasBottom ? values.noteBottom : null,
 			};
 
-			const response = await fetch(`/api/content/works/${work.id}/sections/create-section?profileId=${$account.currProfile.id}`, {
-				method: 'POST',
-				body: JSON.stringify(formInfo),
-				headers: {
-					'content-type': 'application/json',
-				},
-			});
-
-			if (response.status === 200) {
-				await goto(`/prose/${work.id}/${slugify(work.title)}`);
+			const response = await postReq<void>(`/sections/create-section?workId=${work.id}&profileId=${$account.currProfile.id}`, formInfo);
+			if ((response as ResponseError).error) {
+				const error = response as ResponseError;
+				toast.error(error.message);
 			} else {
-				toast.error(`Something went wrong! Try again in a little bit.`);
+				await goto(`/prose/${work.id}/${slugify(work.title)}`);
 			}
 		},
 		validate(values) {

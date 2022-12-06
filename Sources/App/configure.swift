@@ -71,14 +71,14 @@ public func configure(_ app: Application) async throws {
     // CORS configuration
     app.logger.notice("Assigning CORS configuration...")
     let corsConfiguration = CORSMiddleware.Configuration(
-        allowedOrigin: CORSMiddleware.AllowOriginSetting.any([
+        allowedOrigin: .any([
             "http://localhost:3000",
             "http://127.0.0.1:3000",
             "https://offprint.net",
             "https://www.offprint.net",
             "https://staging.offprint.net",
         ]),
-        allowedMethods: [.GET, .POST, .PUT, .PATCH, .OPTIONS],
+        allowedMethods: [.GET, .POST, .PUT, .PATCH, .DELETE, .OPTIONS],
         allowedHeaders: [
             .accept,
             .authorization,
@@ -87,7 +87,8 @@ public func configure(_ app: Application) async throws {
             .xRequestedWith,
             .userAgent,
             .accessControlAllowOrigin
-        ]
+        ],
+        allowCredentials: true
     )
     let cors = CORSMiddleware(configuration: corsConfiguration)
     app.middleware.use(cors, at: .beginning)

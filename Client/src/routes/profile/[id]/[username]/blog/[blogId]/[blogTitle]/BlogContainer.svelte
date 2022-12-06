@@ -27,12 +27,14 @@
 	import { Dropdown } from "$lib/ui/dropdown";
 	import type { ResponseError } from "$lib/http";
 	import { openPopup } from "$lib/ui/popup";
+	import { getReq, postReq, delReq, patchReq } from "$lib/http";
 	import { default as DeleteBlogPrompt } from './DeleteBlogPrompt.svelte';
 	import { UploadBlogBanner } from "$lib/ui/upload";
 
 	export let blog: Blog;
 	const iconSize = '24px';
 	let isEditing = false;
+	let isPublishing = false;
 	let hasFavorited: FavoriteBlog = null;
 	let loadingFavorite = false;
 
@@ -52,41 +54,34 @@
 
 	async function fetchFavorite() {
 		loadingFavorite = true;
-		const response = await fetch(`/api/content/blogs/${blog.id}/fetch-favorite?profileId=${$account.currProfile?.id}`, {
-			method: 'GET',
-		});
-
-		if (response.status === 200) {
-			hasFavorited = await response.json();
-		} else {
+		const response = await getReq<FavoriteBlog>(`/blogs/fetch-favorite/${blog.id}?profileId=${$account.currProfile?.id}`);
+		if ((response as ResponseError).error) {
 			hasFavorited = null;
+		} else {
+			hasFavorited = response as FavoriteBlog;
 		}
 		loadingFavorite = false;
 	}
 
 	async function favoriteBlog() {
 		loadingFavorite = true;
-		const response = await fetch(`/api/content/blogs/${blog.id}/favorite-blog?profileId=${$account.currProfile?.id}`, {
-			method: 'POST',
-		});
-
-		if (response.status === 200) {
-			hasFavorited = await response.json();
+		const response = await postReq<FavoriteBlog>(`/blogs/add-favorite/${blog.id}?profileId=${$account.currProfile?.id}`, {});
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
 		} else {
-			toast.error("Something went wrong! Try again in a little bit.");
+			hasFavorited = response as FavoriteBlog;
 		}
 		loadingFavorite = false;
 	}
 
 	async function unfavoriteBlog() {
-		const response = await fetch(`/api/content/blogs/${blog.id}/unfavorite-blog?profileId=${$account.currProfile?.id}`, {
-			method: 'DELETE',
-		});
-
-		if (response.status === 200) {
-			hasFavorited = null;
+		const response = await delReq<void>(`/blogs/remove-favorite/${blog.id}?profileId=${$account.currProfile?.id}`);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
 		} else {
-			toast.error("Something went wrong! Try again in a little bit.");
+			hasFavorited = null;
 		}
 		loadingFavorite = false;
 	}
@@ -100,58 +95,32 @@
 				title: values.title
 			};
 
-			const response = await fetch(`/api/content/blogs/${blog.id}/update-blog?profileId=${$account.currProfile?.id}`, {
-				method: 'PATCH',
-				body: JSON.stringify(formInfo),
-			});
-
-			if (response.status === 200) {
-				toast.success("Changes saved");
-				blog = await response.json();
-				isEditing = false;
+			const response = await patchReq<Blog>(`/api/content/blogs/${blog.id}/update-blog?profileId=${$account.currProfile?.id}`, formInfo);
+			if ((response as ResponseError).error) {
+				const error = response as ResponseError;
+				toast.error(error.message);
 			} else {
-				const responseError: ResponseError = await response.json();
-				toast.error(`${responseError.statusCode}: ${responseError.message}`);
+				toast.success("Changes saved!");
+				blog = response as Blog;
+				isEditing = false;
 			}
 		},
 	});
 
-	async function publishBlog(date: Date = new Date()) {
+	async function publishBlog(date?: Date) {
+		isPublishing = true;
 		const pubBlog: PublishBlogForm = {
-			pubDate: date.toISOString(). split('.')[0] + 'Z'
+			pubDate: date ? date.toISOString(). split('.')[0] + 'Z' : null,
 		};
-
-		const response = await fetch(`/api/content/blogs/${blog.id}/publish-blog?profileId=${$account.currProfile?.id}`, {
-			method: 'PATCH',
-			body: JSON.stringify(pubBlog),
-		});
-
-		if (response.status === 200) {
-			toast.success("Changes saved");
-			blog = await response.json();
+		const response = await patchReq<Blog>(`/blogs/publish-blog/${blog.id}?profileId=${$account.currProfile?.id}`, pubBlog);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
 		} else {
-			const responseError: ResponseError = await response.json();
-			toast.error(`${responseError.statusCode}: ${responseError.message}`);
+			toast.success("Changes saved!");
+			blog = response as Blog;
 		}
-	}
-
-	async function unpublishBlog() {
-		const pubBlog: PublishBlogForm = {
-			pubDate: null
-		};
-
-		const response = await fetch(`/api/content/blogs/${blog.id}/publish-blog?profileId=${$account.currProfile?.id}`, {
-			method: 'PATCH',
-			body: JSON.stringify(pubBlog),
-		});
-
-		if (response.status === 200) {
-			toast.success("Changes saved");
-			blog = await response.json();
-		} else {
-			const responseError: ResponseError = await response.json();
-			toast.error(`${responseError.statusCode}: ${responseError.message}`);
-		}
+		isPublishing = false;
 	}
 
 	async function updateCover() {
@@ -167,15 +136,13 @@
 	async function deleteBlog() {
 		openPopup(DeleteBlogPrompt, {
 			async onConfirm() {
-				const response = await fetch(`/api/content/blogs/${blog.id}/delete-blog?profileId=${$account.currProfile?.id}`, {
-					method: 'DELETE',
-				});
-
-				if (response.status === 200) {
-					toast.success("Blog deleted");
-					await goto(`/profile/${blog.author.id}/${slugify(blog.author.username)}/blogs`);
+				const response = await delReq<void>(`/blogs/delete-blog/${blog.id}?profileId=${$account.currProfile?.id}`);
+				if ((response as ResponseError).error) {
+					const error = response as ResponseError;
+					toast.error(error.message);
 				} else {
-					toast.error(`${response.status}: Something went wrong! Try again in a little bit.`);
+					toast.success("Changes saved!");
+					await goto(`/profile/${blog.author.id}/${slugify(blog.author.username)}/blogs`);
 				}
 			}
 		});
@@ -222,9 +189,9 @@
 					</Button>
 					<div class="my-0.5"><!--spacer--></div>
 					{#if blog.publishedOn}
-						<Button classes="md:w-full md:justify-center" on:click={() => unpublishBlog()}>
+						<Button classes="md:w-full md:justify-center" on:click={() => publishBlog(null)}>
 							<EditBoxLine class="button-icon" />
-							<span class="button-text">Draft</span>
+							<span class="button-text">Unpublish</span>
 						</Button>
 					{:else}
 						<Dropdown position="right-start">
@@ -233,7 +200,7 @@
 								<span class="button-text">Publish</span>
 							</svelte:fragment>
 							<svelte:fragment slot="items">
-								<button type="button" on:click={() => publishBlog()}>
+								<button type="button" on:click={() => publishBlog(new Date())}>
 									<CalendarEventLine class="mr-2" />
 									<span>Publish Now</span>
 								</button>

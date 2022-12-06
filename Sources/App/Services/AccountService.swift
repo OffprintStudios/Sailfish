@@ -32,6 +32,17 @@ struct AccountService {
     /// Creates a new profile for a user
     func createProfile(with profileForm: Profile.ProfileForm) async throws -> Profile {
         let account = try request.authService.getUser().account
+        let existingUser = try await Profile.query(on: request.db).filter(\.$username == profileForm.username).first()
+        
+        if existingUser != nil {
+            throw Abort(.conflict, reason: "This username has already been taken.")
+        }
+        
+        try await account.$profiles.load(on: request.db)
+        if account.profiles.count == MAX_PROFILE_LIMIT {
+            throw Abort(.conflict, reason: "Only \(MAX_PROFILE_LIMIT) profiles are allowed per account.")
+        }
+        
         let newProfile = try Profile(from: profileForm)
         try await account.$profiles.create(newProfile, on: request.db)
         return newProfile

@@ -9,6 +9,8 @@
 	import { BlogCard } from "$lib/ui/content";
 	import toast from "svelte-french-toast";
 	import { Paginator } from "$lib/ui/util";
+	import { getReq } from "$lib/http";
+	import type { ResponseError } from "$lib/http";
 
 	let blogs: Blog[] = [];
 	let pageNum = $page.url.searchParams.has("page") ? $page.url.searchParams.get("page") : 1;
@@ -22,27 +24,25 @@
 
 	async function fetchPending() {
 		loading = true;
-
-		const response = await fetch(
-			'/api/content/blogs/fetch-blogs?' +
+		const response = await getReq<Paginate<Blog>>(
+			'/blogs/fetch-blogs?' +
 			'profileId=' + $account.currProfile.id + '&' +
 			'status=' + ApprovalStatus.pending + '&' +
 			'filter=' + ContentFilter.everything + '&' +
 			'page=' + pageNum + '&' +
 			'per=' + per
 		);
-
-		if (response.status === 200) {
-			const result: Paginate<Blog> = await response.json();
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			const result = response as Paginate<Blog>;
 			blogs = result.items;
 			pageNum = result.metadata.page;
 			per = result.metadata.per;
 			total = result.metadata.total;
-			loading = false;
-		} else {
-			toast.error("Something went wrong! Try again in a little bit.");
-			loading = false;
 		}
+		loading = false;
 	}
 </script>
 

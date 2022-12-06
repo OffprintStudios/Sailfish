@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
-	import { profileState } from "$lib/state/profile.state";
+	import { page } from "$app/stores";
 	import { account } from "$lib/state/account.state";
 	import { createForm } from "felte";
 	import { AddLine, QuillPenLine } from "svelte-remixicon";
@@ -15,7 +15,11 @@
 	import { TagBadge } from "$lib/ui/content";
 	import toast from "svelte-french-toast";
 	import { slugify } from "$lib/util/functions";
+	import { getReq, postReq } from "$lib/http";
+	import type { ResponseError } from "$lib/http";
+	import type { Profile } from "$lib/models/accounts";
 
+	const profile = $page.data as Profile;
 	let genres: {tag: Tag, isChosen: boolean}[] = [];
 	let selectedGenres: string[] = [];
 	let fandoms: {tag: Tag, isChosen: boolean}[] = [];
@@ -36,16 +40,28 @@
 	}
 
 	async function fetchGenres() {
-		const response = await fetch(`/api/content/tags/fetch-tags?kind=${TagKind.genre}&withCounts=false&ascending=true`);
-		const val = await response.json();
-		genres = val.data;
+		const response = await getReq<{ tag: Tag, works: number, isChosen: boolean }[]>(
+			`/tags/fetch-tags?kind=${TagKind.genre}&withCounts=false&ascending=true`
+		);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			genres = response as { tag: Tag, works: number, isChosen: boolean }[];
+		}
 	}
 
 	async function fetchFandoms() {
 		loadingFandoms = true;
-		const response = await fetch(`/api/content/tags/fetch-tags?kind=${TagKind.fandom}&withCounts=false&ascending=true`);
-		const val = await response.json();
-		fandoms = val.data;
+		const response = await getReq<{ tag: Tag, works: number, isChosen: boolean }[]>(
+			`/tags/fetch-tags?kind=${TagKind.fandom}&withCounts=false&ascending=true`
+		);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			fandoms = response as { tag: Tag, works: number, isChosen: boolean }[];
+		}
 		loadingFandoms = false;
 	}
 
@@ -107,19 +123,13 @@
 				values.tags = [...selectedGenres, ...selectedFandoms];
 			}
 
-			const response = await fetch(`/api/content/works/create-work?profileId=${$account.currProfile?.id}`, {
-				body: JSON.stringify(values),
-				method: 'POST',
-				headers: {
-					'content-type': 'application/json'
-				}
-			});
-
-			if (response.status === 200) {
-				const work: Work = await response.json();
-				await goto(`/prose/${work.id}/${slugify(work.title)}`);
+			const response = await postReq<Work>(`/works/create-work?profileId=${$account.currProfile?.id}`, values);
+			if ((response as ResponseError).error) {
+				const error = response as ResponseError;
+				toast.error(error.message);
 			} else {
-				toast.error(`Something went wrong! Try again in a little bit.`);
+				const work = response as Work;
+				await goto(`/prose/${work.id}/${slugify(work.title)}`);
 			}
 		},
 		validate(values) {
@@ -172,7 +182,7 @@
 	<title>Create a New Work &mdash; Offprint</title>
 </svelte:head>
 
-{#if $account.account && $account.currProfile && $account.currProfile.id === $profileState.id}
+{#if $account.account && $account.currProfile && $account.currProfile.id === profile.id}
 	<form class="max-w-4xl mx-auto rounded-xl overflow-hidden flex flex-col bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed" use:form>
 		<div class="flex items-center justify-center px-2 py-4" style="background: var(--accent);">
 			<QuillPenLine size="48px" class="text-white mr-2" />

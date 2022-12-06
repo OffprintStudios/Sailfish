@@ -10,6 +10,7 @@
 	import AddVolumeDialog from "./AddVolumeDialog.svelte";
 
 	export let work: Work;
+	let volList = VolumesList;
 
 	enum ListTabs {
 		sections,
@@ -24,7 +25,9 @@
 
 	function addVolume() {
 		openPopup(AddVolumeDialog, {
-			async onConfirm() {}
+			async onConfirm() {
+				await volList.fetchVolumes();
+			}
 		}, {
 			workId: work.id
 		})
@@ -62,7 +65,7 @@
 		{#if currTab === ListTabs.sections}
 			<SectionsList work={work} />
 		{:else}
-			<VolumesList work={work} />
+			<VolumesList bind:this={volList} work={work} />
 		{/if}
 	</div>
 </div>

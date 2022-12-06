@@ -10,7 +10,7 @@ struct WorkController: RouteCollection {
         let works = routes.grouped("works")
         let worksWithAuth = works.grouped([
             IdentityGuard(needs: [.user], checkProfile: true),
-            StatusGuard()
+            BannedGuard(),
         ])
         
         works.get("fetch-work", ":id") { request async throws -> Work in

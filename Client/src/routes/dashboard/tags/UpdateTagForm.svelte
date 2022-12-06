@@ -6,6 +6,8 @@
 	import { TextField, TextArea } from '$lib/ui/forms';
 	import type { Tag, TagForm } from "$lib/models/tags";
 	import { TagKind } from "$lib/models/tags";
+	import { patchReq } from "$lib/http";
+	import type { ResponseError } from "$lib/http";
 	import toast from "svelte-french-toast";
 
 	const tag: Tag = $popup.data;
@@ -29,14 +31,13 @@
 				kind: values.kind,
 			};
 
-			const response = await fetch(`/api/content/tags/${tag.id}/update-tag`, { method: 'PATCH', body: JSON.stringify(formInfo), headers: {
-					'content-type': 'application/json'
-				} });
-			if (response.status === 200) {
-				context.reset();
-				closePopupAndConfirm(await response.json());
+			const response = await patchReq<Tag>(`/tags/update-tag/${tag.id}`, formInfo);
+			if ((response as ResponseError).error) {
+				const error = response as ResponseError;
+				toast.error(error.message);
 			} else {
-				toast.error('Something went wrong! Try again in a little bit.');
+				context.reset();
+				closePopupAndConfirm(response as Tag);
 			}
 		},
 		validate: (values) => {

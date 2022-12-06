@@ -22,15 +22,16 @@
 	async function logOut() {
 		openPopup(LogOutAlert, {
 			async onConfirm() {
-				const response = await fetch(`/api/auth/log-out`, { method: 'GET' });
+				const response = await fetch(`/api/auth/log-out?accountId=${$account.account.id}`, { method: 'POST' });
 				if (response.status === 200) {
 					toast.success("See you later!");
 					$account.account = null;
 					$account.currProfile = null;
 					$account.profiles = [];
+					$account.token = null;
 					closeGuide();
 				} else {
-					toast.error(`${response.status}: Something went wrong! Try again in a little bit.`);
+					toast.error(`Something went wrong! Try again in a little bit.`);
 				}
 			}
 		})

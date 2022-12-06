@@ -12,7 +12,7 @@ struct SectionController: RouteCollection {
         let sections = routes.grouped("sections")
         let sectionsWithAuth = sections.grouped([
             IdentityGuard(needs: [.user], checkProfile: true),
-            StatusGuard()
+            BannedGuard()
         ])
         
         sections.get("fetch-section", ":id") { request async throws -> Section in

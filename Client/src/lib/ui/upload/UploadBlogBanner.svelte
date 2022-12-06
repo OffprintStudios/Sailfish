@@ -4,8 +4,9 @@
 	import { Button } from "../util";
 	import { UploadService, UploadType } from "./upload.service";
 	import type { Blog } from "../../models/content";
+	import { account } from "../../state/account.state";
 
-	const uploadService = new UploadService<Blog>(UploadType.BlogBanner, $popup.data.blogId);
+	const uploadService = new UploadService<Blog>(UploadType.BlogBanner, $popup.data.blogId, $account.currProfile.id);
 	let uploading = false;
 
 	async function handleDrop(e) {

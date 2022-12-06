@@ -15,19 +15,21 @@ struct AuthService {
 
     /// Creates a new account, saves it to the database, then returns a valid long session
     /// for this user.
-    ///
-    /// - Throws: when a new account fails to be created for any reason, or when a session fails to be created
     func register(with registerForm: Account.RegisterForm) async throws -> Session.ClientPackage {
+        let existingEmail = try await Account.query(on: request.db).filter(\.$email == registerForm.email).first()
+        
+        if existingEmail != nil {
+            throw Abort(.conflict, reason: "An account with this email already exists.")
+        }
+        
         let newAccount = try Account(formData: registerForm)
         try await newAccount.save(on: request.db)
         try await request.auditLogService.create(newAccount.id!, reason: "Account Created")
-        return try await request.sessionService.createSession(for: newAccount, session: true)
+        return try await request.sessionService.createSession(for: newAccount)
     }
 
     /// Logs in an existing user by first verifying that the account exists, then verifying the password
     /// matches our records.
-    ///
-    /// - Throws: if login fails for any reason, or if creating a session fails for any reason
     func login(with loginForm: Account.LoginForm) async throws -> Session.ClientPackage {
         guard let existingAccount = try await Account.query(on: request.db).filter(\.$email == loginForm.email).first() else {
             throw Abort(.notFound, reason: "Your email or password don't match our records.")
@@ -42,7 +44,7 @@ struct AuthService {
         }
 
         if compareResult == true {
-            return try await request.sessionService.createSession(for: existingAccount, session: loginForm.rememberMe)
+            return try await request.sessionService.createSession(for: existingAccount)
         } else {
             throw Abort(.notFound, reason: "Your email or password don't match our records.")
         }
@@ -50,28 +52,22 @@ struct AuthService {
 
     /// Logs out a user and erases their session. Any cookie erasure should happen on the client,
     /// so we only check to see if the `Authorization` header has been passed one final time.
-    func logout() async throws -> Response {
-        let res = Response()
-
-        guard let verifiedToken = try? request.jwt.verify(as: Session.TokenPayload.self) else {
-            throw Abort(.badRequest, reason: "Something went wrong.")
-        }
-
-        guard let account = try await Account.find(verifiedToken.accountId, on: request.db) else {
+    func logout(with info: SessionService.SessionInfo) async throws -> Response {
+        guard let account = try await Account.find(info.accountId, on: request.db) else {
             throw Abort(.notFound, reason: "Something went wrong.")
         }
-
-        try await account.$sessions.query(on: request.db).filter(\.$id == verifiedToken.accessKey).delete()
-        res.status = .ok
-        return res
+        if let refreshToken = info.refreshToken.fromBase64() {
+            guard let id = UUID(uuidString: refreshToken) else {
+                throw Abort(.internalServerError, reason: "Could not decide refresh token!")
+            }
+            try await account.$sessions.query(on: request.db).filter(\.$id == id).delete()
+        }
+        return .init(status: .ok)
     }
 
 
     /// Retrieves a user's account from `request.user`. If `withProfile` is true, we also retrieve
     /// the associated profile. Otherwise, `profile` is `nil`
-    ///
-    /// - Throws: if `request.user` doesn't have either an account or a profile, or if it simply doesn't
-    /// have an account
     func getUser(withProfile: Bool = false) throws -> (account: Account, profile: Profile?) {
         if withProfile {
             if let account = request.user?.account, let profile = request.user?.profile {

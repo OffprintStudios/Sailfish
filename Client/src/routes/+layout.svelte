@@ -13,6 +13,7 @@
 		$account.account = null;
 		$account.currProfile = null;
 		$account.profiles = [];
+		$account.token = null;
 	}
 </script>
 

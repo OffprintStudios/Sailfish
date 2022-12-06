@@ -10,7 +10,8 @@ struct CommentController: RouteCollection {
         let comments = routes.grouped("comments")
         let commentsWithAuth = comments.grouped([
             IdentityGuard(needs: [.user], checkProfile: true),
-            StatusGuard(),
+            MutedGuard(),
+            BannedGuard(),
             ThreadBlacklistGuard(),
         ])
 

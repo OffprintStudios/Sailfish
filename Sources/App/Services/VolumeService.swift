@@ -85,6 +85,7 @@ struct VolumeService {
             }
             volume.publishedOn = release
             try await volume.save(on: database)
+            try await request.workService.updateWordCount(work)
             return volume
         }
     }

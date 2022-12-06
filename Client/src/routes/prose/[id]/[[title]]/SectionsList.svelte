@@ -3,9 +3,10 @@
 	import { account } from "$lib/state/account.state";
 	import type { Section, Work } from "$lib/models/content/works";
 	import { CheckboxCircleLine, CheckboxBlankCircleLine, DeleteBinLine, Loader5Line } from "svelte-remixicon";
-	import { BASE_URL } from "$lib/http";
 	import { slugify, localeDate } from "$lib/util/functions";
 	import toast from "svelte-french-toast";
+	import { getReq, patchReq, delReq } from "$lib/http";
+	import type { ResponseError } from "$lib/http";
 	import DeleteSectionPrompt from "./DeleteSectionPrompt.svelte";
 	import { openPopup } from "$lib/ui/popup";
 
@@ -22,61 +23,48 @@
 	async function fetchSections() {
 		loading = true;
 		if ($account.account && $account.currProfile && $account.currProfile.id === work.author.id) {
-			const response = await fetch(`${BASE_URL}/sections/fetch-sections?workId=${work.id}`);
-			if (response.status === 200) {
-				sections = await response.json();
-				loading = false;
+			const response = await getReq<Section[]>(`/sections/fetch-sections?workId=${work.id}`);
+			if ((response as ResponseError).error) {
+				const error = response as ResponseError;
+				toast.error(error.message);
 			} else {
-				toast.error(`Something went wrong fetching this work's sections. Try again in a little bit.`);
-				loading = false;
+				sections = response as Section[];
 			}
 		} else {
-			const response = await fetch(`${BASE_URL}/sections/fetch-sections?workId=${work.id}&published=true`);
-			if (response.status === 200) {
-				sections = await response.json();
-				loading = false;
+			const response = await getReq<Section[]>(`/sections/fetch-sections?workId=${work.id}&published=true`);
+			if ((response as ResponseError).error) {
+				const error = response as ResponseError;
+				toast.error(error.message);
 			} else {
-				toast.error(`Something went wrong fetching this work's sections. Try again in a little bit.`);
-				loading = false;
+				sections = response as Section[];
 			}
 		}
+		loading = false;
 	}
 
 	async function publishSection(id: string) {
 		publishing = true;
-		const response = await fetch(`/api/content/works/${work.id}/sections/${id}/publish-section?profileId=${$account.currProfile.id}`, {
-			method: 'PATCH',
-		});
-		if (response.status === 200) {
-			const section: Section = await response.json();
-			sections = sections.map(item => {
-				if (item.id === section.id) {
-					return section;
-				} else {
-					return item;
-				}
-			});
-			publishing = false;
+		const response = await patchReq<Section>(`/sections/publish-section/${id}?workId=${work.id}&profileId=${$account.currProfile.id}`, {});
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
 		} else {
-			toast.error(`Something went wrong! Try again in a little bit.`);
-			publishing = false;
+			const section = response as Section;
+			sections = sections.map(item => item.id === section.id ? section : item);
 		}
+		publishing = false;
 	}
 
 	async function deleteSection(id: string) {
 		openPopup(DeleteSectionPrompt, {
 			async onConfirm() {
 				deleting = true;
-				const response = await fetch(`/api/content/works/${work.id}/sections/${id}/delete-section?profileId=${$account.currProfile.id}`, {
-					method: 'DELETE'
-				});
-				if (response.status === 200) {
-					sections = sections.filter(item => item.id !== id);
-					deleting = false;
-				} else {
-					toast.error(`Something went wrong! Try again in a little bit.`);
-					deleting = false;
+				const response = await delReq<void>(`/sections/delete-section/${id}?workId=${work.id}&profileId=${$account.currProfile.id}`);
+				if ((response as ResponseError).error) {
+					const error = response as ResponseError;
+					toast.error(error.message);
 				}
+				deleting = false;
 			}
 		});
 	}

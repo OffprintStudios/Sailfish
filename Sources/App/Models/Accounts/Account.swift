@@ -71,7 +71,6 @@ extension Account {
     struct LoginForm: Content {
         var email: String
         var password: String
-        var rememberMe: Bool
     }
 
     struct ChangeEmail: Content {

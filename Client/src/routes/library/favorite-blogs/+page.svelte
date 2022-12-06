@@ -5,6 +5,8 @@
 	import type { FavoriteBlog } from "$lib/models/content";
 	import { BlogCard } from "$lib/ui/content";
 	import { Paginator } from "$lib/ui/util";
+	import { BASE_URL, getReq } from "$lib/http";
+	import type { ResponseError } from "$lib/http";
 	import toast  from "svelte-french-toast";
 
 	let loading = false;
@@ -16,14 +18,12 @@
 
 	async function fetchData(page: number) {
 		loading = true;
-		const response = await fetch(`/api/content/blogs/fetch-favorites?profileId=${$account.currProfile?.id}&page=${page}&per=15`, {
-			method: 'GET'
-		});
-
-		if (response.status === 200) {
-			data = await response.json();
+		const response = await getReq<Paginate<FavoriteBlog>>(`${BASE_URL}/blogs/fetch-favorites?profileId=${$account.currProfile.id}&page=${page}&per=15`);
+		if ((response as ResponseError).error) {
+			const errorMsg = response as ResponseError;
+			toast.error(errorMsg.message);
 		} else {
-			toast.error('Something went wrong fetching your favorite blogs!');
+			data = response as Paginate<FavoriteBlog>;
 		}
 		loading = false;
 	}

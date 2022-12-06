@@ -5,7 +5,6 @@
 import Vapor
 import Fluent
 
-
 /// Checks to see if the user attempting to post a comment to a thread is
 /// currently blacklisted. Use only on comment threads, and only after all other
 /// guards.

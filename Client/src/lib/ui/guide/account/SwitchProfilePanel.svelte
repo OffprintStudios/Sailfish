@@ -2,46 +2,56 @@
 	import { createForm } from "felte";
 	import { account } from "$lib/state/account.state";
 	import { Avatar, Button } from "$lib/ui/util";
-	import type { ProfileForm } from "$lib/models/accounts";
+	import type { Profile, ProfileForm } from "$lib/models/accounts";
 	import { Presence } from "$lib/models/accounts";
 	import { TextArea, TextField } from "$lib/ui/forms";
 	import { AddBoxLine, CheckLine, CloseLine, ArrowLeftSLine } from "svelte-remixicon";
 	import { guide, prevPage } from "../guide.state";
+	import { postReq } from "$lib/http";
+	import type { ResponseError } from "$lib/http";
 	import toast from "svelte-french-toast";
 
 	let showAddForm = false;
 
-	const { form, errors, isSubmitting } = createForm({
+	const { form, errors, isSubmitting } = createForm<ProfileForm>({
 		onSubmit: async (values, context) => {
 			const formInfo: ProfileForm = {
 				username: values.username,
 				presence: Presence.Offline,
 				bio: values.bio,
 			};
-			await fetch('/api/accounts/create-profile', { method: 'POST', body: JSON.stringify(formInfo), credentials: 'include' })
-				.then(async (response) => {
-					const data = await response.json();
-					if (response.status === 200) {
-						$account.profiles = [...$account.profiles, data];
-						toast.success('Profile added!');
-						context.reset();
-						showAddForm = false;
-					} else {
-						toast.error('Something went wrong! Try again in a little bit.');
-					}
-				})
+			const response = await postReq<Profile>(`/accounts/create-profile`, formInfo);
+			if ((response as Profile).id) {
+				$account.profiles = [...$account.profiles, (response as Profile)];
+				toast.success(`Profile added!`);
+				context.reset();
+				showAddForm = false;
+			} else {
+				const error = response as ResponseError;
+				toast.error(error.message);
+			}
 		},
-		validate: () => {
-			// TODO: implement errors
-			return {
+		validate: (values) => {
+			const errors = {
 				username: '',
-				pronouns: '',
+				bio: '',
 			};
+
+			if (!values.username || values.username.length < 3 || values.username.length > 36) {
+				errors.username = 'Usernames must be between 3 and 36 characters in length';
+			}
+
+			if (values.bio && (values.bio.length < 3 || values.username.length > 120)) {
+				errors.bio = 'Profile bios must be between 3 and 120 characters in length';
+			}
+
+			return errors;
 		},
 		initialValues: {
 			username: null,
-			pronouns: [],
+			presence: Presence.Offline,
 			bio: null,
+			tagline: null,
 		}
 	});
 </script>
@@ -88,7 +98,7 @@
 						/>
 						<TextArea
 							name="bio"
-							title="Bio"
+							title="Bio (Optional)"
 							placeholder="Just another somebody"
 							errorMessage={$errors.bio}
 						/>

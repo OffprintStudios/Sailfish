@@ -1,28 +1,37 @@
 import type { RequestHandler } from "./$types";
 import type { ResponseError } from "$lib/http";
-import { postReq } from "$lib/http";
 import type { ClientPackage } from "$lib/models/accounts";
-import type { LoginForm } from "$lib/models/accounts/forms";
+import type { RegisterForm } from "$lib/models/accounts/forms";
+import { BASE_URL } from "$lib/http";
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
-	const formInfo: LoginForm = await request.json();
-	const response = await postReq<ClientPackage>('/auth/register', formInfo, {
+	const formInfo: RegisterForm = await request.json();
+	const userAgent = request.headers.get('User-Agent') ?? '';
+	const response = await fetch(`${BASE_URL}/auth/register`, {
+		body: JSON.stringify(formInfo),
+		method: 'POST',
 		headers: {
-			'User-Agent': request.headers.get('User-Agent') ?? false
+			'User-Agent': userAgent,
+			'Content-Type': 'application/json'
 		}
 	});
 
-	if (!(response as ClientPackage).token) {
-		return new Response(JSON.stringify(response as ResponseError), { status: 422 });
-	} else if (response === undefined) {
-		return new Response(null, { status: 500 });
-	} else {
-		cookies.set('accessKey', (response as ClientPackage).token, {
+	if (response.status === 200) {
+		const data: ClientPackage = await response.json();
+		cookies.set('refreshToken', data.refreshToken, {
 			path: '/',
 			httpOnly: true,
-			expires: new Date(Date.now() + 2592000)
+			expires: new Date(Date.now() + 2592000),
 		});
-
-		return new Response(JSON.stringify(response as ClientPackage), { status: 200 });
+		data.refreshToken = '';
+		return new Response(JSON.stringify(data), { status: 200 });
+	} else {
+		const error: { error: boolean, reason: string } = await response.json();
+		const errorMsg: ResponseError = {
+			statusCode: response.status,
+			error: response.statusText,
+			message: error.reason,
+		};
+		return new Response(JSON.stringify(errorMsg), { status: response.status });
 	}
 }

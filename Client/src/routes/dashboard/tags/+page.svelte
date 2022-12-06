@@ -9,6 +9,8 @@
 	import AddTagForm from "./AddTagForm.svelte";
 	import { NavLink } from "$lib/ui/nav";
 	import { Time } from '$lib/ui/util';
+	import { getReq, delReq } from "$lib/http";
+	import type { ResponseError } from "$lib/http";
 	import UpdateTagForm from "./UpdateTagForm.svelte";
 	import DeleteTagPrompt from "./DeleteTagPrompt.svelte";
 	import toast from "svelte-french-toast";
@@ -24,9 +26,13 @@
 	$: fetchData(currCategory)
 
 	async function fetchData(tagKind: TagKind) {
-		const response = await fetch(`/api/content/tags/fetch-tags?kind=${tagKind}&withCounts=true&ascending=${ascending}`);
-		const val = await response.json();
-		tags = val.data;
+		const response = await getReq<{ tag: Tag, works: number, isOpen: boolean }[]>(`/api/content/tags/fetch-tags?kind=${tagKind}&withCounts=true&ascending=${ascending}`);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			tags = response as { tag: Tag, works: number, isOpen: boolean }[];
+		}
 	}
 
 	async function addTag(parentId?: string) {
@@ -63,13 +69,12 @@
 	async function deleteTag(tagId: string) {
 		openPopup(DeleteTagPrompt, {
 			async onConfirm() {
-				const response = await fetch(`/api/content/tags/${tagId}/delete-tag`, {
-					method: 'DELETE'
-				});
-				if (response.status === 200) {
-					await fetchData(currCategory);
+				const response = await delReq<void>(`/tags/delete-tag/${tagId}`);
+				if ((response as ResponseError).error) {
+					const error = response as ResponseError;
+					toast.error(error.message);
 				} else {
-					toast.error('Something went wrong! Try again in a little bit.');
+					await fetchData(currCategory);
 				}
 			}
 		})

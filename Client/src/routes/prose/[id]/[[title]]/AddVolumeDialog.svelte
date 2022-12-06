@@ -1,10 +1,14 @@
 <script lang="ts">
 	import { popup, closePopup, closePopupAndConfirm } from "$lib/ui/popup";
+	import { account } from "$lib/state/account.state";
 	import { createForm } from "felte";
 	import { Button } from "$lib/ui/util";
 	import { CheckLine, CloseLine } from "svelte-remixicon";
 	import type { VolumeForm } from "$lib/models/content/works";
-	import { TextField, TextArea } from "../../../../lib/ui/forms";
+	import { postReq } from "$lib/http";
+	import type { ResponseError } from "$lib/http";
+	import { TextField, TextArea } from "$lib/ui/forms";
+	import toast from "svelte-french-toast";
 
 	const { form, errors, isSubmitting, createSubmitHandler } = createForm<VolumeForm>({
 		validate(values) {
@@ -28,7 +32,18 @@
 
 	const submit = createSubmitHandler({
 		async onSubmit(values) {
-			console.log(values);
+			const formInfo: VolumeForm = {
+				title: values.title,
+				desc: values.desc,
+			};
+
+			const response = await postReq<void>(`/volumes/create-volume?workId=${$popup.data.workId}profileId=${$account.currProfile.id}`, formInfo);
+			if ((response as ResponseError).error) {
+				const error = response as ResponseError;
+				toast.error(error.message);
+			} else {
+				closePopupAndConfirm();
+			}
 		}
 	})
 </script>

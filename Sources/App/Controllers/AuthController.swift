@@ -19,9 +19,15 @@ struct AuthController: RouteCollection {
             let loginForm = try request.content.decode(Account.LoginForm.self)
             return try await request.authService.login(with: loginForm)
         }
+        
+        auth.post("refresh") { request async throws -> Session.RefreshPackage in
+            let info = try request.content.decode(SessionService.SessionInfo.self)
+            return try await request.sessionService.refreshSession(with: info)
+        }
 
-        auth.get("logout") { request async throws in
-            try await request.authService.logout()
+        auth.post("logout") { request async throws in
+            let logoutInfo = try request.content.decode(SessionService.SessionInfo.self)
+            return try await request.authService.logout(with: logoutInfo)
         }
 
         auth.grouped(IdentityGuard(needs: [.user])).post("check-roles") { request async throws -> HasRoles in

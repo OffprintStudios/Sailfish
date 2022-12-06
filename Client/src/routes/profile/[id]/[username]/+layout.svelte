@@ -1,17 +1,13 @@
 <script lang="ts">
-	import { page } from "$app/stores";
 	import { Home5Line, CupLine, QuillPenLine, BarChart2Line, ImageEditLine, ImageAddLine, ServiceLine, AlarmWarningLine, CloseCircleLine, PieChartLine } from "svelte-remixicon";
 	import { Avatar, RoleBadge } from "$lib/ui/util";
 	import { slugify } from "$lib/util/functions";
 	import { Button } from "$lib/ui/util";
-	import { profileState } from "$lib/state/profile.state";
 	import { account } from "$lib/state/account.state";
 	import type { Profile } from "$lib/models/accounts";
-	import { NavLink } from "../../../../lib/ui/nav";
+	import { NavLink } from "$lib/ui/nav";
 
 	export let data: Profile;
-
-	$profileState = data;
 
 	const iconSize = "24px";
 </script>

@@ -10,7 +10,7 @@ struct TagController: RouteCollection {
         let tags = routes.grouped("tags")
         let tagsWithAuth = tags.grouped([
             IdentityGuard(needs: [.admin, .moderator]),
-            StatusGuard()
+            BannedGuard(),
         ])
         
         tags.get("fetch-tag", ":id") { request async throws -> TagService.FetchTag in

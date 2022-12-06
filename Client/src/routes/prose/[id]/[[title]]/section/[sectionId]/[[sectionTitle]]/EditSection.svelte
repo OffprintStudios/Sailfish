@@ -6,6 +6,8 @@
 	import { slugify } from "$lib/util/functions";
 	import { TextField, Editor } from "$lib/ui/forms";
 	import { Button } from "$lib/ui/util";
+	import { patchReq } from "$lib/http";
+	import type { ResponseError } from "$lib/http";
 	import { CloseLine, Save2Line } from "svelte-remixicon";
 	import toast from "svelte-french-toast";
 
@@ -25,19 +27,13 @@
 				noteBottom: hasBottom ? values.noteBottom : null,
 			};
 
-			const response = await fetch(`/api/content/works/${work.id}/sections/${section.id}/update-section?profileId=${$account.currProfile.id}`, {
-				method: 'PATCH',
-				body: JSON.stringify(formInfo),
-				headers: {
-					'content-type': 'application/json',
-				},
-			});
-
-			if (response.status === 200) {
-				section = await response.json();
-				dispatch('save');
+			const response = await patchReq<Section>(`/api/content/works/${work.id}/sections/${section.id}/update-section?profileId=${$account.currProfile.id}`, formInfo);
+			if ((response as ResponseError).error) {
+				const error = response as ResponseError;
+				toast.error(error.message);
 			} else {
-				toast.error(`Something went wrong! Try again in a little bit.`);
+				section = response as Section;
+				dispatch('save');
 			}
 		},
 		validate(values) {
