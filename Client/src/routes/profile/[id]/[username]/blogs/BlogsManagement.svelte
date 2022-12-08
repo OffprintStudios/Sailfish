@@ -57,7 +57,7 @@
 		Published
 	</button>
 	<div class="flex-1"><!--spacer--></div>
-	<Button asLink href="/profile/{profile.id}/{slugify(profile.username)}/blogs/new">
+	<Button kind="primary" asLink href="/profile/{profile.id}/{slugify(profile.username)}/blogs/new">
 		<AddFill class="button-icon" />
 		<span class="button-text">New Blog</span>
 	</Button>

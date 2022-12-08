@@ -18,7 +18,7 @@
 
 	async function fetchData(page: number) {
 		loading = true;
-		const response = await getReq<Paginate<FavoriteBlog>>(`${BASE_URL}/blogs/fetch-favorites?profileId=${$account.currProfile.id}&page=${page}&per=15`);
+		const response = await getReq<Paginate<FavoriteBlog>>(`/blogs/fetch-favorites?profileId=${$account.currProfile.id}&page=${page}&per=15`);
 		if ((response as ResponseError).error) {
 			const errorMsg = response as ResponseError;
 			toast.error(errorMsg.message);

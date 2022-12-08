@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Category } from '$lib/models/content/works';
+	import { Category, Status } from "$lib/models/content/works";
 	import type { Tag } from "$lib/models/tags";
 	import { TagKind } from "$lib/models/tags";
 	import { ContentRating } from '$lib/models/content';
@@ -26,6 +26,7 @@
 	export let kind: TagKind;
 	export let category: Category = null;
 	export let rating: ContentRating = null;
+	export let status: Status;
 	export let tag: Tag = null;
 </script>
 
@@ -37,13 +38,14 @@
 	class:category={kind === TagKind.category}
 	class:genre={kind === TagKind.genre}
 	class:user={kind === TagKind.user}
-	class:no-text={size === 'small'}
+	class:small-text={size === 'small'}
 	class:big-text={size === 'large'}
 	class:no-icon={!hasIcon}
 	class:everyone={rating === ContentRating.Everyone}
 	class:teen={rating === ContentRating.Teen}
 	class:mature={rating === ContentRating.Mature}
 	class:explicit={rating === ContentRating.Explicit}
+	class:status={kind === TagKind.status}
 	on:click
 >
 	{#if kind === TagKind.category}
@@ -105,6 +107,8 @@
 				{tag.name}
 			{/if}
         </span>
+	{:else if kind === TagKind.status}
+		<span class="tag-label">{status}</span>
 	{/if}
 </button>
 
@@ -126,14 +130,14 @@
 			@apply hidden text-sm font-medium;
 		}
 
-		&.no-text {
+		&.small-text {
 			@apply px-1.5;
 			:global(svg) {
 				@apply mr-0;
 			}
 
 			span.tag-label {
-				@apply hidden;
+				@apply text-xs;
 			}
 
 			&.no-icon {
@@ -190,6 +194,10 @@
 
 		&.explicit {
 			@apply bg-red-700 hover:bg-red-900;
+		}
+
+		&.status {
+			@apply bg-emerald-600 hover:bg-emerald-700;
 		}
 
 		&.no-icon {

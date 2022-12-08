@@ -5,4 +5,5 @@ export enum TagKind {
 	user = "User",
 	category = "Category",
 	rating = "Rating",
+	status = "Status",
 }

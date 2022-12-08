@@ -14,6 +14,7 @@
 	<a
 		class="absolute top-0 right-0 left-0 bottom-0 z-[2]"
 		href="/profile/{blog.author.id}/{slugify(blog.author.username)}/blog/{blog.id}/{slugify(blog.title)}"
+		data-sveltekit-preload-data
 	>
 		<!--nothing goes here-->
 	</a>
@@ -60,7 +61,11 @@
 		{/if}
 	</div>
 	<div class="blog-preview">
-		{@html blog.body}
+		{#if blog.desc}
+			{@html blog.desc}
+		{:else}
+			{@html blog.body}
+		{/if}
 	</div>
 	<div class="blog-stats bg-zinc-300 dark:bg-zinc-600">
 		<span class="flex items-center">
@@ -87,7 +92,7 @@
 
 <style lang="scss">
 	div.blog-card {
-		@apply block rounded-lg overflow-hidden no-underline transition relative;
+		@apply block rounded-xl overflow-hidden no-underline transition relative;
 		color: var(--text-color);
 		div.blog-header {
 			@apply flex items-center px-4 py-3.5;

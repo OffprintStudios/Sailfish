@@ -61,13 +61,12 @@ struct WorkService {
         
         if published == true {
             return try await query
-                .filter(\.$publishedOn == nil)
-                .sort(\.$createdAt, .descending)
+                .filter(\.$publishedOn <= Date())
+                .sort(\.$publishedOn, .descending)
                 .paginate(for: request)
         } else {
             return try await query
-                .filter(\.$publishedOn <= Date())
-                .sort(\.$publishedOn, .descending)
+                .sort(\.$createdAt, .descending)
                 .paginate(for: request)
         }
     }

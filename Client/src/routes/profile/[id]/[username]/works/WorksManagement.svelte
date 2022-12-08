@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { profileState } from "$lib/state/profile.state";
 	import { slugify } from "$lib/util/functions";
 	import { AddFill } from "svelte-remixicon";
 	import { Button } from "$lib/ui/util";
 	import DraftList from "./DraftList.svelte";
-	import PendingList from "./PendingList.svelte";
 	import PublishedList from "./PublishedList.svelte";
+	import type { Profile } from "$lib/models/accounts";
+
+	export let profile: Profile;
 
 	enum WorkTabs {
 		Drafts,
-		Pending,
 		Published,
 	}
 
@@ -21,9 +21,6 @@
 		switch (newTab) {
 			case WorkTabs.Drafts:
 				currComponent = DraftList;
-				break;
-			case WorkTabs.Pending:
-				currComponent = PendingList;
 				break;
 			case WorkTabs.Published:
 				currComponent = PublishedList;
@@ -42,20 +39,13 @@
 	</button>
 	<button
 		class="tab-button"
-		class:active={currTab === WorkTabs.Pending}
-		on:click={() => switchTab(WorkTabs.Pending)}
-	>
-		Pending
-	</button>
-	<button
-		class="tab-button"
 		class:active={currTab === WorkTabs.Published}
 		on:click={() => switchTab(WorkTabs.Published)}
 	>
 		Published
 	</button>
 	<div class="flex-1"><!--spacer--></div>
-	<Button kind="primary" asLink href="/profile/{$profileState.id}/{slugify($profileState.username)}/works/new">
+	<Button kind="primary" asLink href="/profile/{profile.id}/{slugify(profile.username)}/works/new">
 		<AddFill class="button-icon" />
 		<span class="button-text">New Work</span>
 	</Button>
