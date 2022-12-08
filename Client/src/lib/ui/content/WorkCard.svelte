@@ -52,15 +52,17 @@
 		<div class="p-2 pb-1 bg-zinc-200 dark:bg-zinc-700">
 			<div class="flex-1">
 				<div class="flex items-center mb-2">
-					<div class="self-end relative w-1/3 max-w-[6.5rem]">
-						<img
-							src="/images/offprint_icon.png"
-							class="absolute bottom-0 border-4 border-zinc-300 dark:border-zinc-600 object-contain rounded-xl max-w-[6rem] max-h-[6rem]"
-							style="box-shadow: var(--dropshadow);"
-							alt="cover-art"
-						/>
-					</div>
-					<div class="flex-1 relative w-2/3">
+					{#if work.coverArt}
+						<div class="self-end relative w-1/3 max-w-[6.5rem]">
+							<img
+								src="/images/offprint_icon.png"
+								class="absolute bottom-0 border-4 border-zinc-300 dark:border-zinc-600 object-contain rounded-xl max-w-[6rem] max-h-[6rem]"
+								style="box-shadow: var(--dropshadow);"
+								alt="cover-art"
+							/>
+						</div>
+					{/if}
+					<div class="flex-1 relative { work.coverArt ? 'w-2/3' : 'w-11/12'}" class:ml-1={!work.coverArt}>
 						<h3 class="font-medium text-lg truncate" style="color: var(--text-color);">
 							{work.title}
 						</h3>
