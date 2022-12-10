@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { account } from "$lib/state/account.state";
-	import { writable } from "svelte/store";
 	import {
 		HeartLine,
 		DislikeLine,
@@ -25,14 +24,6 @@
 	import { Button } from "$lib/ui/util";
 
 	export let work: Work;
-	let coverArtParent: HTMLDivElement;
-	let coverArtContainer: HTMLDivElement;
-
-	$: {
-		if (work.coverArt && coverArtContainer && coverArtParent) {
-			coverArtParent.style.setProperty('--max-width', `${coverArtContainer.offsetWidth}px`);
-		}
-	}
 
 	async function like() {
 		if ($account.account && $account.currProfile) {
@@ -62,9 +53,6 @@
 		openPopup(UploadCoverArt, {
 			onConfirm(value: Work) {
 				work = value;
-				if (coverArtContainer && coverArtParent) {
-					coverArtParent.style.setProperty('--max-width', `${coverArtContainer.offsetWidth}px`);
-				}
 			}
 		}, { workId: work.id });
 	}
@@ -78,12 +66,40 @@
 	}
 </script>
 
-<div class="flex flex-col rounded-xl relative bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed mb-6 overflow-hidden">
-	<div class="w-full relative" class:h-[150px]={!work.bannerArt} class:h-[250px]={work.bannerArt} style="background: var(--accent);">
+<div class="header-container bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
+	{#if work.coverArt}
+		<div class="cover-art">
+			<div
+				class="relative overflow-hidden w-max flex flex-col items-center justify-center bg-zinc-200 dark:bg-zinc-700 border-4 border-zinc-300 dark:border-zinc-600 rounded-xl z-[2]"
+				style="box-shadow: var(--dropshadow);"
+			>
+				<img src={work.coverArt} alt="cover art" class="max-w-[250px] max-h-[210px]" />
+				{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
+					<div class="absolute top-2 right-2">
+						<Button kind="primary" title="Edit Cover Art" on:click={updateCoverArt}>
+							<ImageEditLine class="button-icon no-text" />
+						</Button>
+					</div>
+				{/if}
+			</div>
+		</div>
+	{:else}
+		{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
+			<div class="cover-art w-[150px]">
+				<div class="flex flex-col items-center justify-center w-[150px] h-[215px] bg-zinc-200 dark:bg-zinc-700 border-4 border-zinc-300 dark:border-zinc-600 rounded-xl" style="box-shadow: var(--dropshadow);">
+					<NavLink type="button" on:click={updateCoverArt}>
+						<ImageAddLine class="link-icon" />
+						<span class="link-name">Add Cover</span>
+					</NavLink>
+				</div>
+			</div>
+		{/if}
+	{/if}
+	<div class="banner" class:h-[150px]={!work.bannerArt} class:h-[250px]={work.bannerArt}>
 		{#if work.bannerArt}
 			<img src={work.bannerArt} alt="cover art" class="w-full h-full object-cover" />
 		{/if}
-		<div class="absolute top-2 right-2 z-[2]" class:h-[90%]={!work.bannerArt} class:h-[93%]={work.bannerArt}>
+		<div class="absolute top-2 right-2 z-[2]">
 			<div class="flex items-center">
 				<TagBadge kind={TagKind.category} category={work.category} />
 				<div class="mx-[0.075rem]"></div>
@@ -93,44 +109,15 @@
 			</div>
 		</div>
 	</div>
-	<div class="flex items-center p-4">
-		{#if work.coverArt}
-			<div class="cover-art-parent" bind:this={coverArtParent}>
-				<div
-					class="absolute -bottom-0 overflow-hidden w-max flex flex-col items-center justify-center bg-zinc-200 dark:bg-zinc-700 border-4 border-zinc-300 dark:border-zinc-600 rounded-xl"
-					style="box-shadow: var(--dropshadow);"
-					bind:this={coverArtContainer}
-				>
-					<img src={work.coverArt} alt="cover art" class="max-w-[250px] max-h-[210px]" />
-					{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
-						<div class="absolute top-2 right-2">
-							<Button kind="primary" title="Edit Cover Art" on:click={updateCoverArt}>
-								<ImageEditLine class="button-icon no-text" />
-							</Button>
-						</div>
-					{/if}
-				</div>
-			</div>
-		{:else}
-			{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
-				<div class="relative self-end w-[150px]">
-					<div class="absolute -bottom-0 flex flex-col items-center justify-center w-[150px] h-[215px] bg-zinc-200 dark:bg-zinc-700 border-4 border-zinc-300 dark:border-zinc-600 rounded-xl" style="box-shadow: var(--dropshadow);">
-						<NavLink type="button" on:click={updateCoverArt}>
-							<ImageAddLine class="link-icon" />
-							<span class="link-name">Add Cover</span>
-						</NavLink>
-					</div>
-				</div>
-			{/if}
-		{/if}
-		<div class="flex-1 relative" class:pl-4={work.coverArt || ($account.account && $account.currProfile && $account.currProfile.id === work.author.id)}>
-			<h1 class="text-3xl text-ellipsis" style="color: var(--text-color);">
+	<div class="title-bar">
+		<div class="flex-1">
+			<h1 class="text-3xl" style="color: var(--text-color);">
 				{work.title}
 			</h1>
 			<div class="flex items-center flex-wrap">
-				<span class="relative top-0.5 text-xl font-medium text-zinc-400" style="font-family: var(--header-text);">
-					by <a class="text-zinc-400" href="/profile/{work.author.id}/{slugify(work.author.username)}">{work.author.username}</a>
-				</span>
+			<span class="relative top-0.5 text-xl font-medium text-zinc-400" style="font-family: var(--header-text);">
+				by <a class="text-zinc-400" href="/profile/{work.author.id}/{slugify(work.author.username)}">{work.author.username}</a>
+			</span>
 				<span class="mx-1 text-zinc-400">•</span>
 				{#each work.tags as tag}
 					<TagBadge tag={tag} kind={tag.kind} />
@@ -196,9 +183,27 @@
 </div>
 
 <style lang="scss">
-	div.cover-art-parent {
-		@apply relative self-end;
-		--max-width: 250px;
-		width: var(--max-width);
+	div.header-container {
+		@apply grid rounded-xl relative mb-6 overflow-hidden;
+		grid-template-areas:
+    		"a b"
+    		"c d";
+		grid-template-rows: 1fr auto;
+		grid-template-columns: auto 1fr;
+
+		div.cover-art {
+			grid-area: a / c / c / c;
+			display: flex;
+			align-items: flex-end;
+			@apply p-4 relative;
+		}
+		div.banner {
+			background: var(--accent);
+			grid-area: a / a / b / b;
+		}
+		div.title-bar {
+			grid-area: d;
+			@apply p-4 pl-0 flex items-center z-[2] relative;
+		}
 	}
 </style>

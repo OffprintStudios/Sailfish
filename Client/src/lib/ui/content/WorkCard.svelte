@@ -2,11 +2,11 @@
 	import TagBadge from "./TagBadge.svelte";
 	import { TagKind } from "../../models/tags";
 	import type { Work } from "$lib/models/content/works";
-	import { slugify, abbreviate } from "../../util/functions";
+	import { abbreviate, slugify } from "../../util/functions";
 	import { account } from "../../state/account.state";
 	import { Dropdown } from "../dropdown";
 	import { Time } from "../util";
-	import { Calendar2Line, MoreFill, LineChartLine, PenNibLine, DiscussLine } from "svelte-remixicon";
+	import { Calendar2Line, DiscussLine, LineChartLine, MoreFill, PenNibLine } from "svelte-remixicon";
 
 	export let work: Work;
 
@@ -20,7 +20,7 @@
 	};
 </script>
 
-<div class="work-card bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed" title={work.title}>
+<div class="work-card bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed hover:bg-zinc-300 dark:hover:bg-zinc-600" title={work.title}>
 	<a
 		class="absolute top-0 right-0 left-0 bottom-0 z-[2]"
 		href="/prose/{work.id}/{slugify(work.title)}"
@@ -28,101 +28,120 @@
 	>
 		<!--should be empty-->
 	</a>
-	<div class="card-banner" class:h-[120px]={!work.bannerArt}>
-		<div class="flex items-center">
-			{#if $account.account && $account.currProfile}
-				<Dropdown kind="primary">
-					<svelte:fragment slot="button">
-						<MoreFill size="18px" class="button-icon no-text" />
-					</svelte:fragment>
-					<svelte:fragment slot="items">
-						hi hello
-					</svelte:fragment>
-				</Dropdown>
+	<div class="card-header w-full">
+		{#if work.coverArt}
+			<div class="cover-art">
+				<img
+					src={work.coverArt}
+					class="border-4 border-zinc-300 dark:border-zinc-600 object-contain rounded-xl max-w-[6rem] max-h-[6rem]"
+					style="box-shadow: var(--dropshadow);"
+					alt="cover-art"
+				/>
+			</div>
+		{:else}
+			<div class="cover-art"><!--empty when nothing's here--></div>
+		{/if}
+		<div class="banner">
+			{#if work.bannerArt}
+				<img src={work.bannerArt} alt="cover art" class="w-full h-full object-cover" />
 			{/if}
-			<div class="flex-1"><!--spacer--></div>
-			<TagBadge kind={TagKind.category} category={work.category} size="small" />
-			<div class="mx-[0.025rem]"></div>
-			<TagBadge kind={TagKind.status} status={work.status} size="small" />
-			<div class="mx-[0.025rem]"></div>
-			<TagBadge kind={TagKind.rating} rating={work.rating} size="small" />
-		</div>
-	</div>
-	<div class="card-body">
-		<div class="p-2 pb-1 bg-zinc-200 dark:bg-zinc-700">
-			<div class="flex-1">
-				<div class="flex items-center mb-2">
-					{#if work.coverArt}
-						<div class="self-end relative w-1/3 max-w-[6.5rem]">
-							<img
-								src="/images/offprint_icon.png"
-								class="absolute bottom-0 border-4 border-zinc-300 dark:border-zinc-600 object-contain rounded-xl max-w-[6rem] max-h-[6rem]"
-								style="box-shadow: var(--dropshadow);"
-								alt="cover-art"
-							/>
-						</div>
-					{/if}
-					<div class="flex-1 relative { work.coverArt ? 'w-2/3' : 'w-11/12'}" class:ml-1={!work.coverArt}>
-						<h3 class="font-medium text-lg truncate" style="color: var(--text-color);">
-							{work.title}
-						</h3>
-						<div class="flex items-center text-zinc-400" style="font-family: var(--header-text);">
-							<span class="mr-1">by</span>
-							<a class="text-zinc-400 hover:text-zinc-400 relative z-[2]" href="/profile/{work.author.id}/{slugify(work.author.username)}">{work.author.username}</a>
-						</div>
-					</div>
-				</div>
-				<div class="flex items-center flex-wrap">
-					{#each work.tags.filter(item => item.kind === TagKind.genre) as tag}
-						<TagBadge tag={tag} kind={tag.kind} size="small" />
-						<div class="mx-[0.05rem] last:mx-0"></div>
-					{/each}
-				</div>
-				<div class="text-xs px-2 mt-4 mb-4">
-					{@html work.shortDesc}
-				</div>
-				<div class="flex items-center justify-end text-zinc-400" style="font-family: var(--header-text);">
-					<span class="flex items-center relative z-[2]" title="Views">
-						<LineChartLine class="mr-1" size="16px" />
-						<span class="relative">{abbreviate(work.views)}</span>
-					</span>
-					<span class="mx-2">/</span>
-					<span class="flex items-center relative z-[2]" title="Words">
-						<PenNibLine class="mr-1" size="16px" />
-						<span class="relative">{abbreviate(work.words)}</span>
-					</span>
-					<span class="mx-2">/</span>
-					<span class="flex items-center relative z-[2]" title="Comments">
-						<DiscussLine class="mr-1" size="16px" />
-						<span class="relative">{abbreviate(work.comments)}</span>
-					</span>
-					<span class="mx-2">/</span>
-					{#if work.publishedOn}
-						<span class="flex items-center relative z-[2]" title="Published On">
-							<Calendar2Line class="mr-1" size="16px" />
-							<span class="relative"><Time timestamp={work.publishedOn} format="M-D-YY" /></span>
-						</span>
-					{:else}
-						<span class="flex items-center relative z-[2]" title="Created On">
-							<Calendar2Line class="mr-1" size="16px" />
-							<span class="relative"><Time timestamp={work.createdAt} format="M-D-YY" /></span>
-						</span>
-					{/if}
-				</div>
+			<div class="absolute top-1 px-1.5 w-full flex items-center">
+				{#if $account.account && $account.currProfile}
+					<Dropdown kind={ work.bannerArt ? 'normal' : 'primary' }>
+						<svelte:fragment slot="button">
+							<MoreFill size="18px" class="button-icon no-text" />
+						</svelte:fragment>
+						<svelte:fragment slot="items">
+							hi hello
+						</svelte:fragment>
+					</Dropdown>
+				{/if}
+				<div class="flex-1"><!--spacer--></div>
+				<TagBadge category={work.category} kind={TagKind.category} size="small" />
+				<div class="mx-[0.025rem]"></div>
+				<TagBadge kind={TagKind.status} size="small" status={work.status} />
+				<div class="mx-[0.025rem]"></div>
+				<TagBadge kind={TagKind.rating} rating={work.rating} size="small" />
 			</div>
 		</div>
+		<div class="title-bar">
+			<h3 class="font-medium text-lg truncate" style="color: var(--text-color);">
+				{work.title} with some added characters
+			</h3>
+			<div class="flex items-center text-zinc-400" style="font-family: var(--header-text);">
+				<span class="mr-1">by</span>
+				<a class="text-zinc-400 hover:text-zinc-400 relative z-[2]"
+				   href="/profile/{work.author.id}/{slugify(work.author.username)}">{work.author.username}</a>
+			</div>
+		</div>
+	</div>
+	<div class="flex items-center flex-wrap px-2">
+		{#each work.tags.filter(item => item.kind === TagKind.genre) as tag}
+			<TagBadge tag={tag} kind={tag.kind} size="small" />
+			<div class="mx-[0.05rem] last:mx-0"></div>
+		{/each}
+	</div>
+	<div class="text-xs px-4 mt-4 mb-4">
+		{@html work.shortDesc}
+	</div>
+	<div class="flex items-center justify-end text-zinc-400 px-2 py-1" style="font-family: var(--header-text);">
+		<span class="flex items-center relative z-[2]" title="Views">
+			<LineChartLine class="mr-1" size="16px" />
+			<span class="relative">{abbreviate(work.views)}</span>
+		</span>
+		<span class="mx-2">/</span>
+		<span class="flex items-center relative z-[2]" title="Words">
+			<PenNibLine class="mr-1" size="16px" />
+			<span class="relative">{abbreviate(work.words)}</span>
+		</span>
+		<span class="mx-2">/</span>
+		<span class="flex items-center relative z-[2]" title="Comments">
+			<DiscussLine class="mr-1" size="16px" />
+			<span class="relative">{abbreviate(work.comments)}</span>
+		</span>
+		<span class="mx-2">/</span>
+		{#if work.publishedOn}
+			<span class="flex items-center relative z-[2]" title="Published On">
+				<Calendar2Line class="mr-1" size="16px" />
+				<span class="relative"><Time timestamp={work.publishedOn} format="M-D-YY" /></span>
+			</span>
+		{:else}
+			<span class="flex items-center relative z-[2]" title="Created On">
+				<Calendar2Line class="mr-1" size="16px" />
+				<span class="relative"><Time timestamp={work.createdAt} format="M-D-YY" /></span>
+			</span>
+		{/if}
 	</div>
 </div>
 
 <style lang="scss">
 	div.work-card {
 		@apply block rounded-xl overflow-hidden no-underline transition relative;
-		div.card-banner {
-			@apply flex flex-col relative p-2;
-			background: var(--accent);
-		}
-		div.card-body {
-			@apply flex flex-col justify-end relative;
+		div.card-header {
+			@apply grid rounded-xl relative;
+			grid-template-areas:
+    		"a b"
+    		"c d";
+			grid-template-rows: 1fr auto;
+			grid-template-columns: auto 1fr;
+
+			div.cover-art {
+				grid-area: a / c / c / c;
+				display: flex;
+				align-items: flex-end;
+				@apply p-2 relative z-[2];
+			}
+
+			div.banner {
+				@apply relative h-[120px] w-full;
+				background: var(--accent);
+				grid-area: a / a / b / b;
+			}
+
+			div.title-bar {
+				grid-area: d;
+				@apply p-2 pl-0 relative min-w-[20rem] max-w-[30rem];
+			}
 		}
 	}
 </style>
