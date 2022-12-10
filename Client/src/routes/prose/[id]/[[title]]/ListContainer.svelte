@@ -36,7 +36,7 @@
 
 <div class="w-full mt-6">
 	<div class="flex items-center">
-		<div class="flex items-center bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed overflow-hidden rounded-xl">
+		<div class="flex items-center overflow-hidden">
 			<button class="tab-button" class:active={currTab === ListTabs.sections} on:click={() => switchTab(ListTabs.sections)}>
 				<span>Chapters</span>
 			</button>
@@ -72,13 +72,12 @@
 
 <style lang="scss">
 	button.tab-button {
-		@apply flex items-center px-3 py-1 transition rounded-xl;
+		@apply flex items-center px-3 py-1 transition rounded-t-xl border-b-2 border-transparent;
 		span {
 			@apply all-small-caps tracking-wider text-lg font-bold relative -top-[0.075rem];
 		}
 		&.active {
-			@apply text-white;
-			background: var(--accent);
+			border-color: var(--accent);
 		}
 	}
 </style>

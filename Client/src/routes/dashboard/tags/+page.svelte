@@ -26,7 +26,7 @@
 	$: fetchData(currCategory)
 
 	async function fetchData(tagKind: TagKind) {
-		const response = await getReq<{ tag: Tag, works: number, isOpen: boolean }[]>(`/api/content/tags/fetch-tags?kind=${tagKind}&withCounts=true&ascending=${ascending}`);
+		const response = await getReq<{ tag: Tag, works: number, isOpen: boolean }[]>(`/tags/fetch-tags?kind=${tagKind}&withCounts=true&ascending=${ascending}`);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
 			toast.error(error.message);

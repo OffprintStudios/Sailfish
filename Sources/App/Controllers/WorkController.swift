@@ -56,12 +56,12 @@ struct WorkController: RouteCollection {
         worksWithAuth.on(.PATCH, "update-banner", ":id", body: .collect(maxSize: "5mb")) { request async throws -> Work in
             let id = request.parameters.get("id")!
             let data = try request.content.decode(UtilityService.UploadImage.self)
-            let coverUrl = try await request.utilityService.uploadImage(
+            let bannerUrl = try await request.utilityService.uploadImage(
                 data,
                 itemId: id,
                 folder: "work-banners"
             )
-            return try await request.workService.updateCoverArt(id, coverUrl: coverUrl)
+            return try await request.workService.updateBannerArt(id, bannerUrl: bannerUrl)
         }
         
         // TODO: Add publishing route here

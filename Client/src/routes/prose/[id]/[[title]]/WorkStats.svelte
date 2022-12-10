@@ -1,8 +1,17 @@
 <script lang="ts">
-	import { Calendar2Line, BarChart2Line, ShareBoxLine, AlarmWarningLine } from "svelte-remixicon";
+	import {
+		Calendar2Line,
+		BarChart2Line,
+		ShareBoxLine,
+		AlarmWarningLine,
+		Edit2Line,
+		DeleteBinLine,
+	} from "svelte-remixicon";
 	import type { Work } from "$lib/models/content/works";
 	import { Button } from "$lib/ui/util";
 	import { abbreviate } from "$lib/util/functions";
+	import { account } from "$lib/state/account.state";
+	import { slugify } from "$lib/util/functions";
 
 	export let work: Work;
 </script>
@@ -22,22 +31,41 @@
 			<span class="year">{new Date(work.createdAt).getFullYear()}</span>
 		{/if}
 	</div>
-	<div class="flex flex-col w-full md:max-w-[108.16px] md:min-w-[108.16px] p-2 rounded-xl mb-4 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
-		<Button classes="md:w-full md:justify-center">
-			<BarChart2Line class="button-icon" />
-			<span class="button-text">Shelves</span>
-		</Button>
-		<div class="my-0.5"><!--spacer--></div>
-		<Button classes="md:w-full md:justify-center">
-			<ShareBoxLine class="button-icon" />
-			<span class="button-text">Share</span>
-		</Button>
-		<div class="my-0.5"><!--spacer--></div>
-		<Button classes="md:w-full md:justify-center">
-			<AlarmWarningLine class="button-icon" />
-			<span class="button-text">Report</span>
-		</Button>
-	</div>
+	{#if $account.account && $account.currProfile}
+		<div class="flex flex-col w-full md:max-w-[108.16px] md:min-w-[108.16px] p-2 rounded-xl mb-4 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
+			{#if $account.currProfile.id === work.author.id}
+				<Button classes="md:w-full md:justify-center">
+					<BarChart2Line class="button-icon" />
+					<span class="button-text">Shelves</span>
+				</Button>
+				<div class="my-0.5"><!--spacer--></div>
+				<Button asLink href="/prose/{work.id}/{slugify(work.title)}/edit" classes="md:w-full md:justify-center">
+					<Edit2Line class="button-icon" />
+					<span class="button-text">Edit</span>
+				</Button>
+				<div class="my-0.5"><!--spacer--></div>
+				<Button classes="md:w-full md:justify-center">
+					<DeleteBinLine class="button-icon" />
+					<span class="button-text">Delete</span>
+				</Button>
+			{:else}
+				<Button classes="md:w-full md:justify-center">
+					<BarChart2Line class="button-icon" />
+					<span class="button-text">Shelves</span>
+				</Button>
+				<div class="my-0.5"><!--spacer--></div>
+				<Button classes="md:w-full md:justify-center">
+					<ShareBoxLine class="button-icon" />
+					<span class="button-text">Share</span>
+				</Button>
+				<div class="my-0.5"><!--spacer--></div>
+				<Button classes="md:w-full md:justify-center">
+					<AlarmWarningLine class="button-icon" />
+					<span class="button-text">Report</span>
+				</Button>
+			{/if}
+		</div>
+	{/if}
 	<div class="flex flex-col rounded-xl bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed p-2">
 		<div class="stat-block">
 			<span class="stat-name">Words</span>

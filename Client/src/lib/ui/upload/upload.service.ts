@@ -1,6 +1,6 @@
 import toast from "svelte-french-toast";
 import { writable } from "svelte/store";
-import { postReq } from "../../http";
+import { patchReq } from "../../http";
 import type { ResponseError } from "../../http";
 
 export enum UploadType {
@@ -87,7 +87,7 @@ export class UploadService<T> {
 			mime,
 		};
 
-		const response = await postReq<T>(url, formData);
+		const response = await patchReq<T>(url, formData);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
 			toast.error(error.message);
@@ -100,15 +100,15 @@ export class UploadService<T> {
 	private determineUrl() {
 		switch(this.name) {
 			case UploadType.Avatar:
-				return `/accounts/upload-avatar?profileId=${this.profileId}`;
+				return `/accounts/update-avatar?profileId=${this.profileId}`;
+			case UploadType.ProfileBanner:
+				return `/accounts/update-banner?profileId=${this.profileId}`;
 			case UploadType.BlogBanner:
 				return `/blogs/update-cover/${this.itemId}?profileId=${this.profileId}`;
 			case UploadType.CoverArt:
-				return `/works/upload-cover/${this.itemId}?profileId=${this.profileId}`;
-			case UploadType.ProfileBanner:
-				return `/accounts/upload-banner?profileId=${this.profileId}`;
+				return `/works/update-cover/${this.itemId}?profileId=${this.profileId}`;
 			case UploadType.WorkBanner:
-				return `/works/upload-banner/${this.itemId}?profileId=${this.profileId}`
+				return `/works/update-banner/${this.itemId}?profileId=${this.profileId}`
 		}
 	}
 }

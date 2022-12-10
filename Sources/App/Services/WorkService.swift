@@ -147,6 +147,7 @@ struct WorkService {
             work.bannerArt = bannerUrl
             try await work.save(on: database)
             work.$author.value = profile
+            try await work.$tags.load(on: database)
             return work
         }
     }

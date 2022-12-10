@@ -101,12 +101,12 @@
 			</div>
 
 			<div class="panel-section">
-				<a href="/profile/{$account.currProfile.id}/{slugify($account.currProfile.username)}/works" class="nav-button">
+				<a href="/profile/{$account.currProfile.id}/{slugify($account.currProfile.username)}/works/new" class="nav-button">
 					<BookLine size="24px" />
 					<span>Create Work</span>
 					<Link class="text-zinc-400" />
 				</a>
-				<a href="/profile/{$account.currProfile.id}/{slugify($account.currProfile.username)}/blogs" class="nav-button">
+				<a href="/profile/{$account.currProfile.id}/{slugify($account.currProfile.username)}/blogs/new" class="nav-button">
 					<CupLine size="24px" />
 					<span>Create Blog</span>
 					<Link class="text-zinc-400" />
