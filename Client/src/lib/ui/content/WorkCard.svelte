@@ -129,7 +129,7 @@
 				grid-area: a / c / c / c;
 				display: flex;
 				align-items: flex-end;
-				@apply p-2 relative z-[2];
+				@apply p-2 relative z-[1];
 			}
 
 			div.banner {

@@ -93,6 +93,8 @@
 					</NavLink>
 				</div>
 			</div>
+		{:else}
+			<div class="cover-art"><!--this is meant to be empty--></div>
 		{/if}
 	{/if}
 	<div class="banner" class:h-[150px]={!work.bannerArt} class:h-[250px]={work.bannerArt}>
