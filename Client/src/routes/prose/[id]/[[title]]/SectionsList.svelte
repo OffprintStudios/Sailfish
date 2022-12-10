@@ -103,7 +103,7 @@
 						</button>
 					{/if}
 				{/if}
-				<a href="/prose/{work.id}/{slugify(work.title)}/section/{section.id}/{slugify(section.title)}">
+				<a href="/prose/{work.id}/{slugify(work.title)}/section/{section.id}/{slugify(section.title)}" data-sveltekit-preload-data>
 					<span class="title">{section.title}</span>
 					<span class="words">{section.words} words</span>
 					<span class="mx-1">•</span>

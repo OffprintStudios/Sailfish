@@ -7,13 +7,34 @@
 		Edit2Line,
 		DeleteBinLine,
 	} from "svelte-remixicon";
+	import { goto } from "$app/navigation";
 	import type { Work } from "$lib/models/content/works";
 	import { Button } from "$lib/ui/util";
 	import { abbreviate } from "$lib/util/functions";
 	import { account } from "$lib/state/account.state";
 	import { slugify } from "$lib/util/functions";
+	import { openPopup } from "$lib/ui/popup";
+	import { delReq } from "$lib/http";
+	import type { ResponseError } from "$lib/http";
+	import toast from "svelte-french-toast";
+	import DeleteWorkPrompt from "./DeleteWorkPrompt.svelte";
 
 	export let work: Work;
+
+	async function deleteWork() {
+		openPopup(DeleteWorkPrompt, {
+			async onConfirm() {
+				const response = await delReq<void>(`/works/delete-work/${work.id}?profileId=${$account.currProfile.id}`);
+				if ((response as ResponseError).error) {
+					const error = response as ResponseError;
+					toast.error(error.message);
+				} else {
+					toast.success(`Work successfully deleted!`);
+					await goto(`/profile/${work.author.id}/${slugify(work.author.username)}/works`);
+				}
+			}
+		})
+	}
 </script>
 
 <div class="flex flex-col max-w-[108.16px] min-w-[108.16px]">
@@ -44,7 +65,7 @@
 					<span class="button-text">Edit</span>
 				</Button>
 				<div class="my-0.5"><!--spacer--></div>
-				<Button classes="md:w-full md:justify-center">
+				<Button classes="md:w-full md:justify-center" on:click={deleteWork}>
 					<DeleteBinLine class="button-icon" />
 					<span class="button-text">Delete</span>
 				</Button>

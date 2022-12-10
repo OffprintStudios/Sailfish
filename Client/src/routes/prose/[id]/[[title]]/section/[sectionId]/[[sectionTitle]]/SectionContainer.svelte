@@ -80,13 +80,23 @@
 </script>
 
 <div class="rounded-xl mb-6 dark:highlight-shadowed" style="background: var(--accent);">
-	<div class="p-4">
-		<h3 class="text-white font-light ml-0.5">
-			<a class="text-white hover:text-white" href="/prose/{work.id}/{slugify(work.title)}">{work.title}</a>
-			<span class="text-white mx-[0.075rem] text-lg">•</span>
-			<a class="text-white hover:text-white" href="/profile/{work.author.id}/{slugify(work.author.username)}">{work.author.username}</a>
-		</h3>
-		<h1 class="text-white text-4xl">{section.title}</h1>
+	<div class="flex items-center p-4">
+		{#if work.coverArt}
+			<div
+				class="relative overflow-hidden bg-white border-4 border-white rounded-xl mr-4"
+				style="box-shadow: var(--dropshadow);"
+			>
+				<img src={work.coverArt} alt="cover art" class="max-w-[150px] max-h-[110px]" />
+			</div>
+		{/if}
+		<div class="flex-1">
+			<h3 class="text-white font-light ml-0.5">
+				<a class="text-white hover:text-white" href="/prose/{work.id}/{slugify(work.title)}">{work.title}</a>
+				<span class="text-white mx-[0.075rem] text-lg">•</span>
+				<a class="text-white hover:text-white" href="/profile/{work.author.id}/{slugify(work.author.username)}">{work.author.username}</a>
+			</h3>
+			<h1 class="text-white text-4xl">{section.title}</h1>
+		</div>
 	</div>
 	<div class="flex items-center mt-2 p-2 border-t-2" style="border-color: var(--accent-light);">
 		{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
