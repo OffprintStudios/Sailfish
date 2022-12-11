@@ -37,6 +37,12 @@ final class Work: Model, Content {
     @Siblings(through: WorkTag.self, from: \.$work, to: \.$tag)
     var tags: [Tag]
     
+    @Siblings(through: ShelfItem.self, from: \.$work, to: \.$shelf)
+    var shelves: [Shelf]
+    
+    @Siblings(through: LibraryItem.self, from: \.$work, to: \.$profile)
+    var addedBy: [Profile]
+    
     @OptionalField(key: "cover_art")
     var coverArt: String?
     
@@ -64,11 +70,17 @@ final class Work: Model, Content {
     @Children(for: \.$work)
     var sections: [Section]
     
+    @Children(for: \.$work)
+    var votes: [ReadingHistory]
+    
     @Field(key: "kind")
     var kind: Kind
     
     @Field(key: "approval_status")
     var approvalStatus: ApprovalStatus
+    
+    @OptionalField(key: "license")
+    var license: [LicenseMarkers]?
     
     @OptionalField(key: "published_on")
     var publishedOn: Date?
@@ -139,6 +151,14 @@ extension Work {
         case approved = "Approved"
         case pending = "Pending"
         case rejected = "Rejected"
+    }
+    
+    enum LicenseMarkers: String, Codable {
+        case attribution = "BY"
+        case noDerivatives = "ND"
+        case shareAlike = "SA"
+        case nonCommercial = "NC"
+        case publicDomain = "Z"
     }
 }
 

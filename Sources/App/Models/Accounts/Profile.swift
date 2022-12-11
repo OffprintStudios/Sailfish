@@ -33,6 +33,15 @@ final class Profile: Model, Content {
     
     @Children(for: \.$author)
     var works: [Work]
+    
+    @Children(for: \.$profile)
+    var shelves: [Shelf]
+    
+    @Siblings(through: LibraryItem.self, from: \.$profile, to: \.$work)
+    var library: [Work]
+    
+    @Children(for: \.$profile)
+    var history: [ReadingHistory]
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?

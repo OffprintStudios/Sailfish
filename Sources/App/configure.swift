@@ -51,7 +51,14 @@ public func configure(_ app: Application) async throws {
         CreateSection(),
         CreateWorkTag(),
         AddCommentSectionField(),
-        AddVolumePublishedOn()
+        AddVolumePublishedOn(),
+        AddWorkLicenseField(),
+        CreateShelf(),
+        CreateShelfItem(),
+        CreateLibraryItem(),
+        CreateReadingHistory(),
+        CreateApprovalQueue(),
+        AddVoteChangedField(),
     ])
 
     try await app.autoMigrate()
