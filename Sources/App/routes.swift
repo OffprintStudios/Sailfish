@@ -19,4 +19,7 @@ func routes(_ app: Application) throws {
     try app.register(collection: VolumeController())
     try app.register(collection: SectionController())
     try app.register(collection: TagController())
+    try app.register(collection: LibraryController())
+    try app.register(collection: ShelfController())
+    try app.register(collection: HistoryController())
 }

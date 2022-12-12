@@ -59,6 +59,7 @@ public func configure(_ app: Application) async throws {
         CreateReadingHistory(),
         CreateApprovalQueue(),
         AddVoteChangedField(),
+        AddIsPublicField(),
     ])
 
     try await app.autoMigrate()

@@ -32,6 +32,9 @@ final class ReadingHistory: Model, Content {
     @OptionalField(key: "vote_changed")
     var voteChanged: Date?
     
+    @Field(key: "is_public")
+    var isPublic: Bool
+    
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
     
@@ -49,6 +52,7 @@ final class ReadingHistory: Model, Content {
         viewedOn = Date()
         vote = .noVote
         sectionsRead = []
+        isPublic = true
     }
 }
 
@@ -57,5 +61,15 @@ extension ReadingHistory {
         case liked = 1
         case disliked = -1
         case noVote = 0
+    }
+    
+    struct ChangeVote: Content {
+        var vote: Vote
+    }
+}
+
+extension ReadingHistory.ChangeVote: Validatable {
+    static func validations(_ validations: inout Validations) {
+        validations.add("vote", as: Int32.self, is: .in(1, -1, 0), required: true)
     }
 }
