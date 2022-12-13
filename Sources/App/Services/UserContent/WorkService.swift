@@ -162,8 +162,10 @@ struct WorkService {
         }
     }
     
-    // TODO: Add publishing functions here
-    // func publishWork(_ id: String) {}
+    /// Publishes a work by submitting it to the approval queue.
+    func publishWork(_ id: String) async throws -> Response {
+        try await request.approvalService.submitItem(id)
+    }
     
     /// Deletes a work. Since all works have a `deletedAt` field, this deletion is just a soft delete for moderation purposes.
     func deleteWork(_ id: String) async throws {

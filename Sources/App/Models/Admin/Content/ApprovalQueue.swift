@@ -49,4 +49,8 @@ extension ApprovalQueue {
         case approved = "Approved"
         case rejected = "Rejected"
     }
+    
+    struct ProvideReason: Content {
+        var reason: String
+    }
 }
