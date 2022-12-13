@@ -3,45 +3,45 @@
 	import { getReq } from "$lib/http";
 	import type { Paginate } from "$lib/util/types";
 	import type { ResponseError } from "$lib/http";
-	import type { Work } from "$lib/models/content/works";
-	import { WorkCard } from "$lib/ui/content";
+	import type { ReadingHistory } from "$lib/models/content/library";
 	import { Paginator } from "$lib/ui/util";
-	import toast from "svelte-french-toast";
 	import { account } from "$lib/state/account.state";
+	import { WorkCard } from "$lib/ui/content";
+	import toast from "svelte-french-toast";
 
 	let loading = false;
-	let works: Paginate<Work> = null;
+	let history: Paginate<ReadingHistory> = null;
 
 	onMount(async () => {
-		await loadLibrary(1);
+		await loadHistory(1);
 	})
 
-	async function loadLibrary(page: number) {
+	async function loadHistory(page: number) {
 		loading = true;
-		const response = await getReq<Paginate<Work>>(`/library/fetch-all?profileId=${$account.currProfile.id}&page=${page}&per=20`);
+		const response = await getReq<Paginate<ReadingHistory>>(`/history/fetch-all?profileId=${$account.currProfile.id}&page=${page}&per=20`);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
 			toast.error(error.message);
 		} else {
-			works = response as Paginate<Work>;
+			history = response as Paginate<ReadingHistory>;
 		}
 		loading = false;
 	}
 </script>
 
-{#if loading && !works}
+{#if loading && !history}
 	<div class="h-full flex flex-col items-center justify-center">
 		<div class="empty">
 			<h3>Loading...</h3>
 		</div>
 	</div>
-{:else if works}
-	{#if works.items.length > 0}
-		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-			{#each works.items as favorite}
-				<WorkCard work={favorite}>
+{:else if history}
+	{#if history.items.length > 0}
+		<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+			{#each history.items as item}
+				<WorkCard work={item.work}>
 					<svelte:fragment slot="dropdown">
-						hi hello
+
 					</svelte:fragment>
 				</WorkCard>
 			{/each}
@@ -49,8 +49,8 @@
 	{:else}
 		<div class="h-full flex flex-col items-center justify-center">
 			<div class="empty">
-				<h3>You haven't added anything yet</h3>
-				<p>Click the Add to Library button on any work and it'll show up here!</p>
+				<h3>You haven't read anything yet</h3>
+				<p>Whenever you open any published work, it'll show up here.</p>
 			</div>
 		</div>
 	{/if}
@@ -66,11 +66,11 @@
 	</div>
 {/if}
 
-{#if works && works.items.length > 0}
+{#if history && history.items.length > 0}
 	<Paginator
-		currPage={works.metadata.page}
-		perPage={works.metadata.per}
-		totalItems={works.metadata.total}
-		on:change={(page) => loadLibrary(page)}
+		currPage={history.metadata.page}
+		perPage={history.metadata.per}
+		totalItems={history.metadata.total}
+		on:change={(page) => loadHistory(page)}
 	/>
 {/if}

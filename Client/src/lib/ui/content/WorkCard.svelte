@@ -52,7 +52,7 @@
 							<MoreFill size="18px" class="button-icon no-text" />
 						</svelte:fragment>
 						<svelte:fragment slot="items">
-							hi hello
+							<slot name="dropdown"></slot>
 						</svelte:fragment>
 					</Dropdown>
 				{/if}

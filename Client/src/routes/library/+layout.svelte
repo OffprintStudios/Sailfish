@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/stores";
 	import { account } from "../../lib/state/account.state";
-	import { Bookmark3Line, StarLine, ArrowRightCircleLine, CheckDoubleLine, BarChart2Line } from "svelte-remixicon";
+	import { Bookmark3Line, StarLine, HistoryLine, CheckDoubleLine, BarChart2Line } from "svelte-remixicon";
 
 	const iconSize = '24px';
 </script>
@@ -44,7 +44,7 @@
 					href="/library"
 				>
 					<Bookmark3Line class="mr-1" size={iconSize} />
-					<span>Saved Works</span>
+					<span>My Library</span>
 				</a>
 				<a
 					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
@@ -56,11 +56,11 @@
 				</a>
 				<a
 					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
-					class:active={$page.url.pathname.includes("/read-later")}
-					href="/library/read-later"
+					class:active={$page.url.pathname.includes("/reading-history")}
+					href="/library/reading-history"
 				>
-					<ArrowRightCircleLine class="mr-1" size={iconSize} />
-					<span>Read Later</span>
+					<HistoryLine class="mr-1" size={iconSize} />
+					<span>Reading History</span>
 				</a>
 				<a
 					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
