@@ -63,9 +63,11 @@ struct WorkController: RouteCollection {
             )
             return try await request.workService.updateBannerArt(id, bannerUrl: bannerUrl)
         }
-        
-        // TODO: Add publishing route here
-        // worksWithAuth.post("publish-work", ":id") { request async throws in }
+
+        worksWithAuth.post("publish-work", ":id") { request async throws -> Response in
+            let id = request.parameters.get("id")!
+            return try await request.workService.publishWork(id)
+        }
         
         worksWithAuth.delete("delete-work", ":id") { request async throws -> HTTPResponseStatus in
             let id = request.parameters.get("id")!

@@ -54,3 +54,9 @@ extension ApprovalQueue {
         var reason: String
     }
 }
+
+extension ApprovalQueue.ProvideReason: Validatable {
+    static func validations(_ validations: inout Validations) {
+        validations.add("reason", as: String.self, is: .count(3...), required: true)
+    }
+}
