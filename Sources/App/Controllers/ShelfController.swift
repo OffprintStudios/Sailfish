@@ -32,12 +32,11 @@ struct ShelfController: RouteCollection {
         }
         
         shelves.get("fetch-one") { request async throws -> Shelf in
-            let profileId: String? = request.query["profileId"]
             let shelfId: String? = request.query["shelfId"]
-            if let profile = profileId, let shelf = shelfId {
-                return try await request.libraryService.fetchShelf(shelf, for: profile)
+            if let shelf = shelfId {
+                return try await request.libraryService.fetchShelf(shelf)
             }
-            throw Abort(.badRequest, reason: "You must include the profile ID and shelf ID in your request.")
+            throw Abort(.badRequest, reason: "You must include the shelf ID in your request.")
         }
         
         shelves.get("fetch-items") { request async throws -> Page<Work> in

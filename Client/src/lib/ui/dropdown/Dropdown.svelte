@@ -57,10 +57,11 @@
 
 <style lang="scss">
 	:global(div.dropdown-items) {
-		@apply absolute rounded-lg z-10 p-1 min-w-[12rem] max-w-[24rem] bg-zinc-200;
+		@apply absolute rounded-lg z-10 p-1 min-w-[12rem] max-w-[24rem];
 		box-shadow: var(--dropshadow);
+		background: var(--accent);
 		:global(a), :global(button) {
-			@apply flex items-center w-full p-2 rounded-lg transition transform no-underline hover:bg-zinc-300;
+			@apply flex items-center text-white w-full p-2 rounded-lg transition transform no-underline;
 			color: var(--text-color);
 			:global(span) {
 				@apply text-sm;
@@ -74,14 +75,10 @@
 		}
 		:global(a.active), :global(button.active) {
 			@apply text-white;
-			background: var(--accent);
+			background: var(--accent-light);
 		}
-	}
-
-	:global(.dark div.dropdown-items) {
-		@apply bg-zinc-700;
-		:global(a), :global(button) {
-			@apply hover:bg-zinc-600;
+		:global(a:hover), :global(button:hover) {
+			background: var(--accent-light) !important;
 		}
 	}
 </style>

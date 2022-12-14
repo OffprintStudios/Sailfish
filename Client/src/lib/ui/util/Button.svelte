@@ -57,7 +57,7 @@
 
 <style lang="scss">
 	button, a {
-		@apply flex items-center px-2 py-1.5 transition transform focus:ring-0 m-0 text-base rounded-lg select-none;
+		@apply flex items-center px-2 py-1.5 transition transform focus:ring-0 m-0 text-base rounded-lg select-none z-[11] relative;
 		text-transform: lowercase;
 		font-variant: small-caps;
 		font-weight: 700;

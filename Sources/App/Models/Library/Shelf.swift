@@ -66,6 +66,6 @@ extension Shelf {
 extension Shelf.ShelfForm: Validatable {
     static func validations(_ validations: inout Validations) {
         validations.add("name", as: String.self, is: .count(3...120), required: true)
-        validations.add("desc", as: String.self, is: .count(3...240), required: true)
+        validations.add("desc", as: String.self, is: .count(3...240), required: false)
     }
 }

@@ -104,11 +104,8 @@ struct LibraryService {
     }
     
     /// Fetches a single shelf for a given user.
-    func fetchShelf(_ id: String, for profileId: String) async throws -> Shelf {
-        guard let profile = try await Profile.find(profileId, on: request.db) else {
-            throw Abort(.notFound, reason: "The shelf you're trying to access is for a user that doesn't exist.")
-        }
-        guard let shelf = try await profile.$shelves.query(on: request.db).filter(\.$id == id).first() else {
+    func fetchShelf(_ id: String) async throws -> Shelf {
+        guard let shelf = try await Shelf.find(id, on: request.db) else {
             throw Abort(.notFound, reason: "The shelf you're trying to access doesn't exist.")
         }
         return shelf

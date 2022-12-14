@@ -34,7 +34,7 @@
 </svelte:head>
 
 {#if $account.account && $account.currProfile}
-	<div class="mx-auto max-w-7xl">
+	<div class="mx-auto max-w-4xl">
 		<div class="flex flex-col items-center justify-center my-6">
 			<h1 class="hidden">Library</h1>
 			<div class="flex bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed p-2 rounded-full">
