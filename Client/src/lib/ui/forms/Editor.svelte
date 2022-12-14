@@ -27,7 +27,7 @@
 		Text as TextIcon,
 		Underline as UnderlineIcon,
 	} from 'svelte-remixicon';
-	import { Editor } from "@tiptap/core";
+	import type { Editor } from "@tiptap/core";
 	import Underline from '@tiptap/extension-underline';
 	import Typography from '@tiptap/extension-typography';
 	import Image from '@tiptap/extension-image';
