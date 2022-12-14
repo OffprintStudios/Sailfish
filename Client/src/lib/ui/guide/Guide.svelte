@@ -6,6 +6,7 @@
 	import { AccountPanel } from "./account";
 	import { SettingsPanel } from "./settings";
 	import { Avatar } from "../util";
+	import { HistoryPanel } from "./history";
 
 	const iconSize = "24px";
 
@@ -28,8 +29,10 @@
 				<div class="guide-nav">
 					<button
 						title="History"
+						class:active={$guide.currTab === GuideTabs.HistoryTab}
 						class:disabled={$account.account === null || $account.currProfile === null}
 						disabled={$account.account === null || $account.currProfile === null}
+						on:click={() => switchTab(HistoryPanel, GuideTabs.HistoryTab)}
 					>
 						<HistoryLine size={iconSize} />
 					</button>
