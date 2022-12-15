@@ -4,12 +4,16 @@
 	import type { Work } from "$lib/models/content/works";
 	import { ContentFilter } from "$lib/util/constants";
 	import { account } from "$lib/state/account.state";
-	import { getReq } from "$lib/http";
+	import { getReq, delReq } from "$lib/http";
 	import type { ResponseError } from "$lib/http";
 	import type { Paginate } from "$lib/util/types";
 	import { Paginator } from "$lib/ui/util";
 	import { WorkCard } from "$lib/ui/content";
+	import { slugify } from "$lib/util/functions";
+	import { Edit2Line, DeleteBinLine } from "svelte-remixicon";
 	import toast from "svelte-french-toast";
+	import { openPopup } from "$lib/ui/popup";
+	import DeleteWorkPrompt from "./DeleteWorkPrompt.svelte";
 
 	let works: Work[] = [];
 	let pageNum = $page.url.searchParams.has("page") ? $page.url.searchParams.get("page") : 1;
@@ -43,6 +47,26 @@
 		}
 		loading = false;
 	}
+	async function deleteWork(id: string) {
+		openPopup(DeleteWorkPrompt, {
+			onConfirm: async () => {
+				const result = await toast.promise<void | ResponseError>(
+					delReq<void>(`/works/delete-work/${id}?profileId=${$account.currProfile.id}`),
+					{
+						loading: 'Deleting work...',
+						success: 'Work deleted!',
+						error: null,
+					}
+				);
+				if ((result as ResponseError).error) {
+					const error = result as ResponseError;
+					toast.error(error.message);
+				} else {
+					await fetchDrafts();
+				}
+			}
+		})
+	}
 </script>
 
 {#if loading}
@@ -53,7 +77,18 @@
 	<div class="my-6 w-11/12 mx-auto">
 		{#each works as work}
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-				<WorkCard work={work} />
+				<WorkCard work={work}>
+					<svelte:fragment slot="dropdown">
+						<a href="/prose/{work.id}/{slugify(work.title)}/edit">
+							<Edit2Line class="mr-1" size="18px" />
+							<span>Edit work</span>
+						</a>
+						<button type="button" on:click={() => deleteWork(work.id)}>
+							<DeleteBinLine class="mr-1" size="18px" />
+							<span>Delete work</span>
+						</button>
+					</svelte:fragment>
+				</WorkCard>
 			</div>
 		{:else}
 			<div class="empty">

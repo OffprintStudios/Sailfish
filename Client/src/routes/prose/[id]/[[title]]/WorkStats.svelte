@@ -18,18 +18,33 @@
 	import type { ResponseError } from "$lib/http";
 	import toast from "svelte-french-toast";
 	import DeleteWorkPrompt from "./DeleteWorkPrompt.svelte";
+	import { AddToShelfPrompt } from "$lib/ui/content";
 
 	export let work: Work;
 
+	async function addToShelf() {
+		openPopup(AddToShelfPrompt, {
+			onConfirm: async () => {
+				console.log(`hit!`);
+			}
+		}, { workId: work.id });
+	}
+
 	async function deleteWork() {
 		openPopup(DeleteWorkPrompt, {
-			async onConfirm() {
-				const response = await delReq<void>(`/works/delete-work/${work.id}?profileId=${$account.currProfile.id}`);
-				if ((response as ResponseError).error) {
-					const error = response as ResponseError;
+			onConfirm: async () => {
+				const result = await toast.promise<void | ResponseError>(
+					delReq<void>(`/works/delete-work/${work.id}?profileId=${$account.currProfile.id}`),
+					{
+						loading: 'Deleting work...',
+						success: 'Work deleted!',
+						error: null,
+					}
+				);
+				if ((result as ResponseError).error) {
+					const error = result as ResponseError;
 					toast.error(error.message);
 				} else {
-					toast.success(`Work successfully deleted!`);
 					await goto(`/profile/${work.author.id}/${slugify(work.author.username)}/works`);
 				}
 			}
@@ -55,7 +70,7 @@
 	{#if $account.account && $account.currProfile}
 		<div class="flex flex-col w-full md:max-w-[108.16px] md:min-w-[108.16px] p-2 rounded-xl mb-4 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
 			{#if $account.currProfile.id === work.author.id}
-				<Button classes="md:w-full md:justify-center">
+				<Button classes="md:w-full md:justify-center" on:click={addToShelf}>
 					<BarChart2Line class="button-icon" />
 					<span class="button-text">Shelves</span>
 				</Button>
