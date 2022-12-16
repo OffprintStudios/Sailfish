@@ -154,17 +154,34 @@ struct WorkService {
     
     /// Updates a work's word count.
     func updateWordCount(_ work: Work) async throws {
-        if let updatedWordCount = try await work.$sections.query(on: request.db).filter(\.$publishedOn <= Date()).sum(\.$words) {
-            try await request.db.transaction { database in
-                work.words = updatedWordCount
-                try await work.save(on: database)
-            }
+        let sections: [Section] = try await work.$sections.query(on: request.db).field(\.$words).filter(\.$publishedOn <= Date()).all()
+        let wordCount: Int64 = sections.map({ $0.words }).reduce(0, +)
+        try await request.db.transaction { database in
+            work.words = wordCount
+            try await work.save(on: database)
         }
     }
     
     /// Publishes a work by submitting it to the approval queue.
     func publishWork(_ id: String) async throws -> Response {
         try await request.approvalService.submitItem(id)
+    }
+    
+    /// Hides/shows a work by messing with its publishing date. Throws if the work in question either doesn't exist or is not approved.
+    func hideShow(_ id: String) async throws -> Response {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        guard let work = try await profile.$works.query(on: request.db).filter(\.$id == id).first() else {
+            throw Abort(.notFound, reason: "Could not find a work to update. Are you sure it exists?")
+        }
+        try await request.db.transaction { database in
+            if work.approvalStatus == .approved {
+                work.publishedOn = work.publishedOn == nil ? Date() : nil
+                try await work.save(on: database)
+            } else {
+                throw Abort(.forbidden, reason: "Your work must be approved before this function becomes available.")
+            }
+        }
+        return Response(status: .ok)
     }
     
     /// Deletes a work. Since all works have a `deletedAt` field, this deletion is just a soft delete for moderation purposes.

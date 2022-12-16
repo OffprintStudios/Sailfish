@@ -25,17 +25,27 @@ struct ApprovalQueueService {
     func submitItem(_ id: String) async throws -> Response {
         let profile = try request.authService.getUser(withProfile: true).profile!
         return try await request.db.transaction { database in
-            if try await ApprovalQueue.query(on: database).filter(\.$work.$id == id).first() != nil {
-                throw Abort(.conflict, reason: "This work has already been submitted to the queue.")
+            if let queueItem = try await ApprovalQueue.query(on: database).filter(\.$work.$id == id).first() {
+                if queueItem.attempts > 3 {
+                    throw Abort(.forbidden, reason: "You've already reached the maximum number of attempts for this work.")
+                }
+                queueItem.attempts += 1
+                queueItem.status = .waiting
+                try await queueItem.save(on: database)
+                return Response(status: .ok)
+            } else {
+                guard let work = try await profile.$works.query(on: database).filter(\.$id == id).first() else {
+                    throw Abort(.notFound, reason: "The work you're trying to add to the queue doesn't exist.")
+                }
+                if work.words < MIN_WORD_COUNT {
+                    throw Abort(.badRequest, reason: "Your work must meet a minimum word count of \(MIN_WORD_COUNT) words before submission.")
+                }
+                let newItem = ApprovalQueue(workId: id)
+                try await newItem.save(on: database)
+                work.approvalStatus = .pending
+                try await work.save(on: database)
+                return Response(status: .ok)
             }
-            guard let work = try await profile.$works.query(on: database).filter(\.$id == id).first() else {
-                throw Abort(.notFound, reason: "The work you're trying to add to the queue doesn't exist.")
-            }
-            let newItem = ApprovalQueue(workId: id)
-            try await newItem.save(on: database)
-            work.approvalStatus = .pending
-            try await work.save(on: database)
-            return Response(status: .ok)
         }
     }
     
@@ -97,7 +107,6 @@ struct ApprovalQueueService {
             if let hasItem = item {
                 if hasItem.attempts < 4 {
                     hasItem.status = .rejected
-                    hasItem.attempts += 1
                     hasItem.reason = try SwiftSoup.clean(reason.reason, .none())!
                     try await hasItem.save(on: database)
                     hasItem.work.approvalStatus = .rejected

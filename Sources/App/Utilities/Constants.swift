@@ -18,3 +18,6 @@ let MAX_PROFILE_LIMIT: Int = 3
 
 /// A generic error message for things that should be obfuscated by obscurity
 let GENERIC_ERROR_MESSAGE: String = "Something went wrong! Try again in a little bit."
+
+/// The minimum word count for works before publishing
+let MIN_WORD_COUNT: Int64 = 750

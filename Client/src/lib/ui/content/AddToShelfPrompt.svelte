@@ -25,7 +25,6 @@
 			toast.error(error.message);
 		} else {
 			shelves = response as {shelf: Shelf, hasItem: boolean}[];
-			console.log(shelves)
 		}
 		loading = false;
 	}

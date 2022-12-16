@@ -1,52 +1,120 @@
 <script lang="ts">
-	import { account } from "$lib/state/account.state";
+	import {onMount} from "svelte";
+	import {account} from "$lib/state/account.state";
 	import {
-		HeartLine,
+		BookLine,
+		Bookmark3Line,
+		CloseCircleLine,
 		DislikeLine,
+		EyeLine,
+		EyeOffLine,
+		HeartLine,
 		ImageAddLine,
 		ImageEditLine,
-		Bookmark3Line,
-		BookLine,
+		Loader5Line,
 		TimeLine,
-		CloseCircleLine,
-		EyeOffLine,
-		EyeLine,
 	} from "svelte-remixicon";
-	import type { Work } from "$lib/models/content/works";
-	import { TagBadge } from "$lib/ui/content";
-	import { abbreviate, slugify } from "$lib/util/functions";
-	import { TagKind } from "$lib/models/tags";
-	import { NavLink } from "$lib/ui/nav";
-	import { openPopup } from "$lib/ui/popup";
-	import { UploadCoverArt, UploadWorkBanner } from "$lib/ui/upload";
+	import type {Work} from "$lib/models/content/works";
+	import {ApprovalStatus} from "$lib/models/content/works";
+	import {TagBadge} from "$lib/ui/content";
+	import {abbreviate, slugify} from "$lib/util/functions";
+	import {TagKind} from "$lib/models/tags";
+	import {NavLink} from "$lib/ui/nav";
+	import {openPopup} from "$lib/ui/popup";
+	import {UploadCoverArt, UploadWorkBanner} from "$lib/ui/upload";
 	import toast from "svelte-french-toast";
-	import { ApprovalStatus } from "$lib/models/content/works";
-	import { Button } from "$lib/ui/util";
+	import {Button} from "$lib/ui/util";
+	import type {ReadingHistory} from "$lib/models/content/library";
+	import {Vote} from "$lib/models/content/library";
+	import type {ResponseError} from "$lib/http";
+	import {delReq, getReq, patchReq, putReq} from "$lib/http";
+	import PublishWorkPrompt from "./PublishWorkPrompt.svelte";
 
 	export let work: Work;
+	export let history: ReadingHistory;
+	let library: { hasItem: boolean } = { hasItem: false };
+	let isVoting = false;
+	let isAddingToLibrary = false;
 
-	async function like() {
-		if ($account.account && $account.currProfile) {
-			// TODO: Add liking feature
+	onMount(async () => {
+		if ($account.account && $account.currProfile && $account.currProfile.id !== work.author.id) {
+			await checkLibrary();
+		}
+	});
+
+	async function checkLibrary() {
+		if (work.publishedOn === undefined || work.publishedOn <= new Date()) {
+			toast.error(`This feature is disabled for unpublished works.`);
+			return;
+		}
+		const response = await getReq<{ hasItem: boolean }>(`/history/fetch-one?workId=${work.id}&profileId=${$account.currProfile?.id}`);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
 		} else {
-			toast.error(`You must be logged in to perform this action.`);
+			library = response as { hasItem: boolean };
 		}
 	}
 
-	async function dislike() {
+	async function setVote(vote: Vote) {
+		isVoting = true;
+		if (work.publishedOn === undefined || work.publishedOn <= new Date()) {
+			toast.error(`This feature is disabled for unpublished works.`);
+			isVoting = false;
+			return;
+		}
 		if ($account.account && $account.currProfile) {
-			// TODO: Add disliking feature
+			if ($account.currProfile.id === work.author.id) {
+				toast.error(`You cannot vote on your own work!`);
+				isVoting = false;
+				return;
+			}
+			const response = await patchReq<ReadingHistory>(`/history/set-vote?workId=${work.id}&profileId=${$account.currProfile.id}`, {
+				vote: history.vote === vote ? Vote.noVote : vote,
+			});
+			if ((response as ResponseError).error) {
+				const error = response as ResponseError;
+				toast.error(error.message);
+			} else {
+				history = response as ReadingHistory;
+			}
 		} else {
 			toast.error(`You must be logged in to perform this action.`);
 		}
+		isVoting = false;
 	}
 
-	async function addToLibrary() {
+	async function setLibrary() {
+		isAddingToLibrary = true;
+		if (work.publishedOn === undefined || work.publishedOn <= new Date()) {
+			toast.error(`This feature is disabled for unpublished works.`);
+			isAddingToLibrary = false;
+			return;
+		}
 		if ($account.account && $account.currProfile) {
-			// TODO: Add library feature
+			if ($account.currProfile.id === work.author.id) {
+				toast.error(`You cannot add your own work to your library!`);
+				isAddingToLibrary = false;
+				return;
+			}
+
+			let response: { hasItem: boolean } | ResponseError;
+			if (library.hasItem) {
+				response = await delReq<{ hasItem: boolean}>(`/library/remove-one?workId=${work.id}&profileId=${$account.currProfile.id}`);
+			} else {
+				response = await putReq<{ hasItem: boolean }>(`/library/add-one?workId=${work.id}&profileId=${$account.currProfile.id}`, {});
+			}
+
+			if ((response as ResponseError).error) {
+				const error = response as ResponseError;
+				toast.error(error.message);
+			} else {
+				library = response as { hasItem: boolean };
+			}
 		} else {
 			toast.error(`You must be logged in to perform this action.`);
 		}
+		isAddingToLibrary = false;
 	}
 
 	function updateCoverArt() {
@@ -63,6 +131,48 @@
 				work = value;
 			}
 		}, { workId: work.id })
+	}
+
+	function publishWork() {
+		openPopup(PublishWorkPrompt, {
+			onConfirm: async () => {
+				const response = await toast.promise(
+						patchReq<void>(`/works/publish-work/${work.id}?profileId=${$account.currProfile?.id}`, {}),
+						{
+							loading: 'Submitting to queue...',
+							success: 'Your work has been submitted!',
+							error: null,
+						}
+					);
+				if ((response as ResponseError).error) {
+					const error = response as ResponseError;
+					toast.error(error.message);
+				} else {
+					work.approvalStatus = ApprovalStatus.Pending;
+				}
+			}
+		})
+	}
+
+	async function hideShow() {
+		if (work.approvalStatus !== ApprovalStatus.Approved) {
+			toast.error(`Your work must first be approved before you can access this function.`);
+			return;
+		}
+		const response = await toast.promise<void>(
+				patchReq<void>(`/works/hide-show/${work.id}?profileId=${$account.currProfile?.id}`, {}),
+				{
+					loading: 'Changing visibility...',
+					success: 'Changes saved!',
+					error: null,
+				}
+			);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			work.publishedOn = undefined;
+		}
 	}
 </script>
 
@@ -130,7 +240,7 @@
 		<div class="flex items-center">
 			{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
 				{#if work.approvalStatus === ApprovalStatus.NotSubmitted}
-					<NavLink type="button">
+					<NavLink type="button" on:click={publishWork}>
 						<BookLine class="link-icon" />
 						<span class="link-name">Publish</span>
 					</NavLink>
@@ -140,18 +250,18 @@
 						<span class="link-name">Pending</span>
 					</NavLink>
 				{:else if work.approvalStatus === ApprovalStatus.Rejected}
-					<NavLink type="button">
+					<NavLink type="button" on:click={publishWork}>
 						<CloseCircleLine class="link-icon" />
 						<span class="link-name">Rejected</span>
 					</NavLink>
 				{:else if work.approvalStatus === ApprovalStatus.Approved}
 					{#if work.publishedOn}
-						<NavLink type="button">
+						<NavLink type="button" on:click={hideShow}>
 							<EyeOffLine class="link-icon" />
 							<span class="link-name">Hide</span>
 						</NavLink>
 					{:else}
-						<NavLink type="button">
+						<NavLink type="button" on:click={hideShow}>
 							<EyeLine class="link-icon" />
 							<span class="link-name">Show</span>
 						</NavLink>
@@ -166,17 +276,45 @@
 					<span class="link-name">Banner</span>
 				</NavLink>
 			{:else}
-				<button title="{work.likes} likes" type="button" class="flex items-center p-2 rounded-xl transition" on:click={like}>
-					<HeartLine class="mr-1" size="24px" />
+				<button
+					title="{work.likes} likes"
+					disabled={isVoting}
+					type="button"
+					class="utility"
+					class:active={history?.vote === Vote.liked}
+					on:click={() => setVote(Vote.liked)}
+				>
+					{#if isVoting}
+						<Loader5Line class="animate-spin mr-1" size="24px" />
+					{:else}
+						<HeartLine class="mr-1" size="24px" />
+					{/if}
 					<span class="text-xl relative top-0.5" style="font-family: var(--header-text);">{abbreviate(work.likes)}</span>
 				</button>
 				<div class="mx-0.5"></div>
-				<button title="{work.dislikes} dislikes" type="button" class="flex items-center p-2 rounded-xl transition" on:click={dislike}>
-					<DislikeLine class="mr-1" size="24px" />
+				<button
+					title="{work.dislikes} dislikes"
+					disabled={isVoting}
+					type="button"
+					class="utility"
+					class:active={history?.vote === Vote.disliked}
+					on:click={() => setVote(Vote.disliked)}
+				>
+					{#if isVoting}
+						<Loader5Line class="animate-spin mr-1" size="24px" />
+					{:else}
+						<DislikeLine class="mr-1" size="24px" />
+					{/if}
 					<span class="text-xl relative top-0.5" style="font-family: var(--header-text);">{abbreviate(work.dislikes)}</span>
 				</button>
 				<div class="mx-0.5"></div>
-				<button title="Add to Library" type="button" class="flex items-center p-2 rounded-xl transition" on:click={addToLibrary}>
+				<button
+					title="Add to Library"
+					type="button"
+					class="utility"
+					class:active={library?.hasItem}
+					on:click={setLibrary}
+				>
 					<Bookmark3Line size="24px" />
 				</button>
 			{/if}
@@ -206,6 +344,13 @@
 		div.title-bar {
 			grid-area: d;
 			@apply p-4 pl-0 flex items-center z-[2] relative;
+		}
+		button.utility {
+			@apply flex items-center p-2 rounded-xl transition;
+			&.active {
+				@apply text-white;
+				background: var(--accent);
+			}
 		}
 	}
 </style>

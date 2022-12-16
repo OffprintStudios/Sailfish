@@ -29,7 +29,7 @@
 		loading = true;
 		const response = await getReq<Paginate<Work>>(
 			`/works/fetch-works?` +
-			`authorId=${$account.currProfile.id}&` +
+			`authorId=${$account.currProfile?.id}&` +
 			`published=${false}&` +
 			`filter=${ContentFilter.everything}&` +
 			`page=${pageNum}&` +
@@ -51,7 +51,7 @@
 		openPopup(DeleteWorkPrompt, {
 			onConfirm: async () => {
 				const result = await toast.promise<void | ResponseError>(
-					delReq<void>(`/works/delete-work/${id}?profileId=${$account.currProfile.id}`),
+					delReq<void>(`/works/delete-work/${id}?profileId=${$account.currProfile?.id}`),
 					{
 						loading: 'Deleting work...',
 						success: 'Work deleted!',

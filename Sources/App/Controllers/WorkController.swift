@@ -64,9 +64,14 @@ struct WorkController: RouteCollection {
             return try await request.workService.updateBannerArt(id, bannerUrl: bannerUrl)
         }
 
-        worksWithAuth.post("publish-work", ":id") { request async throws -> Response in
+        worksWithAuth.patch("publish-work", ":id") { request async throws -> Response in
             let id = request.parameters.get("id")!
             return try await request.workService.publishWork(id)
+        }
+        
+        worksWithAuth.patch("hide-show", ":id") { request async throws -> Response in
+            let id = request.parameters.get("id")!
+            return try await request.workService.hideShow(id)
         }
         
         worksWithAuth.delete("delete-work", ":id") { request async throws -> HTTPResponseStatus in

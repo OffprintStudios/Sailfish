@@ -24,8 +24,8 @@ export interface Work {
 	readonly dislikes: number;
 	readonly comments: number;
 	readonly kind: Kind;
-	readonly approvalStatus: ApprovalStatus;
-	readonly publishedOn?: Date;
+	approvalStatus: ApprovalStatus;
+	publishedOn?: Date;
 	readonly lastSectionUpdate?: Date;
 	readonly createdAt: Date;
 	readonly updatedAt: Date;
