@@ -10,14 +10,12 @@ struct ApprovalQueueService {
     let request: Request
     
     /// Fetches the approval queue.
-    func fetchQueue() async throws -> Page<ApprovalQueue> {
+    func fetchQueue(ascending: Bool = true, status: ApprovalQueue.Status = .waiting) async throws -> Page<ApprovalQueue> {
         try await ApprovalQueue.query(on: request.db)
-            .with(\.$work) { $0.with(\.$author) }
+            .with(\.$work) { $0.with(\.$author).with(\.$tags) }
             .with(\.$claimedBy)
-            .group(.or) { group in
-                group.filter(\.$status == .waiting).filter(\.$status == .claimed)
-            }
-            .sort(\.$createdAt, .ascending)
+            .filter(\.$status == status)
+            .sort(\.$createdAt, ascending ? .ascending : .descending)
             .paginate(for: request)
     }
     

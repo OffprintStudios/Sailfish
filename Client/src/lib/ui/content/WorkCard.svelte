@@ -1,26 +1,27 @@
 <script lang="ts">
 	import TagBadge from "./TagBadge.svelte";
-	import { TagKind } from "../../models/tags";
+	import { TagKind } from "$lib/models/tags";
 	import type { Work } from "$lib/models/content/works";
-	import { abbreviate, slugify } from "../../util/functions";
-	import { account } from "../../state/account.state";
+	import { abbreviate, slugify } from "$lib/util/functions";
+	import { account } from "$lib/state/account.state";
 	import { Dropdown } from "../dropdown";
 	import { Time } from "../util";
-	import { Calendar2Line, DiscussLine, LineChartLine, MoreFill, PenNibLine } from "svelte-remixicon";
+	import {
+		Calendar2Line,
+		DiscussLine,
+		LineChartLine,
+		MoreFill,
+		PenNibLine
+	} from "svelte-remixicon";
 
 	export let work: Work;
-
-	const calculateApprovalRating = (likes: number, dislikes: number): number => {
-		const totalVotes = likes + dislikes;
-		if (totalVotes === 0) {
-			return 0;
-		} else {
-			return Math.ceil((likes / totalVotes) * 100);
-		}
-	};
+	export let withDropdown = true;
 </script>
 
-<div class="work-card bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed hover:bg-zinc-300 dark:hover:bg-zinc-600" title={work.title}>
+<div
+	class="work-card bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed hover:bg-zinc-300 dark:hover:bg-zinc-600"
+	title={work.title}
+>
 	<a
 		class="absolute top-0 right-0 left-0 bottom-0 z-[2]"
 		href="/prose/{work.id}/{slugify(work.title)}"
@@ -46,21 +47,21 @@
 				<img src={work.bannerArt} alt="cover art" class="w-full h-full object-cover" />
 			{/if}
 			<div class="absolute top-1 px-1.5 w-full flex items-center">
-				{#if $account.account && $account.currProfile}
-					<Dropdown kind={ work.bannerArt ? 'normal' : 'primary' }>
+				{#if withDropdown && $account.account && $account.currProfile}
+					<Dropdown kind={work.bannerArt ? "normal" : "primary"}>
 						<svelte:fragment slot="button">
 							<MoreFill size="18px" class="button-icon no-text" />
 						</svelte:fragment>
 						<svelte:fragment slot="items">
-							<slot name="dropdown"></slot>
+							<slot name="dropdown" />
 						</svelte:fragment>
 					</Dropdown>
 				{/if}
 				<div class="flex-1"><!--spacer--></div>
 				<TagBadge category={work.category} kind={TagKind.category} size="small" />
-				<div class="mx-[0.025rem]"></div>
+				<div class="mx-[0.025rem]" />
 				<TagBadge kind={TagKind.status} size="small" status={work.status} />
-				<div class="mx-[0.025rem]"></div>
+				<div class="mx-[0.025rem]" />
 				<TagBadge kind={TagKind.rating} rating={work.rating} size="small" />
 			</div>
 		</div>
@@ -70,21 +71,27 @@
 			</h3>
 			<div class="flex items-center text-zinc-400" style="font-family: var(--header-text);">
 				<span class="mr-1">by</span>
-				<a class="text-zinc-400 hover:text-zinc-400 relative z-[2]"
-				   href="/profile/{work.author.id}/{slugify(work.author.username)}">{work.author.username}</a>
+				<a
+					class="text-zinc-400 hover:text-zinc-400 relative z-[2]"
+					href="/profile/{work.author.id}/{slugify(work.author.username)}"
+					>{work.author.username}</a
+				>
 			</div>
 		</div>
 	</div>
 	<div class="flex items-center flex-wrap px-2">
-		{#each work.tags.filter(item => item.kind === TagKind.genre) as tag}
-			<TagBadge tag={tag} kind={tag.kind} size="small" />
-			<div class="mx-[0.05rem] last:mx-0"></div>
+		{#each work.tags.filter((item) => item.kind === TagKind.genre) as tag}
+			<TagBadge {tag} kind={tag.kind} size="small" />
+			<div class="mx-[0.05rem] last:mx-0" />
 		{/each}
 	</div>
 	<div class="text-xs px-4 mt-4 mb-4">
 		{@html work.shortDesc}
 	</div>
-	<div class="flex items-center justify-end text-zinc-400 px-2 py-1" style="font-family: var(--header-text);">
+	<div
+		class="flex items-center justify-end text-zinc-400 px-2 py-1"
+		style="font-family: var(--header-text);"
+	>
 		<span class="flex items-center relative z-[2]" title="Views">
 			<LineChartLine class="mr-1" size="16px" />
 			<span class="relative">{abbreviate(work.views)}</span>
@@ -120,8 +127,8 @@
 		div.card-header {
 			@apply grid rounded-xl relative;
 			grid-template-areas:
-    		"a b"
-    		"c d";
+				"a b"
+				"c d";
 			grid-template-rows: 1fr auto;
 			grid-template-columns: auto 1fr;
 

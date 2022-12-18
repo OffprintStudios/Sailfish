@@ -12,12 +12,26 @@ struct ApprovalQueueController: RouteCollection {
                 IdentityGuard(needs: [.admin, .moderator, .workApprover]),
                 BannedGuard()
             ])
+        let queueCheckProfile = routes.grouped("approval-queue")
+            .grouped([
+                IdentityGuard(needs: [.admin, .moderator, .workApprover], checkProfile: true),
+                BannedGuard(),
+            ])
         
         queue.get("fetch-all") { request async throws -> Page<ApprovalQueue> in
-            try await request.approvalService.fetchQueue()
+            struct FetchOptions: Content {
+                var ascending: Bool?
+                var status: ApprovalQueue.Status?
+            }
+            
+            let query = try request.query.decode(FetchOptions.self)
+            return try await request.approvalService.fetchQueue(
+                ascending: query.ascending ?? true,
+                status: query.status ?? .waiting
+            )
         }
         
-        queue.patch("claim-one") { request async throws -> ApprovalQueue in
+        queueCheckProfile.patch("claim-one") { request async throws -> ApprovalQueue in
             let itemId: String? = request.query["itemId"]
             if let id = itemId {
                 let itemUUID = UUID(uuidString: id)
@@ -29,7 +43,7 @@ struct ApprovalQueueController: RouteCollection {
             throw Abort(.badRequest, reason: "You must provide the item ID in your request.")
         }
         
-        queue.patch("approve") { request async throws -> ApprovalQueue in
+        queueCheckProfile.patch("approve") { request async throws -> ApprovalQueue in
             let itemId: String? = request.query["itemId"]
             if let id = itemId {
                 let itemUUID = UUID(uuidString: id)
@@ -41,7 +55,7 @@ struct ApprovalQueueController: RouteCollection {
             throw Abort(.badRequest, reason: "You must provide the item ID in your request.")
         }
         
-        queue.patch("reject") { request async throws -> ApprovalQueue in
+        queueCheckProfile.patch("reject") { request async throws -> ApprovalQueue in
             let itemId: String? = request.query["itemId"]
             if let id = itemId {
                 let itemUUID = UUID(uuidString: id)

@@ -1,9 +1,16 @@
 <script lang="ts">
 	import { page } from "$app/stores";
-	import { account } from "../../lib/state/account.state";
-	import { MistLine, ListUnordered, Hashtag, GroupLine, ClipboardLine, HistoryLine } from "svelte-remixicon";
+	import { account } from "$lib/state/account.state";
+	import {
+		MistLine,
+		ListUnordered,
+		Hashtag,
+		GroupLine,
+		ClipboardLine,
+		HistoryLine
+	} from "svelte-remixicon";
 
-	const iconSize = '24px';
+	const iconSize = "24px";
 </script>
 
 <svelte:head>
@@ -34,64 +41,71 @@
 </svelte:head>
 
 {#if $account.account && $account.currProfile}
-<div class="mx-auto max-w-7xl">
-	<div class="flex flex-col items-center justify-center my-6 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed rounded-xl overflow-hidden">
-		<div class="p-2 w-full" style="background: var(--accent)">
-			<img src="/images/dashlogo.png" alt="offprint dash logo" class="max-w-[18rem] mx-auto" />
+	<div class="mx-auto max-w-7xl">
+		<div
+			class="flex flex-col items-center justify-center my-6 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed rounded-xl overflow-hidden"
+		>
+			<div class="p-2 w-full" style="background: var(--accent)">
+				<img
+					src="/images/dashlogo.png"
+					alt="offprint dash logo"
+					class="max-w-[18rem] mx-auto"
+				/>
+			</div>
+			<div class="flex items-center justify-center p-2">
+				<a
+					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
+					class:active={$page.url.pathname === "/dashboard"}
+					href="/dashboard"
+				>
+					<MistLine class="mr-1" size={iconSize} />
+					<span>Overview</span>
+				</a>
+				<a
+					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
+					class:active={$page.url.pathname.includes("/approval-queue")}
+					href="/dashboard/approval-queue"
+					data-sveltekit-preload-data
+				>
+					<ListUnordered class="mr-1" size={iconSize} />
+					<span>Approval Queue</span>
+				</a>
+				<a
+					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
+					class:active={$page.url.pathname.includes("/tags")}
+					href="/dashboard/tags"
+				>
+					<Hashtag class="mr-1" size={iconSize} />
+					<span>Tags</span>
+				</a>
+				<a
+					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
+					class:active={$page.url.pathname.includes("/users")}
+					href="/dashboard/users"
+				>
+					<GroupLine class="mr-1" size={iconSize} />
+					<span>Users</span>
+				</a>
+				<a
+					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
+					class:active={$page.url.pathname.includes("/reports")}
+					href="/dashboard/reports"
+				>
+					<ClipboardLine class="mr-1" size={iconSize} />
+					<span>Reports</span>
+				</a>
+				<a
+					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
+					class:active={$page.url.pathname.includes("/audit-log")}
+					href="/dashboard/audit-log"
+				>
+					<HistoryLine class="mr-1" size={iconSize} />
+					<span>Audit Log</span>
+				</a>
+			</div>
 		</div>
-		<div class="flex items-center justify-center p-2">
-			<a
-				class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
-				class:active={$page.url.pathname === "/dashboard"}
-				href="/dashboard"
-			>
-				<MistLine class="mr-1" size={iconSize} />
-				<span>Overview</span>
-			</a>
-			<a
-				class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
-				class:active={$page.url.pathname.includes('/approval-queue')}
-				href="/dashboard/approval-queue"
-			>
-				<ListUnordered class="mr-1" size={iconSize} />
-				<span>Approval Queue</span>
-			</a>
-			<a
-				class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
-				class:active={$page.url.pathname.includes('/tags')}
-				href="/dashboard/tags"
-			>
-				<Hashtag class="mr-1" size={iconSize} />
-				<span>Tags</span>
-			</a>
-			<a
-				class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
-				class:active={$page.url.pathname.includes('/users')}
-				href="/dashboard/users"
-			>
-				<GroupLine class="mr-1" size={iconSize} />
-				<span>Users</span>
-			</a>
-			<a
-				class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
-				class:active={$page.url.pathname.includes('/reports')}
-				href="/dashboard/reports"
-			>
-				<ClipboardLine class="mr-1" size={iconSize} />
-				<span>Reports</span>
-			</a>
-			<a
-				class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
-				class:active={$page.url.pathname.includes('/audit-log')}
-				href="/dashboard/audit-log"
-			>
-				<HistoryLine class="mr-1" size={iconSize} />
-				<span>Audit Log</span>
-			</a>
-		</div>
+		<slot />
 	</div>
-	<slot />
-</div>
 {:else}
 	<div class="empty">
 		<h3>No profile selected</h3>
