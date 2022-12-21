@@ -19,6 +19,19 @@ struct ApprovalQueueService {
             .paginate(for: request)
     }
     
+    func fetchQueueItem(_ id: String) async throws -> ApprovalQueue {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        guard let item = try await ApprovalQueue.query(on: request.db)
+            .with(\.$claimedBy)
+            .filter(\.$work.$id == id)
+            .filter(\.$claimedBy.$id == profile.id!)
+            .filter(\.$status == .claimed)
+            .first() else {
+            throw Abort(.notFound, reason: "The item you're trying to fetch does not exist.")
+        }
+        return item
+    }
+    
     /// Submits a work to the queue and updates its `approvalStatus` to the appropriate marker.
     func submitItem(_ id: String) async throws -> Response {
         let profile = try request.authService.getUser(withProfile: true).profile!

@@ -20,10 +20,8 @@ struct WorkController: RouteCollection {
         
         works.get("fetch-works") { request async throws -> Page<Work> in
             let query = try request.query.decode(FetchWorksQuery.self)
-            if let authorId = query.authorId, let status = query.published {
-                return try await request.workService.fetchWorks(for: authorId, published: status, filter: query.filter ?? .restricted)
-            } else if let authorId = query.authorId {
-                return try await request.workService.fetchWorks(for: authorId, published: true, filter: query.filter ?? .restricted)
+            if let authorId = query.authorId {
+                return try await request.workService.fetchWorks(for: authorId, published: query.published ?? false, filter: query.filter ?? .restricted)
             } else {
                 return try await request.workService.fetchWorks(filter: query.filter ?? .restricted)
             }

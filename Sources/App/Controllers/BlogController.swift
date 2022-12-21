@@ -20,10 +20,8 @@ struct BlogController: RouteCollection {
 
         blogs.get("fetch-blogs") { request async throws -> Page<Blog> in
             let query = try request.query.decode(FetchBlogsQuery.self)
-            if let authorId = query.authorId, let status = query.status {
-                return try await request.blogService.fetchBlogs(for: authorId, status: status, filter: query.filter ?? .restricted)
-            } else if let authorId = query.authorId {
-                return try await request.blogService.fetchBlogs(for: authorId, status: .published, filter: query.filter ?? .restricted)
+            if let authorId = query.authorId {
+                return try await request.blogService.fetchBlogs(for: authorId, status: query.status ?? .published, filter: query.filter ?? .restricted)
             } else {
                 return try await request.blogService.fetchBlogs(filter: query.filter ?? .restricted)
             }

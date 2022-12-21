@@ -57,15 +57,16 @@ struct WorkService {
                 tag.with(\.$parent)
             }
             .filter(\.$author.$id == authorId)
-            .filter(\.$rating ~~ determineRatings(from: filter))
         
         if published == true {
             return try await query
                 .filter(\.$publishedOn <= Date())
+                .filter(\.$rating ~~ determineRatings(from: filter))
                 .sort(\.$publishedOn, .descending)
                 .paginate(for: request)
         } else {
             return try await query
+                .filter(\.$publishedOn == nil)
                 .sort(\.$createdAt, .descending)
                 .paginate(for: request)
         }

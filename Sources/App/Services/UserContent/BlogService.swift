@@ -49,6 +49,11 @@ struct BlogService {
                 .filter(\.$publishedOn == nil)
                 .sort(\.$createdAt, .descending)
                 .paginate(for: request)
+        case .pending:
+            return try await query
+                .filter(\.$publishedOn > Date())
+                .sort(\.$createdAt, .descending)
+                .paginate(for: request)
         case .published:
             return try await query
                 .filter(\.$publishedOn <= Date())
@@ -202,6 +207,7 @@ struct BlogService {
         
     enum PublishStatus: String, Codable {
         case draft = "draft"
+        case pending = "pending"
         case published = "published"
     }
 }

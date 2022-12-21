@@ -31,6 +31,18 @@ struct ApprovalQueueController: RouteCollection {
             )
         }
         
+        queueCheckProfile.get("fetch-one") { request async throws -> ApprovalQueue in
+            struct FetchOptions: Content {
+                var workId: String?
+            }
+            
+            let query = try request.query.decode(FetchOptions.self)
+            if let id = query.workId {
+                return try await request.approvalService.fetchQueueItem(id)
+            }
+            throw Abort(.badRequest, reason: "You must include the item ID in your request.")
+        }
+        
         queueCheckProfile.patch("claim-one") { request async throws -> ApprovalQueue in
             let itemId: String? = request.query["itemId"]
             if let id = itemId {

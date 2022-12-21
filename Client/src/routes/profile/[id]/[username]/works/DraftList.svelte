@@ -23,17 +23,17 @@
 
 	onMount(async () => {
 		await fetchDrafts();
-	})
+	});
 
 	async function fetchDrafts() {
 		loading = true;
 		const response = await getReq<Paginate<Work>>(
 			`/works/fetch-works?` +
-			`authorId=${$account.currProfile?.id}&` +
-			`published=${false}&` +
-			`filter=${ContentFilter.everything}&` +
-			`page=${pageNum}&` +
-			`per=${per}&`
+				`authorId=${$account.currProfile?.id}&` +
+				`published=false&` +
+				`filter=${ContentFilter.everything}&` +
+				`page=${pageNum}&` +
+				`per=${per}&`
 		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
@@ -53,9 +53,9 @@
 				const result = await toast.promise<void | ResponseError>(
 					delReq<void>(`/works/delete-work/${id}?profileId=${$account.currProfile?.id}`),
 					{
-						loading: 'Deleting work...',
-						success: 'Work deleted!',
-						error: null,
+						loading: "Deleting work...",
+						success: "Work deleted!",
+						error: null
 					}
 				);
 				if ((result as ResponseError).error) {
@@ -65,7 +65,7 @@
 					await fetchDrafts();
 				}
 			}
-		})
+		});
 	}
 </script>
 
@@ -75,27 +75,29 @@
 	</div>
 {:else}
 	<div class="my-6 w-11/12 mx-auto">
-		{#each works as work}
+		{#if works.length > 0}
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-				<WorkCard work={work}>
-					<svelte:fragment slot="dropdown">
-						<a href="/prose/{work.id}/{slugify(work.title)}/edit">
-							<Edit2Line class="mr-1" size="18px" />
-							<span>Edit work</span>
-						</a>
-						<button type="button" on:click={() => deleteWork(work.id)}>
-							<DeleteBinLine class="mr-1" size="18px" />
-							<span>Delete work</span>
-						</button>
-					</svelte:fragment>
-				</WorkCard>
+				{#each works as work}
+					<WorkCard {work}>
+						<svelte:fragment slot="dropdown">
+							<a href="/prose/{work.id}/{slugify(work.title)}/edit">
+								<Edit2Line class="mr-1" size="18px" />
+								<span>Edit work</span>
+							</a>
+							<button type="button" on:click={() => deleteWork(work.id)}>
+								<DeleteBinLine class="mr-1" size="18px" />
+								<span>Delete work</span>
+							</button>
+						</svelte:fragment>
+					</WorkCard>
+				{/each}
 			</div>
 		{:else}
 			<div class="empty">
 				<h3>You haven't added anything yet.</h3>
 				<p>Add a work and it'll show up here.</p>
 			</div>
-		{/each}
+		{/if}
 	</div>
 {/if}
 

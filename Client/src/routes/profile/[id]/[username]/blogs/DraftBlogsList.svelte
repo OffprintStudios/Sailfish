@@ -25,12 +25,21 @@
 	async function fetchDrafts() {
 		loading = true;
 		const response = await getReq<Paginate<Blog>>(
-			'/blogs/fetch-blogs?' +
-			'profileId=' + $account.currProfile.id + '&' +
-			'status=' + ApprovalStatus.draft + '&' +
-			'filter=' + ContentFilter.everything + '&' +
-			'page=' + pageNum + '&' +
-			'per=' + per
+			"/blogs/fetch-blogs?" +
+				"authorId=" +
+				$account.currProfile?.id +
+				"&" +
+				"status=" +
+				ApprovalStatus.draft +
+				"&" +
+				"filter=" +
+				ContentFilter.everything +
+				"&" +
+				"page=" +
+				pageNum +
+				"&" +
+				"per=" +
+				per
 		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
@@ -54,7 +63,7 @@
 	<div class="my-6 w-11/12 mx-auto">
 		{#each blogs as blog}
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-				<BlogCard blog={blog} />
+				<BlogCard {blog} />
 			</div>
 			<Paginator currPage={pageNum} perPage={per} totalItems={total} />
 		{:else}
