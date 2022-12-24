@@ -40,6 +40,9 @@ final class Blog: Model, Content {
     
     @Siblings(through: BlogComment.self, from: \.$blog, to: \.$comment)
     var comments: [Comment]
+    
+    @Siblings(through: FavoriteBlog.self, from: \.$blog, to: \.$profile)
+    var favoritedBy: [Profile]
 
     @OptionalField(key: "edited_on")
     var editedOn: Date?

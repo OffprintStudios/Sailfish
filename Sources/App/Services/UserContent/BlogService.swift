@@ -143,58 +143,70 @@ struct BlogService {
     }
 
     /// Fetches all favorited blogs for a given profile
-    func fetchFavorites(profileId: String) async throws -> Page<FavoriteBlog> {
-        try await FavoriteBlog.query(on: request.db)
-            .with(\.$blog) { blog in
-                blog.with(\.$author)
-            }
-            .filter(\.$profile.$id == profileId)
+    func fetchFavorites() async throws -> Page<Blog> {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        return try await profile.$favoriteBlogs
+            .query(on: request.db)
+            .with(\.$author)
             .paginate(for: request)
     }
 
-    /// Fetches a single favorited blog for a given profile
-    func fetchFavorite(blogId: String, profileId: String) async throws -> FavoriteBlog {
-        if let blog = try await FavoriteBlog.query(on: request.db)
-            .filter(\.$blog.$id == blogId)
-            .filter(\.$profile.$id == profileId)
-            .first() {
-            return blog
-        } else {
-            throw Abort(.notFound, reason: "No favorite found.")
-        }
+    /// Checks for a single favorited blog for a given profile
+    func checkFavorite(_ blogId: String) async throws -> CheckFavorite {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        return .init(hasFavorited: try await profile.$favoriteBlogs.isAttached(toID: blogId, on: request.db))
     }
 
     /// Adds a blog to a profile's list of favorites
-    func addFavorite(_ blogId: String, profileId: String) async throws -> FavoriteBlog {
-        try await request.db.transaction { database in
-            let blog: Blog? = try await Blog.query(on: database).filter(\.$id == blogId).first()
-            if let hasBlog = blog {
-                let newFave = FavoriteBlog(blogId, for: profileId)
-                try await newFave.save(on: database)
-
-                let totalFaves: Int = try await FavoriteBlog.query(on: database).filter(\.$blog.$id == blogId).count()
-                hasBlog.stats.favorites = totalFaves
-                try await hasBlog.save(on: database)
-
-                return newFave
-            } else {
-                throw Abort(.notFound, reason: "The blog you're trying to add doesn't exist.")
-            }
+    func addFavorite(_ blogId: String) async throws -> CheckFavorite {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        guard let blog = try await Blog.query(on: request.db).with(\.$author).filter(\.$id == blogId).first() else {
+            throw Abort(.notFound, reason: "The blog you're trying to add doesn't exist.")
         }
+        try await request.db.transaction { database in
+            try await profile.$favoriteBlogs.attach(blog, on: database)
+            blog.stats.favorites = try await blog.$favoritedBy.query(on: database).count()
+            try await blog.save(on: database)
+        }
+        try await request.queue.dispatch(AddNotificationJob.self, .init(
+            to: blog.author.id!,
+            from: profile.id,
+            event: .addFavorite,
+            entity: blog.id,
+            context: ["title": blog.title]
+        ))
+        return .init(hasFavorited: true)
     }
 
     /// Removes a blog from a profile's list of favorites
-    func removeFavorite(_ blogId: String, profileId: String) async throws {
-        try await FavoriteBlog.query(on: request.db)
-            .filter(\.$blog.$id == blogId)
-            .filter(\.$profile.$id == profileId)
-            .delete()
+    func removeFavorite(_ blogId: String) async throws -> CheckFavorite {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        if try await profile.$favoriteBlogs.isAttached(toID: blogId, on: request.db) {
+            guard let blog = try await Blog.find(blogId, on: request.db) else {
+                throw Abort(.notFound, reason: "The blog you're trying to remove doesn't exist.")
+            }
+            try await request.db.transaction { database in
+                try await profile.$favoriteBlogs.detach(blog, on: database)
+                blog.stats.favorites = try await blog.$favoritedBy.query(on: database).count()
+                try await blog.save(on: database)
+            }
+            return .init(hasFavorited: false)
+        } else {
+            throw Abort(.notFound, reason: "You haven't even favorited this blog yet!")
+        }
+        
     }
         
     enum PublishStatus: String, Codable {
         case draft = "draft"
         case pending = "pending"
         case published = "published"
+    }
+}
+
+extension BlogService {
+    struct CheckFavorite: Content {
+        var hasFavorited: Bool
     }
 }
 

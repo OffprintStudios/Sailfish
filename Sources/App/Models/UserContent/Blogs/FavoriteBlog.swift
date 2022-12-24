@@ -21,10 +21,4 @@ final class FavoriteBlog: Model, Content {
     var createdAt: Date?
 
     init() { }
-
-    init(id: UUID? = nil, _ blogId: String, for profileId: String) {
-        self.id = id
-        self.$blog.id = blogId
-        self.$profile.id = profileId
-    }
 }

@@ -11,6 +11,7 @@ struct CreateFavoriteBlog: AsyncMigration {
             .field("blog_id", .string, .required, .references("blogs", "id", onDelete: .cascade))
             .field("profile_id", .string, .required, .references("profiles", "id", onDelete: .cascade))
             .field("created_at", .datetime)
+            .unique(on: "blog_id", "profile_id")
             .create()
     }
 

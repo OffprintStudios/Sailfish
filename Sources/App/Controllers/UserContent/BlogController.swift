@@ -64,36 +64,23 @@ struct BlogController: RouteCollection {
             return Response(status: .ok)
         }
 
-        blogsWithAuth.get("fetch-favorites") { request async throws -> Page<FavoriteBlog> in
-            guard let profile = try request.authService.getUser(withProfile: true).profile else {
-                throw Abort(.unauthorized, reason: "No profile found to complete this request.")
-            }
-            return try await request.blogService.fetchFavorites(profileId: profile.id!)
+        blogsWithAuth.get("fetch-favorites") { request async throws -> Page<Blog> in
+            return try await request.blogService.fetchFavorites()
         }
 
-        blogsWithAuth.get("fetch-favorite", ":id") { request async throws -> FavoriteBlog in
-            guard let profile = try request.authService.getUser(withProfile: true).profile else {
-                throw Abort(.unauthorized, reason: "No profile found to complete this request.")
-            }
+        blogsWithAuth.get("fetch-favorite", ":id") { request async throws -> BlogService.CheckFavorite in
             let blogId = request.parameters.get("id")!
-            return try await request.blogService.fetchFavorite(blogId: blogId, profileId: profile.id!)
+            return try await request.blogService.checkFavorite(blogId)
         }
 
-        blogsWithAuth.post("add-favorite", ":id") { request async throws -> FavoriteBlog in
-            guard let profile = try request.authService.getUser(withProfile: true).profile else {
-                throw Abort(.unauthorized, reason: "No profile found to complete this request.")
-            }
+        blogsWithAuth.post("add-favorite", ":id") { request async throws -> BlogService.CheckFavorite in
             let blogId = request.parameters.get("id")!
-            return try await request.blogService.addFavorite(blogId, profileId: profile.id!)
+            return try await request.blogService.addFavorite(blogId)
         }
 
-        blogsWithAuth.delete("remove-favorite", ":id") { request async throws -> Response in
-            guard let profile = try request.authService.getUser(withProfile: true).profile else {
-                throw Abort(.unauthorized, reason: "No profile found to complete this request.")
-            }
+        blogsWithAuth.post("remove-favorite", ":id") { request async throws -> BlogService.CheckFavorite in
             let blogId = request.parameters.get("id")!
-            try await request.blogService.removeFavorite(blogId, profileId: profile.id!)
-            return Response(status: .ok)
+            return try await request.blogService.removeFavorite(blogId)
         }
     }
 }

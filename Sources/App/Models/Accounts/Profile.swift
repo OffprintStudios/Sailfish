@@ -52,6 +52,9 @@ final class Profile: Model, Content {
     @Siblings(through: LibraryItem.self, from: \.$profile, to: \.$work)
     var library: [Work]
     
+    @Siblings(through: FavoriteBlog.self, from: \.$profile, to: \.$blog)
+    var favoriteBlogs: [Blog]
+    
     @Children(for: \.$profile)
     var history: [ReadingHistory]
 
