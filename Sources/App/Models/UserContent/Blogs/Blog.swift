@@ -37,6 +37,9 @@ final class Blog: Model, Content {
 
     @Field(key: "news_post")
     var newsPost: Bool
+    
+    @Siblings(through: BlogComment.self, from: \.$blog, to: \.$comment)
+    var comments: [Comment]
 
     @OptionalField(key: "edited_on")
     var editedOn: Date?
@@ -55,7 +58,7 @@ final class Blog: Model, Content {
 
     init() { }
 
-    init(id: String? = nil, from formData: BlogForm) throws {
+    init(id: String? = nil, from formData: BlogForm, canMakeNewsPost: Bool = false) throws {
         if let hasId = id {
             self.id = hasId
         } else {
@@ -72,7 +75,11 @@ final class Blog: Model, Content {
         cover = nil
         rating = formData.rating
         stats = .init(words: try SwiftSoup.clean(formData.body, Whitelist.none())!.split { !$0.isLetter }.count)
-        newsPost = false
+        if canMakeNewsPost {
+            newsPost = formData.newsPost
+        } else {
+            newsPost = false
+        }
         publishedOn = nil
         editedOn = nil
     }
@@ -98,6 +105,7 @@ extension Blog {
         var desc: String?
         var body: String
         var rating: ContentRating
+        var newsPost: Bool
     }
 
     struct PublishBlogForm: Content {

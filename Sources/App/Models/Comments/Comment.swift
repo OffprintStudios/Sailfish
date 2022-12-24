@@ -13,20 +13,17 @@ final class Comment: Model, Content {
     @ID(custom: "id", generatedBy: .user)
     var id: String?
 
-    @Parent(key: "thread_id")
-    var thread: Thread
-
     @Parent(key: "profile_id")
     var profile: Profile
+    
+    @OptionalParent(key: "section_id")
+    var section: Section?
 
     @Field(key: "body")
     var body: String
 
     @Field(key: "spoiler")
     var spoiler: Bool
-
-    @OptionalParent(key: "section_id")
-    var section: Section?
 
     @Children(for: \.$comment)
     var history: [CommentHistory]
@@ -36,6 +33,12 @@ final class Comment: Model, Content {
     
     @Siblings(through: Reply.self, from: \.$comment, to: \.$repliesTo)
     var repliesTo: [Comment]
+    
+    @Siblings(through: BlogComment.self, from: \.$comment, to: \.$blog)
+    var blogs: [Blog]
+    
+    @Siblings(through: WorkComment.self, from: \.$comment, to: \.$work)
+    var works: [Work]
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
@@ -53,18 +56,26 @@ final class Comment: Model, Content {
         }
 
         self.$profile.id = profileId
+        if let hasSection = formInfo.sectionId {
+            self.$section.id = hasSection
+        }
         body = try SwiftSoup.clean(formInfo.body, defaultWhitelist())!
         spoiler = formInfo.spoiler
-        self.$section.id = formInfo.sectionId
     }
 }
 
 extension Comment {
     struct CommentForm: Content {
-        var threadId: String
+        var type: CommentType
+        var itemId: String
         var body: String
         var spoiler: Bool
         var repliesTo: [String]
         var sectionId: String?
+    }
+    
+    enum CommentType: String, Codable {
+        case work = "work"
+        case blog = "blog"
     }
 }

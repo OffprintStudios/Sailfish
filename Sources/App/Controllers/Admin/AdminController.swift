@@ -24,22 +24,30 @@ struct AdminController: RouteCollection {
         }
 
         admin.get("fetch-reports", ":id") { request async throws -> [AccountReport] in
-            let id = request.parameters.get("id")!
+            guard let id = UUID(uuidString: request.parameters.get("id")!) else {
+                throw Abort(.badRequest, reason: "Invalid UUID supplied.")
+            }
             return try await request.adminService.fetchReports(id)
         }
 
         admin.get("fetch-notes", ":id") { request async throws -> [AccountNote] in
-            let id = request.parameters.get("id")!
+            guard let id = UUID(uuidString: request.parameters.get("id")!) else {
+                throw Abort(.badRequest, reason: "Invalid UUID supplied.")
+            }
             return try await request.adminService.fetchNotes(id)
         }
 
         admin.get("fetch-log", ":id") { request async throws -> [AccountLog] in
-            let id = request.parameters.get("id")!
+            guard let id = UUID(uuidString: request.parameters.get("id")!) else {
+                throw Abort(.badRequest, reason: "Invalid UUID supplied.")
+            }
             return try await request.auditLogService.fetchLog(id)
         }
 
         admin.patch("change-roles", ":id") { request async throws -> ClientAccount in
-            let id = request.parameters.get("id")!
+            guard let id = UUID(uuidString: request.parameters.get("id")!) else {
+                throw Abort(.badRequest, reason: "Invalid UUID supplied.")
+            }
             let changeRolesDTO = try request.content.decode(ChangeRolesDTO.self)
             return try await request.adminService.changeRoles(id, newRoles: changeRolesDTO.newRoles)
         }
@@ -103,23 +111,23 @@ extension AdminController {
     }
 
     struct AddNoteDTO: Content {
-        var accountId: String
+        var accountId: UUID
         var reason: String
     }
 
     struct WarnUserDTO: Content {
-        var accountId: String
+        var accountId: UUID
         var reason: String
     }
 
     struct MuteUserDTO: Content {
-        var accountId: String
+        var accountId: UUID
         var reason: String
         var duration: Date
     }
 
     struct BanUserDTO: Content {
-        var accountId: String
+        var accountId: UUID
         var reason: String
         var duration: Date?
     }

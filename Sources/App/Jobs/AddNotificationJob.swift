@@ -8,21 +8,17 @@ import Fluent
 import Queues
 
 struct NewNotification: Codable {
-    var sender: String
-    var recipient: String
-    var eventKind: Notification.EventKind
-    var itemKind: Notification.ItemKind
-    var blogId: String?
-    var commentId: String?
-    var context: [String: String]?
-
-    init(sender: String, recipient: String, itemKind: Notification.ItemKind, eventKind: Notification.EventKind, blogId: String? = nil, commentId: String? = nil, context: [String: String]? = nil) {
-        self.sender = sender
-        self.recipient = recipient
-        self.itemKind = itemKind
-        self.eventKind = eventKind
-        self.blogId = blogId
-        self.commentId = commentId
+    var to: String
+    var from: String?
+    var eventType: Notification.EventType
+    var entityId: String?
+    var context: [String: String]
+    
+    init(to recipient: String, from sender: String? = nil, event: Notification.EventType, entity: String? = nil, context: [String: String]) {
+        self.to = recipient
+        self.from = sender
+        self.eventType = event
+        self.entityId = entity
         self.context = context
     }
 }
@@ -30,15 +26,13 @@ struct NewNotification: Codable {
 struct AddNotificationJob: AsyncJob {
     typealias Payload = NewNotification
 
-    func dequeue(_ context: QueueContext, _ payload: NewNotification) async throws {
+    func dequeue(_ context: QueueContext, _ payload: Payload) async throws {
         let newNotification = Notification(
-            from: payload.sender,
-            to: payload.recipient,
+            from: payload.from,
+            to: payload.to,
             with: Notification.EventInfo(
-                eventKind: payload.eventKind,
-                itemKind: payload.itemKind,
-                blogId: payload.blogId,
-                commentId: payload.commentId,
+                eventType: payload.eventType,
+                entityId: payload.entityId,
                 context: payload.context
             )
         )
@@ -47,7 +41,7 @@ struct AddNotificationJob: AsyncJob {
         }
     }
 
-    func error(_ context: QueueContext, _ error: Error, _ payload: NewNotification) async throws {
+    func error(_ context: QueueContext, _ error: Error, _ payload: Payload) async throws {
         context.logger.warning("A job in the Notifications Queue has failed! Error: \(error.localizedDescription)")
     }
 }

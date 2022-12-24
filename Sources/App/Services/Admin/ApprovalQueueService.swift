@@ -84,7 +84,7 @@ struct ApprovalQueueService {
     /// or if the work has already reached the `attempts` limit.
     func approveWork(_ id: UUID) async throws -> ApprovalQueue {
         let profile = try request.authService.getUser(withProfile: true).profile!
-        return try await request.db.transaction { database in
+        let item: ApprovalQueue = try await request.db.transaction { database in
             let item = try await ApprovalQueue.query(on: database)
                 .with(\.$work) { $0.with(\.$author) }
                 .filter(\.$id == id)
@@ -103,13 +103,21 @@ struct ApprovalQueueService {
             }
             throw Abort(.notFound, reason: "This work was either claimed by someone else or its queue entry does not exist.")
         }
+        try await request.queue.dispatch(AddNotificationJob.self, .init(
+            to: profile.id!,
+            from: nil,
+            event: .workApproved,
+            entity: item.work.id,
+            context: ["title": item.work.title]
+        ))
+        return item
     }
     
     /// Rejects a work in the queue. Reasons must be provided for all rejections. If the work has already failed to pass three times, this will throw with a `forbidden` error.
     /// Otherwise, this will throw if the claim doesn't exist.
     func rejectWork(_ id: UUID, reason: ApprovalQueue.ProvideReason) async throws -> ApprovalQueue {
         let profile = try request.authService.getUser(withProfile: true).profile!
-        return try await request.db.transaction { database in
+        let item: ApprovalQueue = try await request.db.transaction { database in
             let item = try await ApprovalQueue.query(on: database)
                 .with(\.$work) { $0.with(\.$author) }
                 .filter(\.$id == id)
@@ -128,6 +136,14 @@ struct ApprovalQueueService {
             }
             throw Abort(.notFound, reason: "This work was either claimed by someone else or its queue entry does not exist.")
         }
+        try await request.queue.dispatch(AddNotificationJob.self, .init(
+            to: profile.id!,
+            from: nil,
+            event: .workRejected,
+            entity: item.work.id,
+            context: ["title": item.work.title, "reason": item.reason!]
+        ))
+        return item
     }
 }
 

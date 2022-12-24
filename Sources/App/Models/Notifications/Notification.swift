@@ -8,32 +8,26 @@ import Fluent
 final class Notification: Model, Content {
     static let schema = "notifications"
 
-    @ID()
+    @ID(key: .id)
     var id: UUID?
 
-    @Parent(key: "sender_id")
-    var sender: Profile
+    @Parent(key: "to_id")
+    var to: Profile
 
-    @Parent(key: "recipient_id")
-    var recipient: Profile
+    @OptionalParent(key: "from_id")
+    var from: Profile?
 
-    @Field(key: "event_kind")
-    var eventKind: EventKind
+    @Field(key: "event_type")
+    var eventType: EventType
 
-    @Field(key: "item_kind")
-    var itemKind: ItemKind
+    @OptionalField(key: "entity_id")
+    var entityId: String?
 
-    @OptionalParent(key: "blog_id")
-    var blog: Blog?
+    @Field(key: "context")
+    var context: [String: String]
 
-    @OptionalParent(key: "comment_id")
-    var comment: Comment?
-
-    @OptionalField(key: "context")
-    var context: [String: String]?
-
-    @Field(key: "marked_as_read")
-    var markedAsRead: Bool
+    @Timestamp(key: "read_on", on: .delete)
+    var readOn: Date?
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
@@ -43,55 +37,42 @@ final class Notification: Model, Content {
 
     init() { }
 
-    init(id: UUID? = nil, from sender: String, to recipient: String, with eventInfo: EventInfo) {
+    init(id: UUID? = nil, from sender: String? = nil, to recipient: String, with eventInfo: EventInfo) {
         self.id = id
-        self.$sender.id = sender
-        self.$recipient.id = recipient
-        eventKind = eventInfo.eventKind
-        itemKind = eventInfo.itemKind
+        if let hasSender = sender {
+            self.$from.id = hasSender
+        }
+        self.$to.id = recipient
+        eventType = eventInfo.eventType
+        entityId = eventInfo.entityId
         context = eventInfo.context
     }
 }
 
 extension Notification {
-    enum ItemKind: String, Codable {
-        case user = "user"
-        case blog = "blog"
-        // case work = "work"
-        // case approvalQueue = "approval-queue"
-        // case admin = "admin"
-    }
-
-    enum EventKind: String, Codable {
+    enum EventType: String, Codable {
         // User events
         case follow = "follow"
-        case newBlog = "new-blog"
-        case newWork = "new-work"
-
+        
         // Blog events
         case addFavorite = "add-favorite"
         case newBlogComment = "new-blog-comment"
-
+        
         // Work events
-        case newWorkComment = "new-work-comment"
         case addToLibrary = "add-to-library"
-
-        // Approval Queue events
-        case receivedInQueue = "received-in-queue"
+        case newWorkComment = "new-work-comment"
         case workApproved = "work-approved"
         case workRejected = "work-rejected"
-
+        
         // Admin events
         case userWarned = "user-warned"
-        case userTimeout = "user-timeout"
+        case userMuted = "user-muted"
         case userBanned = "user-banned"
     }
-
-    struct EventInfo {
-        var eventKind: EventKind
-        var itemKind: ItemKind
-        var blogId: String?
-        var commentId: String?
-        var context: [String: String]?
+    
+    struct EventInfo: Content {
+        var eventType: EventType
+        var entityId: String?
+        var context: [String: String]
     }
 }

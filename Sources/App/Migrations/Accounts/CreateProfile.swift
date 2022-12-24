@@ -8,10 +8,11 @@ struct CreateProfile: AsyncMigration {
     func prepare(on database: Database) async throws {
         return try await database.schema("profiles")
             .field("id", .string, .identifier(auto: false))
-            .field("account_id", .string, .required, .references("accounts", "id", onDelete: .cascade))
+            .field("account_id", .uuid, .required, .references("accounts", "id", onDelete: .cascade))
             .field("username", .string, .required)
             .field("avatar", .string, .required)
             .field("info", .dictionary(of: .string), .required)
+            .field("links", .dictionary(of: .string), .required)
             .field("stats", .dictionary(of: .int), .required)
             .field("created_at", .datetime)
             .field("updated_at", .datetime)

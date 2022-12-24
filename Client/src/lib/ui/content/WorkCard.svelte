@@ -67,7 +67,7 @@
 		</div>
 		<div class="title-bar">
 			<h3 class="font-medium text-lg truncate" style="color: var(--text-color);">
-				{work.title} with some added characters
+				{work.title}
 			</h3>
 			<div class="flex items-center text-zinc-400" style="font-family: var(--header-text);">
 				<span class="mr-1">by</span>

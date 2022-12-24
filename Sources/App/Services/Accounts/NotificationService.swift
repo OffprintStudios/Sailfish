@@ -10,33 +10,26 @@ import Fluent
 /// Contains functions related to the processing of notifications.
 struct NotificationService {
     let request: Request
-
+    
     /// Fetches all a user's un-viewed notifications.
-    func fetchActivity(markedAsRead: Bool = false) async throws -> Page<Notification> {
+    func fetchActivity() async throws -> Page<Notification> {
         let profile = try request.authService.getUser(withProfile: true).profile!
-
         return try await Notification.query(on: request.db)
-            .with(\.$sender)
-            .with(\.$blog)
-            .filter(\.$recipient.$id == profile.id!)
-            .filter(\.$markedAsRead == markedAsRead)
+            .with(\.$from)
+            .filter(\.$to.$id == profile.id!)
             .sort(\.$createdAt, .descending)
             .paginate(for: request)
     }
-
-    /// Marks a notification as read.
-    func markAsRead(_ id: UUID) async throws {
+    
+    /// Marks a bunch of notifications as read by setting their `read_on` field through deletion. 
+    func markAsRead(_ ids: [UUID]) async throws -> Response {
         let profile = try request.authService.getUser(withProfile: true).profile!
         try await request.db.transaction { database in
-            guard let notification: Notification = try await Notification.query(on: database)
-                .filter(\.$id == id)
-                .filter(\.$recipient.$id == profile.id!)
-                .first() else {
-                    throw Abort(.notFound, reason: "The notification you're trying to modify does not exist.")
-                }
-            notification.markedAsRead = true
-            try await notification.save(on: database)
+            for id in ids {
+                try await profile.$activity.query(on: database).filter(\.$id == id).delete()
+            }
         }
+        return Response(status: .ok)
     }
 }
 

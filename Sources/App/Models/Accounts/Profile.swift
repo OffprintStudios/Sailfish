@@ -24,6 +24,9 @@ final class Profile: Model, Content {
 
     @Field(key: "info")
     var info: ProfileInfo
+    
+    @Field(key: "links")
+    var links: [String: String]
 
     @Field(key: "stats")
     var stats: ProfileStats
@@ -34,8 +37,17 @@ final class Profile: Model, Content {
     @Children(for: \.$author)
     var works: [Work]
     
+    @Children(for: \.$to)
+    var activity: [Notification]
+    
     @Children(for: \.$profile)
     var shelves: [Shelf]
+    
+    @Siblings(through: Follower.self, from: \.$profile, to: \.$subscribedTo)
+    var following: [Profile]
+    
+    @Siblings(through: Follower.self, from: \.$subscribedTo, to: \.$profile)
+    var followers: [Profile]
     
     @Siblings(through: LibraryItem.self, from: \.$profile, to: \.$work)
     var library: [Work]
@@ -64,6 +76,7 @@ final class Profile: Model, Content {
         username = try SwiftSoup.clean(formData.username, Whitelist.none())!
         avatar = "https://images.offprint.net/avatars/avatar.png"
         info = .init()
+        links = [:]
         stats = .init()
     }
 }

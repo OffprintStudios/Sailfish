@@ -5,4 +5,5 @@ export interface BlogForm {
 	readonly desc?: string;
 	readonly body: string;
 	readonly rating: ContentRating;
+	readonly newsPost: boolean;
 }

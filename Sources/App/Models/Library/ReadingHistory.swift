@@ -8,7 +8,7 @@ import Fluent
 final class ReadingHistory: Model, Content {
     static let schema = "reading_history"
     
-    @ID()
+    @ID(key: .id)
     var id: UUID?
     
     @Parent(key: "profile_id")

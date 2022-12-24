@@ -9,7 +9,7 @@ import SwiftSoup
 final class AccountWarning: Model, Content {
     static let schema = "account_warnings"
 
-    @ID()
+    @ID(key: .id)
     var id: UUID?
 
     @Parent(key: "account_id")
@@ -36,7 +36,7 @@ final class AccountWarning: Model, Content {
 
 extension AccountWarning {
     struct WarningForm: Codable {
-        var accountId: String
+        var accountId: UUID
         var reason: String
     }
 }

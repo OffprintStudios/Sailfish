@@ -8,7 +8,7 @@ import Fluent
 final class LibraryItem: Model, Content {
     static let schema = "library_items"
     
-    @ID()
+    @ID(key: .id)
     var id: UUID?
     
     @Parent(key: "profile_id")

@@ -125,16 +125,24 @@ struct LibraryService {
     /// returns a `conflict` error.
     func addToLibrary(_ workId: String) async throws -> CheckLibrary {
         let profile = try request.authService.getUser(withProfile: true).profile!
-        return try await request.db.transaction { database in
-            guard let work: Work = try await Work.find(workId, on: database) else {
+        let work: Work = try await request.db.transaction { database in
+            guard let work: Work = try await Work.query(on: database).with(\.$author).filter(\.$id == workId).first() else {
                 throw Abort(.notFound, reason: "Couldn't find the work you're looking for.")
             }
             if try await profile.$library.isAttached(to: work, on: database) == true {
                 throw Abort(.conflict, reason: "You've already added this work to your library!")
             }
             try await profile.$library.attach(work, on: database)
-            return CheckLibrary(hasItem: true)
+            return work
         }
+        try await request.queue.dispatch(AddNotificationJob.self, .init(
+            to: work.author.id!,
+            from: profile.id,
+            event: .addToLibrary,
+            entity: work.id,
+            context: ["title": work.title]
+        ))
+        return CheckLibrary(hasItem: true)
     }
     
     /// Removes a work from a user's library. If the work doesn't exist, throws a `notFound` error. If the work *does* exist, but isn't in

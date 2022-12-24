@@ -9,7 +9,7 @@ import SwiftSoup
 final class AccountBan: Model, Content {
     static let schema = "account_bans"
 
-    @ID()
+    @ID(key: .id)
     var id: UUID?
 
     @Parent(key: "account_id")
@@ -40,7 +40,7 @@ final class AccountBan: Model, Content {
 
 extension AccountBan {
     struct BanForm: Codable {
-        var accountId: String
+        var accountId: UUID
         var reason: String
         var duration: Date?
     }

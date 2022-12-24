@@ -12,6 +12,7 @@ struct CreateVolume: AsyncMigration {
             .field("title", .string, .required)
             .field("desc", .string, .required)
             .field("cover_art", .string)
+            .field("published_on", .datetime)
             .field("created_at", .datetime)
             .field("updated_at", .datetime)
             .create()

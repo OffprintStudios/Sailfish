@@ -14,30 +14,29 @@ struct FollowerController: RouteCollection {
             BannedGuard(),
         ])
 
-        followers.get("fetch-followers", ":id") { request async throws -> Page<Follower> in
+        followers.get("fetch-followers", ":id") { request async throws -> Page<ClientProfile> in
             let profileId = request.parameters.get("id")!
             return try await request.followerService.fetchFollowers(profileId)
         }
 
-        followers.get("fetch-following", ":id") { request async throws -> Page<Follower> in
+        followers.get("fetch-following", ":id") { request async throws -> Page<ClientProfile> in
             let profileId = request.parameters.get("id")!
             return try await request.followerService.fetchFollowing(profileId)
         }
 
-        followersWithAuth.get("check-if-following", ":id") { request async throws -> Follower in
+        followersWithAuth.get("check-if-following", ":id") { request async throws -> FollowerService.CheckFollowing in
             let profileId = request.parameters.get("id")!
             return try await request.followerService.checkIfFollowing(profileId)
         }
 
-        followersWithAuth.post("follow-user", ":id") { request async throws -> Follower in
+        followersWithAuth.post("follow-user", ":id") { request async throws -> FollowerService.CheckFollowing in
             let profileId = request.parameters.get("id")!
             return try await request.followerService.followUser(profileId)
         }
 
-        followersWithAuth.delete("unfollow-user", ":id") { request async throws -> Response in
+        followersWithAuth.delete("unfollow-user", ":id") { request async throws -> FollowerService.CheckFollowing in
             let profileId = request.parameters.get("id")!
-            try await request.followerService.unfollowUser(profileId)
-            return .init(status: .ok)
+            return try await request.followerService.unfollowUser(profileId)
         }
     }
 }

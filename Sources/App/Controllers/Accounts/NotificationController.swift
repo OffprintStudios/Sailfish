@@ -16,13 +16,13 @@ struct NotificationController: RouteCollection {
             try await request.notificationService.fetchActivity()
         }
 
-        notifications.get("mark-as-read", ":id") { request async throws -> Response in
-            let id = request.parameters.get("id")!
-            guard let uuid = UUID(uuidString: id) else {
-                throw Abort(.internalServerError)
+        notifications.post("mark-as-read") { request async throws -> Response in
+            struct IdsToMark: Content {
+                var ids: [UUID]
             }
-            try await request.notificationService.markAsRead(uuid)
-            return .init(status: .ok)
+            
+            let idsToMark = try request.content.decode(IdsToMark.self)
+            return try await request.notificationService.markAsRead(idsToMark.ids)
         }
     }
 }

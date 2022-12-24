@@ -21,7 +21,7 @@ struct CreateWork: AsyncMigration {
             .field("views", .int64, .required, .sql(.default(0)))
             .field("likes", .int64, .required, .sql(.default(0)))
             .field("dislikes", .int64, .required, .sql(.default(0)))
-            .field("comments", .int64, .required, .sql(.default(0)))
+            .field("license", .array(of: .string))
             .field("kind", .string, .required)
             .field("approval_status", .string, .required)
             .field("published_on", .datetime)

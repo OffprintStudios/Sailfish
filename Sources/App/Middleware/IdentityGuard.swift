@@ -36,7 +36,7 @@ struct IdentityGuard: AsyncMiddleware {
                 }
 
                 guard let profile: Profile = try? await account.$profiles.query(on: request.db).filter(\.$id == profileId).first() else {
-                    request.logger.error("Could not validate provided profile ID. Does it really belong to Account \(account.id ?? "NULL_ID")?")
+                    request.logger.error("Could not validate provided profile ID. Does it really belong to Account \(account.id?.uuidString ?? "NULL_ID")?")
                     throw Abort(.unauthorized, reason: "You aren't allowed to do that.")
                 }
 

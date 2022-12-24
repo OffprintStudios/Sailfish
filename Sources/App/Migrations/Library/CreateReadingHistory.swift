@@ -14,6 +14,8 @@ struct CreateReadingHistory: AsyncMigration {
             .field("vote", .int32, .required)
             .field("sections_read", .array(of: .string), .required)
             .field("bookmarked", .string, .references("sections", "id", onDelete: .setNull))
+            .field("is_public", .bool, .required)
+            .field("vote_changed", .datetime)
             .field("created_at", .datetime)
             .field("updated_at", .datetime)
             .field("deleted_at", .datetime)

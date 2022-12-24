@@ -8,8 +8,8 @@ struct CreateAccountMute: AsyncMigration {
     func prepare(on database: Database) async throws {
         return try await database.schema("accounts_muted")
             .id()
-            .field("account_id", .string, .required, .references("accounts", "id", onDelete: .cascade))
-            .field("muted_by", .string, .required, .references("accounts", "id", onDelete: .cascade))
+            .field("account_id", .uuid, .required, .references("accounts", "id", onDelete: .cascade))
+            .field("muted_by", .uuid, .required, .references("accounts", "id", onDelete: .cascade))
             .field("reason", .string, .required)
             .field("expires_on", .datetime, .required)
             .field("created_at", .datetime)

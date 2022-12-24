@@ -10,8 +10,8 @@ import NanoID
 final class Account: Model, Content {
     static let schema = "accounts"
 
-    @ID(custom: "id", generatedBy: .user)
-    var id: String?
+    @ID(key: .id)
+    var id: UUID?
 
     @Field(key: "email")
     var email: String
@@ -42,17 +42,12 @@ final class Account: Model, Content {
 
     init() { }
 
-    init(id: String? = nil, formData: RegisterForm) throws {
+    init(id: UUID? = nil, formData: RegisterForm) throws {
         guard let hashedPassword = try? Argon2Swift.hashPasswordString(password: formData.password, salt: Salt.newSalt(), type: Argon2Type.id) else {
             throw Abort(.internalServerError, reason: "Failed to create your account. Contact an administrator for assistance.")
         }
 
-        if let hasId = id {
-            self.id = hasId
-        } else {
-            self.id = NanoID.with(size: NANO_ID_SIZE)
-        }
-
+        self.id = id
         email = formData.email
         password = hashedPassword.encodedString().trimmingCharacters(in: CharacterSet(charactersIn: "\0"))
         roles = [.user]

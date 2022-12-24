@@ -9,7 +9,7 @@ import SwiftSoup
 final class AccountLog: Model, Content {
     static let schema = "account_logs"
 
-    @ID()
+    @ID(key: .id)
     var id: UUID?
 
     @Parent(key: "account_id")
@@ -61,11 +61,11 @@ extension AccountLog {
         var type: EventType
         var detail: String
         var actionTaken: ActionType?
-        var actionBy: String?
+        var actionBy: UUID?
         var actionReason: String?
         var actionDuration: Date?
 
-        init(type: EventType, detail: String, actionTaken: ActionType? = nil, actionBy: String? = nil, actionReason: String? = nil, actionDuration: Date? = nil) {
+        init(type: EventType, detail: String, actionTaken: ActionType? = nil, actionBy: UUID? = nil, actionReason: String? = nil, actionDuration: Date? = nil) {
             self.type = type
             self.detail = detail
             self.actionTaken = actionTaken

@@ -1,5 +1,15 @@
 <script lang="ts">
-	import { TimeLine, LineChartLine, PenNibLine, StarLine, More2Fill, AlarmWarningLine, Edit2Line, DeleteBin2Line, ShareBoxLine } from "svelte-remixicon";
+	import {
+		TimeLine,
+		LineChartLine,
+		PenNibLine,
+		StarLine,
+		More2Fill,
+		AlarmWarningLine,
+		Edit2Line,
+		DeleteBin2Line,
+		ShareBoxLine
+	} from "svelte-remixicon";
 	import { account } from "$lib/state/account.state";
 	import type { Blog } from "$lib/models/content";
 	import { Time, Avatar } from "$lib/ui/util";
@@ -10,10 +20,15 @@
 	export let showAvatar = false;
 </script>
 
-<div class="blog-card bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 hover:dark:bg-zinc-600" title={blog.title}>
+<div
+	class="blog-card bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 hover:dark:bg-zinc-600"
+	title={blog.title}
+>
 	<a
 		class="absolute top-0 right-0 left-0 bottom-0 z-[2]"
-		href="/profile/{blog.author.id}/{slugify(blog.author.username)}/blog/{blog.id}/{slugify(blog.title)}"
+		href="/profile/{blog.author.id}/{slugify(blog.author.username)}/blog/{blog.id}/{slugify(
+			blog.title
+		)}"
 		data-sveltekit-preload-data
 	>
 		<!--nothing goes here-->
@@ -61,11 +76,7 @@
 		{/if}
 	</div>
 	<div class="blog-preview">
-		{#if blog.desc}
-			{@html blog.desc}
-		{:else}
-			{@html blog.body}
-		{/if}
+		{@html blog.body}
 	</div>
 	<div class="blog-stats bg-zinc-300 dark:bg-zinc-600">
 		<span class="flex items-center">

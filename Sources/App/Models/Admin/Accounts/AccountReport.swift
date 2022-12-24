@@ -9,7 +9,7 @@ import SwiftSoup
 final class AccountReport: Model, Content {
     static let schema = "account_reports"
 
-    @ID()
+    @ID(key: .id)
     var id: UUID?
 
     @Parent(key: "reported_by")
@@ -59,7 +59,7 @@ extension AccountReport {
 
     struct ReportForm: Codable {
         var type: ReportType
-        var accountId: String
+        var accountId: UUID
         var itemId: String?
         var reason: String
         var desc: String?

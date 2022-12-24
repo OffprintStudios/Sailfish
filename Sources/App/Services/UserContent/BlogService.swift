@@ -12,16 +12,16 @@ struct BlogService {
 
     /// Fetches a blog post given its ID. If no such post exists, throws a `notFound` error.
     func fetchBlog(_ id: String) async throws -> Blog {
-        try await request.db.transaction { database in
-            guard let blog: Blog = try await Blog.query(on: database).with(\.$author).filter(\.$id == id).first() else {
-                throw Abort(.notFound, reason: "Blog not found. Are you sure you're looking for the right one?")
-            }
-            if blog.publishedOn != nil {
+        guard let blog: Blog = try await Blog.query(on: request.db).with(\.$author).filter(\.$id == id).first() else {
+            throw Abort(.notFound, reason: "Blog not found. Are you sure you're looking for the right one?")
+        }
+        if blog.publishedOn != nil {
+            try await request.db.transaction { database in
                 blog.stats.views += 1
                 try await blog.save(on: database)
             }
-            return blog
         }
+        return blog
     }
 
     /// Fetches a paginated list of published blogs based on the provided `ContentFilter`.
@@ -75,9 +75,9 @@ struct BlogService {
 
     /// Creates a blog given the provided `formInfo`.
     func createBlog(with formInfo: Blog.BlogForm) async throws -> Blog {
-        let profile = try request.authService.getUser(withProfile: true).profile!
-        let newBlog = try Blog.init(from: formInfo)
-        try await profile.$blogs.create(newBlog, on: request.db)
+        let (account, profile) = try request.authService.getUser(withProfile: true)
+        let newBlog = try Blog.init(from: formInfo, canMakeNewsPost: canAccess(needs: [.admin, .moderator, .contributor], has: account.roles))
+        try await profile!.$blogs.create(newBlog, on: request.db)
         try await newBlog.$author.load(on: request.db)
         return newBlog
     }
@@ -96,6 +96,7 @@ struct BlogService {
         blog.body = try SwiftSoup.clean(formInfo.body, defaultWhitelist())!
         blog.rating = formInfo.rating
         blog.stats.words = try SwiftSoup.clean(formInfo.body, Whitelist.none())!.split { !$0.isLetter }.count
+        blog.newsPost = formInfo.newsPost
         blog.editedOn = Date()
 
         try await blog.save(on: request.db)
@@ -128,21 +129,6 @@ struct BlogService {
             
             return blog
         }
-    }
-
-    /// Converts a blog to a news post. Also forces a rating conversion to Everyone, though this should be enforced with
-    /// site policy.
-    func convertToNewsPost(_ id: String) async throws -> Blog {
-        let profile = try request.authService.getUser(withProfile: true).profile!
-        guard let blog: Blog = try await profile.$blogs.query(on: request.db).filter(\.$id == id).first() else {
-            throw Abort(.notFound, reason: "Could not find blog to update. Are you sure it exists?")
-        }
-
-        blog.newsPost = !blog.newsPost
-        blog.rating = .everyone
-
-        try await blog.save(on: request.db)
-        return blog
     }
 
     /// Deletes a blog. Since all blogs have a `deletedAt` field, this deletion is just a soft delete, for moderation

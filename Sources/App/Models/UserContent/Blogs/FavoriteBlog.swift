@@ -8,7 +8,7 @@ import Fluent
 final class FavoriteBlog: Model, Content {
     static let schema = "favorite_blogs"
 
-    @ID()
+    @ID(key: .id)
     var id: UUID?
 
     @Parent(key: "blog_id")

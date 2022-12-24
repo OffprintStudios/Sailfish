@@ -8,7 +8,7 @@ import Fluent
 final class CommentHistory: Model, Content {
     static let schema = "comment_history"
 
-    @ID()
+    @ID(key: .id)
     var id: UUID?
 
     @Parent(key: "comment_id")

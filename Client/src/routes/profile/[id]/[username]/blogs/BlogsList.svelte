@@ -24,11 +24,12 @@
 	async function fetchBlogs() {
 		const response = await getReq<Paginate<Blog>>(
 			`/blogs/fetch-blogs?` +
-			`authorId=${profile.id}&` +
-			`status=${ApprovalStatus.published}&` +
-			`filter=${$app.filter}&` +
-			`page=${page}&` +
-			`per=${per}`);
+				`authorId=${profile.id}&` +
+				`status=${ApprovalStatus.published}&` +
+				`filter=${$app.filter}&` +
+				`page=${page}&` +
+				`per=${per}`
+		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
 			toast.error(error.message);
@@ -43,15 +44,19 @@
 </script>
 
 <div class="my-6 w-11/12 mx-auto">
-	{#each blogs as blog}
+	{#if blogs.length > 0}
 		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-			<BlogCard blog={blog} />
+			{#each blogs as blog}
+				<BlogCard {blog} />
+			{/each}
 		</div>
-		<Paginator currPage={page} perPage={per} totalItems={total} />
 	{:else}
 		<div class="empty">
 			<h3>No blogs yet</h3>
 			<p>Check back later!</p>
 		</div>
-	{/each}
+	{/if}
+	{#if blogs.length > 0}
+		<Paginator currPage={page} perPage={per} totalItems={total} />
+	{/if}
 </div>

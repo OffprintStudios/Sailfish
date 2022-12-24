@@ -20,30 +20,27 @@
 
 	<!-- Open Graph / Facebook -->
 	<meta property="og:type" content="website" />
-	<meta property="og:url" content="https://offprint.net/profile/{data.id}/{slugify(data.username)}/works" />
-	<meta property="og:title" content="{data.username}'s Works" />
 	<meta
-		property="og:description"
-		content="The collected works of {data.username}"
+		property="og:url"
+		content="https://offprint.net/profile/{data.id}/{slugify(data.username)}/works"
 	/>
-	<meta property="og:image" content="{data.avatar}" />
+	<meta property="og:title" content="{data.username}'s Works" />
+	<meta property="og:description" content="The collected works of {data.username}" />
+	<meta property="og:image" content={data.avatar} />
 
 	<!-- Twitter -->
 	<meta property="twitter:card" content="summary_large_image" />
-	<meta property="twitter:url" content="https://offprint.net/profile/{data.id}/{slugify(data.username)}/works" />
-	<meta property="twitter:title" content="{data.username}'s Works" />
 	<meta
-		property="twitter:description"
-		content="The collected works of {data.username}"
+		property="twitter:url"
+		content="https://offprint.net/profile/{data.id}/{slugify(data.username)}/works"
 	/>
-	<meta property="twitter:image" content="{data.avatar}" />
+	<meta property="twitter:title" content="{data.username}'s Works" />
+	<meta property="twitter:description" content="The collected works of {data.username}" />
+	<meta property="twitter:image" content={data.avatar} />
 </svelte:head>
 
 {#if $account.account && $account.currProfile && $account.currProfile.id === data.id}
 	<WorksManagement profile={data} />
 {:else}
-	<WorksList
-		page={pageNum}
-		per={per}
-	/>
+	<WorksList profile={data} page={pageNum} {per} />
 {/if}

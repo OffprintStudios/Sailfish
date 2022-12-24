@@ -8,8 +8,8 @@ struct CreateAccountNote: AsyncMigration {
     func prepare(on database: Database) async throws {
         return try await database.schema("account_notes")
             .id()
-            .field("added_by", .string, .required, .references("accounts", "id", onDelete: .cascade))
-            .field("account_id", .string, .required, .references("accounts", "id", onDelete: .cascade))
+            .field("added_by", .uuid, .required, .references("accounts", "id", onDelete: .cascade))
+            .field("account_id", .uuid, .required, .references("accounts", "id", onDelete: .cascade))
             .field("message", .string, .required)
             .field("created_at", .datetime)
             .field("updated_at", .datetime)

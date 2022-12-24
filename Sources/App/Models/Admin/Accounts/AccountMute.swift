@@ -9,7 +9,7 @@ import SwiftSoup
 final class AccountMute: Model, Content {
     static let schema = "accounts_muted"
 
-    @ID()
+    @ID(key: .id)
     var id: UUID?
 
     @Parent(key: "account_id")
@@ -40,7 +40,7 @@ final class AccountMute: Model, Content {
 
 extension AccountMute {
     struct MuteForm: Codable {
-        var accountId: String
+        var accountId: UUID
         var reason: String
         var duration: Date
     }

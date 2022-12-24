@@ -11,6 +11,7 @@ struct CreateFollower: AsyncMigration {
             .field("profile_id", .string, .required, .references("profiles", "id", onDelete: .cascade))
             .field("subscribed_to", .string, .required, .references("profiles", "id", onDelete: .cascade))
             .field("created_at", .datetime)
+            .unique(on: "profile_id", "subscribed_to")
             .create()
     }
 

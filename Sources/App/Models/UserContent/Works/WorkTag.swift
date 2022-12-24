@@ -8,7 +8,7 @@ import Fluent
 final class WorkTag: Model, Content {
     static let schema = "work_tags"
     
-    @ID()
+    @ID(key: .id)
     var id: UUID?
     
     @Parent(key: "work_id")

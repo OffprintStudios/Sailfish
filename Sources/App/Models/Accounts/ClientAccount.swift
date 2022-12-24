@@ -5,7 +5,7 @@
 import Vapor
 
 struct ClientAccount: Content {
-    var id: String?
+    var id: UUID?
     var roles: [Account.Roles]
     var termsAgree: Bool
     var emailConfirmed: Bool

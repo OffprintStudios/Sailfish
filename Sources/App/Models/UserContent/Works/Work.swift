@@ -61,8 +61,8 @@ final class Work: Model, Content {
     @Field(key: "dislikes")
     var dislikes: Int64
     
-    @Field(key: "comments")
-    var comments: Int64
+    @Siblings(through: WorkComment.self, from: \.$work, to: \.$comment)
+    var comments: [Comment]
     
     @Children(for: \.$work)
     var volumes: [Volume]
@@ -111,7 +111,6 @@ final class Work: Model, Content {
         likes = 0
         dislikes = 0
         views = 0
-        comments = 0
         kind = formData.kind
         approvalStatus = .notSubmitted
     }

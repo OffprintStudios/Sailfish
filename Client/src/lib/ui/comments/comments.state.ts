@@ -1,7 +1,14 @@
-import type { Paginate } from "../../util/types";
-import type { BlacklistForm, Comment, CommentForm, Thread, ThreadBlacklist, ThreadPage } from "../../models/comments";
+import type { Paginate } from "$lib/util/types";
+import type {
+	BlacklistForm,
+	Comment,
+	CommentForm,
+	Thread,
+	ThreadBlacklist,
+	ThreadPage
+} from "$lib/models/comments";
 import { writable } from "svelte/store";
-import { BASE_URL } from "../../http";
+import { BASE_URL } from "$lib/http";
 import toast from "svelte-french-toast";
 
 interface CommentsState {
@@ -15,20 +22,23 @@ export const comments = writable<CommentsState>({
 	loading: false,
 	thread: null,
 	page: null,
-	replies: [],
+	replies: []
 });
 
 export async function fetchContentThread(contentId: string, page: number, per: number) {
-	comments.update((state) => ({...state, loading: true}));
-	const response = await fetch(`${BASE_URL}/comments/fetch-content-thread/${contentId}?page=${page}&per=${per}`, {
-		method: 'GET'
-	});
+	comments.update((state) => ({ ...state, loading: true }));
+	const response = await fetch(
+		`${BASE_URL}/comments/fetch-content-thread/${contentId}?page=${page}&per=${per}`,
+		{
+			method: "GET"
+		}
+	);
 	if (response.status === 200) {
 		const threadPage: ThreadPage = await response.json();
 		comments.update(() => ({
 			loading: false,
 			thread: threadPage.thread,
-			page: threadPage.page,
+			page: threadPage.page
 		}));
 	} else {
 		toast.error("Something went wrong fetching comments!");
@@ -36,10 +46,13 @@ export async function fetchContentThread(contentId: string, page: number, per: n
 }
 
 export async function addComment(profileId: string, formInfo: CommentForm) {
-	const response = await fetch(`/api/comments/${formInfo.threadId}/add-comment?profileId=${profileId}`, {
-		method: 'POST',
-		body: JSON.stringify(formInfo)
-	});
+	const response = await fetch(
+		`/api/comments/${formInfo.threadId}/add-comment?profileId=${profileId}`,
+		{
+			method: "POST",
+			body: JSON.stringify(formInfo)
+		}
+	);
 
 	if (response.status === 200) {
 		const newComment: Comment = await response.json();
@@ -50,7 +63,7 @@ export async function addComment(profileId: string, formInfo: CommentForm) {
 					metadata: {
 						page: 1,
 						per: 25,
-						total: 1,
+						total: 1
 					}
 				};
 			} else {
@@ -59,7 +72,7 @@ export async function addComment(profileId: string, formInfo: CommentForm) {
 					metadata: {
 						page: state.page.metadata.page,
 						per: state.page.metadata.per,
-						total: state.page.metadata.total + 1,
+						total: state.page.metadata.total + 1
 					}
 				};
 			}
@@ -71,10 +84,13 @@ export async function addComment(profileId: string, formInfo: CommentForm) {
 }
 
 export async function editComment(commentId: string, profileId: string, formInfo: CommentForm) {
-	const response = await fetch(`/api/comments/${formInfo.threadId}/edit-comment?commentId=${commentId}&profileId=${profileId}`, {
-		method: 'PATCH',
-		body: JSON.stringify(formInfo),
-	});
+	const response = await fetch(
+		`/api/comments/${formInfo.threadId}/edit-comment?commentId=${commentId}&profileId=${profileId}`,
+		{
+			method: "PATCH",
+			body: JSON.stringify(formInfo)
+		}
+	);
 
 	if (response.status === 200) {
 		const updatedComment: Comment = await response.json();
@@ -91,21 +107,24 @@ export async function editComment(commentId: string, profileId: string, formInfo
 				metadata: {
 					page: state.page?.metadata.page ?? 1,
 					per: state.page?.metadata.per ?? 25,
-					total: state.page?.metadata.page ?? 1,
+					total: state.page?.metadata.page ?? 1
 				}
 			};
 			return state;
-		})
+		});
 	} else {
 		toast.error("Something went wrong! Try again in a little bit.");
 	}
 }
 
 export async function addToBlacklist(profileId: string, formInfo: BlacklistForm) {
-	const response = await fetch(`/api/comments/${formInfo.threadId}/add-to-blacklist?profileId=${profileId}`, {
-		method: 'POST',
-		body: JSON.stringify(formInfo)
-	});
+	const response = await fetch(
+		`/api/comments/${formInfo.threadId}/add-to-blacklist?profileId=${profileId}`,
+		{
+			method: "POST",
+			body: JSON.stringify(formInfo)
+		}
+	);
 
 	if (response.status === 200) {
 		const newEntry: ThreadBlacklist = await response.json();
@@ -114,24 +133,31 @@ export async function addToBlacklist(profileId: string, formInfo: BlacklistForm)
 				state.thread.blacklist = [...state.thread.blacklist, newEntry];
 			}
 			return state;
-		})
+		});
 	} else {
 		toast.error("Something went wrong! Try again in a little bit.");
 	}
 }
 
-export async function removeFromBlacklist(profileId: string, blacklistId: string, threadId: string) {
-	const response = await fetch(`/api/comments/${threadId}/add-to-blacklist?profileId=${profileId}&blacklistId=${blacklistId}`, {
-		method: 'DELETE',
-	});
+export async function removeFromBlacklist(
+	profileId: string,
+	blacklistId: string,
+	threadId: string
+) {
+	const response = await fetch(
+		`/api/comments/${threadId}/add-to-blacklist?profileId=${profileId}&blacklistId=${blacklistId}`,
+		{
+			method: "DELETE"
+		}
+	);
 
 	if (response.status === 200) {
 		comments.update((state) => {
 			if (state.thread !== null) {
-				state.thread.blacklist = state.thread.blacklist.filter(x => x.id !== blacklistId);
+				state.thread.blacklist = state.thread.blacklist.filter((x) => x.id !== blacklistId);
 			}
 			return state;
-		})
+		});
 	} else {
 		toast.error("Something went wrong! Try again in a little bit.");
 	}

@@ -93,7 +93,7 @@ struct SessionService {
 
 extension SessionService {
     struct SessionInfo: Content {
-        var accountId: String
+        var accountId: UUID
         var refreshToken: String
     }
 }

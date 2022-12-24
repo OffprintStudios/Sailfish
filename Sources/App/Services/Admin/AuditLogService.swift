@@ -13,32 +13,32 @@ struct AuditLogService {
     let request: Request
 
     /// Fetches an account's audit log
-    func fetchLog(_ id: String) async throws -> [AccountLog] {
+    func fetchLog(_ id: UUID) async throws -> [AccountLog] {
         try await AccountLog.query(on: request.db)
             .filter(\.$account.$id == id)
             .all()
     }
 
     /// Logs an event
-    func log(_ id: String, event: AccountLog.LogForm) async throws {
+    func log(_ id: UUID, event: AccountLog.LogForm) async throws {
         let newEvent = try AccountLog(for: id, eventInfo: event)
         try await newEvent.save(on: request.db)
     }
 
     /// Logs a CREATE event
-    func create(_ id: String, reason: String) async throws {
+    func create(_ id: UUID, reason: String) async throws {
         let newEvent = try AccountLog(for: id, eventInfo: .init(type: .create, detail: reason))
         try await newEvent.save(on: request.db)
     }
 
     /// Logs an UPDATE event
-    func update(_ id: String, reason: String) async throws {
+    func update(_ id: UUID, reason: String) async throws {
         let newEvent = try AccountLog(for: id, eventInfo: .init(type: .update, detail: reason))
         try await newEvent.save(on: request.db)
     }
 
     /// Logs a WARN action
-    func warn(_ id: String, byWho: String, reason: String) async throws {
+    func warn(_ id: UUID, byWho: UUID, reason: String) async throws {
         let newEvent = try AccountLog(for: id, eventInfo: .init(
             type: .update,
             detail: reason,
@@ -50,7 +50,7 @@ struct AuditLogService {
     }
 
     /// Logs a MUTE action
-    func mute(_ id: String, byWho: String, reason: String, duration: Date) async throws {
+    func mute(_ id: UUID, byWho: UUID, reason: String, duration: Date) async throws {
         let newEvent = try AccountLog(for: id, eventInfo: .init(
             type: .update,
             detail: reason,
@@ -63,7 +63,7 @@ struct AuditLogService {
     }
 
     /// Logs a BAN action
-    func ban(_ id: String, byWho: String, reason: String, duration: Date? = nil) async throws {
+    func ban(_ id: UUID, byWho: UUID, reason: String, duration: Date? = nil) async throws {
         let newEvent = try AccountLog(for: id, eventInfo: .init(
             type: .update,
             detail: reason,
@@ -76,7 +76,7 @@ struct AuditLogService {
     }
 
     /// Logs a DELETE event
-    func delete(_ id: String, reason: String) async throws {
+    func delete(_ id: UUID, reason: String) async throws {
         let newEvent = try AccountLog(for: id, eventInfo: .init(type: .delete, detail: reason))
         try await newEvent.save(on: request.db)
     }

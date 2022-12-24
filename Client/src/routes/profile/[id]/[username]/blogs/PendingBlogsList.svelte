@@ -61,16 +61,20 @@
 	</div>
 {:else}
 	<div class="my-6 w-11/12 mx-auto">
-		{#each blogs as blog}
+		{#if blogs.length > 0}
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-				<BlogCard {blog} />
+				{#each blogs as blog}
+					<BlogCard {blog} />
+				{/each}
 			</div>
-			<Paginator currPage={pageNum} perPage={per} totalItems={total} />
 		{:else}
 			<div class="empty">
 				<h3>You haven't added anything yet.</h3>
 				<p>Add a blog and it'll show up here.</p>
 			</div>
-		{/each}
+		{/if}
+		{#if blogs.length > 0}
+			<Paginator currPage={pageNum} perPage={per} totalItems={total} />
+		{/if}
 	</div>
 {/if}

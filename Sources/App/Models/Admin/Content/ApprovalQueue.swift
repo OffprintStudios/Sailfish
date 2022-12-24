@@ -8,7 +8,7 @@ import Fluent
 final class ApprovalQueue: Model, Content {
     static let schema = "approval_queue"
     
-    @ID()
+    @ID(key: .id)
     var id: UUID?
     
     @Parent(key: "work_id")

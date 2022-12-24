@@ -55,7 +55,7 @@ extension Session {
 
         var subject: SubjectClaim
         var expiration: ExpirationClaim
-        var accountId: String?
+        var accountId: UUID?
 
         func verify(using signer: JWTSigner) throws {
             try expiration.verifyNotExpired()

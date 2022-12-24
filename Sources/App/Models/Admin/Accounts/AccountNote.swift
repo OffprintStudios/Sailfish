@@ -9,7 +9,7 @@ import SwiftSoup
 final class AccountNote: Model, Content {
     static let schema = "account_notes"
 
-    @ID()
+    @ID(key: .id)
     var id: UUID?
 
     @Parent(key: "added_by")
@@ -42,7 +42,7 @@ final class AccountNote: Model, Content {
 
 extension AccountNote {
     struct NoteForm: Codable {
-        var accountId: String
+        var accountId: UUID
         var message: String
     }
 }

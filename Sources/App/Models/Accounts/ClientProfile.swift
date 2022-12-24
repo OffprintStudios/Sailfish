@@ -10,6 +10,7 @@ struct ClientProfile: Content {
     var username: String
     var avatar: String
     var info: Profile.ProfileInfo
+    var links: [String: String]
     var stats: Profile.ProfileStats
     var createdAt: Date?
     var updatedAt: Date?
@@ -20,6 +21,7 @@ struct ClientProfile: Content {
         username = profile.username
         avatar = profile.avatar
         info = profile.info
+        links = profile.links
         stats = profile.stats
         createdAt = profile.createdAt
         updatedAt = profile.updatedAt
@@ -28,7 +30,7 @@ struct ClientProfile: Content {
 
 extension ClientProfile {
     struct AccountInfo: Codable {
-        var id: String?
+        var id: UUID?
         var roles: [Account.Roles]
     }
 }
