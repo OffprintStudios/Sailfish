@@ -8,7 +8,7 @@ export enum UploadType {
 	BlogBanner = "blogbanner",
 	Avatar = "avatar",
 	ProfileBanner = "profilebanner",
-	WorkBanner = "workbanner",
+	WorkBanner = "workbanner"
 }
 
 export class UploadService<T> {
@@ -37,7 +37,11 @@ export class UploadService<T> {
 
 			file = items[0].getAsFile();
 
-			if (file?.type === 'image/png' || file?.type === 'image/jpeg' ||file?.type === 'image/jpg') {
+			if (
+				file?.type === "image/png" ||
+				file?.type === "image/jpeg" ||
+				file?.type === "image/jpg"
+			) {
 				await this.processFile(file);
 			} else {
 				toast.error(`Unsupported file type ${file?.type}`);
@@ -50,7 +54,11 @@ export class UploadService<T> {
 			}
 			file = files[0];
 
-			if (file?.type === 'image/png' || file?.type === 'image/jpeg' ||file?.type === 'image/jpg') {
+			if (
+				file?.type === "image/png" ||
+				file?.type === "image/jpeg" ||
+				file?.type === "image/jpg"
+			) {
 				await this.processFile(file);
 			} else {
 				toast.error(`Unsupported file type ${file?.type}`);
@@ -61,7 +69,7 @@ export class UploadService<T> {
 
 	async handleFileSelected(event: any): Promise<void> {
 		const file = event.target.files[0];
-		if (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg') {
+		if (file.type === "image/png" || file.type === "image/jpeg" || file.type === "image/jpg") {
 			await this.processFile(file);
 		} else {
 			toast.error(`Unsupported file type '${file.type}'`);
@@ -74,9 +82,9 @@ export class UploadService<T> {
 		const reader = new FileReader();
 		reader.readAsDataURL(image);
 		reader.onload = async (event) => {
-			const fileUrl = (event.target?.result as string).split(',')[1];
+			const fileUrl = (event.target?.result as string).split(",")[1];
 			await this.uploadImage(fileUrl, image.name, image.type);
-		}
+		};
 	}
 
 	private async uploadImage(image: string, filename: string, mime: string): Promise<void> {
@@ -84,7 +92,7 @@ export class UploadService<T> {
 		const formData = {
 			image,
 			filename,
-			mime,
+			mime
 		};
 
 		const response = await patchReq<T>(url, formData);
@@ -98,17 +106,17 @@ export class UploadService<T> {
 	}
 
 	private determineUrl() {
-		switch(this.name) {
+		switch (this.name) {
 			case UploadType.Avatar:
-				return `/accounts/update-avatar?profileId=${this.profileId}`;
+				return `/profiles/update-avatar?profileId=${this.profileId}`;
 			case UploadType.ProfileBanner:
-				return `/accounts/update-banner?profileId=${this.profileId}`;
+				return `/profiles/update-banner?profileId=${this.profileId}`;
 			case UploadType.BlogBanner:
 				return `/blogs/update-cover/${this.itemId}?profileId=${this.profileId}`;
 			case UploadType.CoverArt:
 				return `/works/update-cover/${this.itemId}?profileId=${this.profileId}`;
 			case UploadType.WorkBanner:
-				return `/works/update-banner/${this.itemId}?profileId=${this.profileId}`
+				return `/works/update-banner/${this.itemId}?profileId=${this.profileId}`;
 		}
 	}
 }

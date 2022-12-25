@@ -4,16 +4,30 @@
 	import { ArrowLeftSLine, ImageEditLine } from "svelte-remixicon";
 	import { Button, Avatar } from "$lib/ui/util";
 	import { prevPage } from "$lib/ui/guide";
+	import { openPopup } from "$lib/ui/popup";
+	import { UploadAvatar } from "$lib/ui/upload";
+	import type { Profile } from "$lib/models/accounts";
 
 	const { form } = createForm({
 		async onSubmit(values) {
 			console.log(values);
 		},
 		initialValues: {
-			username: $account.currProfile.username,
-			bio: $account.currProfile.info.bio,
+			username: $account.currProfile?.username,
+			bio: $account.currProfile?.info.bio
 		}
 	});
+
+	function updateAvatar() {
+		openPopup(UploadAvatar, {
+			onConfirm(value: Profile) {
+				$account.currProfile = value;
+				$account.profiles = $account.profiles.map((item) => {
+					return item.id === value.id ? value : item;
+				});
+			}
+		});
+	}
 </script>
 
 <div class="panel-container">
@@ -31,7 +45,7 @@
 			<div class="panel-box">
 				<Avatar src={$account.currProfile.avatar} size="100px" borderWidth="1px" />
 				<div class="my-1"><!--spacer--></div>
-				<Button>
+				<Button on:click={updateAvatar}>
 					<ImageEditLine class="button-icon" />
 					<span class="button-text">Change Avatar</span>
 				</Button>
@@ -42,7 +56,10 @@
 			<div class="panel-box">
 				<form class="w-full" use:form>
 					<label class="flex flex-col w-full">
-						<span class="font-bold text-[0.7rem] relative left-2 uppercase tracking-wide">Username</span>
+						<span
+							class="font-bold text-[0.7rem] relative left-2 uppercase tracking-wide"
+							>Username</span
+						>
 						<input
 							type="text"
 							name="username"
@@ -52,12 +69,15 @@
 					</label>
 					<div class="my-4"><!--spacer--></div>
 					<label class="flex flex-col w-full">
-						<span class="font-bold text-[0.7rem] relative left-2 uppercase tracking-wide">Bio</span>
+						<span
+							class="font-bold text-[0.7rem] relative left-2 uppercase tracking-wide"
+							>Bio</span
+						>
 						<textarea
 							name="bio"
 							placeholder="Just Another Somebody"
 							class="w-full rounded-lg border-transparent py-2.5 bg-zinc-300 dark:bg-zinc-600 min-h-[8rem] max-h-[8rem]"
-						></textarea>
+						/>
 					</label>
 				</form>
 			</div>
@@ -66,5 +86,5 @@
 </div>
 
 <style lang="scss">
-	@use '../../Guide';
+	@use "../../Guide";
 </style>

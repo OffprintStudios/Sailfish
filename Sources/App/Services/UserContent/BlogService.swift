@@ -104,12 +104,12 @@ struct BlogService {
     }
 
     /// Updates a blog's cover image.
-    func updateCover(_ id: String, coverUrl: String? = nil) async throws -> Blog {
+    func updateBannerArt(_ id: String, bannerUrl: String? = nil) async throws -> Blog {
         let profile = try request.authService.getUser(withProfile: true).profile!
         guard let blog: Blog = try await profile.$blogs.query(on: request.db).filter(\.$id == id).first() else {
             throw Abort(.notFound, reason: "Could not find blog to update. Are you sure it exists?")
         }
-        blog.cover = coverUrl
+        blog.bannerArt = bannerUrl
         try await blog.save(on: request.db)
         return blog
     }

@@ -21,15 +21,18 @@ final class Profile: Model, Content {
 
     @Field(key: "avatar")
     var avatar: String
+    
+    @OptionalField(key: "banner_art")
+    var bannerArt: String?
 
     @Field(key: "info")
-    var info: ProfileInfo
+    var info: Info
     
     @Field(key: "links")
     var links: [String: String]
 
     @Field(key: "stats")
-    var stats: ProfileStats
+    var stats: Stats
 
     @Children(for: \.$author)
     var blogs: [Blog]
@@ -78,28 +81,31 @@ final class Profile: Model, Content {
 
         username = try SwiftSoup.clean(formData.username, Whitelist.none())!
         avatar = "https://images.offprint.net/avatars/avatar.png"
-        info = .init()
+        bannerArt = nil
+        if let hasBio = formData.bio {
+            info = .init(bio: try SwiftSoup.clean(hasBio, .none())!)
+        } else {
+            info = .init()
+        }
         links = [:]
         stats = .init()
     }
 }
 
 extension Profile {
-    struct ProfileInfo: Codable {
+    struct Info: Content {
         var bio: String?
         var tagline: String?
-        var coverPic: String?
         var presence: Presence
 
-        init() {
-            bio = nil
-            tagline = nil
-            coverPic = nil
-            presence = .offline
+        init(bio: String? = nil, tagline: String? = nil, presence: Presence = .offline) {
+            self.bio = bio
+            self.tagline = tagline
+            self.presence = presence
         }
     }
 
-    struct ProfileStats: Codable {
+    struct Stats: Content {
         var works: Int
         var blogs: Int
         var followers: Int

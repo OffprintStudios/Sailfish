@@ -11,6 +11,7 @@ struct CreateProfile: AsyncMigration {
             .field("account_id", .uuid, .required, .references("accounts", "id", onDelete: .cascade))
             .field("username", .string, .required)
             .field("avatar", .string, .required)
+            .field("banner_art", .string)
             .field("info", .dictionary(of: .string), .required)
             .field("links", .dictionary(of: .string), .required)
             .field("stats", .dictionary(of: .int), .required)

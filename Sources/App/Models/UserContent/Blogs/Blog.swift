@@ -26,8 +26,8 @@ final class Blog: Model, Content {
     @Field(key: "body")
     var body: String
 
-    @OptionalField(key: "cover")
-    var cover: String?
+    @OptionalField(key: "banner_art")
+    var bannerArt: String?
 
     @Field(key: "rating")
     var rating: ContentRating
@@ -75,7 +75,7 @@ final class Blog: Model, Content {
             desc = nil
         }
         body = try SwiftSoup.clean(formData.body, defaultWhitelist())!
-        cover = nil
+        bannerArt = nil
         rating = formData.rating
         stats = .init(words: try SwiftSoup.clean(formData.body, Whitelist.none())!.split { !$0.isLetter }.count)
         if canMakeNewsPost {

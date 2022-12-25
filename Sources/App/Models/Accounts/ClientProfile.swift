@@ -9,9 +9,10 @@ struct ClientProfile: Content {
     var account: AccountInfo
     var username: String
     var avatar: String
-    var info: Profile.ProfileInfo
+    var bannerArt: String?
+    var info: Profile.Info
     var links: [String: String]
-    var stats: Profile.ProfileStats
+    var stats: Profile.Stats
     var createdAt: Date?
     var updatedAt: Date?
 
@@ -20,6 +21,7 @@ struct ClientProfile: Content {
         account = .init(id: profile.account.id, roles: profile.account.roles)
         username = profile.username
         avatar = profile.avatar
+        bannerArt = profile.bannerArt
         info = profile.info
         links = profile.links
         stats = profile.stats

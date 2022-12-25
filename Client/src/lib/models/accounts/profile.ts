@@ -3,13 +3,13 @@ import type { Roles } from "./roles";
 
 export interface Profile {
 	readonly id: string;
-	readonly account: { id: string, roles: Roles[] };
+	readonly account: { id: string; roles: Roles[] };
 	username: string;
 	avatar: string;
+	bannerArt?: string;
 	info: {
 		bio?: string;
 		tagline?: string;
-		coverPic?: string;
 		presence: Presence;
 	};
 	stats: {

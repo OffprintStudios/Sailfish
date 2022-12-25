@@ -12,7 +12,7 @@ struct CreateBlog: AsyncMigration {
             .field("title", .string, .required)
             .field("desc", .string)
             .field("body", .string, .required)
-            .field("cover", .string)
+            .field("banner_art", .string)
             .field("rating", .string, .required)
             .field("stats", .dictionary(of: .int), .required)
             .field("news_post", .bool, .required)

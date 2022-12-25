@@ -43,12 +43,12 @@ struct BlogController: RouteCollection {
         blogsWithAuth.on(.PATCH, "update-cover", ":blogId", body: .collect(maxSize: "5mb")) { request async throws -> Blog in
             let blogId = request.parameters.get("blogId")!
             let data: UtilityService.UploadImage = try request.content.decode(UtilityService.UploadImage.self)
-            let coverUrl = try await request.utilityService.uploadImage(
+            let bannerUrl = try await request.utilityService.uploadImage(
                 data,
                 itemId: blogId,
                 folder: "blog-banners"
             )
-            return try await request.blogService.updateCover(blogId, coverUrl: coverUrl)
+            return try await request.blogService.updateBannerArt(blogId, bannerUrl: bannerUrl)
         }
 
         blogsWithAuth.patch("publish-blog", ":blogId") { request async throws -> Blog in

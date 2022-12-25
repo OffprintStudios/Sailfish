@@ -3,10 +3,14 @@
 	import { closePopup, closePopupAndConfirm, popup } from "../popup";
 	import { Button } from "../util";
 	import { UploadService, UploadType } from "./upload.service";
-	import { account } from "../../state/account.state";
-	import type { Profile } from "../../models/accounts";
+	import { account } from "$lib/state/account.state";
+	import type { Profile } from "$lib/models/accounts";
 
-	const uploadService = new UploadService<Profile>(UploadType.ProfileBanner, $popup.data.profileId, $account.currProfile.id);
+	const uploadService = new UploadService<Profile>(
+		UploadType.ProfileBanner,
+		$popup.data.profileId,
+		$account.currProfile?.id ?? "id"
+	);
 	let uploading = false;
 
 	async function handleDrop(e) {
@@ -17,15 +21,15 @@
 		await uploadService.handleFileSelected(e);
 	}
 
-	uploadService.isUploading.subscribe(val => {
+	uploadService.isUploading.subscribe((val) => {
 		uploading = val;
 	});
 
-	uploadService.result.subscribe(val => {
+	uploadService.result.subscribe((val) => {
 		if (val !== null) {
 			closePopupAndConfirm(val);
 		}
-	})
+	});
 </script>
 
 <div class="upload-container bg-zinc-300 dark:bg-zinc-700">
@@ -43,23 +47,20 @@
 			</div>
 		</div>
 	{:else}
-		<div
-			class="body-standby"
-			on:drop|preventDefault={(e) => handleDrop(e)}
-		>
+		<div class="body-standby" on:drop|preventDefault={(e) => handleDrop(e)}>
 			<h3 class="font-medium text-2xl">Drag & Drop</h3>
 			<span class="text-sm">
-                or
-                <label>
-                    <input
+				or
+				<label>
+					<input
 						class="hidden"
 						type="file"
 						accept=".jpg, .jpeg, .png"
 						on:change={(e) => handleFileSelected(e)}
 					/>
-                    <span class="file-input">click here</span>
-                </label> to pick something awesome
-            </span>
+					<span class="file-input">click here</span>
+				</label> to pick something awesome
+			</span>
 		</div>
 	{/if}
 </div>

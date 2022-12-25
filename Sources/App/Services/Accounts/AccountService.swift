@@ -48,28 +48,6 @@ struct AccountService {
         return newProfile
     }
 
-    /// Updates an existing profile
-    func updateProfile(_ id: String, with profileForm: Profile.ProfileForm) async throws -> Profile {
-        let account = try request.authService.getUser().account
-        guard let profile: Profile = try await account.$profiles.query(on: request.db).filter(\.$id == id).first() else {
-            throw Abort(.notFound, reason: "Could not find profile you wish to update.")
-        }
-
-        profile.username = try SwiftSoup.clean(profileForm.username, .none())!
-        profile.info.presence = profileForm.presence
-
-        if let bio = profileForm.bio {
-            profile.info.bio = try SwiftSoup.clean(bio, .none())!
-        }
-
-        if let tagline = profileForm.tagline {
-            profile.info.tagline = try SwiftSoup.clean(tagline, .none())!
-        }
-
-        try await profile.save(on: request.db)
-        return profile
-    }
-
     /// Soft-deletes a given profile
     func deleteProfile(_ id: String) async throws {
         let account = try request.authService.getUser().account

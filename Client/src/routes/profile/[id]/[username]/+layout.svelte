@@ -1,35 +1,64 @@
 <script lang="ts">
-	import { Home5Line, CupLine, QuillPenLine, BarChart2Line, ImageEditLine, ImageAddLine, ServiceLine, AlarmWarningLine, CloseCircleLine, PieChartLine } from "svelte-remixicon";
+	import {
+		Home5Line,
+		CupLine,
+		QuillPenLine,
+		BarChart2Line,
+		ImageEditLine,
+		ImageAddLine,
+		ServiceLine,
+		AlarmWarningLine,
+		CloseCircleLine,
+		PieChartLine
+	} from "svelte-remixicon";
 	import { Avatar, RoleBadge } from "$lib/ui/util";
 	import { slugify } from "$lib/util/functions";
 	import { Button } from "$lib/ui/util";
 	import { account } from "$lib/state/account.state";
 	import type { Profile } from "$lib/models/accounts";
 	import { NavLink } from "$lib/ui/nav";
+	import { openPopup } from "$lib/ui/popup";
+	import { UploadProfileCover } from "$lib/ui/upload";
 
 	export let data: Profile;
 
 	const iconSize = "24px";
+
+	function updateBanner() {
+		openPopup(
+			UploadProfileCover,
+			{
+				onConfirm(value: Profile) {
+					$account.currProfile = value;
+					$account.profiles = $account.profiles.map((item) => {
+						return item.id === value.id ? value : item;
+					});
+					data = value;
+				}
+			},
+			{ profileId: data.id }
+		);
+	}
 </script>
 
 <div class="w-11/12 mx-auto max-w-7xl mb-6">
 	<div class="profile-nav-container">
-		{#if data.info.coverPic}
-			{#if $account.account && $account.currProfile && $account.currProfile.id === data.id}
-				<div class="absolute top-2 right-2">
-					<Button kind="primary">
-						<ImageEditLine class="button-icon no-text" size="20px" />
-					</Button>
-				</div>
-			{/if}
+		{#if data.bannerArt}
 			<div class="profile-cover">
-				<img src={data.info.coverPic} alt="{data.username}'s Cover Picture" />
+				{#if $account.account && $account.currProfile && $account.currProfile.id === data.id}
+					<div class="absolute top-2 right-2">
+						<Button kind="primary" on:click={updateBanner}>
+							<ImageEditLine class="button-icon no-text" size="20px" />
+						</Button>
+					</div>
+				{/if}
+				<img src={data.bannerArt} alt="{data.username}'s Cover Picture" />
 			</div>
 		{:else}
 			<div class="profile-banner">
 				{#if $account.account && $account.currProfile && $account.currProfile.id === data.id}
 					<div class="absolute top-2 right-2">
-						<Button kind="primary">
+						<Button kind="primary" on:click={updateBanner}>
 							<ImageAddLine class="button-icon no-text" size="20px" />
 						</Button>
 					</div>
@@ -80,7 +109,9 @@
 			</div>
 			{#if $account.account && $account.currProfile}
 				{#if $account.currProfile.id === data.id}
-					<div class="h-full mx-1 border border-zinc-300 dark:border-zinc-500"><!--spacer--></div>
+					<div class="h-full mx-1 border border-zinc-300 dark:border-zinc-500">
+						<!--spacer-->
+					</div>
 					<button class="link hover:bg-zinc-300 dark:hover:bg-zinc-600">
 						<span class="link-icon"><PieChartLine size={iconSize} /></span>
 						<span class="link-name">Stats</span>
@@ -115,7 +146,7 @@
 			background: var(--accent);
 		}
 		div.profile-cover {
-			@apply h-[240px] w-full overflow-hidden rounded-t-xl;
+			@apply h-[240px] w-full overflow-hidden relative rounded-t-xl;
 			img {
 				@apply object-cover w-full h-full;
 			}
@@ -125,7 +156,8 @@
 			h3 {
 				@apply text-3xl lg:text-4xl lg:mr-2;
 			}
-			a.link, button.link {
+			a.link,
+			button.link {
 				@apply mx-0.5 rounded-lg transition transform;
 				@apply flex flex-col items-center justify-center w-[61px] h-[61px] relative;
 				color: var(--text-color);

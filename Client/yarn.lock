@@ -2533,6 +2533,11 @@ svelte-check@^2.7.1:
     svelte-preprocess "^4.0.0"
     typescript "*"
 
+svelte-easy-crop@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/svelte-easy-crop/-/svelte-easy-crop-1.0.8.tgz#48352c35215aad82ef58e93f70af679c2a0a178d"
+  integrity sha512-FOcMnkWfSVMv7/P5JNLtaRfHr1DNtnQ5cbahhReEyjGRWR65BNahzWalmNiDbQEVaocjzyA1cok1jpbuFbcaYw==
+
 svelte-floating-ui@^0.3.2:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/svelte-floating-ui/-/svelte-floating-ui-0.3.2.tgz#ef5aeedcbda1ebefcd0fd9d884209e22e73cf30c"
