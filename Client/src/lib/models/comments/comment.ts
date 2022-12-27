@@ -3,7 +3,6 @@ import type { CommentHistory } from "./comment-history";
 
 export interface Comment {
 	readonly id: string;
-	readonly thread: { id: string };
 	readonly profile: Profile;
 	body: string;
 	spoiler: boolean;

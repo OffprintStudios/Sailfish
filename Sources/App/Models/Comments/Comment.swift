@@ -66,16 +66,24 @@ final class Comment: Model, Content {
 
 extension Comment {
     struct CommentForm: Content {
-        var type: CommentType
         var itemId: String
         var body: String
         var spoiler: Bool
         var repliesTo: [String]
         var sectionId: String?
+        var locationUrl: String
     }
     
-    enum CommentType: String, Codable {
-        case work = "work"
-        case blog = "blog"
+    struct ClientComment: Content {
+        let comment: Comment
+        let profile: ProfileView
+    }
+}
+
+extension Comment.CommentForm: Validatable {
+    static func validations(_ validations: inout Validations) {
+        validations.add("itemId", as: String.self, required: true)
+        validations.add("body", as: String.self, is: .count(3...), required: true)
+        validations.add("locationUrl", as: String.self, required: false)
     }
 }

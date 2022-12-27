@@ -115,8 +115,12 @@
 
 <style lang="scss">
 	a.feature-link {
-		@apply flex items-center p-3 rounded-lg no-underline mr-0.5 last:mr-0 transition transform;
+		@apply flex text-lg items-center p-3 rounded-lg no-underline mr-0.5 last:mr-0 transition transform;
 		color: var(--text-color);
+		font-family: var(--header-text);
+		span {
+			@apply relative top-0.5;
+		}
 		&.active {
 			@apply text-white;
 			background: var(--accent);

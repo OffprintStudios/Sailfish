@@ -7,14 +7,14 @@ export interface Blog {
 	title: string;
 	desc?: string;
 	body: string;
-	cover?: string;
+	bannerArt?: string;
 	rating: ContentRating;
 	stats: {
 		words: number;
 		views: number;
 		comments: number;
 		favorites: number;
-	}
+	};
 	publishedOn?: Date;
 	editedOn?: Date;
 	readonly createdAt: Date;

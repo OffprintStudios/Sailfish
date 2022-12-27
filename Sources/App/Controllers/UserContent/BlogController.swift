@@ -12,19 +12,44 @@ struct BlogController: RouteCollection {
             IdentityGuard(needs: [.user], checkProfile: true),
             BannedGuard(),
         ])
+        let blogComments = blogs.grouped([
+            IdentityGuard(needs: [.user], checkProfile: true),
+            MutedGuard(),
+            BannedGuard(),
+        ])
 
-        blogs.get("fetch-blog", ":blogId") { request async throws -> Blog in
-            let blogId = request.parameters.get("blogId")!
-            return try await request.blogService.fetchBlog(blogId)
+        blogs.get(":id") { request async throws -> BlogService.FetchBlog in
+            let id = request.parameters.get("id")!
+            return try await request.blogService.fetchBlog(id)
         }
 
-        blogs.get("fetch-blogs") { request async throws -> Page<Blog> in
+        blogs.get("fetch") { request async throws -> Page<Blog> in
             let query = try request.query.decode(FetchBlogsQuery.self)
             if let authorId = query.authorId {
                 return try await request.blogService.fetchBlogs(for: authorId, status: query.status ?? .published, filter: query.filter ?? .restricted)
             } else {
                 return try await request.blogService.fetchBlogs(filter: query.filter ?? .restricted)
             }
+        }
+        
+        blogs.get(":id", "comments") { request async throws -> Page<Comment> in
+            let id = request.parameters.get("id")!
+            return try await request.blogService.fetchComments(for: id)
+        }
+        
+        blogComments.post(":id", "comments", "add") { request async throws -> Comment in
+            let id = request.parameters.get("id")!
+            try Comment.CommentForm.validate(content: request)
+            let commentForm = try request.content.decode(Comment.CommentForm.self)
+            return try await request.blogService.addComment(for: id, with: commentForm)
+        }
+        
+        blogComments.patch(":id", "comments", ":commentId", "edit") { request async throws -> Comment in
+            let id = request.parameters.get("id")!
+            let commentId = request.parameters.get("commentId")!
+            try Comment.CommentForm.validate(content: request)
+            let commentForm = try request.content.decode(Comment.CommentForm.self)
+            return try await request.blogService.editComment(commentId, for: id, with: commentForm)
         }
 
         blogsWithAuth.post("create-blog") { request async throws -> Blog in

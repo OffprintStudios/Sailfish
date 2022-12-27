@@ -16,13 +16,14 @@
 		EyeOffLine,
 		CheckboxBlankCircleLine,
 		CheckboxCircleLine,
-		DoubleQuotesL,
+		DoubleQuotesL
 	} from "svelte-remixicon";
 	import { Editor } from "../forms";
-	import { account } from "../../state/account.state";
-	import { editComment } from "./comments.state";
+	import { account } from "$lib/state/account.state";
+	import type { ThreadService } from "$lib/ui/comments/thread.service";
 
 	export let comment: Comment;
+	export let threadService: ThreadService;
 	export let index = 1;
 
 	const dispatch = createEventDispatcher();
@@ -35,7 +36,7 @@
 		},
 		validate(values) {
 			const errors = {
-				body: '',
+				body: ""
 			};
 
 			if (!values.body || values.body.length < 10) {
@@ -46,31 +47,36 @@
 		},
 		initialValues: {
 			body: comment?.body,
-			spoiler: comment?.spoiler,
+			spoiler: comment?.spoiler
 		}
 	});
 
 	const saveChanges = createSubmitHandler({
-		async onSubmit(values, context) {
+		async onSubmit(values) {
 			const formData: CommentForm = {
-				threadId: comment?.thread.id,
+				itemId: threadService.threadId,
+				locationUrl: "",
+				sectionId: comment.section.id,
 				body: values.body,
 				spoiler: values.spoiler,
-				repliesTo: [],
+				repliesTo: []
 			};
-			await editComment(comment?.id, $account.currProfile?.id, formData).then(() => {
+			await threadService.editComment(comment.id, formData).then((result) => {
 				isEditing = false;
-				context.reset();
-			})
+				comment = result;
+			});
 		}
 	});
 
 	function reply() {
-		dispatch('reply', comment);
+		dispatch("reply", comment);
 	}
 </script>
 
-<div class="flex flex-col w-full min-h-[14rem] rounded-xl my-4 bg-zinc-200 dark:bg-zinc-700" id="comment-{comment?.id}">
+<div
+	class="flex flex-col w-full min-h-[14rem] rounded-xl my-4 bg-zinc-200 dark:bg-zinc-700"
+	id="comment-{comment?.id}"
+>
 	<div class="flex items-center border-b-2 border-transparent dark:border-zinc-600 px-2 py-0.5">
 		<Avatar src={comment?.profile.avatar} size="35px" borderWidth="2px" />
 		<div class="ml-2 flex-1">
@@ -89,7 +95,11 @@
 		</div>
 		{#if $account.account && $account.currProfile && $account.currProfile.id === comment?.profile.id}
 			{#if isEditing}
-				<Button type="button" on:click={() => $data.spoiler = !$data.spoiler} isActive={$data.spoiler}>
+				<Button
+					type="button"
+					on:click={() => ($data.spoiler = !$data.spoiler)}
+					isActive={$data.spoiler}
+				>
 					{#if $data.spoiler === true}
 						<CheckboxCircleLine class="button-icon" />
 					{:else}
@@ -103,13 +113,16 @@
 					<span class="button-text">Save</span>
 				</Button>
 				<div class="mx-0.5"><!--spacer--></div>
-				<Button on:click={() => isEditing = !isEditing}>
+				<Button on:click={() => (isEditing = !isEditing)}>
 					<CloseLine class="button-icon" />
 					<span class="button-text">Cancel</span>
 				</Button>
 			{:else}
 				{#if comment?.spoiler}
-					<Button on:click={() => revealSpoiler = !revealSpoiler} isActive={revealSpoiler}>
+					<Button
+						on:click={() => (revealSpoiler = !revealSpoiler)}
+						isActive={revealSpoiler}
+					>
 						{#if revealSpoiler}
 							<EyeOffLine class="button-icon" />
 							<span class="button-text">Hide</span>
@@ -118,9 +131,9 @@
 							<span class="button-text">Reveal</span>
 						{/if}
 					</Button>
-					<div class="mx-0.5"></div>
+					<div class="mx-0.5"><!--spacer--></div>
 				{/if}
-				<Button on:click={() => isEditing = !isEditing}>
+				<Button on:click={() => (isEditing = !isEditing)}>
 					<Edit2Line class="button-icon" />
 					<span class="button-text">Edit</span>
 				</Button>
@@ -132,7 +145,7 @@
 			</Button>
 			<div class="mx-0.5"><!--separator--></div>
 			{#if comment?.spoiler}
-				<Button on:click={() => revealSpoiler = !revealSpoiler} isActive={revealSpoiler}>
+				<Button on:click={() => (revealSpoiler = !revealSpoiler)} isActive={revealSpoiler}>
 					{#if revealSpoiler}
 						<EyeOffLine class="button-icon" />
 						<span class="button-text">Hide</span>
@@ -141,7 +154,7 @@
 						<span class="button-text">Reveal</span>
 					{/if}
 				</Button>
-				<div class="mx-0.5"></div>
+				<div class="mx-0.5"><!--spacer--></div>
 			{/if}
 			<Dropdown position="bottom-end">
 				<svelte:fragment slot="button">
@@ -159,19 +172,17 @@
 					</button>
 				</svelte:fragment>
 			</Dropdown>
-		{:else}
-			{#if comment?.spoiler}
-				<Button on:click={() => revealSpoiler = !revealSpoiler} isActive={revealSpoiler}>
-					{#if revealSpoiler}
-						<EyeOffLine class="button-icon" />
-						<span class="button-text">Hide</span>
-					{:else}
-						<EyeLine class="button-icon" />
-						<span class="button-text">Reveal</span>
-					{/if}
-				</Button>
-				<div class="mx-0.5"></div>
-			{/if}
+		{:else if comment?.spoiler}
+			<Button on:click={() => (revealSpoiler = !revealSpoiler)} isActive={revealSpoiler}>
+				{#if revealSpoiler}
+					<EyeOffLine class="button-icon" />
+					<span class="button-text">Hide</span>
+				{:else}
+					<EyeLine class="button-icon" />
+					<span class="button-text">Reveal</span>
+				{/if}
+			</Button>
+			<div class="mx-0.5"><!--spacer--></div>
 		{/if}
 	</div>
 	{#if isEditing}
@@ -186,7 +197,9 @@
 					transition:fade|local={{ delay: 0, duration: 100 }}
 				>
 					<EyeOffLine size="36px" />
-					<span class="text-sm all-small-caps font-bold tracking-wider">Potential Spoilers</span>
+					<span class="text-sm all-small-caps font-bold tracking-wider"
+						>Potential Spoilers</span
+					>
 				</div>
 			{/if}
 			<div class="comment-body px-4">
@@ -196,16 +209,17 @@
 		<div class="flex items-center p-0.5 pb-1" in:fade|local={{ delay: 0, duration: 150 }}>
 			<div>
 				<!--TODO: add actual link here-->
-				<a
-					class="block mx-2 relative text-xs"
-					href="#comment-{comment?.id}"
-				>
+				<a class="block mx-2 relative text-xs" href="#comment-{comment?.id}">
 					#{index}
 				</a>
 			</div>
 			<div class="flex-1 text-xs relative top-0.5 pb-1 italic">
 				{#if comment?.history.length !== 0}
-					Last edited <Time timestamp={comment?.history[comment?.history.length - 1].createdAt} relative live />
+					Last edited <Time
+						timestamp={comment?.history[comment?.history.length - 1].createdAt}
+						relative
+						live
+					/>
 				{/if}
 			</div>
 		</div>

@@ -25,7 +25,7 @@
 	async function fetchPending() {
 		loading = true;
 		const response = await getReq<Paginate<Blog>>(
-			"/blogs/fetch-blogs?" +
+			"/blogs/fetch?" +
 				"authorId=" +
 				$account.currProfile?.id +
 				"&" +

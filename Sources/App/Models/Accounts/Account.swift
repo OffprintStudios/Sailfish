@@ -13,31 +13,31 @@ final class Account: Model, Content {
     @ID(key: .id)
     var id: UUID?
 
-    @Field(key: "email")
+    @Field(key: FieldKeys.email)
     var email: String
 
-    @Field(key: "password")
+    @Field(key: FieldKeys.password)
     var password: String
 
     @Children(for: \.$account)
     var profiles: [Profile]
 
-    @Field(key: "roles")
+    @Field(key: FieldKeys.roles)
     var roles: [Roles]
 
-    @Field(key: "terms_agree")
+    @Field(key: FieldKeys.termsAgree)
     var termsAgree: Bool
 
-    @Field(key: "email_confirmed")
+    @Field(key: FieldKeys.emailConfirmed)
     var emailConfirmed: Bool
 
     @Children(for: \.$account)
     var sessions: [Session]
 
-    @Timestamp(key: "created_at", on: .create)
+    @Timestamp(key: FieldKeys.createdAt, on: .create)
     var createdAt: Date?
 
-    @Timestamp(key: "updated_at", on: .update)
+    @Timestamp(key: FieldKeys.updatedAt, on: .update)
     var updatedAt: Date?
 
     init() { }
@@ -57,6 +57,16 @@ final class Account: Model, Content {
 }
 
 extension Account {
+    enum FieldKeys {
+        static let email: FieldKey = "email"
+        static let password: FieldKey = "password"
+        static let roles: FieldKey = "roles"
+        static let termsAgree: FieldKey = "terms_agree"
+        static let emailConfirmed: FieldKey = "email_confirmed"
+        static let createdAt: FieldKey = "created_at"
+        static let updatedAt: FieldKey = "updated_at"
+    }
+    
     struct RegisterForm: Content {
         var email: String
         var password: String

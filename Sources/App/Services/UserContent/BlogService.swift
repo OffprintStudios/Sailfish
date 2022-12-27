@@ -7,11 +7,11 @@ import Vapor
 import Fluent
 import SwiftSoup
 
-struct BlogService {
+struct BlogService: HasComments {
     let request: Request
 
     /// Fetches a blog post given its ID. If no such post exists, throws a `notFound` error.
-    func fetchBlog(_ id: String) async throws -> Blog {
+    func fetchBlog(_ id: String) async throws -> FetchBlog {
         guard let blog: Blog = try await Blog.query(on: request.db).with(\.$author).filter(\.$id == id).first() else {
             throw Abort(.notFound, reason: "Blog not found. Are you sure you're looking for the right one?")
         }
@@ -20,8 +20,16 @@ struct BlogService {
                 blog.stats.views += 1
                 try await blog.save(on: database)
             }
+            return .init(
+                blog: blog,
+                comments: try await blog.$comments
+                    .query(on: request.db)
+                    .with(\.$profile)
+                    .with(\.$history)
+                    .paginate(for: request)
+            )
         }
-        return blog
+        return .init(blog: blog, comments: nil)
     }
 
     /// Fetches a paginated list of published blogs based on the provided `ContentFilter`.
@@ -60,6 +68,82 @@ struct BlogService {
                 .sort(\.$publishedOn, .descending)
                 .paginate(for: request)
         }
+    }
+    
+    /// Fetches a new page of comments for a blog.
+    func fetchComments(for id: String) async throws -> Page<Comment> {
+        guard let blog: Blog = try await Blog.query(on: request.db).filter(\.$id == id).first() else {
+            throw Abort(.notFound, reason: "Blog not found. Are you sure you're looking for the right one?")
+        }
+        if blog.publishedOn != nil {
+            return try await blog.$comments
+                .query(on: request.db)
+                .with(\.$profile)
+                .with(\.$history)
+                .sort(\.$createdAt, .ascending)
+                .paginate(for: request)
+        }
+        throw Abort(.badRequest, reason: "This work is not published, so comments are inaccessible.")
+    }
+    
+    /// Adds a comment to the specified blog.
+    func addComment(for id: String, with formInfo: Comment.CommentForm) async throws -> Comment {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        guard let blog: Blog = try await Blog.query(on: request.db).filter(\.$id == id).first() else {
+            throw Abort(.notFound, reason: "The blog you're commenting on doesn't seem to exist.")
+        }
+        if blog.publishedOn != nil {
+            let comment: Comment = try await request.db.transaction { database in
+                let newComment = try Comment(by: profile.id!, with: formInfo)
+                try await newComment.save(on: database)
+                try await blog.$comments.attach(newComment, on: database)
+                blog.stats.comments += 1
+                try await blog.save(on: database)
+                newComment.$profile.value = profile
+                try await newComment.$history.load(on: database)
+                return newComment
+            }
+            if blog.$author.id != profile.id {
+                try await request.queue.dispatch(AddNotificationJob.self, .init(
+                    to: blog.$author.id,
+                    from: comment.profile.id,
+                    event: .newBlogComment,
+                    entity: blog.id,
+                    context: ["title": blog.title, "url": "\(formInfo.locationUrl)#comment-\(comment.id ?? "nil")"]
+                ))
+            }
+            return comment
+        }
+        throw Abort(.badRequest, reason: "Comments are disabled for drafts.")
+    }
+    
+    /// Edits a blog comment.
+    func editComment(_ id: String, for itemId: String, with formInfo: Comment.CommentForm) async throws -> Comment {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        guard let blog: Blog = try await Blog.query(on: request.db).filter(\.$id == itemId).first() else {
+            throw Abort(.notFound, reason: "The blog you're commenting on doesn't seem to exist.")
+        }
+        if blog.publishedOn != nil {
+            guard let comment = try await blog.$comments
+                .query(on: request.db)
+                .with(\.$profile)
+                .with(\.$history)
+                .filter(\.$id == id)
+                .filter(\.$profile.$id == profile.id!)
+                .first() else {
+                throw Abort(.notFound, reason: "The comment you're trying to edit doesn't seem to exist.")
+            }
+            let newHistory = CommentHistory(oldBody: comment.body)
+            comment.body = try SwiftSoup.clean(formInfo.body, defaultWhitelist())!
+            comment.spoiler = formInfo.spoiler
+            try await request.db.transaction { database in
+                try await comment.$history.create(newHistory, on: database)
+                try await comment.save(on: database)
+            }
+            try await comment.$history.load(on: request.db)
+            return comment
+        }
+        throw Abort(.badRequest, reason: "Comments are disabled for drafts.")
     }
 
     /// Fetches newsposts.
@@ -205,6 +289,11 @@ struct BlogService {
 }
 
 extension BlogService {
+    struct FetchBlog: Content {
+        var blog: Blog
+        var comments: Page<Comment>?
+    }
+    
     struct CheckFavorite: Content {
         var hasFavorited: Bool
     }

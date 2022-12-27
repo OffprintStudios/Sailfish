@@ -23,7 +23,7 @@
 
 	async function fetchBlogs() {
 		const response = await getReq<Paginate<Blog>>(
-			`/blogs/fetch-blogs?` +
+			`/blogs/fetch?` +
 				`authorId=${profile.id}&` +
 				`status=${ApprovalStatus.published}&` +
 				`filter=${$app.filter}&` +

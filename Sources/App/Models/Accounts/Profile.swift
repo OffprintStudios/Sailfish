@@ -10,28 +10,28 @@ import SwiftSoup
 final class Profile: Model, Content {
     static let schema = "profiles"
 
-    @ID(custom: "id", generatedBy: .user)
+    @ID(custom: FieldKey.id, generatedBy: .user)
     var id: String?
 
-    @Parent(key: "account_id")
+    @Parent(key: FieldKeys.accountId)
     var account: Account
 
-    @Field(key: "username")
+    @Field(key: FieldKeys.username)
     var username: String
 
-    @Field(key: "avatar")
+    @Field(key: FieldKeys.avatar)
     var avatar: String
     
-    @OptionalField(key: "banner_art")
+    @OptionalField(key: FieldKeys.bannerArt)
     var bannerArt: String?
 
-    @Field(key: "info")
+    @Field(key: FieldKeys.info)
     var info: Info
     
-    @Field(key: "links")
+    @Field(key: FieldKeys.links)
     var links: [String: String]
 
-    @Field(key: "stats")
+    @Field(key: FieldKeys.stats)
     var stats: Stats
 
     @Children(for: \.$author)
@@ -61,13 +61,13 @@ final class Profile: Model, Content {
     @Children(for: \.$profile)
     var history: [ReadingHistory]
 
-    @Timestamp(key: "created_at", on: .create)
+    @Timestamp(key: FieldKeys.createdAt, on: .create)
     var createdAt: Date?
 
-    @Timestamp(key: "updated_at", on: .update)
+    @Timestamp(key: FieldKeys.updatedAt, on: .update)
     var updatedAt: Date?
 
-    @Timestamp(key: "deleted_at", on: .delete)
+    @Timestamp(key: FieldKeys.deletedAt, on: .delete)
     var deletedAt: Date?
 
     init() { }
@@ -93,6 +93,19 @@ final class Profile: Model, Content {
 }
 
 extension Profile {
+    enum FieldKeys {
+        static let accountId: FieldKey = "account_id"
+        static let username: FieldKey = "username"
+        static let avatar: FieldKey = "avatar"
+        static let bannerArt: FieldKey = "banner_art"
+        static let info: FieldKey = "info"
+        static let links: FieldKey = "links"
+        static let stats: FieldKey = "stats"
+        static let createdAt: FieldKey = "created_at"
+        static let updatedAt: FieldKey = "updated_at"
+        static let deletedAt: FieldKey = "deleted_at"
+    }
+    
     struct Info: Content {
         var bio: String?
         var tagline: String?

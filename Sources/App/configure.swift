@@ -55,6 +55,7 @@ public func configure(_ app: Application) async throws {
         CreateBlogBlacklist(),
         CreateNotification(),
         CreateFollower(),
+        CreateProfileView(),
     ])
 
     try await app.autoMigrate()
