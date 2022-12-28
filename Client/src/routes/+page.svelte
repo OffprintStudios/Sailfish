@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { NewsCarousel } from "$lib/ui/content";
+	import { NewsCarousel, ExploreSummary } from "$lib/ui/content";
 </script>
 
 <svelte:head>
@@ -31,4 +31,5 @@
 
 <div class="w-11/12 mx-auto max-w-7xl mb-6">
 	<NewsCarousel />
+	<ExploreSummary />
 </div>

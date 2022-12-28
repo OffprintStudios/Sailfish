@@ -27,6 +27,14 @@ struct ExploreController: RouteCollection {
             return try await request.exploreService.fetchFandoms()
         }
         
+        explore.get("top-tags") { request async throws -> [Tag.TopTag] in
+            let query = try request.query.decode(FetchFilter.self)
+            if let tagKind = query.tagKind {
+                return try await request.exploreService.fetchTopTags(kind: tagKind)
+            }
+            throw Abort(.badRequest, reason: "You must include the tag kind in this request.")
+        }
+        
         explore.get("works-by-tag") { request async throws -> Page<Work> in
             let query = try request.query.decode(FetchFilter.self)
             if let id = query.tagId {
@@ -40,6 +48,7 @@ struct ExploreController: RouteCollection {
 extension ExploreController {
     struct FetchFilter: Content {
         var tagId: String?
+        var tagKind: Tag.Kind?
         var filter: ContentFilter?
     }
 }

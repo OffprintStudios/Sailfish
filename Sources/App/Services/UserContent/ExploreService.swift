@@ -4,6 +4,7 @@
 
 import Vapor
 import Fluent
+import FluentSQL
 
 struct ExploreService {
     let request: Request
@@ -64,6 +65,17 @@ struct ExploreService {
             ))
         }
         return tagsWithCounts
+    }
+    
+    /// Fetches the top tags.
+    func fetchTopTags(kind: Tag.Kind) async throws -> [Tag.TopTag] {
+        if let sql = request.db as? SQLDatabase {
+            return try await sql.raw("""
+                SELECT t.*, COUNT(w.id) as total FROM tags t LEFT JOIN work_tags w ON t.id = w.tag_id WHERE t.kind = '\(raw: kind.rawValue)' GROUP BY t.id ORDER BY total DESC LIMIT 6
+            """).all(decoding: Tag.TopTag.self)
+        } else {
+            throw Abort(.notImplemented, reason: "This feature is only available with SQL databases.")
+        }
     }
     
     /// Fetches all works belonging to a tag.

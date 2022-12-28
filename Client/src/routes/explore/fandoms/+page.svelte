@@ -15,7 +15,7 @@
 		<p>Contact site staff to get them off their butts and fix this.</p>
 	</div>
 {:else}
-	<div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+	<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4">
 		{#each data.data as item}
 			<TagCard tag={item.tag} works={item.works} />
 		{/each}

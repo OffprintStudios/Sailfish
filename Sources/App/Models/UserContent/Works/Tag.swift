@@ -63,6 +63,17 @@ extension Tag {
         case genre = "Genre"
         case user = "User"
     }
+    
+    struct TopTag: Content {
+        var id: String?
+        var name: String
+        var desc: String?
+        var parent: String?
+        var kind: Kind
+        var created_at: Date?
+        var updated_at: Date?
+        var total: Int64
+    }
 }
 
 extension Tag.TagForm: Validatable {

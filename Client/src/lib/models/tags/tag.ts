@@ -11,3 +11,7 @@ export interface Tag {
 	readonly createdAt: Date;
 	readonly updatedAt: Date;
 }
+
+export interface TopTag extends Tag {
+	readonly total: number;
+}
