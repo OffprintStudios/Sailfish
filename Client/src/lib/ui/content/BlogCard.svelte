@@ -5,19 +5,18 @@
 		PenNibLine,
 		StarLine,
 		More2Fill,
-		AlarmWarningLine,
-		Edit2Line,
-		DeleteBin2Line,
-		ShareBoxLine
+		DiscussLine
 	} from "svelte-remixicon";
 	import { account } from "$lib/state/account.state";
 	import type { Blog } from "$lib/models/content";
 	import { Time, Avatar } from "$lib/ui/util";
-	import { pluralize, slugify } from "../../util/functions";
+	import { pluralize, slugify } from "$lib/util/functions";
 	import { Dropdown } from "$lib/ui/dropdown";
+	import { abbreviate } from "$lib/util/functions/index.js";
 
 	export let blog: Blog;
 	export let showAvatar = false;
+	export let hasDropdown = true;
 </script>
 
 <div
@@ -45,32 +44,13 @@
 				<Time timestamp={blog.createdAt} />
 			</span>
 		</div>
-		{#if $account.account && $account.currProfile}
+		{#if $account.account && $account.currProfile && hasDropdown}
 			<Dropdown kind="primary">
 				<svelte:fragment slot="button">
 					<More2Fill size="18px" class="button-icon no-text text-white" />
 				</svelte:fragment>
 				<svelte:fragment slot="items">
-					{#if $account.account && $account.currProfile && $account.currProfile.id === blog.author.id}
-						<button>
-							<Edit2Line size="18px" class="mr-2" />
-							<span>Edit</span>
-						</button>
-						<button>
-							<ShareBoxLine size="18px" class="mr-2" />
-							<span>Share</span>
-						</button>
-						<div class="w-full my-1 border-b border-zinc-300"><!--divider--></div>
-						<button>
-							<DeleteBin2Line size="18px" class="mr-2" />
-							<span>Delete</span>
-						</button>
-					{:else}
-						<button>
-							<AlarmWarningLine size="18px" class="mr-2 relative -top-0.5" />
-							<span>Report</span>
-						</button>
-					{/if}
+					<slot name="dropdown" />
 				</svelte:fragment>
 			</Dropdown>
 		{/if}
@@ -79,24 +59,25 @@
 		{@html blog.body}
 	</div>
 	<div class="blog-stats bg-zinc-300 dark:bg-zinc-600">
-		<span class="flex items-center">
-			<LineChartLine size="16px" class="mr-1" />
-			{blog.stats.views} view{pluralize(blog.stats.views)}
-		</span>
-		<span class="mx-1">•</span>
-		<span class="flex items-center">
-			<StarLine size="16px" class="mr-1" />
-			{blog.stats.favorites} fave{pluralize(blog.stats.favorites)}
-		</span>
-		<span class="mx-1">•</span>
-		<span class="flex items-center">
-			<PenNibLine size="16px" class="mr-1" />
-			{blog.stats.words} word{pluralize(blog.stats.words)}
-		</span>
 		<div class="flex-1"><!--spacer--></div>
-		<span class="flex items-center">
-			<TimeLine size="16px" class="mr-1 relative -top-[0.02rem]" />
-			<Time timestamp={blog.createdAt} relative="true" />
+		<span class="flex items-center relative z-[2]" title="Views">
+			<LineChartLine size="16px" class="mr-1" />
+			{abbreviate(blog.stats.views)}
+		</span>
+		<span class="mx-1">•</span>
+		<span class="flex items-center relative z-[2]" title="Faves">
+			<StarLine size="16px" class="mr-1" />
+			{abbreviate(blog.stats.favorites)}
+		</span>
+		<span class="mx-1">•</span>
+		<span class="flex items-center relative z-[2]" title="Comments">
+			<DiscussLine size="16px" class="mr-1" />
+			{abbreviate(blog.stats.comments)}
+		</span>
+		<span class="mx-1">•</span>
+		<span class="flex items-center relative z-[2]" title="Words">
+			<PenNibLine size="16px" class="mr-1" />
+			{abbreviate(blog.stats.words)}
 		</span>
 	</div>
 </div>

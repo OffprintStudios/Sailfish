@@ -243,7 +243,7 @@
 		<div class="flex items-center justify-center bg-zinc-300 dark:bg-zinc-600 p-3">
 			<Button type="submit" loading={$isSubmitting} loadingText="Saving...">
 				<AddLine class="button-icon" />
-				<span class="button-text">Create And Save</span>
+				<span class="button-text">Save Changes</span>
 			</Button>
 		</div>
 	</form>

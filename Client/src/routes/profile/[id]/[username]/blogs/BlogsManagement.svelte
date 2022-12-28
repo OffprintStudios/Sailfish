@@ -42,13 +42,13 @@
 	>
 		Drafts
 	</button>
-	<button
+	<!--<button
 		class="tab-button"
 		class:active={currTab === BlogTabs.Pending}
 		on:click={() => switchTab(BlogTabs.Pending)}
 	>
 		Pending
-	</button>
+	</button>-->
 	<button
 		class="tab-button"
 		class:active={currTab === BlogTabs.Published}
@@ -57,7 +57,11 @@
 		Published
 	</button>
 	<div class="flex-1"><!--spacer--></div>
-	<Button kind="primary" asLink href="/profile/{profile.id}/{slugify(profile.username)}/blogs/new">
+	<Button
+		kind="primary"
+		asLink
+		href="/profile/{profile.id}/{slugify(profile.username)}/blogs/new"
+	>
 		<AddFill class="button-icon" />
 		<span class="button-text">New Blog</span>
 	</Button>
