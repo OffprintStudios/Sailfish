@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { page } from "$app/stores";
 	import {
-		NewspaperLine,
-		CalendarLine,
-		Calendar2Line,
-		Hashtag,
-		SunLine,
-		CompassDiscoverLine
+		Loader2Line,
+		CompassDiscoverLine,
+		SignalTowerFill,
+		Book2Line,
+		EmpathizeLine
 	} from "svelte-remixicon";
 
 	const iconSize = "24px";
@@ -48,12 +47,12 @@
 			<h1 class="text-white text-4xl relative top-1">Explore</h1>
 		</div>
 		<div class="flex items-center justify-center p-2">
-			<a
+			<!--<a
 				class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
 				class:active={$page.url.pathname.includes("/popular-this-week")}
 				href="/explore/popular-this-week"
 			>
-				<CalendarLine class="mr-1" size={iconSize} />
+				<Calendar2Line class="mr-1" size={iconSize} />
 				<span>Popular This Week</span>
 			</a>
 			<a
@@ -61,33 +60,53 @@
 				class:active={$page.url.pathname.includes("/popular-today")}
 				href="/explore/popular-today"
 			>
-				<Calendar2Line class="mr-1" size={iconSize} />
+				<CalendarEventLine class="mr-1" size={iconSize} />
 				<span>Popular Today</span>
-			</a>
+			</a>-->
 			<a
 				class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
 				class:active={$page.url.pathname.includes("/new-works")}
 				href="/explore/new-works"
+				data-sveltekit-preload-data
 			>
-				<NewspaperLine class="mr-1" size={iconSize} />
-				<span>New Works</span>
+				<Loader2Line class="mr-1" size={iconSize} />
+				<span>New</span>
 			</a>
 			<a
 				class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
-				class:active={$page.url.pathname.includes("/tags")}
-				href="/dashboard/tags"
+				class:active={$page.url.pathname.includes("/updated-works")}
+				href="/explore/updated-works"
+				data-sveltekit-preload-data
 			>
-				<Hashtag class="mr-1" size={iconSize} />
-				<span>Tags</span>
+				<SignalTowerFill class="mr-1" size={iconSize} />
+				<span>Updated</span>
 			</a>
 			<a
+				class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
+				class:active={$page.url.pathname.includes("/genres")}
+				href="/explore/genres"
+				data-sveltekit-preload-data
+			>
+				<Book2Line class="mr-1" size={iconSize} />
+				<span>Genres</span>
+			</a>
+			<a
+				class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
+				class:active={$page.url.pathname.includes("/fandoms")}
+				href="/explore/fandoms"
+				data-sveltekit-preload-data
+			>
+				<EmpathizeLine class="mr-1" size={iconSize} />
+				<span>Fandoms</span>
+			</a>
+			<!--<a
 				class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
 				class:active={$page.url.pathname.includes("/special-events")}
-				href="/explore/popular-today"
+				href="/explore/special-events"
 			>
 				<SunLine class="mr-1" size={iconSize} />
 				<span>Special Events</span>
-			</a>
+			</a>-->
 		</div>
 	</div>
 	<slot />

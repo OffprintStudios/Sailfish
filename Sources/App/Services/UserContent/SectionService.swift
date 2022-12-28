@@ -126,11 +126,21 @@ struct SectionService {
                 throw Abort(.notFound, reason: "The section you're trying to edit doesn't exist.")
             }
             if section.publishedOn != nil {
+                // if it already has a publish date
                 section.publishedOn = nil
             } else {
-                section.publishedOn = Date()
+                // if it doesn't already have a publish date
+                let pubDate = Date()
+                section.publishedOn = pubDate
+                if section.firstPublished == nil {
+                    section.firstPublished = pubDate
+                    if work.publishedOn != nil {
+                        work.lastSectionUpdate = pubDate
+                    }
+                }
             }
             try await section.save(on: database)
+            try await work.save(on: database)
             return section
         }
         try await request.workService.updateWordCount(work)

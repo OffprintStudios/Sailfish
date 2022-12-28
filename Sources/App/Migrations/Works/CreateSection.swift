@@ -18,6 +18,7 @@ struct CreateSection: AsyncMigration {
             .field("lang", .string, .required, .sql(.default("en")))
             .field("rank", .int64, .required)
             .field("published_on", .datetime)
+            .field("first_published", .datetime)
             .field("created_at", .datetime)
             .field("updated_at", .datetime)
             .field("deleted_at", .datetime)
