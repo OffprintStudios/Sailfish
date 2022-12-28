@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>Home &mdash; Offprint</title>
+	<title>Explore &mdash; Offprint</title>
 	<!-- Primary Meta Tags -->
 	<meta name="title" content="Offprint" />
 	<meta name="description" content="A next-generation publishing and community platform." />
