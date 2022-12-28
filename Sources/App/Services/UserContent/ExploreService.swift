@@ -13,7 +13,7 @@ struct ExploreService {
     func fetchNewWorks(filter: ContentFilter) async throws -> Page<Work> {
         try await Work.query(on: request.db)
             .with(\.$author)
-            .with(\.$tags)
+            .with(\.$tags) { $0.with(\.$parent) }
             .filter(\.$rating ~~ determineRatings(from: filter))
             .filter(\.$publishedOn <= Date())
             .sort(\.$publishedOn, .descending)

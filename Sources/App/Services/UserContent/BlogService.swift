@@ -206,6 +206,9 @@ struct BlogService: HasComments {
                 throw Abort(.notFound, reason: "Could not find blog to update. Are you sure it exists?")
             }
             blog.publishedOn = publishDate
+            if blog.firstPublished == nil {
+                blog.firstPublished = publishDate
+            }
             try await blog.save(on: database)
             
             profile.stats.blogs = try await profile.$blogs.query(on: database).filter(\.$publishedOn <= Date()).count()

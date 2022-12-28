@@ -1,11 +1,11 @@
 import { error } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
+import type { LayoutServerLoad } from "./$types";
 import type { Blog } from "$lib/models/content";
 import { BASE_URL } from "$lib/http";
 import type { Comment } from "$lib/models/comments";
 import type { Paginate } from "$lib/util/types";
 
-export const load: PageServerLoad = async ({
+export const load: LayoutServerLoad = async ({
 	params,
 	url,
 	fetch

@@ -49,6 +49,9 @@ final class Blog: Model, Content {
 
     @OptionalField(key: "published_on")
     var publishedOn: Date?
+    
+    @OptionalField(key: "first_published")
+    var firstPublished: Date?
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?

@@ -52,21 +52,21 @@ struct BlogController: RouteCollection {
             return try await request.blogService.editComment(commentId, for: id, with: commentForm)
         }
 
-        blogsWithAuth.post("create-blog") { request async throws -> Blog in
+        blogsWithAuth.post("create") { request async throws -> Blog in
             try Blog.BlogForm.validate(content: request)
             let blogForm = try request.content.decode(Blog.BlogForm.self)
             return try await request.blogService.createBlog(with: blogForm)
         }
 
-        blogsWithAuth.patch("update-blog", ":blogId") { request async throws -> Blog in
-            let blogId = request.parameters.get("blogId")!
+        blogsWithAuth.patch(":id", "update") { request async throws -> Blog in
+            let blogId = request.parameters.get("id")!
             try Blog.BlogForm.validate(content: request)
             let blogForm = try request.content.decode(Blog.BlogForm.self)
             return try await request.blogService.updateBlog(blogId, with: blogForm)
         }
 
-        blogsWithAuth.on(.PATCH, "update-cover", ":blogId", body: .collect(maxSize: "5mb")) { request async throws -> Blog in
-            let blogId = request.parameters.get("blogId")!
+        blogsWithAuth.on(.PATCH, ":id", "update-cover", body: .collect(maxSize: "5mb")) { request async throws -> Blog in
+            let blogId = request.parameters.get("id")!
             let data: UtilityService.UploadImage = try request.content.decode(UtilityService.UploadImage.self)
             let bannerUrl = try await request.utilityService.uploadImage(
                 data,
@@ -76,15 +76,15 @@ struct BlogController: RouteCollection {
             return try await request.blogService.updateBannerArt(blogId, bannerUrl: bannerUrl)
         }
 
-        blogsWithAuth.patch("publish-blog", ":blogId") { request async throws -> Blog in
-            let blogId = request.parameters.get("blogId")!
+        blogsWithAuth.patch(":id", "publish") { request async throws -> Blog in
+            let blogId = request.parameters.get("id")!
             try Blog.PublishBlogForm.validate(content: request)
             let blogForm = try request.content.decode(Blog.PublishBlogForm.self)
             return try await request.blogService.publishBlog(blogId, on: blogForm.pubDate)
         }
 
-        blogsWithAuth.delete("delete-blog", ":blogId") { request async throws -> Response in
-            let blogId = request.parameters.get("blogId")!
+        blogsWithAuth.delete(":id", "delete") { request async throws -> Response in
+            let blogId = request.parameters.get("id")!
             try await request.blogService.deleteBlog(blogId)
             return Response(status: .ok)
         }
@@ -93,17 +93,17 @@ struct BlogController: RouteCollection {
             return try await request.blogService.fetchFavorites()
         }
 
-        blogsWithAuth.get("fetch-favorite", ":id") { request async throws -> BlogService.CheckFavorite in
+        blogsWithAuth.get(":id", "fetch-favorite") { request async throws -> BlogService.CheckFavorite in
             let blogId = request.parameters.get("id")!
             return try await request.blogService.checkFavorite(blogId)
         }
 
-        blogsWithAuth.post("add-favorite", ":id") { request async throws -> BlogService.CheckFavorite in
+        blogsWithAuth.post(":id", "add-favorite") { request async throws -> BlogService.CheckFavorite in
             let blogId = request.parameters.get("id")!
             return try await request.blogService.addFavorite(blogId)
         }
 
-        blogsWithAuth.post("remove-favorite", ":id") { request async throws -> BlogService.CheckFavorite in
+        blogsWithAuth.post(":id", "remove-favorite") { request async throws -> BlogService.CheckFavorite in
             let blogId = request.parameters.get("id")!
             return try await request.blogService.removeFavorite(blogId)
         }

@@ -17,6 +17,7 @@ export interface Blog {
 	};
 	publishedOn?: Date;
 	editedOn?: Date;
+	newsPost: boolean;
 	readonly createdAt: Date;
 	readonly updatedAt: Date;
 	readonly deletedAt: Date;

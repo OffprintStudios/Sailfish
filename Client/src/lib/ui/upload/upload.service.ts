@@ -112,7 +112,7 @@ export class UploadService<T> {
 			case UploadType.ProfileBanner:
 				return `/profiles/update-banner?profileId=${this.profileId}`;
 			case UploadType.BlogBanner:
-				return `/blogs/update-cover/${this.itemId}?profileId=${this.profileId}`;
+				return `/blogs/${this.itemId}/update-cover?profileId=${this.profileId}`;
 			case UploadType.CoverArt:
 				return `/works/update-cover/${this.itemId}?profileId=${this.profileId}`;
 			case UploadType.WorkBanner:

@@ -14,14 +14,21 @@
 	</a>
 	<slot name="icon" />
 	<div>
-		<span class="text-zinc-400 italic" style="font-family: var(--header-text);">
-			{abbreviate(works)} work{pluralize(works)}
-		</span>
+		<div
+			class="flex items-center text-zinc-400 italic"
+			style="font-family: var(--header-text);"
+		>
+			{#if tag.parent && tag.parent.name}
+				<span>{tag.parent.name}</span>
+				<span class="mx-1">/</span>
+			{/if}
+			<span>{abbreviate(works)} work{pluralize(works)}</span>
+		</div>
 		<h5 class="text-2xl relative -top-0.5" style="color: var(--text-color);">{tag.name}</h5>
 		{#if tag.desc}
-			<span>
+			<div class="text-xs mx-2">
 				{@html tag.desc}
-			</span>
+			</div>
 		{/if}
 	</div>
 </div>

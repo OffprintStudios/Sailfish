@@ -1,4 +1,7 @@
-<div class="empty">
-	<h3>This page intentionally left blank</h3>
-	<p>Click on any of the links above to get started!</p>
+<script lang="ts">
+	import { ExploreSummary } from "$lib/ui/content";
+</script>
+
+<div class="max-w-6xl mx-auto">
+	<ExploreSummary />
 </div>

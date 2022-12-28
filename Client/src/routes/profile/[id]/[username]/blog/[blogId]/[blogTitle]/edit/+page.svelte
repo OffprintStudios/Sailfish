@@ -16,11 +16,12 @@
 	import toast from "svelte-french-toast";
 
 	const profile = $page.data as Profile;
+	const blog: Blog = $page.data.blog;
 
 	const { form, data, errors, isSubmitting } = createForm({
 		async onSubmit(values) {
 			const response = await postReq<Blog>(
-				`/blogs/create?profileId=${$account.currProfile?.id}`,
+				`/blogs/${blog.id}/update?profileId=${$account.currProfile?.id}`,
 				values as BlogForm
 			);
 			if ((response as ResponseError).error) {
@@ -57,17 +58,17 @@
 			return errors;
 		},
 		initialValues: {
-			title: null,
-			desc: null,
-			body: null,
-			rating: ContentRating.Everyone,
-			newsPost: false
+			title: blog.title,
+			desc: blog.desc,
+			body: blog.body,
+			rating: blog.rating,
+			newsPost: blog.newsPost
 		}
 	});
 </script>
 
 <svelte:head>
-	<title>Create a New Blog &mdash; Offprint</title>
+	<title>Edit Blog &mdash; Offprint</title>
 </svelte:head>
 
 {#if $account.account && $account.currProfile && $account.currProfile.id === profile.id}
@@ -77,7 +78,7 @@
 	>
 		<div class="flex items-center justify-center px-2 py-4" style="background: var(--accent);">
 			<QuillPenLine size="48px" class="text-white mr-2" />
-			<h1 class="text-white text-4xl">Create a New Blog</h1>
+			<h1 class="text-white text-4xl">Editing "{blog.title}"</h1>
 		</div>
 		<div class="flex border-b border-zinc-400 dark:border-zinc-500">
 			<div

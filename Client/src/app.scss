@@ -233,6 +233,7 @@ div.comment-body,
 div.section-body,
 div.blog-body,
 div.authors-note,
-div.html-description {
+div.html-description,
+section {
   @include content-body();
 }

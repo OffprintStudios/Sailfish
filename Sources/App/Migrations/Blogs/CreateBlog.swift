@@ -17,6 +17,7 @@ struct CreateBlog: AsyncMigration {
             .field("stats", .dictionary(of: .int), .required)
             .field("news_post", .bool, .required)
             .field("published_on", .datetime)
+            .field("first_published", .datetime)
             .field("edited_on", .datetime)
             .field("created_at", .datetime)
             .field("updated_at", .datetime)
