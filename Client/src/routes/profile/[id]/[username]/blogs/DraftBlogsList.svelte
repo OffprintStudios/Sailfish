@@ -47,7 +47,7 @@
 				ContentFilter.everything +
 				"&" +
 				"page=" +
-				pageNum +
+				newPage +
 				"&" +
 				"per=" +
 				perPage

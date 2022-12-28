@@ -1,16 +1,9 @@
 <script lang="ts">
-	import {
-		TimeLine,
-		LineChartLine,
-		PenNibLine,
-		StarLine,
-		More2Fill,
-		DiscussLine
-	} from "svelte-remixicon";
+	import { LineChartLine, PenNibLine, StarLine, More2Fill, DiscussLine } from "svelte-remixicon";
 	import { account } from "$lib/state/account.state";
 	import type { Blog } from "$lib/models/content";
 	import { Time, Avatar } from "$lib/ui/util";
-	import { pluralize, slugify } from "$lib/util/functions";
+	import { slugify } from "$lib/util/functions";
 	import { Dropdown } from "$lib/ui/dropdown";
 	import { abbreviate } from "$lib/util/functions/index.js";
 

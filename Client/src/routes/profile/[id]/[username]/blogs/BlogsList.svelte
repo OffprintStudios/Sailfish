@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { page } from "$app/stores";
 	import type { Blog } from "$lib/models/content";
 	import { ApprovalStatus } from "$lib/models/content";
 	import { app } from "$lib/state/app.state";
@@ -12,42 +13,45 @@
 	import toast from "svelte-french-toast";
 
 	export let profile: Profile;
-	export let page = 1;
-	export let per = 10;
-	let blogs: Blog[] = [];
-	let total = 1;
+	let blogs: Paginate<Blog> = {
+		items: [],
+		metadata: {
+			page: 1,
+			per: 10,
+			total: 0
+		}
+	};
+	$: pageNum = +($page.url.searchParams.get("page") ?? "1");
+	$: perPage = +($page.url.searchParams.get("per") ?? "10");
 
 	onMount(async () => {
-		await fetchBlogs();
+		await fetchBlogs(pageNum);
 	});
 
-	async function fetchBlogs() {
+	async function fetchBlogs(newPage: number) {
+		$page.url.searchParams.set("page", `${newPage}`);
 		const response = await getReq<Paginate<Blog>>(
 			`/blogs/fetch?` +
 				`authorId=${profile.id}&` +
 				`status=${ApprovalStatus.published}&` +
 				`filter=${$app.filter}&` +
-				`page=${page}&` +
-				`per=${per}`
+				`page=${newPage}&` +
+				`per=${perPage}`
 		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
 			toast.error(error.message);
 		} else {
-			const result = response as Paginate<Blog>;
-			blogs = result.items;
-			page = result.metadata.page;
-			per = result.metadata.per;
-			total = result.metadata.total;
+			blogs = response as Paginate<Blog>;
 		}
 	}
 </script>
 
 <div class="my-6 w-11/12 mx-auto">
-	{#if blogs.length > 0}
+	{#if blogs.metadata.total > 0}
 		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 			{#each blogs as blog}
-				<BlogCard {blog} />
+				<BlogCard {blog} hasDropdown={false} />
 			{/each}
 		</div>
 	{:else}
@@ -56,7 +60,12 @@
 			<p>Check back later!</p>
 		</div>
 	{/if}
-	{#if blogs.length > 0}
-		<Paginator currPage={page} perPage={per} totalItems={total} />
+	{#if blogs.metadata.total > 0}
+		<Paginator
+			currPage={pageNum}
+			{perPage}
+			totalItems={blogs.metadata.total}
+			on:change={(event) => fetchBlogs(event.detail)}
+		/>
 	{/if}
 </div>
