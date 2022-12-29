@@ -14,6 +14,7 @@
 		Skull2Line
 	} from "svelte-remixicon";
 	import toast from "svelte-french-toast";
+	import Time from "$lib/ui/util/Time.svelte";
 
 	export let data: Paginate<AccountWithReports>;
 	$: pageNum = +($page.url.searchParams.get("page") ?? "1");
@@ -40,12 +41,24 @@
 <div class="max-w-6xl mx-auto mb-6">
 	{#each data.items as account}
 		<div
-			class="flex items-center rounded-xl p-4 w-full my-6 first:mt-0 last:mb-0 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
+			class="rounded-xl p-4 w-full my-6 first:mt-0 last:mb-0 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
 		>
-			<div>
-				<div class="font-mono text-zinc-400 font-bold mb-2">Account ID: {account.id}</div>
+			<div class="flex items-center mb-2">
+				<div class="font-mono text-lg font-bold mb-2">Account ID: {account.id}</div>
+				<div class="flex-1"><!--spacer--></div>
+				<div class="flex items-center">
+					{#each account.profiles as profile}
+						<span class="relative z-[2]" title={profile.username}>
+							<Avatar src={profile.avatar} size="42px" borderWidth="1px" />
+						</span>
+					{:else}
+						<span>No Profiles Added</span>
+					{/each}
+				</div>
+			</div>
+			<div class="flex items-center">
 				<div
-					class="flex items-center border rounded-xl px-2 py-0.5 w-fit"
+					class="info-block bg-zinc-300 dark:bg-zinc-600"
 					class:good-standing={account.total === 0}
 					class:negligible-concern={account.total >= 1 && account.total < 3}
 					class:possible-issue={account.total >= 3 && account.total < 5}
@@ -119,16 +132,16 @@
 						</div>
 					{/if}
 				</div>
-			</div>
-			<div class="flex-1"><!--spacer--></div>
-			<div class="flex items-center">
-				{#each account.profiles as profile}
-					<span class="relative z-[2]" title={profile.username}>
-						<Avatar src={profile.avatar} size="42px" borderWidth="1px" />
-					</span>
-				{:else}
-					<span>No Profiles Added</span>
-				{/each}
+				<div class="info-block bg-zinc-300 dark:bg-zinc-600">
+					<div>
+						<div class="text-2xl relative top-1">
+							<Time timestamp={account.createdAt} />
+						</div>
+						<div class="relative -top-0.5 all-small-caps text-xl font-bold">
+							Created
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	{:else}
@@ -140,19 +153,23 @@
 </div>
 
 <style lang="scss">
+	div.info-block {
+		@apply flex items-center rounded-xl h-[70px] px-2 py-0.5 w-fit mx-1 first:ml-0 last:mr-0;
+		font-family: var(--header-text);
+	}
 	div.good-standing {
-		@apply border-green-600 bg-green-700 bg-opacity-25;
+		@apply text-white bg-green-700;
 	}
 	div.negligible-concern {
-		@apply border-yellow-600 bg-yellow-700 bg-opacity-25;
+		@apply bg-yellow-700 text-white;
 	}
 	div.possible-issue {
-		@apply border-orange-600 bg-orange-700 bg-opacity-25;
+		@apply bg-orange-700 text-white;
 	}
 	div.brow-raising {
-		@apply border-rose-600 bg-rose-700 bg-opacity-25;
+		@apply bg-rose-700 text-white;
 	}
 	div.needs-attention {
-		@apply border-red-600 bg-red-700 bg-opacity-25;
+		@apply bg-red-700 text-white;
 	}
 </style>
