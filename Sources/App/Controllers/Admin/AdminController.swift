@@ -12,15 +12,25 @@ struct AdminController: RouteCollection {
             BannedGuard(),
         ])
 
-        admin.get("fetch-users") { request async throws -> Page<Account> in
-            try await request.adminService.fetchUsers()
+        admin.get("fetch-users") { request async throws -> Page<Account.AccountWithReports> in
+            struct FetchPage: Content {
+                var page: Int?
+                var per: Int?
+            }
+            
+            let query = try request.query.decode(FetchPage.self)
+            return try await request.adminService.fetchUsers(page: query.page ?? 1, per: query.per ?? 20)
         }
 
         admin.get("fetch-user", ":id") { request async throws -> Account in
-            guard let account = try await request.adminService.fetchUser(request.parameters.get("id")!) else {
-                throw Abort(.notFound, reason: "The user you're trying to view likely doesn't exist.")
+            let id = request.parameters.get("id")!
+            if let uuid = UUID(uuidString: id) {
+                guard let account = try await request.adminService.fetchUser(uuid) else {
+                    throw Abort(.notFound, reason: "The user you're trying to view likely doesn't exist.")
+                }
+                return account
             }
-            return account
+            throw Abort(.badRequest, reason: "Invalid UUID supplied.")
         }
 
         admin.get("fetch-reports", ":id") { request async throws -> [AccountReport] in
@@ -63,7 +73,6 @@ struct AdminController: RouteCollection {
         }
 
         admin.post("warn-user") { request async throws -> Response in
-            let response = Response()
             let warnUserDTO = try request.content.decode(WarnUserDTO.self)
             let account = try request.authService.getUser().account
             try await request.adminService.warnUser(
@@ -71,12 +80,10 @@ struct AdminController: RouteCollection {
                 byWho: account.id!,
                 reason: warnUserDTO.reason
             )
-            response.status = .ok
-            return response
+            return .init(status: .ok)
         }
 
         admin.post("mute-user") { request async throws -> Response in
-            let response = Response()
             let muteUserDTO = try request.content.decode(MuteUserDTO.self)
             let account = try request.authService.getUser().account
             try await request.adminService.muteUser(
@@ -85,12 +92,10 @@ struct AdminController: RouteCollection {
                 reason: muteUserDTO.reason,
                 duration: muteUserDTO.duration
             )
-            response.status = .ok
-            return response
+            return .init(status: .ok)
         }
 
         admin.post("ban-user") { request async throws -> Response in
-            let response = Response()
             let banUserDTO = try request.content.decode(BanUserDTO.self)
             let account = try request.authService.getUser().account
             try await request.adminService.banUser(
@@ -99,8 +104,7 @@ struct AdminController: RouteCollection {
                 reason: banUserDTO.reason,
                 duration: banUserDTO.duration
             )
-            response.status = .ok
-            return response
+            return .init(status: .ok)
         }
     }
 }

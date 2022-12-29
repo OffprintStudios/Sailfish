@@ -5,6 +5,7 @@
 import Foundation
 import Vapor
 import Fluent
+import FluentSQL
 
 /// Offprint Admin Service
 ///
@@ -14,18 +15,35 @@ struct AdminService {
     let request: Request
 
     /// Fetches all users along with their profiles
-    func fetchUsers() async throws -> Page<Account> {
-        try await Account.query(on: request.db)
-            .with(\.$profiles)
-            .field(\.$id)
-            .field(\.$email)
-            .field(\.$roles)
-            .field(\.$termsAgree)
-            .field(\.$emailConfirmed)
-            .field(\.$createdAt)
-            .field(\.$updatedAt)
-            .sort(\.$createdAt)
-            .paginate(for: request)
+    func fetchUsers(page: Int, per: Int) async throws -> Page<Account.AccountWithReports> {
+        if let sqlDb = request.db as? SQLDatabase {
+            let offset = per * (page - 1)
+            let accounts = try await sqlDb.raw("""
+                SELECT a.id, a.roles, a.terms_agree, a.email_confirmed, a.created_at, a.updated_at, COUNT(r.id) as total
+                FROM accounts a LEFT JOIN account_reports r
+                ON a.id = r.account_id
+                WHERE r.closed_on IS NULL
+                GROUP BY a.id ORDER BY total DESC
+                LIMIT \(raw: per.description)
+                OFFSET \(raw: offset.description);
+            """).all(decoding: Account.AccountWithReports.self)
+            var items: [Account.AccountWithReports] = []
+            for account in accounts {
+                let profiles = try await Profile.query(on: request.db).filter(\.$account.$id == account.id!).all()
+                let newAccountObj: Account.AccountWithReports = .init(
+                    id: account.id,
+                    profiles: profiles,
+                    roles: account.roles,
+                    terms_agree: account.terms_agree,
+                    email_confirmed: account.email_confirmed,
+                    total: account.total
+                )
+                items.append(newAccountObj)
+            }
+            return .init(items: items, metadata: .init(page: page, per: per, total: try await Account.query(on: request.db).count()))
+        } else {
+            throw Abort(.notImplemented, reason: "This feature is only available with SQL databases.")
+        }
     }
 
     /// Fetches a single user along with their profiles
@@ -33,7 +51,6 @@ struct AdminService {
         try await Account.query(on: request.db)
             .with(\.$profiles)
             .field(\.$id)
-            .field(\.$email)
             .field(\.$roles)
             .field(\.$termsAgree)
             .field(\.$emailConfirmed)

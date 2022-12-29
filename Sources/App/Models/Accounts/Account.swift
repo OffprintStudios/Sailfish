@@ -87,6 +87,17 @@ extension Account {
         var newPassword: String
         var oldPassword: String
     }
+    
+    struct AccountWithReports: Content {
+        var id: UUID?
+        var profiles: [Profile]?
+        var roles: [Roles]
+        var terms_agree: Bool
+        var email_confirmed: Bool
+        var created_at: Date?
+        var updated_at: Date?
+        var total: Int64
+    }
 
     enum Roles: String, Codable {
         case admin = "Admin"

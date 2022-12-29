@@ -23,6 +23,9 @@ final class AccountReport: Model, Content {
 
     @Field(key: "metadata")
     var metadata: ReportMetadata
+    
+    @Timestamp(key: "closed_on", on: .delete)
+    var closedOn: Date?
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
@@ -33,13 +36,12 @@ final class AccountReport: Model, Content {
         self.id = id
         self.$reportedBy.id = reportedBy
         self.$account.id = formInfo.accountId
-        metadata.itemId = formInfo.itemId
-        metadata.reason = formInfo.reason
-        if let desc = formInfo.desc {
-            metadata.desc = try SwiftSoup.clean(desc, Whitelist.none())!
-        } else {
-            metadata.desc = nil
-        }
+        metadata = .init(
+            itemId: formInfo.itemId,
+            reason: formInfo.reason,
+            desc: formInfo.desc != nil ? try SwiftSoup.clean(formInfo.desc!, .none())! : nil,
+            link: formInfo.link
+        )
     }
 }
 
@@ -55,6 +57,7 @@ extension AccountReport {
         var itemId: String? // used when the reported item isn't just a user themselves
         var reason: String
         var desc: String?
+        var link: String?
     }
 
     struct ReportForm: Codable {
@@ -63,6 +66,7 @@ extension AccountReport {
         var itemId: String?
         var reason: String
         var desc: String?
+        var link: String?
     }
 }
 

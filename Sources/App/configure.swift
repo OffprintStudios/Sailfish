@@ -56,6 +56,7 @@ public func configure(_ app: Application) async throws {
         CreateNotification(),
         CreateFollower(),
         CreateProfileView(),
+        AddReportClosedOnField(),
     ])
 
     try await app.autoMigrate()

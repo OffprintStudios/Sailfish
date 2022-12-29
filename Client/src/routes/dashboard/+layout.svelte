@@ -80,19 +80,11 @@
 				</a>
 				<a
 					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
-					class:active={$page.url.pathname.includes("/users")}
-					href="/dashboard/users"
-				>
-					<GroupLine class="mr-1" size={iconSize} />
-					<span>Users</span>
-				</a>
-				<a
-					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
-					class:active={$page.url.pathname.includes("/reports")}
-					href="/dashboard/reports"
+					class:active={$page.url.pathname.includes("/moderation")}
+					href="/dashboard/moderation"
 				>
 					<ClipboardLine class="mr-1" size={iconSize} />
-					<span>Reports</span>
+					<span>Moderation</span>
 				</a>
 				<a
 					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
