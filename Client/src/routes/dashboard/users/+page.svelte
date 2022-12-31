@@ -11,10 +11,13 @@
 		EmotionNormalLine,
 		EmotionUnhappyLine,
 		CriminalLine,
-		Skull2Line
+		Skull2Line,
+		AlertLine,
+		CheckboxCircleLine
 	} from "svelte-remixicon";
 	import toast from "svelte-french-toast";
 	import Time from "$lib/ui/util/Time.svelte";
+	import RoleBadge from "$lib/ui/util/RoleBadge.svelte";
 
 	export let data: Paginate<AccountWithReports>;
 	$: pageNum = +($page.url.searchParams.get("page") ?? "1");
@@ -41,14 +44,20 @@
 <div class="max-w-6xl mx-auto mb-6">
 	{#each data.items as account}
 		<div
-			class="rounded-xl p-4 w-full my-6 first:mt-0 last:mb-0 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
+			class="rounded-xl p-4 w-full my-6 relative transition first:mt-0 last:mb-0 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed hover:bg-zinc-300 dark:hover:bg-zinc-600 group"
 		>
+			<a class="h-full w-full absolute z-[2]" href="/dashboard/users/{account.id}">
+				<!--left intentionally blank-->
+			</a>
 			<div class="flex items-center mb-2">
 				<div class="font-mono text-lg font-bold mb-2">Account ID: {account.id}</div>
+				<div class="relative -top-1 ml-2">
+					<RoleBadge roles={account.roles} size="large" />
+				</div>
 				<div class="flex-1"><!--spacer--></div>
 				<div class="flex items-center">
 					{#each account.profiles as profile}
-						<span class="relative z-[2]" title={profile.username}>
+						<span class="relative" title={profile.username}>
 							<Avatar src={profile.avatar} size="42px" borderWidth="1px" />
 						</span>
 					{:else}
@@ -132,9 +141,54 @@
 						</div>
 					{/if}
 				</div>
-				<div class="info-block bg-zinc-300 dark:bg-zinc-600">
+				<div class="flex-1"><!--spacer--></div>
+				<div
+					class="info-block bg-zinc-300 dark:bg-zinc-600 group-hover:bg-zinc-200 dark:group-hover:bg-zinc-700"
+				>
 					<div>
-						<div class="text-2xl relative top-1">
+						<div class="flex items-center text-2xl relative top-1.5">
+							{#if account.terms_agree === true}
+								<span class="flex-1"> Yes </span>
+								<CheckboxCircleLine
+									class="text-green-600 relative -top-1"
+									size="32px"
+								/>
+							{:else}
+								<span class="flex-1"> No </span>
+								<AlertLine class="text-yellow-500 relative -top-1" size="32px" />
+							{/if}
+						</div>
+						<div class="relative -top-0.5 all-small-caps text-xl font-bold">
+							Agreed to Terms
+						</div>
+					</div>
+				</div>
+				<div
+					class="info-block bg-zinc-300 dark:bg-zinc-600 group-hover:bg-zinc-200 dark:group-hover:bg-zinc-700"
+				>
+					<div>
+						<div class="flex items-center text-2xl relative top-1.5">
+							{#if account.email_confirmed === true}
+								<span class="flex-1"> Yes </span>
+								<CheckboxCircleLine
+									class="text-green-600 relative -top-1"
+									size="32px"
+								/>
+							{:else}
+								<span class="flex-1"> No </span>
+								<AlertLine class="text-yellow-500 relative -top-1" size="32px" />
+							{/if}
+						</div>
+						<div class="relative -top-0.5 all-small-caps text-xl font-bold">
+							Email Confirmed
+						</div>
+					</div>
+				</div>
+				<div
+					class="info-block bg-zinc-300 dark:bg-zinc-600 group-hover:bg-zinc-200 dark:group-hover:bg-zinc-700"
+				>
+					<div>
+						<div class="text-2xl relative top-1.5">
 							<Time timestamp={account.createdAt} />
 						</div>
 						<div class="relative -top-0.5 all-small-caps text-xl font-bold">
@@ -150,6 +204,14 @@
 			<p>Check back later once the accounts start rolling in.</p>
 		</div>
 	{/each}
+	{#if data.metadata.total > 0}
+		<Paginator
+			currPage={pageNum}
+			{perPage}
+			totalItems={data.metadata.total}
+			on:change={(event) => loadPage(event.detail)}
+		/>
+	{/if}
 </div>
 
 <style lang="scss">

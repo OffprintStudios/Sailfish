@@ -9,7 +9,7 @@ struct CreateAccountMute: AsyncMigration {
         return try await database.schema("accounts_muted")
             .id()
             .field("account_id", .uuid, .required, .references("accounts", "id", onDelete: .cascade))
-            .field("muted_by", .uuid, .required, .references("accounts", "id", onDelete: .cascade))
+            .field("muted_by", .string, .required, .references("profiles", "id", onDelete: .cascade))
             .field("reason", .string, .required)
             .field("expires_on", .datetime, .required)
             .field("created_at", .datetime)

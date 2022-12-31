@@ -9,7 +9,7 @@ struct CreateAccountBan: AsyncMigration {
         return try await database.schema("account_bans")
             .id()
             .field("account_id", .uuid, .required, .references("accounts", "id", onDelete: .cascade))
-            .field("banned_by", .uuid, .required, .references("accounts", "id", onDelete: .cascade))
+            .field("banned_by", .string, .required, .references("profiles", "id", onDelete: .cascade))
             .field("reason", .string, .required)
             .field("expires_on", .datetime)
             .field("created_at", .datetime)

@@ -16,7 +16,7 @@ final class AccountWarning: Model, Content {
     var account: Account
 
     @Parent(key: "warned_by")
-    var warnedBy: Account
+    var warnedBy: Profile
 
     @Field(key: "reason")
     var reason: String
@@ -26,7 +26,7 @@ final class AccountWarning: Model, Content {
 
     init() { }
 
-    init(id: UUID? = nil, warnedBy: Account.IDValue, warningForm: WarningForm) throws {
+    init(id: UUID? = nil, warnedBy: Profile.IDValue, warningForm: WarningForm) throws {
         self.id = id
         self.$account.id = warningForm.accountId
         self.$warnedBy.id = warnedBy

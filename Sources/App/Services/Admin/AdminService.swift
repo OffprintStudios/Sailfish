@@ -47,8 +47,8 @@ struct AdminService {
     }
 
     /// Fetches a single user along with their profiles
-    func fetchUser(_ id: UUID) async throws -> Account? {
-        try await Account.query(on: request.db)
+    func fetchUser(_ id: UUID) async throws -> Account.AccountWithReports {
+        guard let account = try await Account.query(on: request.db)
             .with(\.$profiles)
             .field(\.$id)
             .field(\.$roles)
@@ -57,7 +57,18 @@ struct AdminService {
             .field(\.$createdAt)
             .field(\.$updatedAt)
             .filter(\.$id == id)
-            .first()
+            .first() else {
+            throw Abort(.notFound, reason: "The user you're trying to look up doesn't exist.")
+        }
+        let accountWithReports: Account.AccountWithReports = .init(
+            id: account.id,
+            profiles: account.profiles,
+            roles: account.roles,
+            terms_agree: account.termsAgree,
+            email_confirmed: account.emailConfirmed,
+            total: Int64(try await account.$reports.query(on: request.db).filter(\.$closedOn == nil).count())
+        )
+        return accountWithReports
     }
 
     /// Fetches all reports for an account
@@ -87,28 +98,28 @@ struct AdminService {
     }
 
     /// Adds a note to an account
-    func addNote(_ id: UUID, byWho: UUID, message: String) async throws -> AccountNote {
+    func addNote(_ id: UUID, byWho: String, message: String) async throws -> AccountNote {
         let note = try AccountNote(addedBy: byWho, formInfo: .init(accountId: id, message: message))
         try await note.save(on: request.db)
         return note
     }
 
     /// Warns a user
-    func warnUser(_ id: UUID, byWho: UUID, reason: String) async throws {
+    func warnUser(_ id: UUID, byWho: String, reason: String) async throws {
         let warning = try AccountWarning(warnedBy: byWho, warningForm: .init(accountId: id, reason: reason))
         try await warning.save(on: request.db)
         try await request.auditLogService.warn(id, byWho: byWho, reason: reason)
     }
 
     /// Mutes a user for a given duration
-    func muteUser(_ id: UUID, byWho: UUID, reason: String, duration: Date) async throws {
+    func muteUser(_ id: UUID, byWho: String, reason: String, duration: Date) async throws {
         let muted = try AccountMute(mutedBy: byWho, muteForm: .init(accountId: id, reason: reason, duration: duration))
         try await muted.save(on: request.db)
         try await request.auditLogService.mute(id, byWho: byWho, reason: reason, duration: duration)
     }
 
     /// Bans a user for a given duration. If no duration is set, the ban is permanent
-    func banUser(_ id: UUID, byWho: UUID, reason: String, duration: Date? = nil) async throws {
+    func banUser(_ id: UUID, byWho: String, reason: String, duration: Date? = nil) async throws {
         let banned = try AccountBan(bannedBy: byWho, banForm: .init(accountId: id, reason: reason, duration: duration))
         try await banned.save(on: request.db)
         try await request.auditLogService.ban(id, byWho: byWho, reason: reason, duration: duration)

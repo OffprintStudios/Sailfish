@@ -9,7 +9,7 @@ struct CreateAccountWarning: AsyncMigration {
         return try await database.schema("account_warnings")
             .id()
             .field("account_id", .uuid, .required, .references("accounts", "id", onDelete: .cascade))
-            .field("warned_by", .uuid, .required, .references("accounts", "id", onDelete: .cascade))
+            .field("warned_by", .string, .required, .references("profiles", "id", onDelete: .cascade))
             .field("reason", .string, .required)
             .field("created_at", .datetime)
             .create()

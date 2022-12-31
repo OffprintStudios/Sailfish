@@ -38,7 +38,7 @@ struct AuditLogService {
     }
 
     /// Logs a WARN action
-    func warn(_ id: UUID, byWho: UUID, reason: String) async throws {
+    func warn(_ id: UUID, byWho: String, reason: String) async throws {
         let newEvent = try AccountLog(for: id, eventInfo: .init(
             type: .update,
             detail: reason,
@@ -50,7 +50,7 @@ struct AuditLogService {
     }
 
     /// Logs a MUTE action
-    func mute(_ id: UUID, byWho: UUID, reason: String, duration: Date) async throws {
+    func mute(_ id: UUID, byWho: String, reason: String, duration: Date) async throws {
         let newEvent = try AccountLog(for: id, eventInfo: .init(
             type: .update,
             detail: reason,
@@ -63,12 +63,12 @@ struct AuditLogService {
     }
 
     /// Logs a BAN action
-    func ban(_ id: UUID, byWho: UUID, reason: String, duration: Date? = nil) async throws {
+    func ban(_ id: UUID, byWho: String, reason: String, duration: Date? = nil) async throws {
         let newEvent = try AccountLog(for: id, eventInfo: .init(
             type: .update,
             detail: reason,
             actionTaken: .ban,
-            actionBy: id,
+            actionBy: byWho,
             actionReason: reason,
             actionDuration: duration
         ))

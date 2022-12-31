@@ -16,7 +16,7 @@ final class AccountBan: Model, Content {
     var account: Account
 
     @Parent(key: "banned_by")
-    var bannedBy: Account
+    var bannedBy: Profile
 
     @Field(key: "reason")
     var reason: String
@@ -29,7 +29,7 @@ final class AccountBan: Model, Content {
 
     init() { }
 
-    init(id: UUID? = nil, bannedBy: Account.IDValue, banForm: BanForm) throws {
+    init(id: UUID? = nil, bannedBy: Profile.IDValue, banForm: BanForm) throws {
         self.id = id
         self.$account.id = banForm.accountId
         self.$bannedBy.id = bannedBy

@@ -1,14 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/stores";
 	import { account } from "$lib/state/account.state";
-	import {
-		MistLine,
-		ListUnordered,
-		Hashtag,
-		GroupLine,
-		ClipboardLine,
-		HistoryLine
-	} from "svelte-remixicon";
+	import { MistLine, ListUnordered, Hashtag, GroupLine, HistoryLine } from "svelte-remixicon";
 
 	const iconSize = "24px";
 </script>
@@ -80,11 +73,11 @@
 				</a>
 				<a
 					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
-					class:active={$page.url.pathname.includes("/moderation")}
-					href="/dashboard/moderation"
+					class:active={$page.url.pathname.includes("/users")}
+					href="/dashboard/users"
 				>
-					<ClipboardLine class="mr-1" size={iconSize} />
-					<span>Moderation</span>
+					<GroupLine class="mr-1" size={iconSize} />
+					<span>Users</span>
 				</a>
 				<a
 					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"

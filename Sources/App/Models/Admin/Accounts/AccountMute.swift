@@ -16,7 +16,7 @@ final class AccountMute: Model, Content {
     var account: Account
 
     @Parent(key: "muted_by")
-    var mutedBy: Account
+    var mutedBy: Profile
 
     @Field(key: "reason")
     var reason: String
@@ -29,7 +29,7 @@ final class AccountMute: Model, Content {
 
     init() { }
 
-    init(id: UUID? = nil, mutedBy: Account.IDValue, muteForm: MuteForm) throws {
+    init(id: UUID? = nil, mutedBy: Profile.IDValue, muteForm: MuteForm) throws {
         self.id = id
         self.$account.id = muteForm.accountId
         self.$mutedBy.id = mutedBy

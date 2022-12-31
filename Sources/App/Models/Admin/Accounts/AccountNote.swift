@@ -13,7 +13,7 @@ final class AccountNote: Model, Content {
     var id: UUID?
 
     @Parent(key: "added_by")
-    var addedBy: Account
+    var addedBy: Profile
 
     @Parent(key: "account_id")
     var account: Account
@@ -32,7 +32,7 @@ final class AccountNote: Model, Content {
 
     init() { }
 
-    init(id: UUID? = nil, addedBy: Account.IDValue, formInfo: NoteForm) throws {
+    init(id: UUID? = nil, addedBy: Profile.IDValue, formInfo: NoteForm) throws {
         self.id = id
         self.$addedBy.id = addedBy
         self.$account.id = formInfo.accountId

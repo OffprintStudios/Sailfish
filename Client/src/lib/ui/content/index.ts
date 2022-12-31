@@ -10,3 +10,4 @@ export { default as NewsCarousel } from "./NewsCarousel.svelte";
 export { default as NewsCard } from "./NewsCard.svelte";
 export { default as ExploreSummary } from "./ExploreSummary.svelte";
 export { default as TagCard } from "./TagCard.svelte";
+export { default as ProfileCard } from "./ProfileCard.svelte";

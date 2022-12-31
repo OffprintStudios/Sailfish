@@ -61,11 +61,11 @@ extension AccountLog {
         var type: EventType
         var detail: String
         var actionTaken: ActionType?
-        var actionBy: UUID?
+        var actionBy: String?
         var actionReason: String?
         var actionDuration: Date?
 
-        init(type: EventType, detail: String, actionTaken: ActionType? = nil, actionBy: UUID? = nil, actionReason: String? = nil, actionDuration: Date? = nil) {
+        init(type: EventType, detail: String, actionTaken: ActionType? = nil, actionBy: String? = nil, actionReason: String? = nil, actionDuration: Date? = nil) {
             self.type = type
             self.detail = detail
             self.actionTaken = actionTaken
@@ -88,7 +88,7 @@ extension AccountLog {
         var taken: ActionType?
 
         @OptionalParent(key: "by")
-        var by: Account?
+        var by: Profile?
 
         @OptionalField(key: "reason")
         var reason: String?

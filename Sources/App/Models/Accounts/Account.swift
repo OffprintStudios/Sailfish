@@ -33,6 +33,9 @@ final class Account: Model, Content {
 
     @Children(for: \.$account)
     var sessions: [Session]
+    
+    @Children(for: \.$account)
+    var reports: [AccountReport]
 
     @Timestamp(key: FieldKeys.createdAt, on: .create)
     var createdAt: Date?
