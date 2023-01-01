@@ -7,9 +7,9 @@
 
 <div class="p-4 rounded-xl w-full h-full bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
 	<h3 class="text-2xl mb-4">Profiles</h3>
-	<div class="overflow-y-scroll mx-auto">
+	<div class="grid grid-cols-3 gap-4">
 		{#each account.profiles as profile}
-			<div class="mb-4 border-4 rounded-lg border-zinc-400">
+			<div class="mb-4 border-4 rounded-lg border-zinc-300 dark:border-zinc-600">
 				<ProfileCard {profile} showBanner={false} />
 			</div>
 		{/each}

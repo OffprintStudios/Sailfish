@@ -17,6 +17,7 @@
 	import ReportLog from "./ReportLog.svelte";
 	import Notes from "./Notes.svelte";
 	import Profiles from "./Profiles.svelte";
+	import AuditLog from "./AuditLog.svelte";
 
 	export let data: AccountWithReports;
 	const iconSize = "50px";
@@ -171,15 +172,18 @@
 		</div>
 	</div>
 	<div class="grid grid-cols-3 grid-rows-2 gap-6">
-		<div class="col-span-2 row-span-2">
+		<div class="row-span-2">
 			<ReportLog account={data} />
 		</div>
-		<div>
+		<div class="row-span-2">
+			<AuditLog account={data} />
+		</div>
+		<div class="row-span-2">
 			<Notes account={data} />
 		</div>
-		<div>
-			<Profiles account={data} />
-		</div>
+	</div>
+	<div class="mt-6">
+		<Profiles account={data} />
 	</div>
 </div>
 
