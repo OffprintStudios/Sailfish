@@ -29,7 +29,7 @@
 				const error = response as ResponseError;
 				toast.error(error.message);
 			} else {
-				notes = [...notes, response as Note];
+				notes = [response as Note, ...notes];
 				context.reset();
 			}
 		},
@@ -57,7 +57,7 @@
 			const error = response as ResponseError;
 			toast.error(error.message);
 		} else {
-			notes = response as Note[];
+			notes = (response as Note[]).reverse();
 		}
 		loading = false;
 	}
@@ -84,7 +84,7 @@
 			</span>
 		</div>
 	{:else}
-		<div class="w-full flex-1 flex flex-col px-2 py-4 overflow-y-scroll">
+		<div class="w-full flex-1 flex flex-col-reverse px-2 py-4 overflow-y-scroll">
 			{#each notes as note}
 				<div class="flex my-2 first:mt-0 last:mb-0">
 					<div class="mr-2">
