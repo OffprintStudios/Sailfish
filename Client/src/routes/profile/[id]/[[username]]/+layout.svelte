@@ -123,10 +123,6 @@
 						<span class="link-name">Follow</span>
 					</button>
 					<button class="link hover:bg-zinc-300 dark:hover:bg-zinc-600">
-						<span class="link-icon"><CloseCircleLine size={iconSize} /></span>
-						<span class="link-name">Block</span>
-					</button>
-					<button class="link hover:bg-zinc-300 dark:hover:bg-zinc-600">
 						<span class="link-icon"><AlarmWarningLine size={iconSize} /></span>
 						<span class="link-name">Report</span>
 					</button>

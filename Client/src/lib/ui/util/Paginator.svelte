@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { ArrowLeftSLine, ArrowRightSLine, MoreLine } from 'svelte-remixicon';
-	import { createEventDispatcher } from 'svelte';
+	import { ArrowLeftSLine, ArrowRightSLine, Loader5Line, MoreLine } from "svelte-remixicon";
+	import { createEventDispatcher } from "svelte";
 
 	const PAGE_BUFFER = 2;
 	export let currPage: number;
 	export let perPage: number;
 	export let totalItems: number;
+	export let loading = false;
 
 	let totalPages = Math.floor(totalItems / perPage);
 	if (totalPages === 0) {
@@ -19,7 +20,7 @@
 
 	function changePage(page: number) {
 		if (page !== currPage) {
-			dispatch('change', page);
+			dispatch("change", page);
 		}
 	}
 </script>
@@ -47,21 +48,25 @@
 			{#if currPage <= PAGE_BUFFER + 3}
 				{#each range(currPage, 1) as page}
 					<li class:active={page === currPage} class="block">
-						<button on:click={() => changePage(page)}>
-							{page}
-						</button>
+						{#if loading}
+							<button>
+								<Loader5Line class="text-white animate-spin" size="18px" />
+							</button>
+						{:else}
+							<button on:click={() => changePage(page)}>
+								{page}
+							</button>
+						{/if}
 					</li>
 				{/each}
 				<!--Otherwise, display 1 then "..." then the buffer before the current page, and current page-->
 			{:else}
 				<li class:active={false} class="block">
-					<button on:click={() => changePage(1)}>
-						1
-					</button>
+					<button on:click={() => changePage(1)}> 1 </button>
 				</li>
 				<li class:active={false} class="block">
 					<button>
-						<MoreLine/>
+						<MoreLine />
 					</button>
 				</li>
 				{#each range(PAGE_BUFFER, currPage - PAGE_BUFFER) as page}
@@ -72,9 +77,15 @@
 					</li>
 				{/each}
 				<li class:active={true} class="block">
-					<button on:click={() => changePage(currPage)}>
-						{currPage}
-					</button>
+					{#if loading}
+						<button>
+							<Loader5Line class="text-white animate-spin" size="18px" />
+						</button>
+					{:else}
+						<button on:click={() => changePage(currPage)}>
+							{currPage}
+						</button>
+					{/if}
 				</li>
 			{/if}
 			<!--If current page is close enough to last page, then display everything after it-->
@@ -98,7 +109,7 @@
 				{/each}
 				<li class:active={false} class="block">
 					<button>
-						<MoreLine/>
+						<MoreLine />
 					</button>
 				</li>
 				<li class:active={false} class="block">
@@ -135,12 +146,12 @@
 						background: var(--accent);
 						@apply text-white scale-110;
 						--tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-						0 4px 6px -4px rgb(0 0 0 / 0.1);
+							0 4px 6px -4px rgb(0 0 0 / 0.1);
 						--tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color),
-						0 4px 6px -4px var(--tw-shadow-color);
+							0 4px 6px -4px var(--tw-shadow-color);
 						box-shadow: inset 0 1px 0 0 rgb(255 255 255/0.05),
-						var(--tw-ring-offset-shadow, 0 0 #0000),
-						var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+							var(--tw-ring-offset-shadow, 0 0 #0000),
+							var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 					}
 				}
 				&.disabled {
