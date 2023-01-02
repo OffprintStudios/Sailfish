@@ -109,13 +109,13 @@
 			</div>
 			{#if $account.account && $account.currProfile}
 				{#if $account.currProfile.id === data.id}
-					<div class="h-full mx-1 border border-zinc-300 dark:border-zinc-500">
-						<!--spacer-->
+					<!--<div class="h-full mx-1 border border-zinc-300 dark:border-zinc-500">
+
 					</div>
 					<button class="link hover:bg-zinc-300 dark:hover:bg-zinc-600">
 						<span class="link-icon"><PieChartLine size={iconSize} /></span>
 						<span class="link-name">Stats</span>
-					</button>
+					</button>-->
 				{:else}
 					<div class="h-full mx-1 border border-zinc-300"><!--spacer--></div>
 					<button class="link hover:bg-zinc-300 dark:hover:bg-zinc-600">
