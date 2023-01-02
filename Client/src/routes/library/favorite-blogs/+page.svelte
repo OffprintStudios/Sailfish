@@ -7,7 +7,7 @@
 	import { Paginator } from "$lib/ui/util";
 	import { getReq } from "$lib/http";
 	import type { ResponseError } from "$lib/http";
-	import toast  from "svelte-french-toast";
+	import toast from "svelte-french-toast";
 
 	let loading = false;
 	let blogs: Paginate<FavoriteBlog> = null;
@@ -18,7 +18,9 @@
 
 	async function loadFavorites(page: number) {
 		loading = true;
-		const response = await getReq<Paginate<FavoriteBlog>>(`/blogs/fetch-favorites?profileId=${$account.currProfile.id}&page=${page}&per=15`);
+		const response = await getReq<Paginate<FavoriteBlog>>(
+			`/blogs/fetch-favorites?profileId=${$account.currProfile.id}&page=${page}&per=15`
+		);
 		if ((response as ResponseError).error) {
 			const errorMsg = response as ResponseError;
 			toast.error(errorMsg.message);
@@ -37,7 +39,7 @@
 	</div>
 {:else if blogs}
 	{#if blogs.items.length > 0}
-		<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+		<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4">
 			{#each blogs.items as favorite}
 				<BlogCard showAvatar blog={favorite} />
 			{/each}

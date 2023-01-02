@@ -1,9 +1,16 @@
 <script lang="ts">
 	import { page } from "$app/stores";
-	import { account } from "../../lib/state/account.state";
-	import { Bookmark3Line, StarLine, HistoryLine, CheckDoubleLine, BarChart2Line } from "svelte-remixicon";
+	import { account } from "$lib/state/account.state";
+	import {
+		BookmarkLine,
+		Bookmark3Line,
+		StarLine,
+		HistoryLine,
+		CheckDoubleLine,
+		BarChart2Line
+	} from "svelte-remixicon";
 
-	const iconSize = '24px';
+	const iconSize = "24px";
 </script>
 
 <svelte:head>
@@ -34,10 +41,18 @@
 </svelte:head>
 
 {#if $account.account && $account.currProfile}
-	<div class="mx-auto max-w-4xl">
-		<div class="flex flex-col items-center justify-center my-6">
-			<h1 class="hidden">Library</h1>
-			<div class="flex bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed p-2 rounded-full">
+	<div class="mx-auto max-w-7xl">
+		<div
+			class="flex flex-col items-center justify-center my-6 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed rounded-xl overflow-hidden"
+		>
+			<div
+				class="flex items-center justify-center p-4 w-full"
+				style="background: var(--accent)"
+			>
+				<BookmarkLine size="48px" class="mr-2 text-white" />
+				<h1 class="text-white text-4xl relative top-1">Library</h1>
+			</div>
+			<div class="flex items-center justify-center p-2">
 				<a
 					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
 					class:active={$page.url.pathname === "/library"}
@@ -70,7 +85,11 @@
 					<CheckDoubleLine class="mr-1" size={iconSize} />
 					<span>Finished Reading</span>
 				</a>
-				<div class="border-r-2 border-zinc-300 dark:border-zinc-600 ml-0.5 mr-1 h-full h-[48px]"></div>
+				<div
+					class="border-r-2 border-zinc-300 dark:border-zinc-600 ml-0.5 mr-1 h-full h-[48px]"
+				>
+					<!--spacer-->
+				</div>
 				<a
 					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
 					class:active={$page.url.pathname.includes("/shelves")}
@@ -92,8 +111,12 @@
 
 <style lang="scss">
 	a.feature-link {
-		@apply flex items-center p-3 first:rounded-l-[25px] last:rounded-r-[25px] rounded-lg no-underline mr-0.5 last:mr-0 transition transform;
+		@apply flex text-lg items-center p-3 rounded-lg no-underline mr-0.5 last:mr-0 transition transform;
 		color: var(--text-color);
+		font-family: var(--header-text);
+		span {
+			@apply relative top-0.5;
+		}
 		&.active {
 			@apply text-white;
 			background: var(--accent);

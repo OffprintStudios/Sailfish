@@ -13,7 +13,14 @@
 
 	export let data: Shelf;
 	let loading = false;
-	let works: Paginate<Work> = null;
+	let works: Paginate<Work> = {
+		items: [],
+		metadata: {
+			page: 1,
+			per: 20,
+			total: 0
+		}
+	};
 
 	onMount(async () => {
 		try {
@@ -21,11 +28,13 @@
 		} catch (e) {
 			toast.error(e);
 		}
-	})
+	});
 
 	async function loadWorks(page: number) {
 		loading = true;
-		const response = await getReq<Paginate<Work>>(`/shelves/fetch-items?profileId=${$account.currProfile.id}&shelfId=${data.id}&page=${page}&per=20`);
+		const response = await getReq<Paginate<Work>>(
+			`/shelves/fetch-items?profileId=${$account.currProfile?.id}&shelfId=${data.id}&page=${page}&per=20`
+		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
 			loading = false;
@@ -36,23 +45,23 @@
 	}
 
 	async function changePage(page: number) {
-		await toast.promise<void>(
-			loadWorks(page),
-			{
-				loading: 'Fetching page...',
-				success: 'Page loaded!',
-				error: 'Something went wrong tyring to load this page!'
-			}
-		)
+		await toast.promise<void>(loadWorks(page), {
+			loading: "Fetching page...",
+			success: "Page loaded!",
+			error: "Something went wrong tyring to load this page!"
+		});
 	}
 
 	async function removeFromShelf(id: string) {
 		const result = await toast.promise<void | ResponseError>(
-			postReq<void>(`/shelves/remove?workId=${id}&shelfId=${data.id}&profileId=${$account.currProfile.id}`, {}),
+			postReq<void>(
+				`/shelves/remove?workId=${id}&shelfId=${data.id}&profileId=${$account.currProfile?.id}`,
+				{}
+			),
 			{
-				loading: 'Removing from shelf...',
-				success: 'Work removed!',
-				error: null,
+				loading: "Removing from shelf...",
+				success: "Work removed!",
+				error: null
 			}
 		);
 		if ((result as ResponseError).error) {
@@ -78,9 +87,9 @@
 	</div>
 {:else if works}
 	{#if works.items.length > 0}
-		<div class="grid grid-cols-1 grid-cols-2 my-6">
+		<div class="max-w-6xl mx-auto grid grid-cols-1 grid-cols-2 my-6">
 			{#each works.items as work}
-				<WorkCard work={work}>
+				<WorkCard {work}>
 					<svelte:fragment slot="dropdown">
 						<button type="button" on:click={() => removeFromShelf(work.id)}>
 							<CloseLine class="mr-1" size="18px" />

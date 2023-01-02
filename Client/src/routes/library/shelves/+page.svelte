@@ -21,11 +21,13 @@
 		} catch (e) {
 			toast.error(e);
 		}
-	})
+	});
 
 	async function loadShelves(page: number) {
 		loading = true;
-		const response = await getReq<Paginate<Shelf>>(`/shelves/fetch-all?profileId=${$account.currProfile.id}&page=${page}&per=20`);
+		const response = await getReq<Paginate<Shelf>>(
+			`/shelves/fetch-all?profileId=${$account.currProfile.id}&page=${page}&per=20`
+		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
 			loading = false;
@@ -36,14 +38,11 @@
 	}
 
 	async function changePage(page: number) {
-		await toast.promise<void>(
-			loadShelves(page),
-			{
-				loading: 'Fetching page...',
-				success: 'Page loaded!',
-				error: 'Something went wrong tyring to load this page!'
-			}
-		)
+		await toast.promise<void>(loadShelves(page), {
+			loading: "Fetching page...",
+			success: "Page loaded!",
+			error: "Something went wrong tyring to load this page!"
+		});
 	}
 
 	function addShelf() {
@@ -58,24 +57,28 @@
 		openPopup(DeleteShelfPrompt, {
 			onConfirm: async () => {
 				let result = await toast.promise<void | ResponseError>(
-					delReq<void>(`/shelves/delete?profileId=${$account.currProfile.id}&shelfId=${id}`),
+					delReq<void>(
+						`/shelves/delete?profileId=${$account.currProfile.id}&shelfId=${id}`
+					),
 					{
-						loading: 'Deleting...',
-						success: 'Shelf deleted!',
+						loading: "Deleting...",
+						success: "Shelf deleted!",
 						error: null
 					}
 				);
 				if ((result as ResponseError).error) {
 					const error = result as ResponseError;
-					toast.error(error.message)
+					toast.error(error.message);
 				}
 				await loadShelves(1);
 			}
-		})
+		});
 	}
 </script>
 
-<div class="w-full mx-auto flex items-center border-b border-zinc-300 dark:border-white pb-2 mb-6">
+<div
+	class="max-w-6xl mx-auto flex items-center border-b border-zinc-300 dark:border-white pb-2 mb-6"
+>
 	<Button on:click={addShelf}>
 		<AddBoxLine class="button-icon" />
 		<span class="button-text">Add Shelf</span>
@@ -90,9 +93,9 @@
 	</div>
 {:else if shelves}
 	{#if shelves.items.length > 0}
-		<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+		<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4">
 			{#each shelves.items as shelf}
-				<ShelfCard shelf={shelf} href="/library/shelves/{shelf.id}">
+				<ShelfCard {shelf} href="/library/shelves/{shelf.id}">
 					<svelte:fragment slot="dropdown">
 						<button type="button" on:click={() => deleteShelf(shelf.id)}>
 							<DeleteBinLine class="mr-2" size="18px" />

@@ -14,11 +14,13 @@
 
 	onMount(async () => {
 		await loadHistory(1);
-	})
+	});
 
 	async function loadHistory(page: number) {
 		loading = true;
-		const response = await getReq<Paginate<ReadingHistory>>(`/history/fetch-all?profileId=${$account.currProfile.id}&page=${page}&per=20`);
+		const response = await getReq<Paginate<ReadingHistory>>(
+			`/history/fetch-all?profileId=${$account.currProfile.id}&page=${page}&per=20`
+		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
 			toast.error(error.message);
@@ -37,12 +39,10 @@
 	</div>
 {:else if history}
 	{#if history.items.length > 0}
-		<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+		<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4">
 			{#each history.items as item}
 				<WorkCard work={item.work}>
-					<svelte:fragment slot="dropdown">
-
-					</svelte:fragment>
+					<svelte:fragment slot="dropdown" />
 				</WorkCard>
 			{/each}
 		</div>
