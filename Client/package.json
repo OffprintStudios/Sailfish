@@ -76,6 +76,7 @@
     "svelte-check": "^2.7.1",
     "svelte-easy-crop": "^1.0.8",
     "svelte-french-toast": "^1.0.3",
+    "svelte-markdown": "^0.2.3",
     "svelte-preprocess": "^4.10.7",
     "svelte-remixicon": "^1.0.1",
     "svelte-select": "^5.0.0-beta.19",

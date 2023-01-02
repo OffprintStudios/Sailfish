@@ -50,6 +50,6 @@ extension AccountNote {
 extension AccountNote.NoteForm: Validatable {
     static func validations(_ validations: inout Validations) {
         validations.add("accountId", as: String.self, is: !.empty)
-        validations.add("message", as: String.self, is: .count(8...))
+        validations.add("message", as: String.self, is: .count(3...))
     }
 }

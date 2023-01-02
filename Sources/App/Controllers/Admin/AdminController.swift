@@ -64,12 +64,13 @@ struct AdminController: RouteCollection {
         }
 
         adminCheckProfile.post("add-note") { request async throws -> AccountNote in
-            let addNoteDTO = try request.content.decode(AddNoteDTO.self)
+            try AccountNote.NoteForm.validate(content: request)
+            let addNote = try request.content.decode(AccountNote.NoteForm.self)
             let profile = try request.authService.getUser(withProfile: true).profile!
             return try await request.adminService.addNote(
-                addNoteDTO.accountId,
+                addNote.accountId,
                 byWho: profile.id!,
-                message: addNoteDTO.reason
+                message: addNote.message
             )
         }
 
@@ -113,11 +114,6 @@ struct AdminController: RouteCollection {
 extension AdminController {
     struct ChangeRolesDTO: Content {
         var newRoles: [Account.Roles]
-    }
-
-    struct AddNoteDTO: Content {
-        var accountId: UUID
-        var reason: String
     }
 
     struct WarnUserDTO: Content {

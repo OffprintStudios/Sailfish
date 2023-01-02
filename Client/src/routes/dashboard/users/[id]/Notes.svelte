@@ -8,6 +8,8 @@
 	import { account as accountState } from "$lib/state/account.state";
 	import { onMount } from "svelte";
 	import toast from "svelte-french-toast";
+	import { Avatar, Time } from "$lib/ui/util";
+	import SvelteMarkdown from "svelte-markdown";
 
 	export let account: AccountWithReports;
 	let notes: Note[] = [];
@@ -18,7 +20,7 @@
 	});
 
 	const { form } = createForm<NoteForm>({
-		onSubmit: async (values) => {
+		onSubmit: async (values, context) => {
 			const response = await postReq<Note>(
 				`/admin/add-note?profileId=${$accountState.currProfile?.id}`,
 				values
@@ -28,6 +30,7 @@
 				toast.error(error.message);
 			} else {
 				notes = [...notes, response as Note];
+				context.reset();
 			}
 		},
 		validate: (values) => {
@@ -61,9 +64,9 @@
 </script>
 
 <div
-	class="rounded-xl w-full h-full flex flex-col overflow-hidden bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
+	class="rounded-xl w-full h-full flex flex-col overflow-hidden bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed h-[550px]"
 >
-	<div class="flex items-center p-4 sticky top-0">
+	<div class="flex items-center px-4 pt-4 top-0">
 		<h3 class="text-2xl">Notes</h3>
 		<div class="flex-1"><!--spacer--></div>
 	</div>
@@ -74,25 +77,41 @@
 				<span class="uppercase font-bold tracking-wider">Loading</span>
 			</span>
 		</div>
+	{:else if notes.length === 0}
+		<div class="w-full flex-1 flex flex-col items-center justify-center">
+			<span class="flex items-center">
+				<span class="uppercase font-bold tracking-wider">No notes found</span>
+			</span>
+		</div>
 	{:else}
-		{#each notes as note}
-			here's a note
-		{:else}
-			<div class="w-full flex-1 flex flex-col items-center justify-center">
-				<span class="flex items-center">
-					<span class="uppercase font-bold tracking-wider">No notes found</span>
-				</span>
-			</div>
-		{/each}
+		<div class="w-full flex-1 flex flex-col px-2 py-4 overflow-y-scroll">
+			{#each notes as note}
+				<div class="flex my-2 first:mt-0 last:mb-0">
+					<div class="mr-2">
+						<Avatar src={note.addedBy.avatar} size="38px" borderWidth="1px" />
+					</div>
+					<div class="flex flex-col">
+						<div class="flex items-center">
+							<span class="font-bold">{note.addedBy.username}</span>
+							<span class="mx-1 text-zinc-400">•</span>
+							<span class="text-zinc-400"
+								><Time timestamp={note.createdAt} relative /></span
+							>
+						</div>
+						<div class="markdown-text"><SvelteMarkdown source={note.message} /></div>
+					</div>
+				</div>
+			{/each}
+		</div>
 	{/if}
-	<form class="w-full bg-zinc-300 dark:bg-zinc-600 flex sticky bottom-0" use:form>
+	<form class="w-full bg-zinc-300 dark:bg-zinc-600 flex" use:form>
 		<input
 			type="text"
 			name="message"
 			class="w-full bg-zinc-300 dark:bg-zinc-600 border-0 rounded-bl-xl focus:ring-0 py-3"
 			placeholder="Add a note"
 		/>
-		<button title="Add Note" class="add-note-button">
+		<button title="Add Note" class="add-note-button" type="submit">
 			<SendPlaneFill class="button-icon no-text" size="22px" />
 		</button>
 	</form>
@@ -104,6 +123,11 @@
 		background: var(--accent);
 		&:hover {
 			background: var(--accent-light);
+		}
+	}
+	:global(div.markdown-text) {
+		:global(p) {
+			margin: 0 !important;
 		}
 	}
 </style>

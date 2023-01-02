@@ -81,6 +81,7 @@ struct AdminService {
     /// Fetches all notes for an account
     func fetchNotes(_ id: UUID) async throws -> [AccountNote] {
         try await AccountNote.query(on: request.db)
+            .with(\.$addedBy)
             .filter(\.$account.$id == id)
             .all()
     }
@@ -101,6 +102,7 @@ struct AdminService {
     func addNote(_ id: UUID, byWho: String, message: String) async throws -> AccountNote {
         let note = try AccountNote(addedBy: byWho, formInfo: .init(accountId: id, message: message))
         try await note.save(on: request.db)
+        try await note.$addedBy.load(on: request.db)
         return note
     }
 
