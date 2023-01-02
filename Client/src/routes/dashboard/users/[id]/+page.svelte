@@ -171,6 +171,9 @@
 			</div>
 		</div>
 	</div>
+	<div class="mb-6">
+		<Profiles account={data} />
+	</div>
 	<div class="grid grid-cols-3 grid-rows-2 gap-6">
 		<div class="row-span-2">
 			<ReportLog account={data} />
@@ -181,9 +184,6 @@
 		<div class="row-span-2">
 			<Notes account={data} />
 		</div>
-	</div>
-	<div class="mt-6">
-		<Profiles account={data} />
 	</div>
 </div>
 
