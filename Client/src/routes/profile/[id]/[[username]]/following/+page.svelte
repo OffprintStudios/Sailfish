@@ -6,6 +6,7 @@
 	import { getReq, type ResponseError } from "$lib/http";
 	import { ProfileCard } from "$lib/ui/content";
 	import { Paginator } from "$lib/ui/util";
+	import { account } from "$lib/state/account.state";
 	import toast from "svelte-french-toast";
 
 	export let data: PageData;
@@ -40,8 +41,13 @@
 	</div>
 	{#if currPage.metadata.total === 0}
 		<div class="empty">
-			<h3>You're not following anyone yet</h3>
-			<p>Hit the Follow button on someone's profile and they'll show up here!</p>
+			{#if $account.account && $account.currProfile && $account.currProfile?.id === data.id}
+				<h3>You're not following anyone yet</h3>
+				<p>Hit the Follow button on someone's profile and they'll show up here!</p>
+			{:else}
+				<h3>This user isn't following anyone</h3>
+				<p>Come back later to see if that changes!</p>
+			{/if}
 		</div>
 	{:else}
 		<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
