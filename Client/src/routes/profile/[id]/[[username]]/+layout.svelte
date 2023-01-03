@@ -7,9 +7,9 @@
 		ImageEditLine,
 		ImageAddLine,
 		ServiceLine,
+		ServiceFill,
 		AlarmWarningLine,
-		CloseCircleLine,
-		PieChartLine
+		Loader5Line
 	} from "svelte-remixicon";
 	import { Avatar, RoleBadge } from "$lib/ui/util";
 	import { slugify } from "$lib/util/functions";
@@ -19,10 +19,21 @@
 	import { NavLink } from "$lib/ui/nav";
 	import { openPopup } from "$lib/ui/popup";
 	import { UploadProfileCover } from "$lib/ui/upload";
+	import { onMount } from "svelte";
+	import { delReq, getReq, postReq, type ResponseError } from "$lib/http";
+	import toast from "svelte-french-toast";
+	import { abbreviate, pluralize } from "$lib/util/functions";
 
 	export let data: Profile;
-
 	const iconSize = "24px";
+	let hasFollowed = { isFollowing: false };
+	let loadingFollow = false;
+
+	onMount(async () => {
+		if ($account.account && $account.currProfile && $account.currProfile.id !== data.id) {
+			await checkFollow();
+		}
+	});
 
 	function updateBanner() {
 		openPopup(
@@ -38,6 +49,49 @@
 			},
 			{ profileId: data.id }
 		);
+	}
+
+	async function checkFollow() {
+		loadingFollow = true;
+		const response = await getReq<{ isFollowing: boolean }>(
+			`/followers/check-if-following/${data.id}?profileId=${$account.currProfile?.id}`
+		);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			hasFollowed = response as { isFollowing: boolean };
+		}
+		loadingFollow = false;
+	}
+
+	async function followUser() {
+		loadingFollow = true;
+		const response = await postReq<{ isFollowing: boolean }>(
+			`/followers/follow-user/${data.id}?profileId=${$account.currProfile?.id}`,
+			{}
+		);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			hasFollowed = response as { isFollowing: boolean };
+		}
+		loadingFollow = false;
+	}
+
+	async function unfollowUser() {
+		loadingFollow = true;
+		const response = await delReq<{ isFollowing: boolean }>(
+			`/followers/unfollow-user/${data.id}?profileId=${$account.currProfile?.id}`
+		);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			hasFollowed = response as { isFollowing: boolean };
+		}
+		loadingFollow = false;
 	}
 </script>
 
@@ -77,14 +131,14 @@
 						class="text-zinc-800 dark:text-white no-underline"
 						href="/profile/{data.id}/{slugify(data.username)}/followers"
 					>
-						0 followers
+						{abbreviate(data.stats.followers)} follower{pluralize(data.stats.followers)}
 					</a>
 					<span class="text-zinc-800 dark:text-white mx-1">•</span>
 					<a
 						class="text-zinc-800 dark:text-white no-underline"
 						href="/profile/{data.id}/{slugify(data.username)}/following"
 					>
-						0 following
+						{abbreviate(data.stats.following)} following
 					</a>
 				</div>
 			</div>
@@ -118,10 +172,34 @@
 					</button>-->
 				{:else}
 					<div class="h-full mx-1 border border-zinc-300"><!--spacer--></div>
-					<button class="link hover:bg-zinc-300 dark:hover:bg-zinc-600">
-						<span class="link-icon"><ServiceLine size={iconSize} /></span>
-						<span class="link-name">Follow</span>
-					</button>
+					{#if loadingFollow}
+						<button class="link hover:bg-zinc-300 dark:hover:bg-zinc-600">
+							<span class="link-icon"
+								><Loader5Line size={iconSize} class="animate-spin" /></span
+							>
+							<span class="link-name">Loading</span>
+						</button>
+					{:else if hasFollowed.isFollowing}
+						<button
+							class="link hover:bg-zinc-300 dark:hover:bg-zinc-600"
+							on:click={unfollowUser}
+						>
+							<span class="link-icon"><ServiceFill size={iconSize} /></span>
+							<span class="link-name">Unfollow</span>
+						</button>
+					{:else}
+						<button
+							class="link hover:bg-zinc-300 dark:hover:bg-zinc-600"
+							on:click={followUser}
+						>
+							<span class="link-icon"><ServiceLine size={iconSize} /></span>
+							<span class="link-name">Follow</span>
+						</button>
+					{/if}
+					<!--<button class="link hover:bg-zinc-300 dark:hover:bg-zinc-600">
+						<span class="link-icon"><CloseCircleLine size={iconSize} /></span>
+						<span class="link-name">Block</span>
+					</button>-->
 					<button class="link hover:bg-zinc-300 dark:hover:bg-zinc-600">
 						<span class="link-icon"><AlarmWarningLine size={iconSize} /></span>
 						<span class="link-name">Report</span>
