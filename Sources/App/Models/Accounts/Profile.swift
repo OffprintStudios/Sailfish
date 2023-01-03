@@ -85,7 +85,7 @@ final class Profile: Model, Content {
         if let hasBio = formData.bio {
             info = .init(bio: try SwiftSoup.clean(hasBio, .none())!)
         } else {
-            info = .init()
+            info = .init(bio: "A brand new face")
         }
         links = [:]
         stats = .init()

@@ -57,6 +57,9 @@ public func configure(_ app: Application) async throws {
         CreateFollower(),
         CreateProfileView(),
         AddReportClosedOnField(),
+        CreatePG_TRGMExtension(),
+        CreateBlogTitleIndex(),
+        CreateWorkTitleIndex(),
     ])
 
     try await app.autoMigrate()
