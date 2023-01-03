@@ -35,6 +35,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>{data.username}'s Follows &mdash; Offprint</title>
+</svelte:head>
+
 <div class="max-w-6xl mx-auto">
 	<div class="flex items-center mb-6 pb-2 border-b border-zinc-700 dark:border-white">
 		<h2 class="text-3xl">Following</h2>
