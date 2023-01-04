@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { getReq } from "../../../http";
-	import type { Paginate } from "../../../util/types";
-	import type { ResponseError } from "../../../http";
-	import type { ReadingHistory } from "../../../models/content/library";
-	import { account } from "../../../state/account.state";
+	import { getReq, type ResponseError } from "$lib/http";
+	import type { Paginate } from "$lib/util/types";
+	import type { ReadingHistory } from "$lib/models/content/library";
+	import { account } from "$lib/state/account.state";
 	import { WorkCard } from "../../content";
 	import toast from "svelte-french-toast";
 
@@ -17,7 +16,9 @@
 
 	async function loadHistory() {
 		loading = true;
-		const response = await getReq<Paginate<ReadingHistory>>(`/history/fetch-all?profileId=${$account.currProfile.id}&page=1&per=5`);
+		const response = await getReq<Paginate<ReadingHistory>>(
+			`/history/fetch-all?profileId=${$account.currProfile?.id}&page=1&per=5`
+		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
 			toast.error(error.message);
@@ -40,7 +41,7 @@
 			{#each history.items as item}
 				<WorkCard work={item.work}>
 					<svelte:fragment slot="dropdown">
-
+						<!--TODO: populate this with appropriate options-->
 					</svelte:fragment>
 				</WorkCard>
 			{/each}
@@ -49,9 +50,9 @@
 		<div class="h-full flex flex-col items-center justify-center">
 			<div class="empty">
 				<h3>Nothing read yet</h3>
-				<p>The last five things you've read<br/>will show up here.</p>
-				<div class="my-4"></div>
-				<p>For your full reading history,<br/>go to Library > Reading History</p>
+				<p>The last five things you've read<br />will show up here.</p>
+				<div class="my-4" />
+				<p>For your full reading history,<br />go to Library > Reading History</p>
 			</div>
 		</div>
 	{/if}

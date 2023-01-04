@@ -15,11 +15,38 @@
 		Dashboard2Fill
 	} from "svelte-remixicon";
 	import { guide, openGuide, closeGuide } from "../guide";
-	import { account } from "../../state/account.state";
-	import { hasRoles } from "../../util/functions";
-	import { Roles } from "$lib/models/accounts/index.js";
+	import { account } from "$lib/state/account.state";
+	import { activity } from "$lib/state/activity.state";
+	import { hasRoles } from "$lib/util/functions";
+	import { Roles } from "$lib/models/accounts";
+	import { getReq, type ResponseError } from "$lib/http";
+	import { CountBadge } from "$lib/ui/util";
 
 	const iconSize = "24px";
+
+	$: {
+		if ($account.account && $account.currProfile) {
+			fetchActivityCount();
+		}
+	}
+
+	setInterval(async () => {
+		if ($account.account && $account.currProfile) {
+			await fetchActivityCount();
+		}
+	}, 1000 * 15);
+
+	async function fetchActivityCount() {
+		const response = await getReq<{ count: number }>(
+			`/notifications/fetch-count?profileId=${$account.currProfile?.id}`
+		);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			console.error(`ERROR: ${error.message}`);
+		} else {
+			$activity.count = (response as { count: number }).count;
+		}
+	}
 
 	$: {
 		if ($navigating !== null) {
@@ -35,7 +62,10 @@
 			<span class="link-name">Close</span>
 		</button>
 	{:else}
-		<button class="link" on:click={openGuide}>
+		<button class="link relative" on:click={openGuide}>
+			{#if $activity.count > 0}
+				<CountBadge value={$activity.count} />
+			{/if}
 			<span class="link-icon"><Book2Line size={iconSize} /></span>
 			<span class="link-name">Guide</span>
 		</button>
