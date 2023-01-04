@@ -32,6 +32,7 @@
 		>
 			<span> Activity </span>
 		</button>
+		<div class="mx-0.5"><!--spacer--></div>
 		<button
 			class:active={currTab === ActivityTabs.System}
 			on:click={() => switchTab(ActivityTabs.System)}
