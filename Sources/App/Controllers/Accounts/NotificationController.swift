@@ -11,9 +11,17 @@ struct NotificationController: RouteCollection {
             .grouped([
                 IdentityGuard(needs: [.user], checkProfile: true),
             ])
+        
+        notifications.get("fetch-count") { request async throws -> ActivityCount in
+            return .init(count: try await request.notificationService.fetchNotificationCount())
+        }
 
         notifications.get("fetch-activity") { request async throws -> Page<Notification> in
             try await request.notificationService.fetchActivity()
+        }
+        
+        notifications.get("fetch-system-activity") { request async throws -> Page<Notification> in
+            try await request.notificationService.fetchSystemActivity()
         }
 
         notifications.post("mark-as-read") { request async throws -> Response in
@@ -24,5 +32,11 @@ struct NotificationController: RouteCollection {
             let idsToMark = try request.content.decode(IdsToMark.self)
             return try await request.notificationService.markAsRead(idsToMark.ids)
         }
+    }
+}
+
+extension NotificationController {
+    struct ActivityCount: Content {
+        var count: Int
     }
 }

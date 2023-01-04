@@ -46,6 +46,9 @@ final class Profile: Model, Content {
     @Children(for: \.$profile)
     var shelves: [Shelf]
     
+    @Children(for: \.$to)
+    var notifications: [Notification]
+    
     @Siblings(through: Follower.self, from: \.$profile, to: \.$subscribedTo)
     var following: [Profile]
     

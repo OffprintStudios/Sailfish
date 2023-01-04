@@ -11,12 +11,27 @@ import Fluent
 struct NotificationService {
     let request: Request
     
+    func fetchNotificationCount() async throws -> Int {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        return try await profile.$notifications.query(on: request.db)
+            .count()
+    }
+    
     /// Fetches all a user's un-viewed notifications.
     func fetchActivity() async throws -> Page<Notification> {
         let profile = try request.authService.getUser(withProfile: true).profile!
-        return try await Notification.query(on: request.db)
+        return try await profile.$notifications.query(on: request.db)
             .with(\.$from)
-            .filter(\.$to.$id == profile.id!)
+            .filter(.sql(raw: "from_id IS NOT NULL"))
+            .sort(\.$createdAt, .descending)
+            .paginate(for: request)
+    }
+    
+    /// Fetches a user's un-viewed system notifications
+    func fetchSystemActivity() async throws -> Page<Notification> {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        return try await profile.$notifications.query(on: request.db)
+            .filter(.sql(raw: "from_id IS NULL"))
             .sort(\.$createdAt, .descending)
             .paginate(for: request)
     }
