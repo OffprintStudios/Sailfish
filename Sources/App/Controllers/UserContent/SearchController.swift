@@ -11,7 +11,6 @@ struct SearchController: RouteCollection {
         
         search.get("works") { request async throws -> Page<Work> in
             let query = try request.query.decode(SearchQuery.self)
-            print(query)
             return try await request.searchService.findRelatedWorks(
                 title: query.title,
                 author: query.username,
@@ -22,7 +21,6 @@ struct SearchController: RouteCollection {
         
         search.get("blogs") { request async throws -> Page<Blog> in
             let query = try request.query.decode(SearchQuery.self)
-            print(query)
             return try await request.searchService.findRelatedBlogs(
                 title: query.title,
                 author: query.username,
