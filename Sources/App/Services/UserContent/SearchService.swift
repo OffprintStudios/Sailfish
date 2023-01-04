@@ -110,6 +110,7 @@ struct SearchService {
     private func findRelatedAuthor(username: String?) async throws -> Profile? {
         if let hasUsername = username {
             let cleanedUsername = try SwiftSoup.clean(hasUsername, .none())!
+            print(cleanedUsername)
             return try await Profile.query(on: request.db)
                 .filter(\.$username, .custom("@@"), cleanedUsername)
                 .first()
