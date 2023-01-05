@@ -14,7 +14,7 @@
 	import { slugify } from "$lib/util/functions";
 	import { DeleteBin2Line, Edit2Line } from "svelte-remixicon";
 	import { openPopup } from "$lib/ui/popup";
-	import DeleteBlogPrompt from "../blog/[blogId]/[blogTitle]/DeleteBlogPrompt.svelte";
+	import DeleteBlogPrompt from "../blog/[blogId]/[[blogTitle]]/DeleteBlogPrompt.svelte";
 
 	let blogs: Paginate<Blog> = {
 		items: [],
