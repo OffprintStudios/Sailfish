@@ -12,7 +12,14 @@
 
 	export let data: Profile;
 	let loadingBlogs = false;
-	let blogs: Paginate<Blog> = null;
+	let blogs: Paginate<Blog> = {
+		items: [],
+		metadata: {
+			page: 1,
+			per: 3,
+			total: 0
+		}
+	};
 
 	onMount(async () => {
 		//await loadBlogs();
@@ -68,7 +75,7 @@
 
 <div class="flex flex-col max-w-6xl mx-auto">
 	<div class="flex-1 p-4 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed rounded-xl">
-		<h3>About Me</h3>
+		<h3 class="text-2xl">About Me</h3>
 		<div>
 			{data.info.bio}
 		</div>

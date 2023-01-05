@@ -141,6 +141,10 @@ extension Profile {
         var bio: String?
         var tagline: String?
     }
+    
+    struct ProfileLinks: Content {
+        var links: [String: String]
+    }
 
     enum Presence: String, Codable {
         case online = "Online"

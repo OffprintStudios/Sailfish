@@ -41,6 +41,15 @@ struct ProfileService {
         return profile
     }
     
+    func updateLinks(with newLinks: Profile.ProfileLinks) async throws -> Profile {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        return try await request.db.transaction { database in
+            profile.links = newLinks.links
+            try await profile.save(on: database)
+            return profile
+        }
+    }
+    
     /// Updates a profile's avatar.
     func updateAvatar(avatarUrl: String? = nil) async throws -> Profile {
         let profile = try request.authService.getUser(withProfile: true).profile!

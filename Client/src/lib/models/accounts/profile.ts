@@ -18,6 +18,7 @@ export interface Profile {
 		followers: number;
 		following: number;
 	};
+	links: Map<string, string>;
 	readonly createdAt: Date;
 	readonly updatedAt: Date;
 }

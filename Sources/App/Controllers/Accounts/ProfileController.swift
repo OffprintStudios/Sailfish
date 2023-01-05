@@ -24,6 +24,11 @@ struct ProfileController: RouteCollection {
             return try await request.profileService.updateProfile(with: profileForm)
         }
         
+        profilesWithAuth.patch("update-links") { request async throws -> Profile in
+            let linksForm = try request.content.decode(Profile.ProfileLinks.self)
+            return try await request.profileService.updateLinks(with: linksForm)
+        }
+        
         profilesWithAuth.on(.PATCH, "update-avatar", body: .collect(maxSize: "5mb")) { request async throws -> Profile in
             let profile = try request.authService.getUser(withProfile: true).profile!
             let data: UtilityService.UploadImage = try request.content.decode(UtilityService.UploadImage.self)
