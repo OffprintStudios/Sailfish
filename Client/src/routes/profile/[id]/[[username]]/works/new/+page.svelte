@@ -377,7 +377,7 @@
 				class="w-full lg:w-3/4 px-2.5 py-2.5 grid grid-cols-2 lg:grid-cols-4 whitespace-nowrap lg:whitespace-normal"
 			>
 				<div
-					class="flex flex-col p-4 bg-red-700 bg-opacity-10 rounded-tl-xl lg:rounded-l-xl border border-red-500 w-[220px] lg:w-auto"
+					class="flex flex-col p-4 bg-red-700 bg-opacity-10 rounded-tl-xl lg:rounded-l-xl border border-red-500"
 				>
 					<label class="mb-2">
 						<input
@@ -447,7 +447,7 @@
 				class="w-full lg:w-3/4 px-2.5 py-2.5 grid grid-cols-2 lg:grid-cols-4 whitespace-nowrap lg:whitespace-normal"
 			>
 				<div
-					class="flex flex-col p-4 bg-teal-700 bg-opacity-10 rounded-tl-xl lg:rounded-l-xl border border-teal-500 w-[220px] lg:w-auto"
+					class="flex flex-col p-4 bg-teal-700 bg-opacity-10 rounded-tl-xl lg:rounded-l-xl border border-teal-500 lg:w-auto"
 				>
 					<label class="mb-2">
 						<input type="radio" value={Status.Incomplete} bind:group={$data.status} />
