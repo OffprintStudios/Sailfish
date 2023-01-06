@@ -156,7 +156,7 @@
 				class="w-full lg:w-3/4 px-2.5 py-2.5 grid grid-cols-2 lg:grid-cols-4 whitespace-nowrap lg:whitespace-normal"
 			>
 				<div
-					class="flex flex-col p-4 bg-red-700 bg-opacity-10 rounded-tl-xl lg:rounded-l-xl border border-red-500 w-[220px] lg:w-auto"
+					class="flex flex-col p-4 bg-red-700 bg-opacity-10 rounded-tl-xl lg:rounded-l-xl border border-red-500 lg:w-auto"
 				>
 					<label class="mb-2">
 						<input
@@ -180,7 +180,7 @@
 					<div class="text-xs hidden lg:block">Suitable for most works.</div>
 				</div>
 				<div
-					class="flex flex-col p-4 bg-red-700 bg-opacity-10 border-l border-t-0 border-b rounded-bl-xl lg:rounded-none lg:border-l-0 lg:border-y border-red-500"
+					class="flex flex-col p-4 bg-red-700 bg-opacity-10 border-x border-t-0 border-b rounded-bl-xl lg:rounded-none lg:border-l-0 lg:border-y border-red-500"
 				>
 					<label class="mb-2">
 						<input
@@ -195,7 +195,7 @@
 					<div class="text-xs hidden lg:block">Heavy topics, but nothing explicit.</div>
 				</div>
 				<div
-					class="flex flex-col p-4 bg-red-700 bg-opacity-10 rounded-br-xl lg:rounded-r-xl border-t-0 border lg:border-t border-red-500"
+					class="flex flex-col p-4 bg-red-700 bg-opacity-10 rounded-br-xl lg:rounded-r-xl border-t-0 border lg:border-t border-l-0 border-red-500"
 				>
 					<label class="mb-2">
 						<input
@@ -226,7 +226,7 @@
 				</div>
 				<div class="w-full lg:w-3/4 px-2.5 py-2.5 grid grid-cols-2">
 					<div
-						class="flex flex-col p-4 bg-orange-700 bg-opacity-10 rounded-l-xl border border-orange-500"
+						class="flex flex-col p-4 bg-green-700 bg-opacity-10 rounded-l-xl border border-green-500"
 					>
 						<label class="mb-2">
 							<input type="radio" value={true} bind:group={$data.newsPost} />

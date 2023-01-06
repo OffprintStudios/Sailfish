@@ -401,7 +401,7 @@
 					<div class="text-xs hidden lg:block">Suitable for most works.</div>
 				</div>
 				<div
-					class="flex flex-col p-4 bg-red-700 bg-opacity-10 border-l border-t-0 border-b rounded-bl-xl lg:rounded-none lg:border-l-0 lg:border-y border-red-500"
+					class="flex flex-col p-4 bg-red-700 bg-opacity-10 border-t-0 border-b rounded-bl-xl lg:rounded-none lg:border-l-0 lg:border-y border-x border-red-500"
 				>
 					<label class="mb-2">
 						<input
@@ -416,7 +416,7 @@
 					<div class="text-xs hidden lg:block">Heavy topics, but nothing explicit.</div>
 				</div>
 				<div
-					class="flex flex-col p-4 bg-red-700 bg-opacity-10 rounded-br-xl lg:rounded-r-xl border-t-0 border lg:border-t border-red-500"
+					class="flex flex-col p-4 bg-red-700 bg-opacity-10 rounded-br-xl lg:rounded-r-xl border-t-0 border lg:border-t border-l-0 border-red-500"
 				>
 					<label class="mb-2">
 						<input
@@ -469,7 +469,7 @@
 					<div class="text-xs hidden lg:block">Totally wrapped up.</div>
 				</div>
 				<div
-					class="flex flex-col p-4 bg-teal-700 bg-opacity-10 rounded-bl-xl lg:rounded-none border-t-0 border-b lg:border-y border-l border-teal-500"
+					class="flex flex-col p-4 bg-teal-700 bg-opacity-10 rounded-bl-xl lg:rounded-none border-t-0 border-b lg:border-y border-x lg:border-r-0 border-teal-500"
 				>
 					<label class="mb-2">
 						<input type="radio" value={Status.Paused} bind:group={$data.status} />
@@ -480,7 +480,7 @@
 					<div class="text-xs hidden lg:block">Taking a break.</div>
 				</div>
 				<div
-					class="flex flex-col p-4 bg-teal-700 bg-opacity-10 rounded-br-xl lg:rounded-r-xl border-b border-x lg:border border-teal-500"
+					class="flex flex-col p-4 bg-teal-700 bg-opacity-10 rounded-br-xl lg:rounded-r-xl border-b border-r lg:border border-teal-500"
 				>
 					<label class="mb-2">
 						<input type="radio" value={Status.Cancelled} bind:group={$data.status} />
