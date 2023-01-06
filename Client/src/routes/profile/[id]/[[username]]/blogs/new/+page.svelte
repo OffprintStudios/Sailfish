@@ -5,7 +5,7 @@
 	import type { Blog, BlogForm } from "$lib/models/content";
 	import { ContentRating } from "$lib/models/content";
 	import { account } from "$lib/state/account.state";
-	import { QuillPenLine, AddLine } from "svelte-remixicon";
+	import { CupLine, AddLine } from "svelte-remixicon";
 	import { TextField, TextArea, Editor } from "$lib/ui/forms";
 	import { Button } from "$lib/ui/util";
 	import { goto } from "$app/navigation";
@@ -79,7 +79,7 @@
 			class="flex flex-row items-center justify-center px-2 py-4"
 			style="background: var(--accent);"
 		>
-			<QuillPenLine class="text-white mr-2 w-[36px] h-[36px] lg:w-[48px] lg:h-[48px]" />
+			<CupLine class="text-white mr-2 w-[36px] h-[36px] lg:w-[48px] lg:h-[48px]" />
 			<h1 class="text-white text-2xl lg:text-4xl">Create a New Blog</h1>
 		</div>
 		<div class="flex flex-col lg:flex-row border-b border-zinc-400 dark:border-zinc-500">
