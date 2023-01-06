@@ -315,9 +315,7 @@
 					<span class="all-small-caps font-bold tracking-wider text-lg"> About Me </span>
 				</div>
 				<div class="markdown-text pb-1">
-					<SvelteMarkdown
-						source={"Just another nobody. Lead Developer and Designer of Offprint. Don't contact me for moderation issues. Ain't my job."}
-					/>
+					<SvelteMarkdown source={data.info.bio} />
 				</div>
 			</div>
 			{#if Object.keys(data.links).length !== 0}
