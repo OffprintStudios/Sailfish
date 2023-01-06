@@ -17,10 +17,11 @@
 	let total = 1;
 
 	onMount(async () => {
-		await fetchWorks();
+		await fetchWorks(page);
 	});
 
-	async function fetchWorks() {
+	async function fetchWorks(newPage: number) {
+		page = newPage;
 		const response = await getReq<Paginate<Work>>(
 			`/works/fetch-works?` +
 				`authorId=${profile.id}&` +
@@ -42,7 +43,7 @@
 	}
 </script>
 
-<div class="my-6 w-11/12 mx-auto">
+<div class="my-6 w-11/12 lg:w-full mx-auto">
 	{#if works.length > 0}
 		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 			{#each works as work}
@@ -56,6 +57,11 @@
 		</div>
 	{/if}
 	{#if works.length > 0}
-		<Paginator currPage={page} perPage={per} totalItems={total} />
+		<Paginator
+			currPage={page}
+			perPage={per}
+			totalItems={total}
+			on:change={(event) => fetchWorks(event.detail)}
+		/>
 	{/if}
 </div>

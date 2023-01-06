@@ -12,3 +12,4 @@ export { default as ExploreSummary } from "./ExploreSummary.svelte";
 export { default as TagCard } from "./TagCard.svelte";
 export { default as ProfileCard } from "./ProfileCard.svelte";
 export { default as NotificationCard } from "./NotificationCard.svelte";
+export { default as LinkTag } from "./LinkTag.svelte";

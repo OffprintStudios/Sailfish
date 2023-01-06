@@ -7,3 +7,4 @@ export { Roles } from "./roles";
 export * from "./forms";
 export type { Session } from "./session";
 export type { SessionInfo } from "./session-info";
+export { LinkKinds } from "./link-kinds";

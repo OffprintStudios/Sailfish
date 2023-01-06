@@ -1,31 +1,41 @@
 <script lang="ts">
 	import {
-		Home5Line,
 		CupLine,
 		QuillPenLine,
 		BarChart2Line,
 		ImageEditLine,
 		ImageAddLine,
-		ServiceLine,
-		ServiceFill,
 		AlarmWarningLine,
-		Loader5Line
+		Loader5Line,
+		UserFollowLine,
+		UserUnfollowLine,
+		More2Fill,
+		Cake2Line,
+		InformationLine,
+		LinksFill,
+		Link
 	} from "svelte-remixicon";
-	import { Avatar, RoleBadge } from "$lib/ui/util";
+	import { page } from "$app/stores";
+	import { RoleBadge } from "$lib/ui/util";
 	import { slugify } from "$lib/util/functions";
 	import { Button } from "$lib/ui/util";
 	import { account } from "$lib/state/account.state";
 	import type { Profile } from "$lib/models/accounts";
-	import { NavLink } from "$lib/ui/nav";
 	import { openPopup } from "$lib/ui/popup";
 	import { UploadProfileCover } from "$lib/ui/upload";
 	import { onMount } from "svelte";
 	import { delReq, getReq, postReq, type ResponseError } from "$lib/http";
 	import toast from "svelte-french-toast";
 	import { abbreviate, pluralize } from "$lib/util/functions";
+	import Time from "$lib/ui/util/Time.svelte";
+	import SvelteMarkdown from "svelte-markdown";
+	import Dropdown from "$lib/ui/dropdown/Dropdown.svelte";
+	import LinkTag from "$lib/ui/content/LinkTag.svelte";
+	import UpdateLinksPrompt from "./UpdateLinksPrompt.svelte";
 
 	export let data: Profile;
 	const iconSize = "24px";
+
 	let hasFollowed = { isFollowing: false };
 	let loadingFollow = false;
 
@@ -49,6 +59,10 @@
 			},
 			{ profileId: data.id }
 		);
+	}
+
+	function updateLinks() {
+		openPopup(UpdateLinksPrompt);
 	}
 
 	async function checkFollow() {
@@ -95,157 +109,246 @@
 	}
 </script>
 
-<div class="w-11/12 mx-auto max-w-7xl mb-6">
-	<div class="profile-nav-container">
-		{#if data.bannerArt}
-			<div class="profile-cover">
-				{#if $account.account && $account.currProfile && $account.currProfile.id === data.id}
-					<div class="absolute top-2 right-2">
-						<Button kind="primary" on:click={updateBanner}>
-							<ImageEditLine class="button-icon no-text" size="20px" />
-						</Button>
-					</div>
-				{/if}
-				<img src={data.bannerArt} alt="{data.username}'s Cover Picture" />
-			</div>
-		{:else}
-			<div class="profile-banner">
-				{#if $account.account && $account.currProfile && $account.currProfile.id === data.id}
-					<div class="absolute top-2 right-2">
-						<Button kind="primary" on:click={updateBanner}>
-							<ImageAddLine class="button-icon no-text" size="20px" />
-						</Button>
-					</div>
-				{/if}
-			</div>
-		{/if}
-		<div class="profile-nav bg-zinc-200 dark:bg-zinc-700">
-			<Avatar src={data.avatar} size="150px" borderWidth="2px" />
-			<div class="lg:ml-4 self-center">
-				<div class="flex flex-col lg:flex-row items-center">
-					<h3>{data.username}</h3>
-					<RoleBadge roles={data.account.roles} size="large" />
+<svelte:head>
+	<title>{data.username}'s Profile &mdash; Offprint</title>
+	<!-- Primary Meta Tags -->
+	<meta name="title" content="{data.username}'s Profile" />
+	<meta name="description" content={data.info.bio} />
+
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="profile" />
+	<meta property="profile:username" content={data.username} />
+	<meta
+		property="og:url"
+		content="https://offprint.net/profile/{data.id}/{slugify(data.username)}"
+	/>
+	<meta property="og:title" content="{data.username}'s Profile" />
+	<meta property="og:description" content={data.info.bio} />
+	<meta property="og:image" content={data.avatar} />
+
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary" />
+	<meta
+		property="twitter:url"
+		content="https://offprint.net/profile/{data.id}/{slugify(data.username)}"
+	/>
+	<meta property="twitter:title" content="{data.username}'s Profile" />
+	<meta property="twitter:description" content={data.info.bio} />
+	<meta property="twitter:image" content={data.avatar} />
+</svelte:head>
+
+<div
+	class="w-11/12 mx-auto my-6 max-w-7xl relative justify-items-start grid grid-cols-1 lg:grid-cols-3 lg:gap-12"
+>
+	<div
+		class="profile-block lg:sticky lg:top-6 col-span-1 h-fit bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
+	>
+		<div class="h-32 overflow-hidden w-full relative">
+			{#if data.bannerArt !== null && data.bannerArt !== undefined}
+				<img src={data.bannerArt} class="h-full w-full object-cover" alt="profile avatar" />
+			{:else}
+				<div class="h-full w-full" style="background: var(--accent);">
+					<!--intentionally left blank-->
 				</div>
-				<div class="flex items-center mt-2 lg:mt-0 text-xs">
-					<a
-						class="text-zinc-800 dark:text-white no-underline"
-						href="/profile/{data.id}/{slugify(data.username)}/followers"
-					>
-						{abbreviate(data.stats.followers)} follower{pluralize(data.stats.followers)}
-					</a>
-					<span class="text-zinc-800 dark:text-white mx-1">•</span>
-					<a
-						class="text-zinc-800 dark:text-white no-underline"
-						href="/profile/{data.id}/{slugify(data.username)}/following"
-					>
-						{abbreviate(data.stats.following)} following
-					</a>
+			{/if}
+		</div>
+		<div class="relative flex items-center p-2">
+			<div class="absolute -bottom-0">
+				<div
+					class="w-[115px] h-[115px] border-4 border-zinc-300 dark:border-zinc-600 rounded-full bg-zinc-300 dark:bg-zinc-600 overflow-hidden"
+				>
+					<img
+						src={data.avatar}
+						alt="{data.username}'s Avatar"
+						class="object-cover w-full h-full"
+					/>
 				</div>
 			</div>
 			<div class="flex-1"><!--spacer--></div>
-			<div class="flex items-center justify-center mt-4 lg:mt-0 lg:justify-end">
-				<NavLink href="/profile/{data.id}/{slugify(data.username)}">
-					<Home5Line class="link-icon" />
-					<span class="link-name">Home</span>
-				</NavLink>
-				<NavLink href="/profile/{data.id}/{slugify(data.username)}/blogs">
-					<CupLine class="link-icon" />
-					<span class="link-name">Blogs</span>
-				</NavLink>
-				<NavLink href="/profile/{data.id}/{slugify(data.username)}/works">
-					<QuillPenLine class="link-icon" />
-					<span class="link-name">Works</span>
-				</NavLink>
-				<NavLink href="/profile/{data.id}/{slugify(data.username)}/shelves">
-					<BarChart2Line class="link-icon" />
-					<span class="link-name">Shelves</span>
-				</NavLink>
-			</div>
 			{#if $account.account && $account.currProfile}
-				{#if $account.currProfile.id === data.id}
-					<!--<div class="h-full mx-1 border border-zinc-300 dark:border-zinc-500">
-
-					</div>
-					<button class="link hover:bg-zinc-300 dark:hover:bg-zinc-600">
-						<span class="link-icon"><PieChartLine size={iconSize} /></span>
-						<span class="link-name">Stats</span>
-					</button>-->
-				{:else}
-					<div class="h-full mx-1 border border-zinc-300"><!--spacer--></div>
-					{#if loadingFollow}
-						<button class="link hover:bg-zinc-300 dark:hover:bg-zinc-600">
-							<span class="link-icon"
-								><Loader5Line size={iconSize} class="animate-spin" /></span
-							>
-							<span class="link-name">Loading</span>
-						</button>
-					{:else if hasFollowed.isFollowing}
-						<button
-							class="link hover:bg-zinc-300 dark:hover:bg-zinc-600"
+				{#if $account.currProfile.id !== data.id}
+					{#if hasFollowed.isFollowing}
+						<Button
 							on:click={unfollowUser}
+							loading={loadingFollow}
+							loadingText="Saving..."
 						>
-							<span class="link-icon"><ServiceFill size={iconSize} /></span>
-							<span class="link-name">Unfollow</span>
-						</button>
+							<UserUnfollowLine class="button-icon" />
+							<span class="button-text">Unfollow</span>
+						</Button>
 					{:else}
-						<button
-							class="link hover:bg-zinc-300 dark:hover:bg-zinc-600"
+						<Button
 							on:click={followUser}
+							loading={loadingFollow}
+							loadingText="Saving..."
 						>
-							<span class="link-icon"><ServiceLine size={iconSize} /></span>
-							<span class="link-name">Follow</span>
-						</button>
+							<UserFollowLine class="button-icon" />
+							<span class="button-text">Follow</span>
+						</Button>
 					{/if}
-					<!--<button class="link hover:bg-zinc-300 dark:hover:bg-zinc-600">
-						<span class="link-icon"><CloseCircleLine size={iconSize} /></span>
-						<span class="link-name">Block</span>
-					</button>-->
-					<button class="link hover:bg-zinc-300 dark:hover:bg-zinc-600">
-						<span class="link-icon"><AlarmWarningLine size={iconSize} /></span>
-						<span class="link-name">Report</span>
-					</button>
 				{/if}
+				<div class="mx-0.5"><!--spacer--></div>
+				<Dropdown>
+					<svelte:fragment slot="button">
+						<More2Fill class="button-icon no-text" size="20px" />
+					</svelte:fragment>
+					<svelte:fragment slot="items">
+						{#if $account.currProfile.id === data.id}
+							{#if data.bannerArt}
+								<button on:click={updateBanner}>
+									<ImageEditLine class="mr-2" size="18px" />
+									<span>Edit Banner</span>
+								</button>
+							{:else}
+								<button on:click={updateBanner}>
+									<ImageAddLine class="mr-2" size="18px" />
+									<span>Add Banner</span>
+								</button>
+							{/if}
+							<button on:click={updateLinks}>
+								<Link class="mr-2" size="18px" />
+								<span>Update Links</span>
+							</button>
+						{:else}
+							<button>
+								<AlarmWarningLine class="mr-2" size="18px" />
+								<span>Report</span>
+							</button>
+						{/if}
+					</svelte:fragment>
+				</Dropdown>
+			{:else}
+				<Button disabled>
+					<UserFollowLine class="button-icon" />
+					<span class="button-text">Follow</span>
+				</Button>
+				<div class="mx-0.5"><!--spacer--></div>
+				<Button disabled>
+					<More2Fill class="button-icon no-text" size="20px" />
+				</Button>
+			{/if}
+		</div>
+		<div class="pb-2 pt-1 px-4">
+			<div class="flex items-center">
+				<h4 class="text-3xl truncate">
+					<a
+						class="text-ellipsis overflow-hidden"
+						href="/profile/{data.id}/{slugify(data.username)}"
+					>
+						{data.username}
+					</a>
+				</h4>
+				<div class="mx-0.5"><!--spacer--></div>
+				<RoleBadge roles={data.account.roles} size="large" />
+			</div>
+			<div class="flex items-center text-xs">
+				<a class="text-white" href="/profile/{data.id}/{slugify(data.username)}/followers">
+					{abbreviate(data.stats.followers)} follower{pluralize(data.stats.followers)}
+				</a>
+				<span class="mx-1">•</span>
+				<a class="text-white" href="/profile/{data.id}/{slugify(data.username)}/following">
+					{abbreviate(data.stats.following)} following
+				</a>
+			</div>
+		</div>
+		<div
+			class="w-full flex items-center justify-center border-t border-b border-zinc-300 dark:border-zinc-600 mt-0.5"
+		>
+			<a
+				class="stat-box hover:bg-zinc-300 dark:hover:bg-zinc-600"
+				href="/profile/{data.id}/{slugify(data.username)}/works"
+				class:active={$page.url.pathname.includes("/works")}
+			>
+				<div class="stat">
+					<QuillPenLine size="18.4px" class="mr-1" />
+					<span class="select-none">{abbreviate(data.stats.works)}</span>
+				</div>
+				<div class="stat-label">Work{pluralize(data.stats.works)}</div>
+			</a>
+			<a
+				class="stat-box border-l border-r border-zinc-300 dark:border-zinc-600 hover:bg-zinc-300 dark:hover:bg-zinc-600"
+				href="/profile/{data.id}/{slugify(data.username)}/blogs"
+				class:active={$page.url.pathname.includes("/blogs")}
+			>
+				<div class="stat">
+					<CupLine size="18.4px" class="mr-1" />
+					<span class="select-none">{abbreviate(data.stats.blogs)}</span>
+				</div>
+				<div class="stat-label">Blog{pluralize(data.stats.blogs)}</div>
+			</a>
+			<a
+				class="stat-box hover:bg-zinc-300 dark:hover:bg-zinc-600"
+				href="/profile/{data.id}/{slugify(data.username)}/shelves"
+				class:active={$page.url.pathname.includes("/shelves")}
+			>
+				<div class="relative top-0.5 flex flex-col items-center">
+					<div class="stat">
+						<BarChart2Line size="18.4px" />
+					</div>
+					<div class="stat-label">Shelves</div>
+				</div>
+			</a>
+		</div>
+		<div class="px-4 py-2 mx-4 my-4 bg-zinc-300 dark:bg-zinc-600 rounded-xl">
+			<div class="mb-4">
+				<div class="flex items-center">
+					<Cake2Line size="20px" class="mr-1" />
+					<span class="all-small-caps font-bold tracking-wider text-lg"> Joined </span>
+				</div>
+				<Time timestamp={data.createdAt} />
+			</div>
+			<div class="mt-4" class:mb-4={Object.keys(data.links).length > 0}>
+				<div class="flex items-center">
+					<InformationLine size="20px" class="mr-1" />
+					<span class="all-small-caps font-bold tracking-wider text-lg"> About Me </span>
+				</div>
+				<div class="markdown-text pb-1">
+					<SvelteMarkdown
+						source={"Just another nobody. Lead Developer and Designer of Offprint. Don't contact me for moderation issues. Ain't my job."}
+					/>
+				</div>
+			</div>
+			{#if Object.keys(data.links).length !== 0}
+				<div class="mt-4">
+					<div class="flex items-center">
+						<LinksFill size="20px" class="mr-1" />
+						<span class="all-small-caps font-bold tracking-wider text-lg"> Links </span>
+					</div>
+					<div class="flex items-center flex-wrap">
+						{#each Object.keys(data.links) as key}
+							<LinkTag kind={key} href={data.links[key]} />
+						{/each}
+					</div>
+				</div>
 			{/if}
 		</div>
 	</div>
-
-	<slot />
+	<div class="col-span-2 my-6 w-full">
+		<slot />
+	</div>
 </div>
 
 <style lang="scss">
-	div.profile-nav-container {
-		@apply flex flex-col w-full my-6;
-		div.profile-banner {
-			@apply h-[92px] w-full rounded-t-xl relative;
+	div.profile-block {
+		@apply flex flex-col overflow-hidden rounded-xl;
+	}
+	a.stat-box {
+		@apply block cursor-pointer flex flex-col items-center select-none no-underline p-4 w-1/3 h-[70px] transition;
+		color: var(--text-color);
+		div.stat {
+			@apply flex items-center;
+		}
+		div.stat-label {
+			@apply text-xs uppercase font-bold tracking-wider;
+		}
+		&.active {
+			@apply text-white;
 			background: var(--accent);
 		}
-		div.profile-cover {
-			@apply h-[240px] w-full overflow-hidden relative rounded-t-xl;
-			img {
-				@apply object-cover w-full h-full;
-			}
-		}
-		div.profile-nav {
-			@apply flex flex-col items-center justify-center lg:flex-row lg:items-end lg:justify-end px-1.5 py-2 rounded-b-xl lg:h-[77px] relative z-10;
-			h3 {
-				@apply text-3xl lg:text-4xl lg:mr-2;
-			}
-			a.link,
-			button.link {
-				@apply mx-0.5 rounded-lg transition transform;
-				@apply flex flex-col items-center justify-center w-[61px] h-[61px] relative;
-				color: var(--text-color);
-				&:active {
-					@apply scale-95;
-				}
-				&.active {
-					@apply no-underline text-white;
-					background: var(--accent);
-				}
-				span.link-name {
-					@apply text-[0.6rem] uppercase font-bold tracking-wider;
-				}
-			}
+	}
+	:global(div.markdown-text) {
+		:global(p) {
+			margin: 0 !important;
 		}
 	}
 </style>
