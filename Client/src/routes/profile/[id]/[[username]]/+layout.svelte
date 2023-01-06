@@ -149,7 +149,7 @@
 	class="w-11/12 mx-auto my-6 max-w-7xl relative justify-items-start grid grid-cols-1 lg:grid-cols-3 lg:gap-12"
 >
 	<div
-		class="profile-block lg:sticky lg:top-6 col-span-1 h-fit bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
+		class="profile-block lg:sticky lg:top-6 col-span-1 w-full lg:w-fit h-fit bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
 	>
 		<div class="h-32 overflow-hidden w-full relative">
 			{#if data.bannerArt !== null && data.bannerArt !== undefined}
