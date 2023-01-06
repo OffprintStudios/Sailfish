@@ -62,7 +62,15 @@
 	}
 
 	function updateLinks() {
-		openPopup(UpdateLinksPrompt);
+		openPopup(
+			UpdateLinksPrompt,
+			{
+				onConfirm: async (value: Map<string, string>) => {
+					console.log(value);
+				}
+			},
+			{ links: data.links }
+		);
 	}
 
 	async function checkFollow() {
@@ -228,27 +236,31 @@
 				</Button>
 			{/if}
 		</div>
-		<div class="pb-2 pt-1 px-4">
-			<div class="flex items-center">
-				<h4 class="text-3xl truncate">
-					<a
-						class="text-ellipsis overflow-hidden"
-						href="/profile/{data.id}/{slugify(data.username)}"
-					>
-						{data.username}
-					</a>
-				</h4>
-				<div class="mx-0.5"><!--spacer--></div>
-				<RoleBadge roles={data.account.roles} size="large" />
-			</div>
-			<div class="flex items-center text-xs">
-				<a class="text-white" href="/profile/{data.id}/{slugify(data.username)}/followers">
+		<div class="pb-1 pt-1 px-4">
+			<h4 class="text-3xl truncate">
+				<a
+					class="text-ellipsis overflow-hidden"
+					href="/profile/{data.id}/{slugify(data.username)}"
+				>
+					{data.username}
+				</a>
+			</h4>
+			<div class="flex items-center text-xs relative -top-1">
+				<a
+					style="color: var(--text-color);"
+					href="/profile/{data.id}/{slugify(data.username)}/followers"
+				>
 					{abbreviate(data.stats.followers)} follower{pluralize(data.stats.followers)}
 				</a>
 				<span class="mx-1">•</span>
-				<a class="text-white" href="/profile/{data.id}/{slugify(data.username)}/following">
+				<a
+					style="color: var(--text-color);"
+					href="/profile/{data.id}/{slugify(data.username)}/following"
+				>
 					{abbreviate(data.stats.following)} following
 				</a>
+				<div class="flex-1"><!--spacer--></div>
+				<RoleBadge roles={data.account.roles} size="large" />
 			</div>
 		</div>
 		<div

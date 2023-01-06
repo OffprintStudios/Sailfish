@@ -83,10 +83,10 @@
 
 <div class="section">
 	<div class="section-header">
-		<Loader2Line size="36px" class="mr-2" />
-		<h3 class="text-3xl relative top-1">New</h3>
+		<Loader2Line class="mr-2 w-[24px] h-[24px] lg:w-[36px] lg:h-[36px]" />
+		<h3 class="text-xl lg:text-3xl relative top-0.5 lg:top-1">New</h3>
 		<div class="flex-1"><!--spacer--></div>
-		<a class="text-lg relative top-1" href="/explore/new-works">All New >></a>
+		<a class="text-base lg:text-lg relative top-1" href="/explore/new-works">All New »</a>
 	</div>
 	{#if !newWorks}
 		<div class="empty">
@@ -112,10 +112,12 @@
 
 <div class="section">
 	<div class="section-header">
-		<SignalTowerFill size="36px" class="mr-2" />
-		<h3 class="text-3xl relative top-1">Updated</h3>
+		<SignalTowerFill class="mr-2 w-[24px] h-[24px] lg:w-[36px] lg:h-[36px]" />
+		<h3 class="text-xl lg:text-3xl relative top-1">Updated</h3>
 		<div class="flex-1"><!--spacer--></div>
-		<a class="text-lg relative top-1" href="/explore/updated-works">All Updated >></a>
+		<a class="text-base lg:text-lg relative top-1" href="/explore/updated-works"
+			>All Updated »</a
+		>
 	</div>
 	{#if !updatedWorks}
 		<div class="empty">
@@ -141,10 +143,10 @@
 
 <div class="section">
 	<div class="section-header">
-		<Book2Line size="36px" class="mr-2" />
-		<h3 class="text-3xl relative top-1">Top Genres</h3>
+		<Book2Line class="mr-2 w-[24px] h-[24px] lg:w-[36px] lg:h-[36px]" />
+		<h3 class="text-xl lg:text-3xl relative top-1">Top Genres</h3>
 		<div class="flex-1"><!--spacer--></div>
-		<a class="text-lg relative top-1" href="/explore/genres">All Genres >></a>
+		<a class="text-base lg:text-lg relative top-1" href="/explore/genres">All Genres »</a>
 	</div>
 	{#if topGenres.length === 0}
 		<div class="empty">
@@ -192,10 +194,10 @@
 
 <div class="section">
 	<div class="section-header">
-		<EmpathizeLine size="36px" class="mr-2" />
-		<h3 class="text-3xl relative top-1">Top Fandoms</h3>
+		<EmpathizeLine class="mr-2 w-[24px] h-[24px] lg:w-[36px] lg:h-[36px]" />
+		<h3 class="text-xl lg:text-3xl relative top-1">Top Fandoms</h3>
 		<div class="flex-1"><!--spacer--></div>
-		<a class="text-lg relative top-1" href="/explore/fandoms">All Fandoms >></a>
+		<a class="text-base lg:text-lg relative top-1" href="/explore/fandoms">All Fandoms »</a>
 	</div>
 	{#if topFandoms.length === 0}
 		<div class="empty">

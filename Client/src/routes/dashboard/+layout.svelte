@@ -36,16 +36,16 @@
 {#if $account.account && $account.currProfile}
 	<div class="mx-auto max-w-7xl">
 		<div
-			class="flex flex-col items-center justify-center my-6 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed rounded-xl overflow-hidden"
+			class="lg:flex lg:flex-col lg:items-center lg:justify-center mb-6 lg:mt-6 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed lg:rounded-xl overflow-hidden"
 		>
 			<div class="p-2 w-full" style="background: var(--accent)">
 				<img
 					src="/images/dashlogo.png"
 					alt="offprint dash logo"
-					class="max-w-[18rem] mx-auto"
+					class="max-w-[10rem] lg:max-w-[18rem] mx-auto"
 				/>
 			</div>
-			<div class="flex items-center justify-center p-2">
+			<div class="flex items-center lg:justify-center overflow-x-auto whitespace-nowrap p-2">
 				<a
 					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
 					class:active={$page.url.pathname === "/dashboard"}
@@ -100,7 +100,7 @@
 
 <style lang="scss">
 	a.feature-link {
-		@apply flex text-lg items-center p-3 rounded-lg no-underline mr-0.5 last:mr-0 transition transform;
+		@apply flex text-base lg:text-lg items-center p-3 rounded-lg no-underline mr-0.5 last:mr-0 transition transform;
 		color: var(--text-color);
 		font-family: var(--header-text);
 		span {

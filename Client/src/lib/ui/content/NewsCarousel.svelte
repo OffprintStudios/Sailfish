@@ -75,9 +75,9 @@
 			<img
 				src="/images/logo.png"
 				alt="offprint logo"
-				class="max-w-[8rem] lg:max-w-[18rem] mx-auto"
+				class="max-w-[12rem] lg:max-w-[18rem] mx-auto"
 			/>
-			<h2 class="hidden lg:block text-white font-light text-lg">
+			<h2 class="block text-white font-light lg:text-lg">
 				{currSlogan}
 			</h2>
 		</div>
@@ -113,32 +113,40 @@
 							class="h-full w-full object-cover"
 						/>
 						<div
-							class="absolute bottom-[50px] left-[50px] rounded-xl py-2 px-4 bg-zinc-600 opacity-75 backdrop-blur z-10"
+							class="absolute bottom-[30px] left-[10px] lg:bottom-[50px] lg:left-[50px] rounded-xl py-2 px-4 bg-zinc-600 opacity-75 backdrop-blur z-10"
 							style="font-family: var(--header-text);"
 						>
 							<div class="relative top-1">
-								<h3 class="text-white text-4xl relative top-0.5">
+								<h3 class="text-white text-2xl lg:text-4xl relative top-0.5">
 									{currPost.title}
 								</h3>
-								<span class="text-white text-2xl italic relative bottom-0.5">
+								<span
+									class="text-white text-base lg:text-2xl italic relative bottom-0.5"
+								>
 									{currPost.desc}
 								</span>
 							</div>
-							<div class="flex items-center text-zinc-400">
+							<div class="flex items-center text-xs lg:text-sm text-zinc-400">
 								<span>by {currPost.author.username}</span>
 								<span class="mx-1.5 text-xl relative top-0.5">/</span>
 								<span class="flex items-center">
-									<LineChartLine size="18px" class="mr-1" />
+									<LineChartLine
+										class="mr-1 w-[16px] h-[16px] lg:w-[18px] lg:h-[18px]"
+									/>
 									<span>{abbreviate(currPost.stats.views)}</span>
 								</span>
 								<span class="mx-1.5 text-xl relative top-0.5">/</span>
 								<span class="flex items-center">
-									<DiscussLine size="18px" class="mr-1" />
+									<DiscussLine
+										class="mr-1 w-[16px] h-[16px] lg:w-[18px] lg:h-[18px]"
+									/>
 									<span>{abbreviate(currPost.stats.comments)}</span>
 								</span>
 								<span class="mx-1.5 text-xl relative top-0.5">/</span>
 								<span class="flex items-center">
-									<CalendarLine size="18px" class="mr-1" />
+									<CalendarLine
+										class="mr-1 w-[16px] h-[16px] lg:w-[18px] lg:h-[18px]"
+									/>
 									<Time timestamp={currPost.publishedOn} />
 								</span>
 							</div>
@@ -148,14 +156,21 @@
 			{/if}
 			<div class="post-buttons">
 				<div
-					class="flex items-center bg-zinc-600 bg-opacity-75 backdrop-blur p-1 rounded-full relative z-20"
+					class="flex items-center bg-zinc-600 bg-opacity-75 backdrop-blur p-0.5 lg:p-1 rounded-full relative z-20"
 				>
 					{#each posts.items as post}
-						<button class="rounded-full mx-0.5" on:click={() => (currPost = post)}>
+						<button
+							class="rounded-full mx-[0.075rem] lg:mx-0.5"
+							on:click={() => (currPost = post)}
+						>
 							{#if currPost.id === post.id}
-								<CheckboxBlankCircleFill size="18px" />
+								<CheckboxBlankCircleFill
+									class="w-[16px] h-[16px] lg:w-[18px] lg:h-[18px]"
+								/>
 							{:else}
-								<CheckboxBlankCircleLine size="18px" />
+								<CheckboxBlankCircleLine
+									class="w-[16px] h-[16px] lg:w-[18px] lg:h-[18px]"
+								/>
 							{/if}
 						</button>
 					{/each}
@@ -177,12 +192,12 @@
 			font-family: var(--header-text), sans-serif;
 		}
 		div.carousel-items {
-			@apply relative h-[350px];
+			@apply relative h-[250px] lg:h-[350px];
 			div.post {
 				@apply h-full w-full absolute top-0 z-10;
 			}
 			div.post-buttons {
-				@apply absolute bottom-4 w-full flex items-center justify-center;
+				@apply absolute bottom-1 w-full flex items-center justify-center;
 			}
 		}
 	}

@@ -150,7 +150,7 @@
 				);
 			}
 			button {
-				@apply relative flex flex-col items-center justify-center w-[60px] h-[52px] lg:w-[70px] lg:h-[62px] relative lg:first:rounded-l-md lg:last:rounded-r-md;
+				@apply relative flex flex-col items-center justify-center w-[60px] h-[62px] lg:w-[70px] lg:h-[62px] relative lg:first:rounded-l-md lg:last:rounded-r-md;
 				@apply transition transform text-white border-b-4 border-t-4 border-t-transparent border-b-transparent transition-all;
 				background: var(--accent);
 				&.active {

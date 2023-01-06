@@ -138,7 +138,7 @@
 
 <div class="max-w-7xl mx-auto">
 	<form
-		class="max-w-5xl mx-auto my-6 rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
+		class="max-w-5xl mx-auto mb-6 lg:mt-6 lg:rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
 		use:form
 	>
 		<div class="flex border-b-2 border-zinc-300 dark:border-zinc-600">
@@ -160,11 +160,14 @@
 			{/if}
 		</div>
 		<div
-			class="flex items-center px-4"
+			class="flex items-center flex-wrap px-4"
 			class:py-4={$data.searchFor !== SearchFor.Works && $data.searchFor !== SearchFor.Blogs}
 			class:py-2={$data.searchFor === SearchFor.Works || $data.searchFor === SearchFor.Blogs}
 		>
-			<fieldset name="searchFor" class="text-base relative -top-0.5">
+			<fieldset
+				name="searchFor"
+				class="text-base flex items-center justify-center w-full lg:w-auto lg:justify-start relative -top-0.5"
+			>
 				<label>
 					<input type="radio" value={SearchFor.Works} name="searchFor" />
 					<span class="relative top-0.5">Works</span>
@@ -178,27 +181,29 @@
 					<span class="relative top-0.5">Users</span>
 				</label>
 			</fieldset>
-			<div class="flex-1"><!--spacer--></div>
-			{#if $data.searchFor === SearchFor.Works || $data.searchFor === SearchFor.Blogs}
-				<input
-					type="text"
-					name="author"
-					class="w-[200px] bg-zinc-300 dark:bg-zinc-600 border-0 focus:ring-0 rounded-xl"
-					class:w-[200px]={$data.searchFor === SearchFor.Works}
-					class:w-[250px]={$data.searchFor === SearchFor.Blogs}
-					placeholder="Author"
-				/>
-			{/if}
-			{#if $data.searchFor === SearchFor.Works}
-				<select
-					name="categories"
-					class="ml-2 bg-zinc-300 dark:bg-zinc-600 rounded-xl border-0 w-[200px] focus:ring-0"
-				>
-					<option value={Categories.All}>{Categories.All}</option>
-					<option value={Categories.Original}>{Categories.Original}</option>
-					<option value={Categories.Fanfiction}>{Categories.Fanfiction}</option>
-				</select>
-			{/if}
+			<div class="basis-full lg:flex-1"><!--spacer--></div>
+			<div
+				class="flex items-center justify-center w-full mt-2 lg:mt-0 lg:w-auto lg:justify-end"
+			>
+				{#if $data.searchFor === SearchFor.Works || $data.searchFor === SearchFor.Blogs}
+					<input
+						type="text"
+						name="author"
+						class="w-1/2 lg:w-[200px] bg-zinc-300 dark:bg-zinc-600 border-0 focus:ring-0 rounded-xl"
+						placeholder="Author"
+					/>
+				{/if}
+				{#if $data.searchFor === SearchFor.Works}
+					<select
+						name="categories"
+						class="ml-2 bg-zinc-300 dark:bg-zinc-600 rounded-xl border-0 w-1/2 lg:w-[200px] focus:ring-0"
+					>
+						<option value={Categories.All}>{Categories.All}</option>
+						<option value={Categories.Original}>{Categories.Original}</option>
+						<option value={Categories.Fanfiction}>{Categories.Fanfiction}</option>
+					</select>
+				{/if}
+			</div>
 		</div>
 	</form>
 	<div class="w-11/12 mx-auto">
