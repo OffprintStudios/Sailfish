@@ -127,13 +127,16 @@ struct WorkService {
     func updateCoverArt(_ id: String, coverUrl: String? = nil) async throws -> Work {
         let profile = try request.authService.getUser(withProfile: true).profile!
         return try await request.db.transaction { database in
-            guard let work: Work = try await profile.$works.query(on: database).filter(\.$id == id).first() else {
+            guard let work: Work = try await profile.$works
+                .query(on: database)
+                .with(\.$tags, { $0.with(\.$parent) })
+                .filter(\.$id == id)
+                .first() else {
                 throw Abort(.notFound, reason: "Could not find a work to update. Are you sure it exists?")
             }
             work.coverArt = coverUrl
             try await work.save(on: database)
             work.$author.value = profile
-            try await work.$tags.load(on: database)
             return work
         }
     }

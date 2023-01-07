@@ -273,7 +273,11 @@
 				class="relative overflow-hidden w-max flex flex-col items-center justify-center bg-zinc-200 dark:bg-zinc-700 border-4 border-zinc-300 dark:border-zinc-600 rounded-xl z-[2]"
 				style="box-shadow: var(--dropshadow);"
 			>
-				<img src={work.coverArt} alt="cover art" class="max-w-[250px] max-h-[210px]" />
+				<img
+					src={work.coverArt}
+					alt="cover art"
+					class="max-w-[200px] max-h-[160px] lg:max-w-[250px] lg:max-h-[210px]"
+				/>
 				{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
 					<div class="absolute top-2 right-2">
 						<Button kind="primary" title="Edit Cover Art" on:click={updateCoverArt}>
@@ -534,7 +538,7 @@
 			grid-area: banner / banner / cover / cover;
 			display: flex;
 			align-items: flex-end;
-			@apply px-4 pt-16 lg:p-4 relative items-end justify-self-center lg:justify-self-start;
+			@apply px-4 pt-32 lg:p-4 relative items-end justify-self-center lg:justify-self-start;
 		}
 		div.banner {
 			background: var(--accent);
