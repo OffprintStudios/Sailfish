@@ -46,7 +46,7 @@
 			{#if work.bannerArt}
 				<img src={work.bannerArt} alt="cover art" class="w-full h-full object-cover" />
 			{/if}
-			<div class="absolute top-1 px-1.5 w-full flex items-center">
+			<div class="absolute top-1 px-1.5 w-[97.5%] lg:w-full flex items-center">
 				{#if withDropdown && $account.account && $account.currProfile}
 					<Dropdown kind={work.bannerArt ? "normal" : "primary"}>
 						<svelte:fragment slot="button">
