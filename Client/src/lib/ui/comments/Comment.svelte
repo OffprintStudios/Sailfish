@@ -21,6 +21,10 @@
 	import { Editor } from "../forms";
 	import { account } from "$lib/state/account.state";
 	import type { ThreadService } from "$lib/ui/comments/thread.service";
+	import { openPopup } from "$lib/ui/popup";
+	import { ReportForm } from "$lib/ui/admin";
+	import { ReportKind } from "$lib/models/admin/users/reports";
+	import { page } from "$app/stores";
 
 	export let comment: Comment;
 	export let threadService: ThreadService;
@@ -70,6 +74,23 @@
 
 	function reply() {
 		dispatch("reply", comment);
+	}
+
+	function reportComment() {
+		openPopup(
+			ReportForm,
+			{
+				onConfirm: () => {
+					console.log("0");
+				}
+			},
+			{
+				kind: ReportKind.Comment,
+				accountId: comment.profile.account.id,
+				itemId: comment.id,
+				link: `${$page.url.pathname}#comment-${comment.id}`
+			}
+		);
 	}
 </script>
 
@@ -166,7 +187,7 @@
 						<span>Add to multi-quote</span>
 					</button>
 					<div class="my-0.5"><!--spacer--></div>
-					<button type="button">
+					<button type="button" on:click={reportComment}>
 						<AlarmWarningLine class="mr-2" />
 						<span>Report</span>
 					</button>
