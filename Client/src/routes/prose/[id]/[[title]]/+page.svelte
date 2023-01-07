@@ -74,7 +74,7 @@
                                 this page, and all social features (such as comments and likes/dislikes) are disabled."
 		/>
 		<div class="mb-6"><!--spacer--></div>
-	{:else if queueItem}
+	{:else if queueItem !== null && queueItem !== undefined}
 		<ApprovalOptionsBar {queueItem} />
 	{/if}
 	<div class="max-w-4xl w-11/12 lg:w-full mx-auto">
