@@ -38,6 +38,9 @@
 	import { delReq, getReq, patchReq, putReq } from "$lib/http";
 	import PublishWorkPrompt from "./PublishWorkPrompt.svelte";
 	import DeleteWorkPrompt from "./DeleteWorkPrompt.svelte";
+	import { ReportForm } from "$lib/ui/admin";
+	import { ReportKind } from "$lib/models/admin/users/reports";
+	import { page } from "$app/stores";
 
 	export let work: Work;
 	export let history: ReadingHistory;
@@ -244,6 +247,23 @@
 			}
 		});
 	}
+
+	function reportWork() {
+		openPopup(
+			ReportForm,
+			{
+				onConfirm: () => {
+					console.log("0");
+				}
+			},
+			{
+				kind: ReportKind.Work,
+				accountId: work.author.account.id,
+				itemId: work.id,
+				link: $page.url.pathname
+			}
+		);
+	}
 </script>
 
 <div class="header-container bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
@@ -439,7 +459,7 @@
 					<span class="button-text">Shelves</span>
 				</Button>
 				<div class="mx-1 text-zinc-400 text-lg relative top-[0.075rem]">|</div>
-				<Button>
+				<Button on:click={reportWork}>
 					<AlarmWarningLine class="button-icon" />
 					<span class="button-text">Report</span>
 				</Button>
