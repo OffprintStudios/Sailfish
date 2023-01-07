@@ -19,7 +19,7 @@
 </script>
 
 <div
-	class="p-4 rounded-xl relative flex flex-col overflow-hidden w-full h-full bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
+	class="p-4 rounded-xl relative flex flex-col overflow-hidden w-full h-[550px] bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
 >
 	<div class="sticky top-0 mb-4">
 		<h3 class="text-2xl">Audit Log</h3>

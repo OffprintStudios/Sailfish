@@ -3,7 +3,7 @@
 	import { CloseLine, CheckLine } from "svelte-remixicon";
 	import { popup, closePopup, closePopupAndConfirm } from "$lib/ui/popup";
 	import { createForm } from "felte";
-	import { TextField, TextArea } from '$lib/ui/forms';
+	import { TextField, TextArea } from "$lib/ui/forms";
 	import type { TagForm, Tag } from "$lib/models/tags";
 	import { TagKind } from "$lib/models/tags";
 	import { postReq } from "$lib/http";
@@ -12,13 +12,13 @@
 
 	const { form, isSubmitting, createSubmitHandler, errors } = createForm({
 		onSubmit: () => {
-			console.log('Alt submit hit!');
+			console.log("Alt submit hit!");
 		},
 		initialValues: {
 			name: null,
 			desc: null,
 			parentId: $popup.data.parentId ?? null,
-			kind: TagKind.fandom
+			kind: $popup.data.kind ?? TagKind.fandom
 		}
 	});
 
@@ -28,7 +28,7 @@
 				name: values.name,
 				desc: values.desc,
 				parentId: values.parentId,
-				kind: values.kind,
+				kind: values.kind
 			};
 
 			const response = await postReq<Tag>(`/tags/create-tag`, formInfo);
@@ -42,21 +42,21 @@
 		},
 		validate: (values) => {
 			const errors = {
-				name: '',
-				desc: '',
+				name: "",
+				desc: ""
 			};
 
-			if (!values.name || (values.name.length < 3 || values.name.length > 120)) {
-				errors.name = 'Names must be between 3 and 120 characters';
+			if (!values.name || values.name.length < 3 || values.name.length > 120) {
+				errors.name = "Names must be between 3 and 120 characters";
 			}
 
 			if (values.desc && (values.desc.length < 3 || values.desc.length > 120)) {
-				errors.name = 'Descriptions must be between 3 and 120 characters';
+				errors.name = "Descriptions must be between 3 and 120 characters";
 			}
 
 			return errors;
 		}
-	})
+	});
 </script>
 
 <div class="rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
@@ -91,7 +91,11 @@
 			>
 				Tag Kind
 			</label>
-			<select name="kind" id="kind" class="w-full border-transparent bg-zinc-300 dark:bg-zinc-600 rounded-xl">
+			<select
+				name="kind"
+				id="kind"
+				class="w-full border-transparent bg-zinc-300 dark:bg-zinc-600 rounded-xl"
+			>
 				<option value={TagKind.fandom}>{TagKind.fandom}</option>
 				<option value={TagKind.genre}>{TagKind.genre}</option>
 				<option value={TagKind.warning}>{TagKind.warning}</option>
@@ -104,7 +108,7 @@
 			<CheckLine class="button-icon" />
 			<span class="button-text">Create</span>
 		</Button>
-		<div class="mx-0.5"></div>
+		<div class="mx-0.5" />
 		<Button on:click={closePopup} disabled={$isSubmitting}>
 			<CloseLine class="button-icon" />
 			<span class="button-text">Cancel</span>

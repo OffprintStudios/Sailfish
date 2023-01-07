@@ -66,7 +66,7 @@
 	}
 </script>
 
-<div class="max-w-6xl mx-auto">
+<div class="w-11/12 lg:w-full max-w-6xl mx-auto">
 	<div class="flex items-center">
 		<Button isActive={ascending} on:click={switchDirection}>
 			<SortAsc class="button-icon" />
@@ -79,7 +79,7 @@
 		</Button>
 		<div class="flex-1"><!--spacer--></div>
 		<select
-			class="w-[250px] border-transparent bg-zinc-200 dark:bg-zinc-700 rounded-xl dark:highlight-shadowed"
+			class="w-[150px] lg:w-[250px] border-transparent bg-zinc-200 dark:bg-zinc-700 rounded-xl dark:highlight-shadowed"
 			bind:value={currStatus}
 		>
 			<option value={Status.waiting}>{Status.waiting}</option>

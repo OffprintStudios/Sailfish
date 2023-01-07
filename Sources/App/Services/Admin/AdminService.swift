@@ -105,6 +105,16 @@ struct AdminService {
         try await note.$addedBy.load(on: request.db)
         return note
     }
+    
+    /// Files a new report
+    func reportUser(with formInfo: AccountReport.ReportForm) async throws -> Response {
+        let account = try request.authService.getUser().account
+        let newReport = try AccountReport(reportedBy: account.id!, formInfo: formInfo)
+        try await request.db.transaction { database in
+            try await newReport.save(on: database)
+        }
+        return .init(status: .ok)
+    }
 
     /// Warns a user
     func warnUser(_ id: UUID, byWho: String, reason: String) async throws {

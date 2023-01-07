@@ -6,7 +6,6 @@
 		ImageEditLine,
 		ImageAddLine,
 		AlarmWarningLine,
-		Loader5Line,
 		UserFollowLine,
 		UserUnfollowLine,
 		More2Fill,
@@ -32,9 +31,10 @@
 	import Dropdown from "$lib/ui/dropdown/Dropdown.svelte";
 	import LinkTag from "$lib/ui/content/LinkTag.svelte";
 	import UpdateLinksPrompt from "./UpdateLinksPrompt.svelte";
+	import { ReportForm } from "$lib/ui/admin";
+	import { ReportKind } from "$lib/models/admin/users/reports";
 
 	export let data: Profile;
-	const iconSize = "24px";
 
 	let hasFollowed = { isFollowing: false };
 	let loadingFollow = false;
@@ -115,6 +115,18 @@
 		}
 		loadingFollow = false;
 	}
+
+	function reportUser() {
+		openPopup(
+			ReportForm,
+			{
+				onConfirm: () => {
+					console.log("0");
+				}
+			},
+			{ kind: ReportKind.User, accountId: data.account.id, itemId: data.id }
+		);
+	}
 </script>
 
 <svelte:head>
@@ -149,7 +161,7 @@
 	class="w-11/12 mx-auto my-6 max-w-7xl relative justify-items-start grid grid-cols-1 lg:grid-cols-3 lg:gap-12"
 >
 	<div
-		class="profile-block lg:sticky lg:top-6 col-span-1 w-full lg:w-fit h-fit bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
+		class="profile-block lg:sticky lg:top-6 col-span-1 w-full h-fit bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
 	>
 		<div class="h-32 overflow-hidden w-full relative">
 			{#if data.bannerArt !== null && data.bannerArt !== undefined}
@@ -218,7 +230,7 @@
 								<span>Update Links</span>
 							</button>
 						{:else}
-							<button>
+							<button on:click={reportUser}>
 								<AlarmWarningLine class="mr-2" size="18px" />
 								<span>Report</span>
 							</button>

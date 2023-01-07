@@ -23,7 +23,7 @@
 	const iconSize = "50px";
 </script>
 
-<div class="max-w-6xl mx-auto mb-6">
+<div class="w-11/12 lg:w-full max-w-6xl mx-auto mb-6">
 	<div class="account-header bg-zinc-200 dark:bg-zinc-700">
 		<div class="flex items-center mb-4">
 			<div class="font-mono text-lg font-bold relative top-0.5">Account ID: {data.id}</div>
@@ -174,7 +174,7 @@
 	<div class="mb-6">
 		<Profiles account={data} />
 	</div>
-	<div class="grid grid-cols-3 grid-rows-2 gap-6">
+	<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 		<div class="row-span-2">
 			<ReportLog account={data} />
 		</div>

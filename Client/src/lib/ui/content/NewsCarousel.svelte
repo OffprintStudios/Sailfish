@@ -160,7 +160,7 @@
 				>
 					{#each posts.items as post}
 						<button
-							class="rounded-full mx-[0.075rem] lg:mx-0.5"
+							class="rounded-full mx-[0.075rem] lg:mx-0.5 text-white"
 							on:click={() => (currPost = post)}
 						>
 							{#if currPost.id === post.id}

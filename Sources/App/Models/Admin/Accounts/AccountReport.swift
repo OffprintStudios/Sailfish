@@ -36,6 +36,7 @@ final class AccountReport: Model, Content {
         self.id = id
         self.$reportedBy.id = reportedBy
         self.$account.id = formInfo.accountId
+        type = formInfo.type
         metadata = .init(
             itemId: formInfo.itemId,
             reason: formInfo.reason,

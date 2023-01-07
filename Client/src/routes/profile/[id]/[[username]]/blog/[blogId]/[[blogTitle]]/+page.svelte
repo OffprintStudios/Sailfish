@@ -11,7 +11,7 @@
 	import { onMount } from "svelte";
 	import { delReq, getReq, patchReq, postReq } from "$lib/http";
 	import type { ResponseError } from "$lib/http";
-	import type { FavoriteBlog, PublishBlogForm } from "$lib/models/content";
+	import type { PublishBlogForm } from "$lib/models/content";
 	import toast from "svelte-french-toast";
 	import { openPopup } from "$lib/ui/popup";
 	import { UploadBlogBanner } from "$lib/ui/upload";
@@ -32,6 +32,10 @@
 		CheckboxCircleLine
 	} from "svelte-remixicon";
 	import DeleteBlogPrompt from "./DeleteBlogPrompt.svelte";
+	import { ReportForm } from "$lib/ui/admin";
+	import { ReportKind } from "$lib/models/admin/users/reports";
+	import TagBadge from "$lib/ui/content/TagBadge.svelte";
+	import { TagKind } from "$lib/models/tags";
 
 	export let data: { blog: Blog; comments?: Paginate<Comment> };
 	let blog = data.blog;
@@ -143,6 +147,23 @@
 			}
 		});
 	}
+
+	function reportBlog() {
+		openPopup(
+			ReportForm,
+			{
+				onConfirm: () => {
+					console.log("0");
+				}
+			},
+			{
+				kind: ReportKind.Blog,
+				accountId: blog.author.account.id,
+				itemId: blog.id,
+				link: $page.url.pathname
+			}
+		);
+	}
 </script>
 
 <svelte:head>
@@ -245,6 +266,8 @@
 					<PenNibLine class="mr-1 relative -top-[0.075rem]" size="16px" />
 					<span>{abbreviate(blog.stats.words)}</span>
 				</span>
+				<div class="flex-1"><!--spacer--></div>
+				<TagBadge kind={TagKind.rating} rating={blog.rating} size="small" />
 			</div>
 			<h1>{blog.title}</h1>
 		</div>
@@ -310,7 +333,7 @@
 						<span class="button-text">Discuss</span>
 					</Button>
 					<div class="flex-1"><!--spacer--></div>
-					<Button kind="primary">
+					<Button kind="primary" on:click={reportBlog}>
 						<AlarmWarningLine class="button-icon" />
 						<span class="button-text">Report</span>
 					</Button>
