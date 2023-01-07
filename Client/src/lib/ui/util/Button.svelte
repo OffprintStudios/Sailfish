@@ -1,16 +1,16 @@
 <script lang="ts">
-	import { Loader5Line } from 'svelte-remixicon';
+	import { Loader5Line } from "svelte-remixicon";
 
 	export let loading = false;
 	export let isActive = false;
 	export let disabled = false;
-	export let classes = '';
-	export let loadingText = 'Loading...';
-	export let type = 'button';
-	export let kind: 'primary' | 'normal' = 'normal';
-	export let title = '';
+	export let classes = "";
+	export let loadingText = "Loading...";
+	export let type = "button";
+	export let kind: "primary" | "normal" = "normal";
+	export let title = "";
 	export let asLink = false;
-	export let href = '';
+	export let href = "";
 	export let thisButton = null;
 
 	let isDisabled: boolean;
@@ -19,9 +19,9 @@
 
 {#if asLink}
 	<a
-		class:primary={kind === 'primary'}
+		class:primary={kind === "primary"}
 		class:active={isActive}
-		class="{classes}"
+		class={classes}
 		{title}
 		{href}
 		tabindex="0"
@@ -36,11 +36,11 @@
 {:else}
 	<button
 		{type}
-		class:primary={kind === 'primary'}
+		class:primary={kind === "primary"}
 		class:active={isActive}
 		{title}
 		class:disabled
-		class="{classes}"
+		class={classes}
 		disabled={isDisabled}
 		tabindex="0"
 		on:click
@@ -56,7 +56,8 @@
 {/if}
 
 <style lang="scss">
-	button, a {
+	button,
+	a {
 		@apply flex items-center px-2 py-1.5 transition transform focus:ring-0 m-0 text-base rounded-lg select-none z-[11] relative;
 		text-transform: lowercase;
 		font-variant: small-caps;

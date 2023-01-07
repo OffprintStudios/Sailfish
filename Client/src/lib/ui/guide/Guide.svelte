@@ -114,12 +114,12 @@
 				</div>
 				{#if $guide.routing.length === 1}
 					{#key $guide.currTab}
-						<div in:fly|local={{ delay: 0, duration: 200, x: -200 }}>
+						<div in:fade|local={{ delay: 0, duration: 200 }}>
 							<svelte:component this={$guide.routing[$guide.currPage]} />
 						</div>
 					{/key}
 				{:else}
-					<div in:fly|local={{ delay: 0, duration: 200, x: -200 }}>
+					<div in:fade|local={{ delay: 0, duration: 200 }}>
 						<svelte:component this={$guide.routing[$guide.currPage]} />
 					</div>
 				{/if}

@@ -102,11 +102,6 @@
 			<span class="relative">{abbreviate(work.words)}</span>
 		</span>
 		<span class="mx-2">/</span>
-		<span class="flex items-center relative z-[2]" title="Comments">
-			<DiscussLine class="mr-1" size="16px" />
-			<span class="relative">{abbreviate(work.comments)}</span>
-		</span>
-		<span class="mx-2">/</span>
 		{#if work.publishedOn}
 			<span class="flex items-center relative z-[2]" title="Published On">
 				<Calendar2Line class="mr-1" size="16px" />

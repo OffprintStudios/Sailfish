@@ -7,7 +7,6 @@
 	import { account } from "$lib/state/account.state";
 	import { InfoBar } from "$lib/ui/util";
 	import WorkHeader from "./WorkHeader.svelte";
-	import WorkStats from "./WorkStats.svelte";
 	import WorkInfo from "./WorkInfo.svelte";
 	import ListContainer from "./ListContainer.svelte";
 	import ApprovalOptionsBar from "./ApprovalOptionsBar.svelte";
@@ -67,7 +66,7 @@
 	<meta property="twitter:image" content={data.coverArt ?? data.author.avatar} />
 </svelte:head>
 
-<div class="max-w-7xl mx-auto my-6">
+<div class="max-w-7xl mx-auto mb-6 lg:mt-6">
 	<WorkHeader work={data} />
 	{#if !data.publishedOn && !queueItem}
 		<InfoBar
@@ -78,11 +77,8 @@
 	{:else if queueItem}
 		<ApprovalOptionsBar {queueItem} />
 	{/if}
-	<div class="flex flex-row max-w-4xl mx-auto">
-		<WorkStats work={data} />
-		<div class="mx-6 flex-1">
-			<WorkInfo work={data} />
-			<ListContainer work={data} />
-		</div>
+	<div class="max-w-4xl w-11/12 lg:w-full mx-auto">
+		<WorkInfo work={data} />
+		<ListContainer work={data} />
 	</div>
 </div>

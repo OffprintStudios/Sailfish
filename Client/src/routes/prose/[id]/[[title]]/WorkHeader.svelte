@@ -1,43 +1,57 @@
 <script lang="ts">
-	import {onMount} from "svelte";
-	import {account} from "$lib/state/account.state";
+	import { onMount } from "svelte";
+	import { goto } from "$app/navigation";
+	import { account } from "$lib/state/account.state";
 	import {
+		AlarmWarningLine,
+		BarChart2Line,
 		BookLine,
 		Bookmark3Line,
+		Calendar2Line,
 		CloseCircleLine,
+		DeleteBinLine,
 		DislikeLine,
+		Edit2Line,
 		EyeLine,
 		EyeOffLine,
 		HeartLine,
 		ImageAddLine,
 		ImageEditLine,
+		LineChartLine,
 		Loader5Line,
-		TimeLine,
+		PenNibLine,
+		TimeLine
 	} from "svelte-remixicon";
-	import type {Work} from "$lib/models/content/works";
-	import {ApprovalStatus} from "$lib/models/content/works";
-	import {TagBadge} from "$lib/ui/content";
-	import {abbreviate, slugify} from "$lib/util/functions";
-	import {TagKind} from "$lib/models/tags";
-	import {NavLink} from "$lib/ui/nav";
-	import {openPopup} from "$lib/ui/popup";
-	import {UploadCoverArt, UploadWorkBanner} from "$lib/ui/upload";
+	import type { Work } from "$lib/models/content/works";
+	import { ApprovalStatus } from "$lib/models/content/works";
+	import { AddToShelfPrompt, TagBadge } from "$lib/ui/content";
+	import { abbreviate, slugify } from "$lib/util/functions";
+	import { TagKind } from "$lib/models/tags";
+	import { NavLink } from "$lib/ui/nav";
+	import { openPopup } from "$lib/ui/popup";
+	import { UploadCoverArt, UploadWorkBanner } from "$lib/ui/upload";
 	import toast from "svelte-french-toast";
-	import {Button} from "$lib/ui/util";
-	import type {ReadingHistory} from "$lib/models/content/library";
-	import {Vote} from "$lib/models/content/library";
-	import type {ResponseError} from "$lib/http";
-	import {delReq, getReq, patchReq, putReq} from "$lib/http";
+	import { Button, Time } from "$lib/ui/util";
+	import type { ReadingHistory } from "$lib/models/content/library";
+	import { Vote } from "$lib/models/content/library";
+	import type { ResponseError } from "$lib/http";
+	import { delReq, getReq, patchReq, putReq } from "$lib/http";
 	import PublishWorkPrompt from "./PublishWorkPrompt.svelte";
+	import DeleteWorkPrompt from "./DeleteWorkPrompt.svelte";
 
 	export let work: Work;
 	export let history: ReadingHistory;
+	const fandoms = work.tags.filter((value) => value.kind === TagKind.fandom);
 	let library: { hasItem: boolean } = { hasItem: false };
 	let isVoting = false;
 	let isAddingToLibrary = false;
 
 	onMount(async () => {
-		if ($account.account && $account.currProfile && $account.currProfile.id !== work.author.id) {
+		if (
+			$account.account &&
+			$account.currProfile &&
+			$account.currProfile.id !== work.author.id
+		) {
 			await checkLibrary();
 		}
 	});
@@ -47,7 +61,9 @@
 			toast.error(`This feature is disabled for unpublished works.`);
 			return;
 		}
-		const response = await getReq<{ hasItem: boolean }>(`/history/fetch-one?workId=${work.id}&profileId=${$account.currProfile?.id}`);
+		const response = await getReq<{ hasItem: boolean }>(
+			`/history/fetch-one?workId=${work.id}&profileId=${$account.currProfile?.id}`
+		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
 			toast.error(error.message);
@@ -69,9 +85,12 @@
 				isVoting = false;
 				return;
 			}
-			const response = await patchReq<ReadingHistory>(`/history/set-vote?workId=${work.id}&profileId=${$account.currProfile.id}`, {
-				vote: history.vote === vote ? Vote.noVote : vote,
-			});
+			const response = await patchReq<ReadingHistory>(
+				`/history/set-vote?workId=${work.id}&profileId=${$account.currProfile.id}`,
+				{
+					vote: history.vote === vote ? Vote.noVote : vote
+				}
+			);
 			if ((response as ResponseError).error) {
 				const error = response as ResponseError;
 				toast.error(error.message);
@@ -100,9 +119,14 @@
 
 			let response: { hasItem: boolean } | ResponseError;
 			if (library.hasItem) {
-				response = await delReq<{ hasItem: boolean}>(`/library/remove-one?workId=${work.id}&profileId=${$account.currProfile.id}`);
+				response = await delReq<{ hasItem: boolean }>(
+					`/library/remove-one?workId=${work.id}&profileId=${$account.currProfile.id}`
+				);
 			} else {
-				response = await putReq<{ hasItem: boolean }>(`/library/add-one?workId=${work.id}&profileId=${$account.currProfile.id}`, {});
+				response = await putReq<{ hasItem: boolean }>(
+					`/library/add-one?workId=${work.id}&profileId=${$account.currProfile.id}`,
+					{}
+				);
 			}
 
 			if ((response as ResponseError).error) {
@@ -118,32 +142,43 @@
 	}
 
 	function updateCoverArt() {
-		openPopup(UploadCoverArt, {
-			onConfirm(value: Work) {
-				work = value;
-			}
-		}, { workId: work.id });
+		openPopup(
+			UploadCoverArt,
+			{
+				onConfirm(value: Work) {
+					work = value;
+				}
+			},
+			{ workId: work.id }
+		);
 	}
 
 	function updateBannerArt() {
-		openPopup(UploadWorkBanner, {
-			onConfirm(value: Work) {
-				work = value;
-			}
-		}, { workId: work.id })
+		openPopup(
+			UploadWorkBanner,
+			{
+				onConfirm(value: Work) {
+					work = value;
+				}
+			},
+			{ workId: work.id }
+		);
 	}
 
 	function publishWork() {
 		openPopup(PublishWorkPrompt, {
 			onConfirm: async () => {
 				const response = await toast.promise(
-						patchReq<void>(`/works/publish-work/${work.id}?profileId=${$account.currProfile?.id}`, {}),
-						{
-							loading: 'Submitting to queue...',
-							success: 'Your work has been submitted!',
-							error: null,
-						}
-					);
+					patchReq<void>(
+						`/works/publish-work/${work.id}?profileId=${$account.currProfile?.id}`,
+						{}
+					),
+					{
+						loading: "Submitting to queue...",
+						success: "Your work has been submitted!",
+						error: null
+					}
+				);
 				if ((response as ResponseError).error) {
 					const error = response as ResponseError;
 					toast.error(error.message);
@@ -151,7 +186,7 @@
 					work.approvalStatus = ApprovalStatus.Pending;
 				}
 			}
-		})
+		});
 	}
 
 	async function hideShow() {
@@ -160,19 +195,54 @@
 			return;
 		}
 		const response = await toast.promise<void>(
-				patchReq<void>(`/works/hide-show/${work.id}?profileId=${$account.currProfile?.id}`, {}),
-				{
-					loading: 'Changing visibility...',
-					success: 'Changes saved!',
-					error: null,
-				}
-			);
+			patchReq<void>(`/works/hide-show/${work.id}?profileId=${$account.currProfile?.id}`, {}),
+			{
+				loading: "Changing visibility...",
+				success: "Changes saved!",
+				error: null
+			}
+		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
 			toast.error(error.message);
 		} else {
 			work.publishedOn = undefined;
 		}
+	}
+
+	async function addToShelf() {
+		openPopup(
+			AddToShelfPrompt,
+			{
+				onConfirm: async () => {
+					console.log(`hit!`);
+				}
+			},
+			{ workId: work.id }
+		);
+	}
+
+	async function deleteWork() {
+		openPopup(DeleteWorkPrompt, {
+			onConfirm: async () => {
+				const result = await toast.promise<void | ResponseError>(
+					delReq<void>(
+						`/works/delete-work/${work.id}?profileId=${$account.currProfile?.id}`
+					),
+					{
+						loading: "Deleting work...",
+						success: "Work deleted!",
+						error: null
+					}
+				);
+				if ((result as ResponseError).error) {
+					const error = result as ResponseError;
+					toast.error(error.message);
+				} else {
+					await goto(`/profile/${work.author.id}/${slugify(work.author.username)}/works`);
+				}
+			}
+		});
 	}
 </script>
 
@@ -193,19 +263,20 @@
 				{/if}
 			</div>
 		</div>
-	{:else}
-		{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
-			<div class="cover-art w-[150px]">
-				<div class="flex flex-col items-center justify-center w-[150px] h-[215px] bg-zinc-200 dark:bg-zinc-700 border-4 border-zinc-300 dark:border-zinc-600 rounded-xl" style="box-shadow: var(--dropshadow);">
-					<NavLink type="button" on:click={updateCoverArt}>
-						<ImageAddLine class="link-icon" />
-						<span class="link-name">Add Cover</span>
-					</NavLink>
-				</div>
+	{:else if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
+		<div class="cover-art w-[180px]">
+			<div
+				class="flex flex-col items-center justify-center w-[180px] h-[215px] bg-zinc-200 dark:bg-zinc-700 border-4 border-zinc-300 dark:border-zinc-600 rounded-xl"
+				style="box-shadow: var(--dropshadow);"
+			>
+				<NavLink type="button" on:click={updateCoverArt}>
+					<ImageAddLine class="link-icon" />
+					<span class="link-name">Add Cover</span>
+				</NavLink>
 			</div>
-		{:else}
-			<div class="cover-art"><!--this is meant to be empty--></div>
-		{/if}
+		</div>
+	{:else}
+		<div class="cover-art"><!--this is meant to be empty--></div>
 	{/if}
 	<div class="banner" class:h-[150px]={!work.bannerArt} class:h-[250px]={work.bannerArt}>
 		{#if work.bannerArt}
@@ -214,109 +285,210 @@
 		<div class="absolute top-2 right-2 z-[2]">
 			<div class="flex items-center">
 				<TagBadge kind={TagKind.category} category={work.category} />
-				<div class="mx-[0.075rem]"></div>
+				<div class="mx-[0.075rem]"><!--spacer--></div>
 				<TagBadge kind={TagKind.status} status={work.status} />
-				<div class="mx-[0.075rem]"></div>
+				<div class="mx-[0.075rem]"><!--spacer--></div>
 				<TagBadge kind={TagKind.rating} rating={work.rating} />
+				{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
+					<div class="mx-2 text-white text-lg relative top-[0.1625rem]">|</div>
+					<div class="relative top-0.5">
+						<Button on:click={updateBannerArt} kind="primary">
+							{#if work.bannerArt}
+								<ImageEditLine class="button-icon no-text" size="18px" />
+							{:else}
+								<ImageAddLine class="button-icon no-text" size="18px" />
+							{/if}
+						</Button>
+					</div>
+				{/if}
 			</div>
 		</div>
 	</div>
 	<div class="title-bar">
-		<div class="flex-1">
+		<div class="flex-1 text-center lg:text-left">
 			<h1 class="text-3xl" style="color: var(--text-color);">
 				{work.title}
 			</h1>
-			<div class="flex items-center flex-wrap">
-			<span class="relative top-0.5 text-xl font-medium text-zinc-400" style="font-family: var(--header-text);">
-				by <a class="text-zinc-400" href="/profile/{work.author.id}/{slugify(work.author.username)}">{work.author.username}</a>
-			</span>
-				<span class="mx-1 text-zinc-400">•</span>
-				{#each work.tags as tag}
-					<TagBadge tag={tag} kind={tag.kind} />
-					<div class="mx-[0.075rem]"></div>
-				{/each}
+			<div class="flex items-center justify-center lg:justify-start flex-wrap">
+				<span
+					class="relative top-0.5  text-xl font-medium text-zinc-400"
+					style="font-family: var(--header-text);"
+				>
+					by <a
+						class="text-zinc-400"
+						href="/profile/{work.author.id}/{slugify(work.author.username)}"
+						>{work.author.username}</a
+					>
+				</span>
+				<span class="mx-1 text-zinc-400 hidden lg:block">•</span>
+				<div
+					class="flex items-center justify-center w-full lg:w-fit my-2 lg:my-0 lg:justify-start flex-wrap"
+				>
+					{#each work.tags as tag}
+						{#if tag.kind === TagKind.genre}
+							<TagBadge {tag} kind={tag.kind} />
+							<div class="mx-[0.075rem]"><!--spacer--></div>
+						{/if}
+					{/each}
+					{#each fandoms as tag, i}
+						{#if i === 0}
+							<TagBadge {tag} kind={tag.kind} />
+							<button
+								class="relative text-lg top-0.5 ml-2 text-zinc-400"
+								style="font-family: var(--header-text);"
+							>
+								+ {fandoms.length - 1} more
+							</button>
+						{/if}
+					{/each}
+				</div>
 			</div>
 		</div>
 		<div class="flex items-center">
+			<button
+				title="{work.likes} likes"
+				disabled={isVoting}
+				type="button"
+				class="utility"
+				class:active={history?.vote === Vote.liked}
+				on:click={() => setVote(Vote.liked)}
+			>
+				{#if isVoting}
+					<Loader5Line class="animate-spin mr-1" size="24px" />
+				{:else}
+					<HeartLine class="mr-1" size="24px" />
+				{/if}
+				<span class="text-xl relative top-0.5" style="font-family: var(--header-text);"
+					>{abbreviate(work.likes)}</span
+				>
+			</button>
+			<div class="mx-0.5"><!--spacer--></div>
+			<button
+				title="{work.dislikes} dislikes"
+				disabled={isVoting}
+				type="button"
+				class="utility"
+				class:active={history?.vote === Vote.disliked}
+				on:click={() => setVote(Vote.disliked)}
+			>
+				{#if isVoting}
+					<Loader5Line class="animate-spin mr-1" size="24px" />
+				{:else}
+					<DislikeLine class="mr-1" size="24px" />
+				{/if}
+				<span class="text-xl relative top-0.5" style="font-family: var(--header-text);"
+					>{abbreviate(work.dislikes)}</span
+				>
+			</button>
+		</div>
+	</div>
+	<div class="tool-bar">
+		<div class="flex items-center p-1 bg-zinc-300 dark:bg-zinc-600 rounded-xl">
 			{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
 				{#if work.approvalStatus === ApprovalStatus.NotSubmitted}
-					<NavLink type="button" on:click={publishWork}>
-						<BookLine class="link-icon" />
-						<span class="link-name">Publish</span>
-					</NavLink>
+					<Button type="button" on:click={publishWork}>
+						<BookLine class="button-icon" />
+						<span class="button-text">Publish</span>
+					</Button>
 				{:else if work.approvalStatus === ApprovalStatus.Pending}
-					<NavLink type="button">
-						<TimeLine class="link-icon" />
-						<span class="link-name">Pending</span>
-					</NavLink>
+					<Button type="button">
+						<TimeLine class="button-icon" />
+						<span class="button-text">Pending</span>
+					</Button>
 				{:else if work.approvalStatus === ApprovalStatus.Rejected}
-					<NavLink type="button" on:click={publishWork}>
-						<CloseCircleLine class="link-icon" />
-						<span class="link-name">Rejected</span>
-					</NavLink>
+					<Button type="button" on:click={publishWork}>
+						<CloseCircleLine class="button-icon" />
+						<span class="button-text">Rejected</span>
+					</Button>
 				{:else if work.approvalStatus === ApprovalStatus.Approved}
 					{#if work.publishedOn}
-						<NavLink type="button" on:click={hideShow}>
-							<EyeOffLine class="link-icon" />
-							<span class="link-name">Hide</span>
-						</NavLink>
+						<Button type="button" on:click={hideShow}>
+							<EyeOffLine class="button-icon" />
+							<span class="button-text">Hide</span>
+						</Button>
 					{:else}
-						<NavLink type="button" on:click={hideShow}>
-							<EyeLine class="link-icon" />
-							<span class="link-name">Show</span>
-						</NavLink>
+						<Button type="button" on:click={hideShow}>
+							<EyeLine class="button-icon" />
+							<span class="button-text">Show</span>
+						</Button>
 					{/if}
 				{/if}
-				<NavLink type="button" on:click={updateBannerArt}>
-					{#if work.bannerArt}
-						<ImageEditLine class="link-icon" />
-					{:else}
-						<ImageAddLine class="link-icon" />
-					{/if}
-					<span class="link-name">Banner</span>
-				</NavLink>
+				<div class="mx-0.5"><!--spacer--></div>
+				<Button on:click={() => goto(`/prose/${work.id}/${slugify(work.title)}/edit`)}>
+					<Edit2Line class="button-icon" />
+					<span class="button-text">Edit</span>
+				</Button>
+				<div class="mx-1 text-zinc-400 text-lg relative top-[0.075rem]">|</div>
+				<Button on:click={addToShelf}>
+					<BarChart2Line class="button-icon" />
+					<span class="button-text">Shelves</span>
+				</Button>
+				<div class="mx-1 text-zinc-400 text-lg relative top-[0.075rem]">|</div>
+				<Button on:click={deleteWork}>
+					<DeleteBinLine class="button-icon" />
+					<span class="button-text">Delete</span>
+				</Button>
+			{:else if $account.account && $account.currProfile && $account.currProfile.id !== work.author.id}
+				<Button on:click={setLibrary}>
+					<Bookmark3Line class="button-icon" />
+					<span class="button-text">Library</span>
+				</Button>
+				<div class="mx-0.5"><!--spacer--></div>
+				<Button on:click={addToShelf}>
+					<BarChart2Line class="button-icon" />
+					<span class="button-text">Shelves</span>
+				</Button>
+				<div class="mx-1 text-zinc-400 text-lg relative top-[0.075rem]">|</div>
+				<Button>
+					<AlarmWarningLine class="button-icon" />
+					<span class="button-text">Report</span>
+				</Button>
 			{:else}
-				<button
-					title="{work.likes} likes"
-					disabled={isVoting}
-					type="button"
-					class="utility"
-					class:active={history?.vote === Vote.liked}
-					on:click={() => setVote(Vote.liked)}
-				>
-					{#if isVoting}
-						<Loader5Line class="animate-spin mr-1" size="24px" />
-					{:else}
-						<HeartLine class="mr-1" size="24px" />
-					{/if}
-					<span class="text-xl relative top-0.5" style="font-family: var(--header-text);">{abbreviate(work.likes)}</span>
-				</button>
-				<div class="mx-0.5"></div>
-				<button
-					title="{work.dislikes} dislikes"
-					disabled={isVoting}
-					type="button"
-					class="utility"
-					class:active={history?.vote === Vote.disliked}
-					on:click={() => setVote(Vote.disliked)}
-				>
-					{#if isVoting}
-						<Loader5Line class="animate-spin mr-1" size="24px" />
-					{:else}
-						<DislikeLine class="mr-1" size="24px" />
-					{/if}
-					<span class="text-xl relative top-0.5" style="font-family: var(--header-text);">{abbreviate(work.dislikes)}</span>
-				</button>
-				<div class="mx-0.5"></div>
-				<button
-					title="Add to Library"
-					type="button"
-					class="utility"
-					class:active={library?.hasItem}
-					on:click={setLibrary}
-				>
-					<Bookmark3Line size="24px" />
-				</button>
+				<Button disabled>
+					<Bookmark3Line class="button-icon" />
+					<span class="button-text">Library</span>
+				</Button>
+				<div class="mx-0.5"><!--spacer--></div>
+				<Button disabled>
+					<BarChart2Line class="button-icon" />
+					<span class="button-text">Shelves</span>
+				</Button>
+				<div class="mx-1 text-zinc-400 text-lg relative top-[0.075rem]">|</div>
+				<Button disabled>
+					<AlarmWarningLine class="button-icon" />
+					<span class="button-text">Report</span>
+				</Button>
+			{/if}
+		</div>
+		<div class="flex-1"><!--spacer--></div>
+		<div
+			class="flex items-center mt-4 lg:mt-0 lg:self-end lg:justify-end text-base text-zinc-400"
+			style="font-family: var(--header-text);"
+		>
+			<span class="flex items-center relative z-[2]" title="Views">
+				<LineChartLine class="mr-1" size="20px" />
+				<span class="relative">{abbreviate(work.views)}</span>
+			</span>
+			<span class="mx-2">/</span>
+			<span class="flex items-center relative z-[2]" title="Words">
+				<PenNibLine class="mr-1" size="20px" />
+				<span class="relative">{abbreviate(work.words)}</span>
+			</span>
+			<span class="mx-2">/</span>
+			{#if work.publishedOn}
+				<span class="flex items-center relative z-[2]" title="Published On">
+					<Calendar2Line class="mr-1" size="20px" />
+					<span class="relative"
+						><Time timestamp={work.publishedOn} format="MMM DD, YYYY" /></span
+					>
+				</span>
+			{:else}
+				<span class="flex items-center relative z-[2]" title="Created On">
+					<Calendar2Line class="mr-1" size="20px" />
+					<span class="relative"
+						><Time timestamp={work.createdAt} format="MMM DD, YYYY" /></span
+					>
+				</span>
 			{/if}
 		</div>
 	</div>
@@ -324,26 +496,37 @@
 
 <style lang="scss">
 	div.header-container {
-		@apply grid rounded-xl relative mb-6 overflow-hidden;
+		@apply grid lg:rounded-xl relative mb-6 overflow-hidden;
 		grid-template-areas:
-    		"a b"
-    		"c d";
-		grid-template-rows: 1fr auto;
+			"banner"
+			"cover"
+			"title"
+			"action";
+		grid-template-rows: 1fr auto auto;
 		grid-template-columns: auto 1fr;
-
+		@media (min-width: 1024px) {
+			grid-template-areas:
+				"banner banner"
+				"cover title"
+				"action action";
+		}
 		div.cover-art {
-			grid-area: a / c / c / c;
+			grid-area: banner / banner / cover / cover;
 			display: flex;
 			align-items: flex-end;
-			@apply p-4 relative;
+			@apply px-4 pt-16 lg:p-4 relative items-end justify-self-center lg:justify-self-start;
 		}
 		div.banner {
 			background: var(--accent);
-			grid-area: a / a / b / b;
+			grid-area: banner;
 		}
 		div.title-bar {
-			grid-area: d;
-			@apply p-4 pl-0 flex items-center z-[2] relative;
+			grid-area: title;
+			@apply p-4 pl-0 flex flex-col lg:flex-row items-center z-[2] relative;
+		}
+		div.tool-bar {
+			grid-area: action;
+			@apply flex flex-col lg:flex-row items-center mx-4 mb-4;
 		}
 		button.utility {
 			@apply flex items-center p-2 rounded-xl transition;
