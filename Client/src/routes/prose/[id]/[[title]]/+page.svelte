@@ -23,18 +23,24 @@
 			$account.currProfile &&
 			hasRoles($account.account.roles, [Roles.Admin, Roles.Moderator, Roles.WorkApprover])
 		) {
-			const response = await getReq<ApprovalQueue>(
-				`/approval-queue/fetch-one?workId=${data.id}&profileId=${$account.currProfile?.id}`
-			);
-			if ((response as ResponseError).error) {
-				const error = response as ResponseError;
-				console.log(error.message);
-			} else {
-				console.log(`this has been added to`);
-				queueItem = response as ApprovalQueue;
-			}
+			await fetchQueueItem();
 		}
 	});
+
+	async function fetchQueueItem() {
+		const response = await getReq<ApprovalQueue>(
+			`/approval-queue/fetch-one?workId=${data.id}&profileId=${$account.currProfile?.id}`
+		);
+		console.log(response);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			console.log(error.message);
+		} else {
+			console.log(`this has been added to`);
+			queueItem = response as ApprovalQueue;
+			console.log(queueItem);
+		}
+	}
 </script>
 
 <svelte:head>
