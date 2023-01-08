@@ -424,7 +424,7 @@
 				{#if i === 0}
 					<TagBadge {tag} kind={tag.kind} size="small" />
 					<button
-						class="relative text-base top-0.5 ml-2 text-zinc-400"
+						class="relative text-sm lg:text-base top-1 lg:top-0.5 ml-2 text-zinc-400"
 						style="font-family: var(--header-text);"
 					>
 						+ {fandoms.length - 1} more
