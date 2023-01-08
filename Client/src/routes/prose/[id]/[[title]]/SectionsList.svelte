@@ -2,7 +2,12 @@
 	import { onMount } from "svelte";
 	import { account } from "$lib/state/account.state";
 	import type { Section, Work } from "$lib/models/content/works";
-	import { CheckboxCircleLine, CheckboxBlankCircleLine, DeleteBinLine, Loader5Line } from "svelte-remixicon";
+	import {
+		CheckboxCircleLine,
+		CheckboxBlankCircleLine,
+		DeleteBinLine,
+		Loader5Line
+	} from "svelte-remixicon";
 	import { slugify, localeDate } from "$lib/util/functions";
 	import toast from "svelte-french-toast";
 	import { getReq, patchReq, delReq } from "$lib/http";
@@ -22,7 +27,11 @@
 
 	async function fetchSections() {
 		loading = true;
-		if ($account.account && $account.currProfile && $account.currProfile.id === work.author.id) {
+		if (
+			$account.account &&
+			$account.currProfile &&
+			$account.currProfile.id === work.author.id
+		) {
 			const response = await getReq<Section[]>(`/sections/fetch-sections?workId=${work.id}`);
 			if ((response as ResponseError).error) {
 				const error = response as ResponseError;
@@ -31,7 +40,9 @@
 				sections = response as Section[];
 			}
 		} else {
-			const response = await getReq<Section[]>(`/sections/fetch-sections?workId=${work.id}&published=true`);
+			const response = await getReq<Section[]>(
+				`/sections/fetch-sections?workId=${work.id}&published=true`
+			);
 			if ((response as ResponseError).error) {
 				const error = response as ResponseError;
 				toast.error(error.message);
@@ -44,13 +55,16 @@
 
 	async function publishSection(id: string) {
 		publishing = true;
-		const response = await patchReq<Section>(`/sections/publish-section/${id}?workId=${work.id}&profileId=${$account.currProfile.id}`, {});
+		const response = await patchReq<Section>(
+			`/sections/publish-section/${id}?workId=${work.id}&profileId=${$account.currProfile?.id}`,
+			{}
+		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
 			toast.error(error.message);
 		} else {
 			const section = response as Section;
-			sections = sections.map(item => item.id === section.id ? section : item);
+			sections = sections.map((item) => (item.id === section.id ? section : item));
 		}
 		publishing = false;
 	}
@@ -59,7 +73,9 @@
 		openPopup(DeleteSectionPrompt, {
 			async onConfirm() {
 				deleting = true;
-				const response = await delReq<void>(`/sections/delete-section/${id}?workId=${work.id}&profileId=${$account.currProfile.id}`);
+				const response = await delReq<void>(
+					`/sections/delete-section/${id}?workId=${work.id}&profileId=${$account.currProfile?.id}`
+				);
 				if ((response as ResponseError).error) {
 					const error = response as ResponseError;
 					toast.error(error.message);
@@ -103,14 +119,19 @@
 						</button>
 					{/if}
 				{/if}
-				<a href="/prose/{work.id}/{slugify(work.title)}/section/{section.id}/{slugify(section.title)}" data-sveltekit-preload-data>
+				<a
+					href="/prose/{work.id}/{slugify(work.title)}/section/{section.id}/{slugify(
+						section.title
+					)}"
+					data-sveltekit-preload-data
+				>
 					<span class="title">{section.title}</span>
 					<span class="words">{section.words} words</span>
 					<span class="mx-1">•</span>
 					{#if section.publishedOn}
-						<span>{localeDate(section.publishedOn, 'shortDate')}</span>
+						<span>{localeDate(section.publishedOn, "shortDate")}</span>
 					{:else}
-						<span>{localeDate(section.createdAt, 'shortDate')}</span>
+						<span>{localeDate(section.createdAt, "shortDate")}</span>
 					{/if}
 				</a>
 				{#if $account.currProfile && $account.currProfile.id === work.author.id}

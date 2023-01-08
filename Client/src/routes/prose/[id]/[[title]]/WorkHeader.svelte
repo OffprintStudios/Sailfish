@@ -23,7 +23,7 @@
 	} from "svelte-remixicon";
 	import type { Work } from "$lib/models/content/works";
 	import { ApprovalStatus } from "$lib/models/content/works";
-	import { AddToShelfPrompt, TagBadge } from "$lib/ui/content";
+	import { AddToShelfPrompt, TagBadge, AllTagsPrompt } from "$lib/ui/content";
 	import { abbreviate, slugify } from "$lib/util/functions";
 	import { TagKind } from "$lib/models/tags";
 	import { NavLink } from "$lib/ui/nav";
@@ -248,20 +248,16 @@
 	}
 
 	function reportWork() {
-		openPopup(
-			ReportForm,
-			{
-				onConfirm: () => {
-					console.log("0");
-				}
-			},
-			{
-				kind: ReportKind.Work,
-				accountId: work.author.account.id,
-				itemId: work.id,
-				link: $page.url.pathname
-			}
-		);
+		openPopup(ReportForm, null, {
+			kind: ReportKind.Work,
+			accountId: work.author.account.id,
+			itemId: work.id,
+			link: $page.url.pathname
+		});
+	}
+
+	function openAllTags() {
+		openPopup(AllTagsPrompt, null, { tags: work.tags });
 	}
 </script>
 
@@ -382,6 +378,7 @@
 							<button
 								class="relative text-lg top-0.5 ml-2 text-zinc-400"
 								style="font-family: var(--header-text);"
+								on:click={openAllTags}
 							>
 								+ {fandoms.length - 1} more
 							</button>
@@ -432,6 +429,7 @@
 					<button
 						class="relative text-sm lg:text-base top-1 lg:top-0.5 ml-2 text-zinc-400"
 						style="font-family: var(--header-text);"
+						on:click={openAllTags}
 					>
 						+ {fandoms.length - 1} more
 					</button>

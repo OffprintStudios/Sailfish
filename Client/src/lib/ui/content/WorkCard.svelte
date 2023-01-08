@@ -8,14 +8,24 @@
 	import { Time } from "../util";
 	import {
 		Calendar2Line,
-		DiscussLine,
 		LineChartLine,
 		MoreFill,
-		PenNibLine
+		PenNibLine,
+		ThumbUpLine,
+		ThumbDownLine,
+		ThumbUpFill,
+		ThumbDownFill
 	} from "svelte-remixicon";
+	import { openPopup } from "$lib/ui/popup";
+	import { AllTagsPrompt } from "$lib/ui/content/index";
 
 	export let work: Work;
 	export let withDropdown = true;
+	const fandoms = work.tags.filter((value) => value.kind === TagKind.fandom);
+
+	function openAllTags() {
+		openPopup(AllTagsPrompt, null, { tags: work.tags });
+	}
 </script>
 
 <div
@@ -59,9 +69,9 @@
 				{/if}
 				<div class="flex-1"><!--spacer--></div>
 				<TagBadge category={work.category} kind={TagKind.category} size="small" />
-				<div class="mx-[0.025rem]" />
+				<div class="mx-[0.025rem]"><!--spacer--></div>
 				<TagBadge kind={TagKind.status} size="small" status={work.status} />
-				<div class="mx-[0.025rem]" />
+				<div class="mx-[0.025rem]"><!--spacer--></div>
 				<TagBadge kind={TagKind.rating} rating={work.rating} size="small" />
 			</div>
 		</div>
@@ -82,16 +92,44 @@
 	<div class="flex items-center flex-wrap px-2">
 		{#each work.tags.filter((item) => item.kind === TagKind.genre) as tag}
 			<TagBadge {tag} kind={tag.kind} size="small" />
-			<div class="mx-[0.05rem] last:mx-0" />
+			<div class="mx-[0.05rem] last:mx-0"><!--spacer--></div>
+		{/each}
+		{#each fandoms as tag, i}
+			{#if i === 0}
+				<TagBadge {tag} kind={tag.kind} size="small" />
+				<button
+					class="relative z-[2] text-sm top-1 lg:top-0.5 ml-2 text-zinc-400"
+					style="font-family: var(--header-text);"
+					on:click={openAllTags}
+				>
+					+ {fandoms.length - 1} more
+				</button>
+			{/if}
 		{/each}
 	</div>
 	<div class="text-xs px-4 mt-4 mb-4">
 		{@html work.shortDesc}
 	</div>
-	<div
-		class="flex items-center justify-end text-zinc-400 px-2 py-1"
-		style="font-family: var(--header-text);"
-	>
+	<div class="flex-1"><!--spacer--></div>
+	<div class="flex items-center text-zinc-400 px-2 py-1" style="font-family: var(--header-text);">
+		<span class="flex items-center relative z-[2] text-green-600" title="Likes">
+			{#if work.likes > work.dislikes}
+				<ThumbUpFill class="mr-1" size="16px" />
+			{:else}
+				<ThumbUpLine class="mr-1" size="16px" />
+			{/if}
+			<span class="relative">{abbreviate(work.likes)}</span>
+		</span>
+		<span class="mx-2">/</span>
+		<span class="flex items-center relative z-[2] text-red-500" title="Dislikes">
+			{#if work.dislikes > work.likes}
+				<ThumbDownFill class="mr-1" size="16px" />
+			{:else}
+				<ThumbDownLine class="mr-1" size="16px" />
+			{/if}
+			<span class="relative">{abbreviate(work.dislikes)}</span>
+		</span>
+		<span class="flex-1"><!--spacer--></span>
 		<span class="flex items-center relative z-[2]" title="Views">
 			<LineChartLine class="mr-1" size="16px" />
 			<span class="relative">{abbreviate(work.views)}</span>
@@ -118,7 +156,7 @@
 
 <style lang="scss">
 	div.work-card {
-		@apply block rounded-xl overflow-hidden no-underline transition relative;
+		@apply flex flex-col rounded-xl overflow-hidden no-underline transition relative;
 		div.card-header {
 			@apply grid rounded-xl relative max-w-full;
 			grid-template-areas:
