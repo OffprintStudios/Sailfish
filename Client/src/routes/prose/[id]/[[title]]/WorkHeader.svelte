@@ -287,15 +287,21 @@
 			</div>
 		</div>
 	{:else if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
-		<div class="cover-art w-[140px] lg:w-[180px]">
+		<div class="cover-art w-[180px]">
 			<div
-				class="flex flex-col items-center justify-center w-[140px] h-[175px] lg:w-[180px] lg:h-[215px] bg-zinc-200 dark:bg-zinc-700 border-4 border-zinc-300 dark:border-zinc-600 rounded-xl"
+				class="lg:flex flex-col items-center justify-center w-[180px] h-[215px] bg-zinc-200 dark:bg-zinc-700 border-4 border-zinc-300 dark:border-zinc-600 rounded-xl hidden"
 				style="box-shadow: var(--dropshadow);"
 			>
 				<NavLink type="button" on:click={updateCoverArt}>
 					<ImageAddLine class="link-icon" />
 					<span class="link-name">Add Cover</span>
 				</NavLink>
+			</div>
+			<div class="block lg:hidden">
+				<Button>
+					<ImageAddLine class="button-icon" />
+					<span class="button-text">Add Cover</span>
+				</Button>
 			</div>
 		</div>
 	{:else}

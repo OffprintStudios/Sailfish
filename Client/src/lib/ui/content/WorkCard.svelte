@@ -67,7 +67,7 @@
 		</div>
 		<div class="title-bar overflow-hidden">
 			<h3 class="font-medium text-lg truncate max-w-full" style="color: var(--text-color);">
-				{work.title} with a long title
+				{work.title}
 			</h3>
 			<div class="flex items-center text-zinc-400" style="font-family: var(--header-text);">
 				<span class="mr-1">by</span>
