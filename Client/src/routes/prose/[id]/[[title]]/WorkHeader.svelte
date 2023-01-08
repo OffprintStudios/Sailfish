@@ -514,25 +514,25 @@
 			class="flex items-center lg:mt-4 self-center justify-center lg:mt-0 lg:self-end lg:justify-end text-xs lg:text-base text-zinc-400"
 			style="font-family: var(--header-text);"
 		>
-			<span class="lg:flex items-center relative z-[2] hidden" title="Views">
+			<span class="flex items-center relative z-[2]" title="Views">
 				<LineChartLine class="mr-1 w-[16px] h-[16px] lg:w-[20px] lg:h-[20px]" />
 				<span class="relative">{abbreviate(work.views)}</span>
 			</span>
-			<span class="hidden lg:block mx-2">/</span>
-			<span class="lg:flex items-center relative z-[2] hidden" title="Words">
+			<span class="mx-2">/</span>
+			<span class="flex items-center relative z-[2]" title="Words">
 				<PenNibLine class="mr-1 w-[16px] h-[16px] lg:w-[20px] lg:h-[20px]" />
 				<span class="relative">{abbreviate(work.words)}</span>
 			</span>
 			<span class="hidden lg:block mx-2">/</span>
 			{#if work.publishedOn}
-				<span class="flex items-center relative z-[2]" title="Published On">
+				<span class="lg:flex items-center relative z-[2] hidden" title="Published On">
 					<Calendar2Line class="mr-1 w-[16px] h-[16px] lg:w-[20px] lg:h-[20px]" />
 					<span class="relative"
 						><Time timestamp={work.publishedOn} format="MMM DD, YYYY" /></span
 					>
 				</span>
 			{:else}
-				<span class="flex items-center relative z-[2]" title="Created On">
+				<span class="lg:flex items-center relative z-[2] hidden" title="Created On">
 					<Calendar2Line class="mr-1 w-[16px] h-[16px] lg:w-[20px] lg:h-[20px]" />
 					<span class="relative"
 						><Time timestamp={work.createdAt} format="MMM DD, YYYY" /></span
