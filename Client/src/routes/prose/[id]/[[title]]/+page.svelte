@@ -37,6 +37,8 @@
 			console.log(error.message);
 		} else {
 			console.log(`this has been added to`);
+			console.log(`item in question:`);
+			console.log(response);
 			queueItem = response as ApprovalQueue;
 			console.log(queueItem);
 		}
