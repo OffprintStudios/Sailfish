@@ -298,7 +298,7 @@
 				</NavLink>
 			</div>
 			<div class="block lg:hidden">
-				<Button>
+				<Button on:click={updateCoverArt}>
 					<ImageAddLine class="button-icon" />
 					<span class="button-text">Add Cover</span>
 				</Button>
