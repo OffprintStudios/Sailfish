@@ -31,16 +31,11 @@
 		const response = await getReq<ApprovalQueue>(
 			`/approval-queue/fetch-one?workId=${data.id}&profileId=${$account.currProfile?.id}`
 		);
-		console.log(response);
-		if ((response as ResponseError).error) {
+		if ((response as ResponseError).statusCode) {
 			const error = response as ResponseError;
 			console.log(error.message);
 		} else {
-			console.log(`this has been added to`);
-			console.log(`item in question:`);
-			console.log(response);
 			queueItem = response as ApprovalQueue;
-			console.log(queueItem);
 		}
 	}
 </script>
