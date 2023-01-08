@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { scale } from 'svelte/transition';
-	import { popup, closePopup } from './popup.state';
-	import { app } from '$lib/state/app.state';
+	import { scale } from "svelte/transition";
+	import { popup, closePopup } from "./popup.state";
+	import { app } from "$lib/state/app.state";
 </script>
 
 {#if $popup.isOpen}
@@ -21,7 +21,7 @@
 
 <style lang="scss">
 	div.popup-container {
-		@apply relative z-[110] w-fit;
+		@apply relative z-[110] w-fit max-w-full max-h-full overflow-y-auto;
 		margin: 50vh auto 0;
 		transform: translateY(-50%);
 		color: var(--text-color);
