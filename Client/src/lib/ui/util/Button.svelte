@@ -123,8 +123,16 @@
 			@apply mr-0;
 		}
 
+		:global(svg.button-icon.variable-text) {
+			@apply mr-0 lg:mr-1.5 relative;
+		}
+
 		:global(span.button-text) {
 			@apply relative -top-0.5;
+		}
+
+		:global(span.button-small-text) {
+			@apply text-sm font-medium;
 		}
 	}
 </style>

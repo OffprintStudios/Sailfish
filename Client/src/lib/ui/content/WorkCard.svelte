@@ -46,7 +46,7 @@
 			{#if work.bannerArt}
 				<img src={work.bannerArt} alt="cover art" class="w-full h-full object-cover" />
 			{/if}
-			<div class="absolute top-1 px-1.5 w-[97.5%] lg:w-full flex items-center">
+			<div class="absolute flex items-center top-1 px-1.5 w-full">
 				{#if withDropdown && $account.account && $account.currProfile}
 					<Dropdown kind={work.bannerArt ? "normal" : "primary"}>
 						<svelte:fragment slot="button">
@@ -65,9 +65,9 @@
 				<TagBadge kind={TagKind.rating} rating={work.rating} size="small" />
 			</div>
 		</div>
-		<div class="title-bar">
-			<h3 class="font-medium text-lg truncate" style="color: var(--text-color);">
-				{work.title}
+		<div class="title-bar overflow-hidden">
+			<h3 class="font-medium text-lg truncate max-w-full" style="color: var(--text-color);">
+				{work.title} with a long title
 			</h3>
 			<div class="flex items-center text-zinc-400" style="font-family: var(--header-text);">
 				<span class="mr-1">by</span>
@@ -120,7 +120,7 @@
 	div.work-card {
 		@apply block rounded-xl overflow-hidden no-underline transition relative;
 		div.card-header {
-			@apply grid rounded-xl relative;
+			@apply grid rounded-xl relative max-w-full;
 			grid-template-areas:
 				"a b"
 				"c d";
@@ -135,14 +135,14 @@
 			}
 
 			div.banner {
-				@apply relative h-[120px] w-full;
+				@apply relative h-[120px];
 				background: var(--accent);
 				grid-area: a / a / b / b;
 			}
 
 			div.title-bar {
 				grid-area: d;
-				@apply p-2 pl-0 relative min-w-[20rem] max-w-[30rem];
+				@apply p-2 pl-0 relative max-w-full;
 			}
 		}
 	}

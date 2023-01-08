@@ -10,17 +10,17 @@
 		Calendar2Line,
 		CloseCircleLine,
 		DeleteBinLine,
-		DislikeLine,
 		Edit2Line,
 		EyeLine,
 		EyeOffLine,
-		HeartLine,
 		ImageAddLine,
 		ImageEditLine,
 		LineChartLine,
 		Loader5Line,
 		PenNibLine,
-		TimeLine
+		TimeLine,
+		ThumbUpLine,
+		ThumbDownLine
 	} from "svelte-remixicon";
 	import type { Work } from "$lib/models/content/works";
 	import { ApprovalStatus } from "$lib/models/content/works";
@@ -276,7 +276,7 @@
 				<img
 					src={work.coverArt}
 					alt="cover art"
-					class="max-w-[200px] max-h-[160px] lg:max-w-[250px] lg:max-h-[210px]"
+					class="max-w-[150px] max-h-[110px] lg:max-w-[250px] lg:max-h-[210px]"
 				/>
 				{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
 					<div class="absolute top-2 right-2">
@@ -302,12 +302,12 @@
 	{:else}
 		<div class="cover-art"><!--this is meant to be empty--></div>
 	{/if}
-	<div class="banner" class:h-[150px]={!work.bannerArt} class:h-[250px]={work.bannerArt}>
+	<div class="banner {work.bannerArt ? 'big-art' : 'small-art'}">
 		{#if work.bannerArt}
 			<img src={work.bannerArt} alt="cover art" class="w-full h-full object-cover" />
 		{/if}
 		<div class="absolute top-2 right-2 z-[2]">
-			<div class="flex items-center">
+			<div class="lg:flex items-center hidden">
 				<TagBadge kind={TagKind.category} category={work.category} />
 				<div class="mx-[0.075rem]"><!--spacer--></div>
 				<TagBadge kind={TagKind.status} status={work.status} />
@@ -326,16 +326,35 @@
 					</div>
 				{/if}
 			</div>
+			<div class="flex items-center lg:hidden">
+				<TagBadge kind={TagKind.category} category={work.category} size="small" />
+				<div class="mx-[0.075rem]"><!--spacer--></div>
+				<TagBadge kind={TagKind.status} status={work.status} size="small" />
+				<div class="mx-[0.075rem]"><!--spacer--></div>
+				<TagBadge kind={TagKind.rating} rating={work.rating} size="small" />
+				{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
+					<div class="mx-2 text-white text-lg relative top-[0.1625rem]">|</div>
+					<div class="relative top-0.5">
+						<Button on:click={updateBannerArt} kind="primary">
+							{#if work.bannerArt}
+								<ImageEditLine class="button-icon no-text" size="16px" />
+							{:else}
+								<ImageAddLine class="button-icon no-text" size="16px" />
+							{/if}
+						</Button>
+					</div>
+				{/if}
+			</div>
 		</div>
 	</div>
 	<div class="title-bar">
-		<div class="flex-1 text-center lg:text-left">
-			<h1 class="text-3xl" style="color: var(--text-color);">
+		<div class="flex-1 hidden lg:block">
+			<h1 class="text-2xl lg:text-3xl" style="color: var(--text-color);">
 				{work.title}
 			</h1>
-			<div class="flex items-center justify-center lg:justify-start flex-wrap">
+			<div class="flex items-center flex-wrap">
 				<span
-					class="relative top-0.5  text-xl font-medium text-zinc-400"
+					class="relative top-0.5 text-base lg:text-xl font-medium text-zinc-400"
 					style="font-family: var(--header-text);"
 				>
 					by <a
@@ -345,9 +364,7 @@
 					>
 				</span>
 				<span class="mx-1 text-zinc-400 hidden lg:block">•</span>
-				<div
-					class="flex items-center justify-center w-full lg:w-fit my-2 lg:my-0 lg:justify-start flex-wrap"
-				>
+				<div class="hidden lg:flex items-center flex-wrap">
 					{#each work.tags as tag}
 						{#if tag.kind === TagKind.genre}
 							<TagBadge {tag} kind={tag.kind} />
@@ -368,147 +385,155 @@
 				</div>
 			</div>
 		</div>
-		<div class="flex items-center">
-			<button
-				title="{work.likes} likes"
-				disabled={isVoting}
-				type="button"
-				class="utility"
-				class:active={history?.vote === Vote.liked}
-				on:click={() => setVote(Vote.liked)}
-			>
-				{#if isVoting}
-					<Loader5Line class="animate-spin mr-1" size="24px" />
-				{:else}
-					<HeartLine class="mr-1" size="24px" />
-				{/if}
-				<span class="text-xl relative top-0.5" style="font-family: var(--header-text);"
-					>{abbreviate(work.likes)}</span
-				>
-			</button>
+		<div class="flex-1 lg:hidden"><!--spacer--></div>
+		<div class="flex items-center bg-zinc-300 dark:bg-zinc-600 rounded-xl p-1">
+			<Button loading={isVoting} loadingText="''" on:click={() => setVote(Vote.liked)}>
+				<ThumbUpLine class="button-icon" />
+				<span class="button-small-text">{abbreviate(work.likes)}</span>
+			</Button>
 			<div class="mx-0.5"><!--spacer--></div>
-			<button
-				title="{work.dislikes} dislikes"
-				disabled={isVoting}
-				type="button"
-				class="utility"
-				class:active={history?.vote === Vote.disliked}
-				on:click={() => setVote(Vote.disliked)}
-			>
-				{#if isVoting}
-					<Loader5Line class="animate-spin mr-1" size="24px" />
-				{:else}
-					<DislikeLine class="mr-1" size="24px" />
-				{/if}
-				<span class="text-xl relative top-0.5" style="font-family: var(--header-text);"
-					>{abbreviate(work.dislikes)}</span
-				>
-			</button>
+			<Button loading={isVoting} loadingText="''" on:click={() => setVote(Vote.disliked)}>
+				<ThumbDownLine class="button-icon" />
+				<span class="button-small-text">{abbreviate(work.dislikes)}</span>
+			</Button>
 		</div>
 	</div>
 	<div class="tool-bar">
+		<div class="basis-full block mb-2 lg:hidden">
+			<h1 class="text-2xl lg:text-3xl" style="color: var(--text-color);">
+				{work.title}
+			</h1>
+			<span
+				class="relative top-0.5 text-base lg:text-xl font-medium text-zinc-400"
+				style="font-family: var(--header-text);"
+			>
+				by <a
+					class="text-zinc-400"
+					href="/profile/{work.author.id}/{slugify(work.author.username)}"
+					>{work.author.username}</a
+				>
+			</span>
+		</div>
+		<div class="flex items-center flex-wrap basis-full mb-4 lg:hidden">
+			{#each work.tags as tag}
+				{#if tag.kind === TagKind.genre}
+					<TagBadge {tag} kind={tag.kind} size="small" />
+					<div class="mx-[0.075rem]"><!--spacer--></div>
+				{/if}
+			{/each}
+			{#each fandoms as tag, i}
+				{#if i === 0}
+					<TagBadge {tag} kind={tag.kind} size="small" />
+					<button
+						class="relative text-base top-0.5 ml-2 text-zinc-400"
+						style="font-family: var(--header-text);"
+					>
+						+ {fandoms.length - 1} more
+					</button>
+				{/if}
+			{/each}
+		</div>
 		<div class="flex items-center p-1 bg-zinc-300 dark:bg-zinc-600 rounded-xl">
 			{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
 				{#if work.approvalStatus === ApprovalStatus.NotSubmitted}
 					<Button type="button" on:click={publishWork}>
-						<BookLine class="button-icon" />
-						<span class="button-text">Publish</span>
+						<BookLine class="button-icon variable-text" />
+						<span class="button-text hidden lg:block">Publish</span>
 					</Button>
 				{:else if work.approvalStatus === ApprovalStatus.Pending}
 					<Button type="button">
-						<TimeLine class="button-icon" />
-						<span class="button-text">Pending</span>
+						<TimeLine class="button-icon variable-text" />
+						<span class="button-text hidden lg:block">Pending</span>
 					</Button>
 				{:else if work.approvalStatus === ApprovalStatus.Rejected}
 					<Button type="button" on:click={publishWork}>
-						<CloseCircleLine class="button-icon" />
-						<span class="button-text">Rejected</span>
+						<CloseCircleLine class="button-icon variable-text" />
+						<span class="button-text hidden lg:block">Rejected</span>
 					</Button>
 				{:else if work.approvalStatus === ApprovalStatus.Approved}
 					{#if work.publishedOn}
 						<Button type="button" on:click={hideShow}>
-							<EyeOffLine class="button-icon" />
-							<span class="button-text">Hide</span>
+							<EyeOffLine class="button-icon variable-text" />
+							<span class="button-text hidden lg:block">Hide</span>
 						</Button>
 					{:else}
 						<Button type="button" on:click={hideShow}>
-							<EyeLine class="button-icon" />
-							<span class="button-text">Show</span>
+							<EyeLine class="button-icon variable-text" />
+							<span class="button-text hidden lg:block">Show</span>
 						</Button>
 					{/if}
 				{/if}
 				<div class="mx-0.5"><!--spacer--></div>
 				<Button on:click={() => goto(`/prose/${work.id}/${slugify(work.title)}/edit`)}>
-					<Edit2Line class="button-icon" />
-					<span class="button-text">Edit</span>
+					<Edit2Line class="button-icon variable-text" />
+					<span class="button-text hidden lg:block">Edit</span>
 				</Button>
-				<div class="mx-1 text-zinc-400 text-lg relative top-[0.075rem]">|</div>
 				<Button on:click={addToShelf}>
-					<BarChart2Line class="button-icon" />
-					<span class="button-text">Shelves</span>
+					<BarChart2Line class="button-icon variable-text" />
+					<span class="button-text hidden lg:block">Shelves</span>
 				</Button>
 				<div class="mx-1 text-zinc-400 text-lg relative top-[0.075rem]">|</div>
 				<Button on:click={deleteWork}>
-					<DeleteBinLine class="button-icon" />
-					<span class="button-text">Delete</span>
+					<DeleteBinLine class="button-icon variable-text" />
+					<span class="button-text hidden lg:block">Delete</span>
 				</Button>
 			{:else if $account.account && $account.currProfile && $account.currProfile.id !== work.author.id}
 				<Button on:click={setLibrary}>
-					<Bookmark3Line class="button-icon" />
-					<span class="button-text">Library</span>
+					<Bookmark3Line class="button-icon variable-text" />
+					<span class="button-text hidden lg:block">Library</span>
 				</Button>
 				<div class="mx-0.5"><!--spacer--></div>
 				<Button on:click={addToShelf}>
-					<BarChart2Line class="button-icon" />
-					<span class="button-text">Shelves</span>
+					<BarChart2Line class="button-icon variable-text" />
+					<span class="button-text hidden lg:block">Shelves</span>
 				</Button>
 				<div class="mx-1 text-zinc-400 text-lg relative top-[0.075rem]">|</div>
 				<Button on:click={reportWork}>
-					<AlarmWarningLine class="button-icon" />
-					<span class="button-text">Report</span>
+					<AlarmWarningLine class="button-icon variable-text" />
+					<span class="button-text hidden lg:block">Report</span>
 				</Button>
 			{:else}
 				<Button disabled>
-					<Bookmark3Line class="button-icon" />
-					<span class="button-text">Library</span>
+					<Bookmark3Line class="button-icon variable-text" />
+					<span class="button-text hidden lg:block">Library</span>
 				</Button>
 				<div class="mx-0.5"><!--spacer--></div>
 				<Button disabled>
-					<BarChart2Line class="button-icon" />
-					<span class="button-text">Shelves</span>
+					<BarChart2Line class="button-icon variable-text" />
+					<span class="button-text hidden lg:block">Shelves</span>
 				</Button>
 				<div class="mx-1 text-zinc-400 text-lg relative top-[0.075rem]">|</div>
 				<Button disabled>
-					<AlarmWarningLine class="button-icon" />
-					<span class="button-text">Report</span>
+					<AlarmWarningLine class="button-icon variable-text" />
+					<span class="button-text hidden lg:block">Report</span>
 				</Button>
 			{/if}
 		</div>
 		<div class="flex-1"><!--spacer--></div>
 		<div
-			class="flex items-center mt-4 lg:mt-0 lg:self-end lg:justify-end text-base text-zinc-400"
+			class="flex items-center lg:mt-4 self-center justify-center lg:mt-0 lg:self-end lg:justify-end text-xs lg:text-base text-zinc-400"
 			style="font-family: var(--header-text);"
 		>
-			<span class="flex items-center relative z-[2]" title="Views">
-				<LineChartLine class="mr-1" size="20px" />
+			<span class="lg:flex items-center relative z-[2] hidden" title="Views">
+				<LineChartLine class="mr-1 w-[16px] h-[16px] lg:w-[20px] lg:h-[20px]" />
 				<span class="relative">{abbreviate(work.views)}</span>
 			</span>
-			<span class="mx-2">/</span>
-			<span class="flex items-center relative z-[2]" title="Words">
-				<PenNibLine class="mr-1" size="20px" />
+			<span class="hidden lg:block mx-2">/</span>
+			<span class="lg:flex items-center relative z-[2] hidden" title="Words">
+				<PenNibLine class="mr-1 w-[16px] h-[16px] lg:w-[20px] lg:h-[20px]" />
 				<span class="relative">{abbreviate(work.words)}</span>
 			</span>
-			<span class="mx-2">/</span>
+			<span class="hidden lg:block mx-2">/</span>
 			{#if work.publishedOn}
 				<span class="flex items-center relative z-[2]" title="Published On">
-					<Calendar2Line class="mr-1" size="20px" />
+					<Calendar2Line class="mr-1 w-[16px] h-[16px] lg:w-[20px] lg:h-[20px]" />
 					<span class="relative"
 						><Time timestamp={work.publishedOn} format="MMM DD, YYYY" /></span
 					>
 				</span>
 			{:else}
 				<span class="flex items-center relative z-[2]" title="Created On">
-					<Calendar2Line class="mr-1" size="20px" />
+					<Calendar2Line class="mr-1 w-[16px] h-[16px] lg:w-[20px] lg:h-[20px]" />
 					<span class="relative"
 						><Time timestamp={work.createdAt} format="MMM DD, YYYY" /></span
 					>
@@ -520,12 +545,11 @@
 
 <style lang="scss">
 	div.header-container {
-		@apply grid lg:rounded-xl relative mb-6 overflow-hidden;
+		@apply grid lg:rounded-xl relative w-full mb-6 overflow-hidden;
 		grid-template-areas:
-			"banner"
-			"cover"
-			"title"
-			"action";
+			"banner banner"
+			"cover title"
+			"action action";
 		grid-template-rows: 1fr auto auto;
 		grid-template-columns: auto 1fr;
 		@media (min-width: 1024px) {
@@ -533,12 +557,13 @@
 				"banner banner"
 				"cover title"
 				"action action";
+			grid-template-columns: auto 1fr;
 		}
 		div.cover-art {
 			grid-area: banner / banner / cover / cover;
 			display: flex;
 			align-items: flex-end;
-			@apply px-4 pt-32 lg:p-4 relative items-end justify-self-center lg:justify-self-start;
+			@apply px-4 pb-4 lg:p-4 relative items-end justify-self-start;
 		}
 		div.banner {
 			background: var(--accent);
@@ -546,18 +571,24 @@
 		}
 		div.title-bar {
 			grid-area: title;
-			@apply p-4 pl-0 flex flex-col lg:flex-row items-center z-[2] relative;
+			@apply p-4 pl-0 flex items-center z-[2] relative;
 		}
 		div.tool-bar {
 			grid-area: action;
-			@apply flex flex-col lg:flex-row items-center mx-4 mb-4;
+			@apply flex items-center mx-4 mb-4 flex-wrap;
 		}
 		button.utility {
-			@apply flex items-center p-2 rounded-xl transition;
+			@apply flex items-center p-2 rounded-xl transition hidden lg:block;
 			&.active {
 				@apply text-white;
 				background: var(--accent);
 			}
+		}
+		div.big-art {
+			@apply h-[200px] lg:h-[250px];
+		}
+		div.small-art {
+			@apply h-[100px] lg:h-[150px];
 		}
 	}
 </style>
