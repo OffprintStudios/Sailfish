@@ -1,6 +1,6 @@
 <script lang="ts">
-	import '../app.scss';
-	import { Nav } from '$lib/ui/nav';
+	import "../app.scss";
+	import { Nav } from "$lib/ui/nav";
 	import { app } from "$lib/state/app.state";
 	import { Guide } from "$lib/ui/guide";
 	import { Toaster } from "svelte-french-toast";
@@ -19,7 +19,7 @@
 
 <Popup />
 <main
-	class="flex flex-col h-full overflow-y-scroll lg:overflow-y-hidden lg:flex-row lg:h-screen {$app.theme}"
+	class="flex flex-col min-h-[100vh] h-full overflow-y-scroll lg:overflow-y-hidden lg:flex-row lg:h-screen {$app.theme}"
 	class:light={$app.darkMode === false}
 	class:dark={$app.darkMode === true}
 >
