@@ -97,6 +97,8 @@ struct ApprovalQueueService {
                     hasItem.work.approvalStatus = .approved
                     hasItem.work.publishedOn = Date()
                     try await hasItem.work.save(on: database)
+                    hasItem.work.author.stats.works += 1
+                    try await hasItem.work.author.save(on: database)
                     return hasItem
                 }
                 throw Abort(.forbidden, reason: "This work has already failed to pass three times and can no longer be approved.")

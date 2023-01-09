@@ -36,6 +36,7 @@
 			toast.error(error.message);
 		} else {
 			currPage = response as Paginate<Notification>;
+			console.log(currPage);
 		}
 		loading = false;
 	}

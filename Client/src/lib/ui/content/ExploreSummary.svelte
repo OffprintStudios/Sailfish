@@ -67,7 +67,8 @@
 	}
 
 	async function loadTopTags(kind: TagKind) {
-		const response = await getReq<TopTag[]>(`/explore/top-tags?tagKind=${kind}`);
+		console.log(kind);
+		/*const response = await getReq<TopTag[]>(`/explore/top-tags?tagKind=${kind}`);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
 			toast.error(error.message);
@@ -77,7 +78,7 @@
 			} else if (kind === TagKind.fandom) {
 				topFandoms = response as TopTag[];
 			}
-		}
+		}*/
 	}
 </script>
 
@@ -98,7 +99,7 @@
 			<p>Just watch out for the tumbleweeds.</p>
 		</div>
 	{:else}
-		<div class="section-items grid-cols-1 lg:grid-cols-2">
+		<div class="section-items grid-cols-1 lg:grid-cols-3">
 			{#each newWorks?.items as work}
 				<WorkCard {work}>
 					<svelte:fragment slot="dropdown">
@@ -129,7 +130,7 @@
 			<p>Just watch out for the tumbleweeds.</p>
 		</div>
 	{:else}
-		<div class="section-items grid-cols-1 lg:grid-cols-2">
+		<div class="section-items grid-cols-1 lg:grid-cols-3">
 			{#each updatedWorks?.items as work}
 				<WorkCard {work}>
 					<svelte:fragment slot="dropdown">
@@ -141,11 +142,11 @@
 	{/if}
 </div>
 
-<div class="section">
+<!--<div class="section">
 	<div class="section-header">
 		<Book2Line class="mr-2 w-[24px] h-[24px] lg:w-[36px] lg:h-[36px]" />
 		<h3 class="text-xl lg:text-3xl relative top-1">Top Genres</h3>
-		<div class="flex-1"><!--spacer--></div>
+		<div class="flex-1"></div>
 		<a class="text-base lg:text-lg relative top-1" href="/explore/genres">All Genres »</a>
 	</div>
 	{#if topGenres.length === 0}
@@ -190,13 +191,13 @@
 			{/each}
 		</div>
 	{/if}
-</div>
+</div>-->
 
-<div class="section">
+<!--<div class="section">
 	<div class="section-header">
 		<EmpathizeLine class="mr-2 w-[24px] h-[24px] lg:w-[36px] lg:h-[36px]" />
 		<h3 class="text-xl lg:text-3xl relative top-1">Top Fandoms</h3>
-		<div class="flex-1"><!--spacer--></div>
+		<div class="flex-1"></div>
 		<a class="text-base lg:text-lg relative top-1" href="/explore/fandoms">All Fandoms »</a>
 	</div>
 	{#if topFandoms.length === 0}
@@ -211,8 +212,7 @@
 			{/each}
 		</div>
 	{/if}
-</div>
-
+</div>-->
 <style lang="scss">
 	div.section {
 		@apply max-w-6xl mx-auto my-6 first:mt-0;

@@ -35,7 +35,7 @@
 <div
 	class="flex flex-col relative rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed hover:bg-zinc-300 dark:hover:bg-zinc-600 transition"
 >
-	{#if notification.from}
+	{#if notification.from.id !== null}
 		{#if notification.eventType === EventType.follow}
 			<a
 				class="hidden-link"
@@ -130,8 +130,8 @@
 			><!--left intentionally blank--></a
 		>
 		<div class="flex items-center px-2 py-1">
-			<CheckLine size={iconSize} class="mr-2" />
-			<span class="activity-title">Work Approved</span>
+			<CheckLine size={iconSize} class="mr-2 text-green-600" />
+			<span class="activity-title text-green-600">Work Approved</span>
 			<div class="flex-1"><!--spacer--></div>
 			<Button on:click={markToRead}>
 				{#if $activity.markAsRead.includes(notification.id)}
@@ -142,7 +142,7 @@
 			</Button>
 		</div>
 		<div class="activity-description">
-			Your work, "{notification.context.get("title")}", has been approved!
+			Your work, "{notification.context["title"]}", has been approved!
 		</div>
 	{:else if notification.eventType === EventType.workRejected}
 		<a
@@ -151,8 +151,8 @@
 			><!--left intentionally blank--></a
 		>
 		<div class="flex items-center px-2 py-1">
-			<CloseLine size={iconSize} class="mr-2" />
-			<span class="activity-title">Work Rejected</span>
+			<CloseLine size={iconSize} class="mr-2 text-red-600" />
+			<span class="activity-title text-red-600">Work Rejected</span>
 			<div class="flex-1"><!--spacer--></div>
 			<Button on:click={markToRead}>
 				{#if $activity.markAsRead.includes(notification.id)}
@@ -167,6 +167,7 @@
 				>Your work, "{notification.context["title"]}", has been rejected for the following
 				reason(s):</span
 			>
+			<div class="my-0.5"><!--spacer--></div>
 			<span>{notification.context["reason"]}</span>
 		</div>
 	{:else if notification.eventType === EventType.userWarned}

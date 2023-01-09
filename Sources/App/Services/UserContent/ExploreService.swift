@@ -40,7 +40,7 @@ struct ExploreService {
             .all()
         var tagsWithCounts: [TagService.FetchTag] = []
         for tag in tags {
-            let works = try await tag.$works.query(on: request.db).count()
+            let works = try await tag.$works.query(on: request.db).filter(\.$publishedOn <= Date()).count()
             tagsWithCounts.append(.init(
                 tag: tag,
                 works: UInt64(works)
@@ -58,7 +58,7 @@ struct ExploreService {
             .all()
         var tagsWithCounts: [TagService.FetchTag] = []
         for tag in tags {
-            let works = try await tag.$works.query(on: request.db).count()
+            let works = try await tag.$works.query(on: request.db).filter(\.$publishedOn <= Date()).count()
             tagsWithCounts.append(.init(
                 tag: tag,
                 works: UInt64(works)
@@ -71,7 +71,12 @@ struct ExploreService {
     func fetchTopTags(kind: Tag.Kind) async throws -> [Tag.TopTag] {
         if let sql = request.db as? SQLDatabase {
             return try await sql.raw("""
-                SELECT t.*, COUNT(w.id) as total FROM tags t LEFT JOIN work_tags w ON t.id = w.tag_id WHERE t.kind = '\(raw: kind.rawValue)' GROUP BY t.id ORDER BY total DESC LIMIT 6
+                SELECT t.*, COUNT(w.id) as total
+                FROM tags t LEFT JOIN work_tags w ON t.id = w.tag_id
+                WHERE t.kind = '\(raw: kind.rawValue)'
+                GROUP BY t.id
+                ORDER BY total DESC
+                LIMIT 6
             """).all(decoding: Tag.TopTag.self)
         } else {
             throw Abort(.notImplemented, reason: "This feature is only available with SQL databases.")
