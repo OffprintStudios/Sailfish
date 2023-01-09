@@ -9,13 +9,16 @@
 		FontSize,
 		ListUnordered,
 		Edit2Line,
-		BookmarkLine
+		BookmarkLine,
+		BookmarkFill
 	} from "svelte-remixicon";
 	import { Dropdown } from "$lib/ui/dropdown";
 	import { account } from "$lib/state/account.state";
 	import { SectionFont } from "$lib/models/util";
 	import { Button } from "$lib/ui/util";
 	import type { ReadingHistory } from "$lib/models/content/library";
+	import { patchReq, type ResponseError } from "$lib/http";
+	import toast from "svelte-french-toast";
 
 	export let work: Work;
 	export let section: Section;
@@ -27,6 +30,7 @@
 	let nextLink = `/prose/${work.id}/${slugify(work.title)}/section/${section.id}/${slugify(
 		section.title
 	)}`;
+	let bookmarking = false;
 
 	const published: Section[] = allSections.filter((item) => {
 		if (item.publishedOn !== undefined) {
@@ -36,10 +40,18 @@
 
 	const dispatch = createEventDispatcher();
 
-	onMount(() => {
+	onMount(async () => {
 		setFont();
 		generatePrevLink(section);
 		generateNextLink(section);
+		if (
+			$account.account &&
+			$account.currProfile &&
+			$account.currProfile.id !== work.author.id &&
+			work.publishedOn
+		) {
+			await markAsRead();
+		}
 	});
 
 	function generatePrevLink(thisSection: Section) {
@@ -113,9 +125,33 @@
 		dispatch("edit");
 	}
 
-	async function markAsRead() {}
+	async function markAsRead() {
+		const response = await patchReq<ReadingHistory>(
+			`/history/set-as-read?workId=${work.id}&sectionId=${section.id}&profileId=${$account.currProfile?.id}`,
+			{}
+		);
+		if ((response as ResponseError).statusCode) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			history = response as ReadingHistory;
+		}
+	}
 
-	async function bookmarkSection() {}
+	async function bookmarkSection() {
+		bookmarking = true;
+		const response = await patchReq<ReadingHistory>(
+			`/history/set-bookmark?workId=${work.id}&sectionId=${section.id}&profileId=${$account.currProfile?.id}`,
+			{}
+		);
+		if ((response as ResponseError).statusCode) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			history = response as ReadingHistory;
+		}
+		bookmarking = false;
+	}
 </script>
 
 <div class="lg:rounded-xl lg:mb-6 dark:highlight-shadowed" style="background: var(--accent);">
@@ -158,9 +194,16 @@
 					kind="primary"
 					isActive={history.bookmarked.id && history.bookmarked.id === section.id}
 					on:click={bookmarkSection}
+					loading={bookmarking}
+					loadingText="Saving..."
 				>
-					<BookmarkLine class="button-icon variable-text" />
-					<span class="button-text hidden lg:block">Mark</span>
+					{#if history.bookmarked.id && history.bookmarked.id === section.id}
+						<BookmarkFill class="button-icon variable-text" />
+						<span class="button-text hidden lg:block">Marked</span>
+					{:else}
+						<BookmarkLine class="button-icon variable-text" />
+						<span class="button-text hidden lg:block">Mark</span>
+					{/if}
 				</Button>
 			{/if}
 		{/if}
