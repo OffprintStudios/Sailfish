@@ -16,6 +16,7 @@
 	import VolumeFormDialog from "./VolumeFormDialog.svelte";
 	import DeleteVolumePrompt from "./DeleteVolumePrompt.svelte";
 	import PublishVolumePrompt from "./PublishVolumePrompt.svelte";
+	import { UploadVolumeCover } from "$lib/ui/upload";
 
 	export let work: Work;
 	let volumes: Volume[] = [];
@@ -69,7 +70,20 @@
 		);
 	}
 
-	async function addCoverArt(id: string) {}
+	async function addCoverArt(id: string) {
+		openPopup(
+			UploadVolumeCover,
+			{
+				onConfirm: async () => {
+					await fetchVolumes();
+				}
+			},
+			{
+				volumeId: id,
+				workId: work.id
+			}
+		);
+	}
 
 	async function publishVolume(id: string) {
 		openPopup(PublishVolumePrompt, {
@@ -129,7 +143,7 @@
 			<div class="bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed rounded-xl">
 				<div class="flex items-center">
 					{#if volume.coverArt}
-						some art
+						<!--<img src={volume.coverArt} class="max-w-[75px] max-h-[75px]" />-->
 					{/if}
 					<div class="p-4">
 						<h3 class="text-xl">{volume.title}</h3>
@@ -161,9 +175,9 @@
 							<Edit2Line class="button-icon no-text" />
 						</Button>
 						<div class="mx-[0.075rem]"><!--spacer--></div>
-						<Button title="Add Cover Art">
+						<!--<Button title="Change Cover Art" on:click={() => addCoverArt(volume.id)}>
 							<ImageAddLine class="button-icon no-text" />
-						</Button>
+						</Button>-->
 						<div class="flex-1"><!--spacer--></div>
 						<Button
 							title="Delete"

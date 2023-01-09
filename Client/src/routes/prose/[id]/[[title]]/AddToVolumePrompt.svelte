@@ -1,16 +1,17 @@
 <script lang="ts">
 	import { Button } from "$lib/ui/util";
-	import { CloseLine, InformationLine, Loader5Line } from "svelte-remixicon";
-	import { popup, closePopup } from "$lib/ui/popup";
-	import type { Section } from "$lib/models/content/works";
-	import { getReq, type ResponseError } from "$lib/http";
+	import { AddBoxLine, CloseLine, InformationLine, Loader5Line } from "svelte-remixicon";
+	import { popup, closePopup, closePopupAndConfirm } from "$lib/ui/popup";
+	import { getReq, patchReq, type ResponseError } from "$lib/http";
 	import type { Volume } from "$lib/models/content/works";
 	import { onMount } from "svelte";
+	import { account } from "$lib/state/account.state";
 	import toast from "svelte-french-toast";
 
 	const workId: string = $popup.data.workId;
-	const section: Section = $popup.data.section;
+	const sectionId: string = $popup.data.sectionId;
 	let loading = false;
+	let adding = false;
 	let volumes: Volume[] = [];
 
 	onMount(async () => {
@@ -19,7 +20,9 @@
 
 	export async function fetchVolumes() {
 		loading = true;
-		const response = await getReq<Volume[]>(`/volumes/fetch-volumes?workId=${workId}`);
+		const response = await getReq<Volume[]>(
+			`/volumes/fetch-volumes?workId=${workId}&status=draft`
+		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
 			toast.error(error.message);
@@ -27,6 +30,22 @@
 			volumes = response as Volume[];
 		}
 		loading = false;
+	}
+
+	async function addToVolume(volumeId: string) {
+		adding = true;
+		const response = await patchReq<void>(
+			`/sections/add-to-volume/${sectionId}?workId=${workId}&volumeId=${volumeId}&profileId=${$account.currProfile?.id}`,
+			{}
+		);
+		if ((response as ResponseError).statusCode) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			toast.success(`Added to volume!`);
+			closePopupAndConfirm();
+		}
+		adding = false;
 	}
 </script>
 
@@ -55,10 +74,37 @@
 			</div>
 		</div>
 	{:else}
-		<ul>
+		<ul class="mt-2">
 			{#each volumes as volume}
-				<li>{volume.title}</li>
+				<li class="odd:bg-zinc-300 odd:dark:bg-zinc-600">
+					<button
+						class="w-full"
+						disabled={adding}
+						on:click={() => addToVolume(volume.id)}
+					>
+						<span class="flex-1 text-left">{volume.title}</span>
+						{#if adding}
+							<Loader5Line size="18px" class="animate-spin" />
+						{:else}
+							<AddBoxLine size="18px" />
+						{/if}
+					</button>
+				</li>
 			{/each}
 		</ul>
 	{/if}
 </div>
+
+<style lang="scss">
+	button {
+		@apply flex items-center text-sm transition transform h-full p-2;
+		color: var(--text-color);
+		span.title {
+			@apply flex-1;
+		}
+		&:hover {
+			background: var(--accent);
+			@apply text-white;
+		}
+	}
+</style>

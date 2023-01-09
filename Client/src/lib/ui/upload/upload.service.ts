@@ -8,7 +8,8 @@ export enum UploadType {
 	BlogBanner = "blogbanner",
 	Avatar = "avatar",
 	ProfileBanner = "profilebanner",
-	WorkBanner = "workbanner"
+	WorkBanner = "workbanner",
+	VolumeCover = "volumecover"
 }
 
 export class UploadService<T> {
@@ -17,11 +18,13 @@ export class UploadService<T> {
 	itemId = "";
 	profileId = "";
 	result = writable<T | null>(null);
+	otherParams: string | undefined = undefined;
 
-	constructor(name: UploadType, itemId: string, profileId: string) {
+	constructor(name: UploadType, itemId: string, profileId: string, otherParams?: string) {
 		this.name = name;
 		this.itemId = itemId;
 		this.profileId = profileId;
+		this.otherParams = otherParams;
 	}
 
 	async handleDrop(event: DragEvent): Promise<void> {
@@ -117,6 +120,10 @@ export class UploadService<T> {
 				return `/works/update-cover/${this.itemId}?profileId=${this.profileId}`;
 			case UploadType.WorkBanner:
 				return `/works/update-banner/${this.itemId}?profileId=${this.profileId}`;
+			case UploadType.VolumeCover:
+				return `/volumes/update-cover/${this.itemId}?profileId=${this.profileId}${
+					this.otherParams ? this.otherParams : ""
+				}`;
 		}
 	}
 }

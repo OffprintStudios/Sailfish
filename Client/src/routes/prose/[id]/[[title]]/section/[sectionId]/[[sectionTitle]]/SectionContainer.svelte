@@ -1,10 +1,16 @@
 <script lang="ts">
 	import { onMount, createEventDispatcher } from "svelte";
-	import { fade } from "svelte/transition";
 	import type { Section, Work } from "$lib/models/content/works";
 	import { slugify } from "$lib/util/functions";
 	import { app } from "$lib/state/app.state";
-	import { ArrowLeftSLine, ArrowRightSLine, FontSize, ListUnordered, Edit2Line, BookmarkLine } from "svelte-remixicon";
+	import {
+		ArrowLeftSLine,
+		ArrowRightSLine,
+		FontSize,
+		ListUnordered,
+		Edit2Line,
+		BookmarkLine
+	} from "svelte-remixicon";
 	import { Dropdown } from "$lib/ui/dropdown";
 	import { account } from "$lib/state/account.state";
 	import { SectionFont } from "$lib/models/util";
@@ -13,9 +19,15 @@
 	export let work: Work;
 	export let section: Section;
 	export let allSections: Section[] = [];
+	let prevLink = `/prose/${work.id}/${slugify(work.title)}/section/${section.id}/${slugify(
+		section.title
+	)}`;
+	let nextLink = `/prose/${work.id}/${slugify(work.title)}/section/${section.id}/${slugify(
+		section.title
+	)}`;
 
-	const published: Section[] = allSections.filter(item => {
-		if (item.publishedOn !== null || item.publishedOn !== undefined) {
+	const published: Section[] = allSections.filter((item) => {
+		if (item.publishedOn !== undefined) {
 			return item;
 		}
 	});
@@ -24,32 +36,44 @@
 
 	onMount(() => {
 		setFont();
-	})
+		generatePrevLink(section);
+		generateNextLink(section);
+	});
 
-	function generatePrevLink(): string {
+	function generatePrevLink(thisSection: Section) {
 		let sections = published;
-		let thisSection = section;
-		if ($account.account && $account.currProfile && $account.currProfile.id === work.author.id) {
+		if (
+			$account.account &&
+			$account.currProfile &&
+			$account.currProfile.id === work.author.id
+		) {
 			sections = allSections;
 		}
-		const idx = sections.findIndex(item => item.id === thisSection.id);
+		const idx = sections.findIndex((item) => item.id === thisSection.id);
 		if (idx >= 1) {
 			thisSection = sections[idx - 1];
 		}
-		return `/prose/${work.id}/${slugify(work.title)}/section/${thisSection.id}/${slugify(thisSection.title)}`;
+		prevLink = `/prose/${work.id}/${slugify(work.title)}/section/${thisSection.id}/${slugify(
+			thisSection.title
+		)}`;
 	}
 
-	function generateNextLink(): string {
+	function generateNextLink(thisSection: Section) {
 		let sections = published;
-		let thisSection = section;
-		if ($account.account && $account.currProfile && $account.currProfile.id === work.author.id) {
+		if (
+			$account.account &&
+			$account.currProfile &&
+			$account.currProfile.id === work.author.id
+		) {
 			sections = allSections;
 		}
-		const idx = sections.findIndex(item => item.id === thisSection.id);
-		if (idx < (sections.length - 1)) {
+		const idx = sections.findIndex((item) => item.id === thisSection.id);
+		if (idx < sections.length - 1) {
 			thisSection = sections[idx + 1];
 		}
-		return `/prose/${work.id}/${slugify(work.title)}/section/${thisSection?.id}/${slugify(thisSection.title)}`;
+		nextLink = `/prose/${work.id}/${slugify(work.title)}/section/${thisSection?.id}/${slugify(
+			thisSection.title
+		)}`;
 	}
 
 	function changeFont(font: SectionFont) {
@@ -60,22 +84,31 @@
 	function setFont() {
 		switch ($app.sectionFont) {
 			case SectionFont.inter:
-				document.documentElement.style.setProperty('--section-text', `'Inter', sans-serif`);
+				document.documentElement.style.setProperty("--section-text", `'Inter', sans-serif`);
 				break;
 			case SectionFont.josefinSlab:
-				document.documentElement.style.setProperty('--section-text', `'Josefin Slab', serif`);
+				document.documentElement.style.setProperty(
+					"--section-text",
+					`'Josefin Slab', serif`
+				);
 				break;
 			case SectionFont.libreBaskerville:
-				document.documentElement.style.setProperty('--section-text', `'Libre Baskerville', serif`);
+				document.documentElement.style.setProperty(
+					"--section-text",
+					`'Libre Baskerville', serif`
+				);
 				break;
 			case SectionFont.ibmPlexMono:
-				document.documentElement.style.setProperty('--section-text', `'IBM Plex Mono', sans-serif`);
+				document.documentElement.style.setProperty(
+					"--section-text",
+					`'IBM Plex Mono', sans-serif`
+				);
 				break;
 		}
 	}
 
 	function onEdit() {
-		dispatch('edit');
+		dispatch("edit");
 	}
 </script>
 
@@ -91,9 +124,15 @@
 		{/if}
 		<div class="flex-1">
 			<h3 class="text-white font-light ml-0.5">
-				<a class="text-white hover:text-white" href="/prose/{work.id}/{slugify(work.title)}">{work.title}</a>
+				<a class="text-white hover:text-white" href="/prose/{work.id}/{slugify(work.title)}"
+					>{work.title}</a
+				>
 				<span class="text-white mx-[0.075rem] text-lg">•</span>
-				<a class="text-white hover:text-white" href="/profile/{work.author.id}/{slugify(work.author.username)}">{work.author.username}</a>
+				<a
+					class="text-white hover:text-white"
+					href="/profile/{work.author.id}/{slugify(work.author.username)}"
+					>{work.author.username}</a
+				>
 			</h3>
 			<h1 class="text-white text-4xl">{section.title}</h1>
 		</div>
@@ -156,7 +195,11 @@
 			<svelte:fragment slot="items">
 				{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
 					{#each allSections as thisSection}
-						<a href="/prose/{work.id}/{slugify(work.title)}/section/{thisSection.id}/{slugify(thisSection.title)}">
+						<a
+							href="/prose/{work.id}/{slugify(
+								work.title
+							)}/section/{thisSection.id}/{slugify(thisSection.title)}"
+						>
 							<span>{thisSection.title}</span>
 						</a>
 					{:else}
@@ -164,7 +207,11 @@
 					{/each}
 				{:else}
 					{#each published as thisSection}
-						<a href="/prose/{work.id}/{slugify(work.title)}/section/{thisSection.id}/{slugify(thisSection.title)}">
+						<a
+							href="/prose/{work.id}/{slugify(
+								work.title
+							)}/section/{thisSection.id}/{slugify(thisSection.title)}"
+						>
 							<span>{thisSection.title}</span>
 						</a>
 					{:else}
@@ -179,18 +226,18 @@
 <div class="flex flex-col rounded-xl bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
 	{#key section}
 		{#if section.noteTop}
-			<div class="note mt-12 border-b-2 rounded-bl-xl" transition:fade|local={{ delay: 0, duration: 250 }}>
+			<div class="note mt-12 border-b-2 rounded-bl-xl">
 				<h3>From the author&mdash;</h3>
 				<div class="authors-note">
 					{@html section.noteTop}
 				</div>
 			</div>
 		{/if}
-		<div class="section-body px-12 py-6" transition:fade|local={{ delay: 0, duration: 250 }}>
+		<div class="section-body px-12 py-6">
 			{@html section.body}
 		</div>
 		{#if section.noteBottom}
-			<div class="note mb-12 border-t-2 rounded-tl-xl" transition:fade|local={{ delay: 0, duration: 250 }}>
+			<div class="note mb-12 border-t-2 rounded-tl-xl">
 				<h3>From the author&mdash;</h3>
 				<div class="authors-note">
 					{@html section.noteBottom}
@@ -199,18 +246,12 @@
 		{/if}
 	{/key}
 	<div class="flex items-center p-2 rounded-xl bg-zinc-300 dark:bg-zinc-600 mx-4 mb-4">
-		<a
-			class="direction-button hover:bg-zinc-400 dark:hover:bg-zinc-500"
-			href={generatePrevLink()}
-		>
+		<a class="direction-button hover:bg-zinc-400 dark:hover:bg-zinc-500" href={prevLink}>
 			<span><ArrowLeftSLine /></span>
 			<span class="uppercase font-bold tracking-wider text-xs">Prev</span>
 		</a>
 		<div class="mx-0.5"><!--spacer--></div>
-		<a
-			class="direction-button hover:bg-zinc-400 dark:hover:bg-zinc-500"
-			href={generateNextLink()}
-		>
+		<a class="direction-button hover:bg-zinc-400 dark:hover:bg-zinc-500" href={nextLink}>
 			<span class="uppercase font-bold tracking-wider text-xs">Next</span>
 			<span><ArrowRightSLine /></span>
 		</a>
@@ -223,7 +264,11 @@
 			<svelte:fragment slot="items">
 				{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
 					{#each allSections as thisSection}
-						<a href="/prose/{work.id}/{slugify(work.title)}/section/{thisSection.id}/{slugify(thisSection.title)}">
+						<a
+							href="/prose/{work.id}/{slugify(
+								work.title
+							)}/section/{thisSection.id}/{slugify(thisSection.title)}"
+						>
 							<span>{thisSection.title}</span>
 						</a>
 					{:else}
@@ -231,7 +276,11 @@
 					{/each}
 				{:else}
 					{#each published as thisSection}
-						<a href="/prose/{work.id}/{slugify(work.title)}/section/{thisSection.id}/{slugify(thisSection.title)}">
+						<a
+							href="/prose/{work.id}/{slugify(
+								work.title
+							)}/section/{thisSection.id}/{slugify(thisSection.title)}"
+						>
 							<span>{thisSection.title}</span>
 						</a>
 					{:else}

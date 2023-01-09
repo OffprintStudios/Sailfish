@@ -59,12 +59,12 @@ struct SectionService {
                 if published == true {
                     let results: [Section] = try await query.filter(\.$publishedOn <= Date()).all()
                     return results.map { item in
-                        SectionInfo(from: item)
+                        SectionInfo(from: item, with: item.volume)
                     }
                 } else {
                     let results: [Section] = try await query.all()
                     return results.map { item in
-                        SectionInfo(from: item)
+                        SectionInfo(from: item, with: item.volume)
                     }
                 }
             }
@@ -125,7 +125,7 @@ struct SectionService {
             throw Abort(.notFound, reason: "The work you're trying to update doesn't exist.")
         }
         let section: Section = try await request.db.transaction { database in
-            guard let section: Section = try await work.$sections.query(on: database).filter(\.$id == id).first() else {
+            guard let section: Section = try await work.$sections.query(on: database).with(\.$volume).filter(\.$id == id).first() else {
                 throw Abort(.notFound, reason: "The section you're trying to edit doesn't exist.")
             }
             if section.publishedOn != nil {
@@ -148,6 +148,41 @@ struct SectionService {
         }
         try await request.workService.updateWordCount(work)
         return section
+    }
+    
+    /// Adds a section to a volume
+    func addToVolume(_ id: String, volumeId: String, for workId: String) async throws -> SectionInfo {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        guard let work: Work = try await profile.$works.query(on: request.db).filter(\.$id == workId).first() else {
+            throw Abort(.notFound, reason: "The work you're trying to update doesn't exist.")
+        }
+        guard let section: Section = try await work.$sections.query(on: request.db).filter(\.$id == id).first() else {
+            throw Abort(.notFound, reason: "The section you're trying to modify doesn't exist.")
+        }
+        guard let volume: Volume = try await work.$volumes.query(on: request.db).filter(\.$id == volumeId).first() else {
+            throw Abort(.notFound, reason: "The volume you're trying to modify doesn't exist.")
+        }
+        section.$volume.id = volume.id!
+        try await request.db.transaction { database in
+            try await section.save(on: database)
+        }
+        return .init(from: section, with: volume)
+    }
+    
+    /// Removes a volume from a work
+    func removeFromVolume(_ id: String, for workId: String) async throws -> SectionInfo {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        guard let work: Work = try await profile.$works.query(on: request.db).filter(\.$id == workId).first() else {
+            throw Abort(.notFound, reason: "The work you're trying to update doesn't exist.")
+        }
+        guard let section: Section = try await work.$sections.query(on: request.db).filter(\.$id == id).first() else {
+            throw Abort(.notFound, reason: "The section you're trying to modify doesn't exist.")
+        }
+        section.$volume.id = nil
+        try await request.db.transaction { database in
+            try await section.save(on: database)
+        }
+        return .init(from: section, with: nil)
     }
     
     /// Deletes a section from a work.

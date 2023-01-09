@@ -89,23 +89,30 @@
 		});
 	}
 
-	async function addToVolume(section: Section) {
+	async function addToVolume(id: string) {
 		openPopup(
 			AddToVolumePrompt,
 			{
-				onConfirm: async (volId: string) => {
-					loadingVolumeAction = true;
-					console.log(volId);
-					loadingVolumeAction = false;
+				onConfirm: async () => {
+					await fetchSections();
 				}
 			},
-			{ section, workId: work.id }
+			{ sectionId: id, workId: work.id }
 		);
 	}
 
 	async function removeFromVolume(id: string) {
 		loadingVolumeAction = true;
-		console.log(id);
+		const response = await patchReq<void>(
+			`/sections/remove-from-volume/${id}?workId=${work.id}&profileId=${$account.currProfile?.id}`,
+			{}
+		);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			await fetchSections();
+		}
 		loadingVolumeAction = false;
 	}
 </script>
@@ -127,7 +134,7 @@
 {:else}
 	<ul class="mt-4 w-full">
 		{#each sections as section}
-			<li class="section-item odd:bg-zinc-300 odd:dark:bg-zinc-700">
+			<li class="section-item odd:bg-zinc-200 odd:dark:bg-zinc-700">
 				{#if $account.currProfile && $account.currProfile.id === work.author.id}
 					{#if publishing}
 						<button>
@@ -148,12 +155,17 @@
 					{#if section.volume}
 						<button
 							title="Remove From Volume"
+							disabled={loadingVolumeAction}
 							on:click={() => removeFromVolume(section.id)}
 						>
-							<ListCheck2 />
+							{#if loadingVolumeAction}
+								<Loader5Line class="animate-spin" />
+							{:else}
+								<ListCheck2 />
+							{/if}
 						</button>
 					{:else}
-						<button title="Add To Volume" on:click={addToVolume}>
+						<button title="Add To Volume" on:click={() => addToVolume(section.id)}>
 							<PlayListAddLine />
 						</button>
 					{/if}
@@ -164,7 +176,13 @@
 					)}"
 					data-sveltekit-preload-data
 				>
-					<span class="title">{section.title}</span>
+					<span class="title">
+						{section.title}
+						{#if section.volume}
+							<span class="mx-1 text-zinc-400">•</span>
+							<span class="text-zinc-400">{section.volume.title}</span>
+						{/if}
+					</span>
 					<span class="words">{section.words} words</span>
 					<span class="mx-1">•</span>
 					{#if section.publishedOn}

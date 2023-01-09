@@ -75,6 +75,24 @@ struct SectionController: RouteCollection {
             }
         }
         
+        sectionsWithAuth.patch("add-to-volume", ":id") { request async throws -> SectionService.SectionInfo in
+            let query = try request.query.decode(SectionQuery.self)
+            if let workId = query.workId, let volumeId = query.volumeId {
+                let id = request.parameters.get("id")!
+                return try await request.sectionService.addToVolume(id, volumeId: volumeId, for: workId)
+            }
+            throw Abort(.badRequest, reason: "You must include both the work ID and volume ID in your query parameters.")
+        }
+        
+        sectionsWithAuth.patch("remove-from-volume", ":id") { request async throws -> SectionService.SectionInfo in
+            let query = try request.query.decode(SectionQuery.self)
+            if let workId = query.workId {
+                let id = request.parameters.get("id")!
+                return try await request.sectionService.removeFromVolume(id, for: workId)
+            }
+            throw Abort(.badRequest, reason: noWorkIdReason)
+        }
+        
         sectionsWithAuth.delete("delete-section", ":id") { request async throws -> HTTPResponseStatus in
             let query = try request.query.decode(SectionQuery.self)
             if let workId = query.workId {
