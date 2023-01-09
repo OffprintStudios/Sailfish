@@ -112,17 +112,17 @@
 	}
 </script>
 
-<div class="rounded-xl mb-6 dark:highlight-shadowed" style="background: var(--accent);">
-	<div class="flex items-center p-4">
+<div class="lg:rounded-xl lg:mb-6 dark:highlight-shadowed" style="background: var(--accent);">
+	<div class="flex flex-col lg:flex-row items-center p-4">
 		{#if work.coverArt}
 			<div
-				class="relative overflow-hidden bg-white border-4 border-white rounded-xl mr-4"
+				class="relative overflow-hidden bg-white border-4 border-white rounded-xl mb-2 lg:mb-0 lg:mr-4"
 				style="box-shadow: var(--dropshadow);"
 			>
 				<img src={work.coverArt} alt="cover art" class="max-w-[150px] max-h-[110px]" />
 			</div>
 		{/if}
-		<div class="flex-1">
+		<div class="flex-1 text-center lg:text-left">
 			<h3 class="text-white font-light ml-0.5">
 				<a class="text-white hover:text-white" href="/prose/{work.id}/{slugify(work.title)}"
 					>{work.title}</a
@@ -134,26 +134,29 @@
 					>{work.author.username}</a
 				>
 			</h3>
-			<h1 class="text-white text-4xl">{section.title}</h1>
+			<h1 class="text-white text-2xl lg:text-4xl">{section.title}</h1>
 		</div>
 	</div>
-	<div class="flex items-center mt-2 p-2 border-t-2" style="border-color: var(--accent-light);">
+	<div
+		class="flex items-center lg:mt-2 p-2 border-t-2"
+		style="border-color: var(--accent-light);"
+	>
 		{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
 			<Button kind="primary" on:click={onEdit}>
-				<Edit2Line class="button-icon" />
-				<span class="button-text">Edit</span>
+				<Edit2Line class="button-icon variable-text" />
+				<span class="button-text hidden lg:block">Edit</span>
 			</Button>
 		{:else if $account.account && $account.currProfile}
 			<Button kind="primary">
-				<BookmarkLine class="button-icon" />
-				<span class="button-text">Bookmark</span>
+				<BookmarkLine class="button-icon variable-text" />
+				<span class="button-text hidden lg:bock">Bookmark</span>
 			</Button>
 		{/if}
 		<div class="mx-0.5"><!--spacer--></div>
 		<Dropdown kind="primary">
 			<svelte:fragment slot="button">
-				<FontSize class="button-icon" />
-				<span class="button-text">Formatting</span>
+				<FontSize class="button-icon variable-text" />
+				<span class="button-text hidden lg:block">Formatting</span>
 			</svelte:fragment>
 			<svelte:fragment slot="items">
 				<button
@@ -189,8 +192,8 @@
 		<div class="flex-1"><!--spacer--></div>
 		<Dropdown kind="primary" position="bottom-end">
 			<svelte:fragment slot="button">
-				<ListUnordered class="button-icon" />
-				<span class="button-text">Chapters</span>
+				<ListUnordered class="button-icon variable-text" />
+				<span class="button-text hidden lg:block">Chapters</span>
 			</svelte:fragment>
 			<svelte:fragment slot="items">
 				{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
@@ -223,7 +226,7 @@
 	</div>
 </div>
 
-<div class="flex flex-col rounded-xl bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
+<div class="flex flex-col lg:rounded-xl bg-zinc-200 dark:bg-zinc-700 lg:dark:highlight-shadowed">
 	{#key section}
 		{#if section.noteTop}
 			<div class="note mt-12 border-b-2 rounded-bl-xl">
@@ -233,7 +236,7 @@
 				</div>
 			</div>
 		{/if}
-		<div class="section-body px-12 py-6">
+		<div class="section-body px-4 py-2 lg:px-12 lg:py-6">
 			{@html section.body}
 		</div>
 		{#if section.noteBottom}
@@ -245,7 +248,7 @@
 			</div>
 		{/if}
 	{/key}
-	<div class="flex items-center p-2 rounded-xl bg-zinc-300 dark:bg-zinc-600 mx-4 mb-4">
+	<div class="flex items-center p-2 lg:rounded-xl bg-zinc-300 dark:bg-zinc-600 lg:mx-4 lg:mb-4">
 		<a class="direction-button hover:bg-zinc-400 dark:hover:bg-zinc-500" href={prevLink}>
 			<span><ArrowLeftSLine /></span>
 			<span class="uppercase font-bold tracking-wider text-xs">Prev</span>
@@ -258,8 +261,8 @@
 		<div class="flex-1"><!--spacer--></div>
 		<Dropdown position="top-end">
 			<svelte:fragment slot="button">
-				<ListUnordered class="button-icon" />
-				<span class="button-text">Chapters</span>
+				<ListUnordered class="button-icon variable-text" />
+				<span class="button-text hidden lg:block">Chapters</span>
 			</svelte:fragment>
 			<svelte:fragment slot="items">
 				{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
@@ -298,7 +301,7 @@
 		color: var(--text-color);
 	}
 	div.note {
-		@apply px-4 py-3 mx-20 border-l-2;
+		@apply px-4 py-3 mx-6 lg:mx-20 border-l-2;
 		border-color: var(--accent);
 		h3 {
 			@apply text-2xl;

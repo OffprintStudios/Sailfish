@@ -53,8 +53,8 @@
 	<meta property="twitter:image" content={data.work.coverArt ?? data.work.author.avatar} />
 </svelte:head>
 
-<div bind:this={containerTop} />
-<div class="max-w-4xl mx-auto my-6">
+<div bind:this={containerTop}><!--intentionally left blank--></div>
+<div class="max-w-4xl mx-auto mb-6 lg:mt-6">
 	{#if editMode}
 		<EditSection
 			work={data.work}

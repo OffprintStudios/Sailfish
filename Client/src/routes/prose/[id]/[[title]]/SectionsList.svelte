@@ -179,17 +179,22 @@
 					<span class="title">
 						{section.title}
 						{#if section.volume}
-							<span class="mx-1 text-zinc-400">•</span>
-							<span class="text-zinc-400">{section.volume.title}</span>
+							<span class="mx-1 text-zinc-400 hidden lg:block">•</span>
+							<span class="text-zinc-400 hidden lg:block">{section.volume.title}</span
+							>
 						{/if}
 					</span>
-					<span class="words">{section.words} words</span>
-					<span class="mx-1">•</span>
-					{#if section.publishedOn}
-						<span>{localeDate(section.publishedOn, "shortDate")}</span>
-					{:else}
-						<span>{localeDate(section.createdAt, "shortDate")}</span>
-					{/if}
+					<span
+						class="flex items-center text-xs lg:text-sm text-zinc-400 relative -top-0.5 lg:top-0"
+					>
+						<span class="words">{section.words} words</span>
+						<span class="mx-1">•</span>
+						{#if section.publishedOn}
+							<span>{localeDate(section.publishedOn, "shortDate")}</span>
+						{:else}
+							<span>{localeDate(section.createdAt, "shortDate")}</span>
+						{/if}
+					</span>
 				</a>
 				{#if $account.currProfile && $account.currProfile.id === work.author.id}
 					{#if deleting}
@@ -211,10 +216,10 @@
 	li.section-item {
 		@apply w-full flex h-10;
 		a {
-			@apply flex-1 flex items-center no-underline text-sm transition transform h-full px-2;
+			@apply flex-1 flex flex-col lg:flex-row lg:items-center no-underline text-sm transition transform h-full px-2;
 			color: var(--text-color);
 			span.title {
-				@apply flex-1;
+				@apply flex-1 flex items-center relative top-0.5 lg:top-0;
 			}
 			&:hover {
 				background: var(--accent);
