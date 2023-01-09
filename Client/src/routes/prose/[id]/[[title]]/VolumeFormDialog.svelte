@@ -5,28 +5,27 @@
 	import { Button } from "$lib/ui/util";
 	import { CheckLine, CloseLine } from "svelte-remixicon";
 	import type { VolumeForm } from "$lib/models/content/works";
-	import { postReq } from "$lib/http";
-	import type { ResponseError } from "$lib/http";
+	import { postReq, patchReq, type ResponseError } from "$lib/http";
 	import { TextField, TextArea } from "$lib/ui/forms";
 	import toast from "svelte-french-toast";
 
 	const { form, errors, isSubmitting, createSubmitHandler } = createForm<VolumeForm>({
 		validate(values) {
 			const errors = {
-				title: '',
-				desc: '',
+				title: "",
+				desc: ""
 			};
-			if (!values.title || values.title.length < 3 || values.title.length > 120) {
-				errors.title = 'Titles should be between 3 and 120 characters';
+			if (values.title.length < 3 || values.title.length > 120) {
+				errors.title = "Titles should be between 3 and 120 characters";
 			}
-			if (!values.desc || values.desc.length < 3 || values.desc.length > 240) {
-				errors.desc = 'Descriptions should be between 3 and 240 characters';
+			if (values.desc.length < 3 || values.desc.length > 240) {
+				errors.desc = "Descriptions should be between 3 and 240 characters";
 			}
 			return errors;
 		},
 		initialValues: {
-			title: null,
-			desc: null,
+			title: $popup.data.volume ? $popup.data.volume.title : "",
+			desc: $popup.data.volume ? $popup.data.volume.desc : ""
 		}
 	});
 
@@ -34,23 +33,45 @@
 		async onSubmit(values) {
 			const formInfo: VolumeForm = {
 				title: values.title,
-				desc: values.desc,
+				desc: values.desc
 			};
 
-			const response = await postReq<void>(`/volumes/create-volume?workId=${$popup.data.workId}profileId=${$account.currProfile.id}`, formInfo);
-			if ((response as ResponseError).error) {
-				const error = response as ResponseError;
-				toast.error(error.message);
+			if ($popup.data.volume) {
+				const response = await patchReq<void>(
+					`/volumes/update-volume/${$popup.data.volume.id}?workId=${$popup.data.workId}&profileId=${$account.currProfile?.id}`,
+					formInfo
+				);
+				if ((response as ResponseError).error) {
+					const error = response as ResponseError;
+					toast.error(error.message);
+				} else {
+					closePopupAndConfirm();
+				}
 			} else {
-				closePopupAndConfirm();
+				const response = await postReq<void>(
+					`/volumes/create-volume?workId=${$popup.data.workId}&profileId=${$account.currProfile?.id}`,
+					formInfo
+				);
+				if ((response as ResponseError).error) {
+					const error = response as ResponseError;
+					toast.error(error.message);
+				} else {
+					closePopupAndConfirm();
+				}
 			}
 		}
-	})
+	});
 </script>
 
-<div class="w-[400px] rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
+<div
+	class="w-[400px] rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
+>
 	<div class="p-4">
-		<h3 class="text-2xl">Add a Volume</h3>
+		{#if $popup.data.volume}
+			<h3 class="text-2xl">Edit Volume</h3>
+		{:else}
+			<h3 class="text-2xl">Add a Volume</h3>
+		{/if}
 		<form use:form>
 			<TextField
 				name="title"
@@ -74,7 +95,7 @@
 			<CheckLine class="button-icon" />
 			<span class="button-text">Save</span>
 		</Button>
-		<div class="mx-0.5"></div>
+		<div class="mx-0.5" />
 		<Button on:click={closePopup} loading={$isSubmitting}>
 			<CloseLine class="button-icon" />
 			<span class="button-text">Cancel</span>

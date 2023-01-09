@@ -2,47 +2,110 @@
 	import { onMount } from "svelte";
 	import { account } from "$lib/state/account.state";
 	import type { Volume, Work } from "$lib/models/content/works";
-	import { getReq } from "$lib/http";
-	import type { ResponseError } from "$lib/http";
+	import { getReq, delReq, patchReq, type ResponseError } from "$lib/http";
 	import toast from "svelte-french-toast";
 	import { Button } from "$lib/ui/util";
-	import { Edit2Line, DeleteBin2Line, ImageAddLine, CheckboxBlankCircleLine, CheckboxCircleLine } from "svelte-remixicon";
+	import {
+		Edit2Line,
+		DeleteBin2Line,
+		ImageAddLine,
+		CheckboxBlankCircleLine,
+		CheckboxCircleLine
+	} from "svelte-remixicon";
+	import { openPopup } from "$lib/ui/popup";
+	import VolumeFormDialog from "./VolumeFormDialog.svelte";
+	import DeleteVolumePrompt from "./DeleteVolumePrompt.svelte";
+	import PublishVolumePrompt from "./PublishVolumePrompt.svelte";
 
 	export let work: Work;
 	let volumes: Volume[] = [];
 	let loading = false;
+	let publishing = false;
 	let deleting = false;
 
 	onMount(async () => {
 		await fetchVolumes();
-	})
+	});
 
 	export async function fetchVolumes() {
 		loading = true;
-		const response = await getReq<Volume[]>(`/volumes/fetch-volumes?workId=${work.id}`);
-		if ((response as ResponseError).error) {
-			const error = response as ResponseError;
-			toast.error(error.message);
+		if (
+			$account.account &&
+			$account.currProfile &&
+			$account.currProfile.id === work.author.id
+		) {
+			const response = await getReq<Volume[]>(
+				`/volumes/fetch-volumes?workId=${work.id}&status=draft`
+			);
+			if ((response as ResponseError).error) {
+				const error = response as ResponseError;
+				toast.error(error.message);
+			} else {
+				volumes = response as Volume[];
+			}
 		} else {
-			volumes = response as Volume[];
+			const response = await getReq<Volume[]>(
+				`/volumes/fetch-volumes?workId=${work.id}&status=published`
+			);
+			if ((response as ResponseError).error) {
+				const error = response as ResponseError;
+				toast.error(error.message);
+			} else {
+				volumes = response as Volume[];
+			}
 		}
 		loading = false;
 	}
 
 	async function editVolume(volume: Volume) {
-
+		openPopup(
+			VolumeFormDialog,
+			{
+				onConfirm: async () => {
+					await fetchVolumes();
+				}
+			},
+			{ workId: work.id, volume }
+		);
 	}
 
-	async function addCoverArt(id: string) {
-
-	}
+	async function addCoverArt(id: string) {}
 
 	async function publishVolume(id: string) {
-
+		openPopup(PublishVolumePrompt, {
+			onConfirm: async () => {
+				publishing = true;
+				const response = await patchReq<void>(
+					`/volumes/publish-volume/${id}?workId=${work.id}&profileId=${$account.currProfile?.id}`,
+					{}
+				);
+				if ((response as ResponseError).statusCode) {
+					const error = response as ResponseError;
+					toast.error(error.message);
+				} else {
+					await fetchVolumes();
+				}
+				publishing = false;
+			}
+		});
 	}
 
 	async function deleteVolume(id: string) {
-
+		openPopup(DeleteVolumePrompt, {
+			onConfirm: async () => {
+				deleting = true;
+				const response = await delReq<void>(
+					`/volumes/delete-volume/${id}?workId=${work.id}&profileId=${$account.currProfile?.id}`
+				);
+				if ((response as ResponseError).statusCode) {
+					const error = response as ResponseError;
+					toast.error(error.message);
+				} else {
+					await fetchVolumes();
+				}
+				deleting = false;
+			}
+		});
 	}
 </script>
 
@@ -55,7 +118,7 @@
 	<div class="empty">
 		<h3>Nothing's been added yet!</h3>
 		{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
-			<p>Hit the Add Volume button to hit the ground running.</p>
+			<p>Smash the Add Volume button to hit the ground running.</p>
 		{:else}
 			<p>Come back later when there's something to check out.</p>
 		{/if}
@@ -71,23 +134,30 @@
 					<div class="p-4">
 						<h3 class="text-xl">{volume.title}</h3>
 						<span class="text-xs italic text-zinc-400">
-						{volume.desc}
-					</span>
+							{volume.desc}
+						</span>
 					</div>
 				</div>
 				{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
-					<div class="flex items-center p-1 border-t-2 border-zinc-300 dark:border-zinc-600">
+					<div
+						class="flex items-center p-1 border-t-2 border-zinc-300 dark:border-zinc-600"
+					>
 						{#if volume.publishedOn}
-							<Button title="Unpublish">
+							<Button title="Published">
 								<CheckboxCircleLine class="button-icon no-text" />
 							</Button>
 						{:else}
-							<Button title="Publish">
+							<Button
+								title="Publish"
+								loading={publishing}
+								loadingText=""
+								on:click={() => publishVolume(volume.id)}
+							>
 								<CheckboxBlankCircleLine class="button-icon no-text" />
 							</Button>
 						{/if}
 						<div class="mx-[0.075rem]"><!--spacer--></div>
-						<Button title="Edit">
+						<Button title="Edit" on:click={() => editVolume(volume)}>
 							<Edit2Line class="button-icon no-text" />
 						</Button>
 						<div class="mx-[0.075rem]"><!--spacer--></div>
@@ -95,7 +165,12 @@
 							<ImageAddLine class="button-icon no-text" />
 						</Button>
 						<div class="flex-1"><!--spacer--></div>
-						<Button title="Delete">
+						<Button
+							title="Delete"
+							loading={deleting}
+							loadingText=""
+							on:click={() => deleteVolume(volume.id)}
+						>
 							<DeleteBin2Line class="button-icon no-text" />
 						</Button>
 					</div>

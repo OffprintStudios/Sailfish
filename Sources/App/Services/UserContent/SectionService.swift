@@ -16,7 +16,10 @@ struct SectionService {
             guard let work: Work = try await Work.query(on: database).filter(\.$id == workId).first() else {
                 throw Abort(.notFound, reason: "The section you're trying to fetch belongs to a work that doesn't exist.")
             }
-            guard let section: Section = try await work.$sections.query(on: database).filter(\.$id == id).first() else {
+            guard let section: Section = try await work.$sections.query(on: database)
+                .with(\.$volume)
+                .filter(\.$id == id)
+                .first() else {
                 throw Abort(.notFound, reason: "The section you're trying to fetch doesn't exist.")
             }
             

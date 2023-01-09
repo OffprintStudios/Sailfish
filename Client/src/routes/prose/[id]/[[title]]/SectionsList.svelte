@@ -6,12 +6,15 @@
 		CheckboxCircleLine,
 		CheckboxBlankCircleLine,
 		DeleteBinLine,
-		Loader5Line
+		Loader5Line,
+		PlayListAddLine,
+		ListCheck2
 	} from "svelte-remixicon";
 	import { slugify, localeDate } from "$lib/util/functions";
 	import toast from "svelte-french-toast";
 	import { getReq, patchReq, delReq } from "$lib/http";
 	import type { ResponseError } from "$lib/http";
+	import AddToVolumePrompt from "./AddToVolumePrompt.svelte";
 	import DeleteSectionPrompt from "./DeleteSectionPrompt.svelte";
 	import { openPopup } from "$lib/ui/popup";
 
@@ -20,6 +23,7 @@
 	let loading = false;
 	let publishing = false;
 	let deleting = false;
+	let loadingVolumeAction = false;
 
 	onMount(async () => {
 		await fetchSections();
@@ -84,6 +88,26 @@
 			}
 		});
 	}
+
+	async function addToVolume(section: Section) {
+		openPopup(
+			AddToVolumePrompt,
+			{
+				onConfirm: async (volId: string) => {
+					loadingVolumeAction = true;
+					console.log(volId);
+					loadingVolumeAction = false;
+				}
+			},
+			{ section, workId: work.id }
+		);
+	}
+
+	async function removeFromVolume(id: string) {
+		loadingVolumeAction = true;
+		console.log(id);
+		loadingVolumeAction = false;
+	}
 </script>
 
 {#if loading}
@@ -110,12 +134,27 @@
 							<Loader5Line class="animate-spin" />
 						</button>
 					{:else}
-						<button on:click={() => publishSection(section.id)}>
+						<button
+							on:click={() => publishSection(section.id)}
+							title="Publish/Unpublish"
+						>
 							{#if section.publishedOn}
 								<CheckboxCircleLine class="button-icon no-text" />
 							{:else}
 								<CheckboxBlankCircleLine class="button-icon no-text" />
 							{/if}
+						</button>
+					{/if}
+					{#if section.volume}
+						<button
+							title="Remove From Volume"
+							on:click={() => removeFromVolume(section.id)}
+						>
+							<ListCheck2 />
+						</button>
+					{:else}
+						<button title="Add To Volume" on:click={addToVolume}>
+							<PlayListAddLine />
 						</button>
 					{/if}
 				{/if}
@@ -140,7 +179,7 @@
 							<Loader5Line class="animate-spin" />
 						</button>
 					{:else}
-						<button on:click={() => deleteSection(section.id)}>
+						<button on:click={() => deleteSection(section.id)} title="Delete">
 							<DeleteBinLine class="button-icon no-text" />
 						</button>
 					{/if}

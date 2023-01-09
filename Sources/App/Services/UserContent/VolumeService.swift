@@ -11,13 +11,12 @@ struct VolumeService {
     let request: Request
     
     /// Fetches all volumes for a given work.
-    func fetchVolumes(for workId: String, on release: Date? = nil) async throws -> [Volume] {
-        let query = Volume.query(on: request.db).filter(\.$work.$id == workId).sort(\.$createdAt, .ascending)
-        if let released = release {
-            return try await query.filter(\.$publishedOn <= released).all()
-        } else {
-            return try await query.all()
+    func fetchVolumes(for workId: String, status: FetchStatus) async throws -> [Volume] {
+        var query = Volume.query(on: request.db).filter(\.$work.$id == workId).sort(\.$createdAt, .ascending)
+        if status == .published {
+            query = query.filter(\.$publishedOn <= Date())
         }
+        return try await query.all()
     }
     
     /// Creates a new volume for the provided `workId`.
@@ -67,27 +66,29 @@ struct VolumeService {
     }
 
     /// Publishes a volume and all its associated sections with the given release date.
-    func publishVolume(_ id: String, for workId: String, on release: Date? = nil) async throws -> Volume {
+    func publishVolume(_ id: String, for workId: String, on release: Date) async throws -> Volume {
         let profile = try request.authService.getUser(withProfile: true).profile!
-        return try await request.db.transaction { database in
-            guard let work: Work = try await profile.$works.query(on: database).filter(\.$id == workId).first() else {
-                throw Abort(.notFound, reason: "The work you're trying to modify doesn't exist.")
-            }
-            guard let volume: Volume = try await work.$volumes.query(on: database).filter(\.$id == id).first() else {
-                throw Abort(.notFound, reason: "The volume you're trying to modify doesn't exist.")
-            }
-            let sections: [Section] = try await volume.$sections.query(on: database).all()
+        guard let work: Work = try await profile.$works.query(on: request.db).filter(\.$id == workId).first() else {
+            throw Abort(.notFound, reason: "The work you're trying to modify doesn't exist.")
+        }
+        guard let volume: Volume = try await work.$volumes.query(on: request.db).filter(\.$id == id).first() else {
+            throw Abort(.notFound, reason: "The volume you're trying to modify doesn't exist.")
+        }
+        let sections: [Section] = try await volume.$sections.query(on: request.db).all()
+        try await request.db.transaction { database in
             for section in sections {
                 if (section.publishedOn == nil) {
                     section.publishedOn = release
                     try await section.save(on: database)
                 }
             }
-            volume.publishedOn = release
-            try await volume.save(on: database)
-            try await request.workService.updateWordCount(work)
-            return volume
         }
+        volume.publishedOn = release
+        try await request.db.transaction { database in
+            try await volume.save(on: database)
+        }
+        try await request.workService.updateWordCount(work)
+        return volume
     }
     
     /// Deletes a volume from a work.
@@ -102,6 +103,13 @@ struct VolumeService {
             }
             try await volume.delete(on: database)
         }
+    }
+}
+
+extension VolumeService {
+    enum FetchStatus: String, Codable {
+        case draft = "draft"
+        case published = "published"
     }
 }
 

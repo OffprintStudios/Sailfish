@@ -7,7 +7,7 @@
 	import { slugify } from "$lib/util/functions";
 	import { AddBoxLine } from "svelte-remixicon";
 	import { openPopup } from "$lib/ui/popup";
-	import AddVolumeDialog from "./AddVolumeDialog.svelte";
+	import VolumeFormDialog from "./VolumeFormDialog.svelte";
 
 	export let work: Work;
 	let volList = VolumesList;
@@ -25,7 +25,7 @@
 
 	function addVolume() {
 		openPopup(
-			AddVolumeDialog,
+			VolumeFormDialog,
 			{
 				async onConfirm() {
 					await volList.fetchVolumes();
