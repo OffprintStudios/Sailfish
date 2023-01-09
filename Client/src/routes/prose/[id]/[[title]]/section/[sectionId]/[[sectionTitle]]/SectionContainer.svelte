@@ -48,7 +48,8 @@
 			$account.account &&
 			$account.currProfile &&
 			$account.currProfile.id !== work.author.id &&
-			work.publishedOn
+			work.publishedOn &&
+			section.publishedOn
 		) {
 			await markAsRead();
 		}
