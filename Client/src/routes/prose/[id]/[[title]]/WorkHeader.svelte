@@ -19,7 +19,9 @@
 		PenNibLine,
 		TimeLine,
 		ThumbUpLine,
-		ThumbDownLine
+		ThumbUpFill,
+		ThumbDownLine,
+		ThumbDownFill
 	} from "svelte-remixicon";
 	import type { Work } from "$lib/models/content/works";
 	import { ApprovalStatus } from "$lib/models/content/works";
@@ -47,6 +49,8 @@
 	let library: { hasItem: boolean } = { hasItem: false };
 	let isVoting = false;
 	let isAddingToLibrary = false;
+
+	console.log(history);
 
 	onMount(async () => {
 		if (
@@ -389,15 +393,51 @@
 		</div>
 		<div class="flex-1 lg:hidden"><!--spacer--></div>
 		<div class="flex items-center bg-zinc-300 dark:bg-zinc-600 rounded-xl p-1">
-			<Button loading={isVoting} loadingText="''" on:click={() => setVote(Vote.liked)}>
-				<ThumbUpLine class="button-icon" />
-				<span class="button-small-text">{abbreviate(work.likes)}</span>
-			</Button>
-			<div class="mx-0.5"><!--spacer--></div>
-			<Button loading={isVoting} loadingText="''" on:click={() => setVote(Vote.disliked)}>
-				<ThumbDownLine class="button-icon" />
-				<span class="button-small-text">{abbreviate(work.dislikes)}</span>
-			</Button>
+			{#if history}
+				<Button
+					loading={isVoting}
+					loadingText="''"
+					isPositive={history.vote === Vote.liked}
+					on:click={() => setVote(Vote.liked)}
+				>
+					{#if history.vote === Vote.liked}
+						<ThumbUpFill class="button-icon" />
+						<span class="button-small-text">{abbreviate(work.likes + 1)}</span>
+					{:else}
+						<ThumbUpLine class="button-icon text-green-600" />
+						<span class="button-small-text text-green-600"
+							>{abbreviate(work.likes)}</span
+						>
+					{/if}
+				</Button>
+				<div class="mx-0.5"><!--spacer--></div>
+				<Button
+					loading={isVoting}
+					loadingText="''"
+					isNegative={history.vote === Vote.disliked}
+					on:click={() => setVote(Vote.disliked)}
+				>
+					{#if history.vote === Vote.disliked}
+						<ThumbDownFill class="button-icon" />
+						<span class="button-small-text">{abbreviate(work.dislikes + 1)}</span>
+					{:else}
+						<ThumbDownLine class="button-icon text-red-600" />
+						<span class="button-small-text text-red-600"
+							>{abbreviate(work.dislikes)}</span
+						>
+					{/if}
+				</Button>
+			{:else}
+				<Button>
+					<ThumbUpLine class="button-icon text-green-600" />
+					<span class="button-small-text text-green-600">{abbreviate(work.likes)}</span>
+				</Button>
+				<div class="mx-0.5"><!--spacer--></div>
+				<Button>
+					<ThumbDownLine class="button-icon text-red-600" />
+					<span class="button-small-text text-red-600">{abbreviate(work.dislikes)}</span>
+				</Button>
+			{/if}
 		</div>
 	</div>
 	<div class="tool-bar">

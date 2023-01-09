@@ -3,6 +3,8 @@
 
 	export let loading = false;
 	export let isActive = false;
+	export let isPositive = false;
+	export let isNegative = false;
 	export let disabled = false;
 	export let classes = "";
 	export let loadingText = "Loading...";
@@ -38,6 +40,8 @@
 		{type}
 		class:primary={kind === "primary"}
 		class:active={isActive}
+		class:positive={isPositive}
+		class:negative={isNegative}
 		{title}
 		class:disabled
 		class={classes}
@@ -78,6 +82,22 @@
 		&.primary.active {
 			@apply text-white;
 			background: var(--accent-light);
+		}
+
+		&.positive {
+			@apply text-white bg-green-600;
+			color: white !important;
+			&:hover {
+				@apply bg-green-500;
+			}
+		}
+
+		&.negative {
+			@apply text-white bg-red-600;
+			color: white !important;
+			&:hover {
+				@apply bg-red-500;
+			}
 		}
 
 		&.disabled {

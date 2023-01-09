@@ -13,9 +13,12 @@
 	import type { ApprovalQueue } from "$lib/models/admin/approval-queue";
 	import { hasRoles } from "$lib/util/functions";
 	import { Roles } from "$lib/models/accounts";
+	import type { ReadingHistory } from "$lib/models/content/library";
+	import toast from "svelte-french-toast";
 
 	export let data: Work;
 	let queueItem: ApprovalQueue;
+	let history: ReadingHistory;
 
 	onMount(async () => {
 		if (
@@ -24,6 +27,14 @@
 			hasRoles($account.account.roles, [Roles.Admin, Roles.Moderator, Roles.WorkApprover])
 		) {
 			await fetchQueueItem();
+		}
+		if (
+			data.publishedOn !== undefined &&
+			data.publishedOn !== null &&
+			$account.account &&
+			$account.currProfile
+		) {
+			await fetchHistory();
 		}
 	});
 
@@ -36,6 +47,18 @@
 			console.log(error.message);
 		} else {
 			queueItem = response as ApprovalQueue;
+		}
+	}
+
+	async function fetchHistory() {
+		const response = await getReq<ReadingHistory>(
+			`/history/fetch-one?workId=${data.id}&profileId=${$account.currProfile?.id}`
+		);
+		if ((response as ResponseError).statusCode) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			history = response as ReadingHistory;
 		}
 	}
 </script>
@@ -71,7 +94,7 @@
 </svelte:head>
 
 <div class="max-w-7xl mx-auto mb-6 lg:mt-6">
-	<WorkHeader work={data} />
+	<WorkHeader work={data} {history} />
 	{#if !data.publishedOn && !queueItem}
 		<InfoBar
 			message="<b>This work is a draft.</b> No views will be counted when navigating to
@@ -83,6 +106,6 @@
 	{/if}
 	<div class="max-w-4xl w-11/12 lg:w-full mx-auto">
 		<WorkInfo work={data} />
-		<ListContainer work={data} />
+		<ListContainer work={data} {history} />
 	</div>
 </div>

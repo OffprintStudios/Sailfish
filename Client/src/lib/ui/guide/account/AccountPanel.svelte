@@ -18,6 +18,7 @@
 	import { openPopup } from "../../popup";
 	import LogOutAlert from "./LogOutAlert.svelte";
 	import toast from "svelte-french-toast";
+	import { activity } from "$lib/state/activity.state";
 
 	async function logOut() {
 		openPopup(LogOutAlert, {
@@ -34,6 +35,8 @@
 					$account.currProfile = null;
 					$account.profiles = [];
 					$account.token = null;
+					$activity.markAsRead = [];
+					$activity.count = 0;
 					closeGuide();
 				} else {
 					toast.error(`Something went wrong! Try again in a little bit.`);

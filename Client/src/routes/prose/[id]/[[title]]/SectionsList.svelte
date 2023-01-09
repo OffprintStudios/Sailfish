@@ -8,7 +8,9 @@
 		DeleteBinLine,
 		Loader5Line,
 		PlayListAddLine,
-		ListCheck2
+		ListCheck2,
+		BookOpenLine,
+		BookLine
 	} from "svelte-remixicon";
 	import { slugify, localeDate } from "$lib/util/functions";
 	import toast from "svelte-french-toast";
@@ -17,8 +19,10 @@
 	import AddToVolumePrompt from "./AddToVolumePrompt.svelte";
 	import DeleteSectionPrompt from "./DeleteSectionPrompt.svelte";
 	import { openPopup } from "$lib/ui/popup";
+	import type { ReadingHistory } from "$lib/models/content/library";
 
 	export let work: Work;
+	export let history: ReadingHistory;
 	let sections: Section[] = [];
 	let loading = false;
 	let publishing = false;
@@ -167,6 +171,17 @@
 					{:else}
 						<button title="Add To Volume" on:click={() => addToVolume(section.id)}>
 							<PlayListAddLine />
+						</button>
+					{/if}
+				{/if}
+				{#if $account.account && $account.currProfile && $account.currProfile.id !== work.author.id}
+					{#if history && history.sectionsRead.includes(section.id)}
+						<button title="Read">
+							<BookOpenLine />
+						</button>
+					{:else}
+						<button title="Unread">
+							<BookLine />
 						</button>
 					{/if}
 				{/if}

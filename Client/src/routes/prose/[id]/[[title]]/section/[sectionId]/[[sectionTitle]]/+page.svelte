@@ -1,15 +1,30 @@
 <script lang="ts">
+	import { onMount } from "svelte";
 	import { afterNavigate } from "$app/navigation";
 	import type { Work, Section } from "$lib/models/content/works";
 	import SectionContainer from "./SectionContainer.svelte";
 	import EditSection from "./EditSection.svelte";
 	import { slugify } from "$lib/util/functions";
 	import { account } from "$lib/state/account.state";
+	import { getReq, type ResponseError } from "$lib/http";
+	import type { ReadingHistory } from "$lib/models/content/library";
+	import toast from "svelte-french-toast";
 
 	export let data: { work: Work; section: Section; allSections: Section[] };
 
 	let containerTop;
 	let editMode = false;
+	let history: ReadingHistory;
+
+	onMount(async () => {
+		if (
+			$account.account &&
+			$account.currProfile &&
+			$account.currProfile.id !== data.work.author.id
+		) {
+			await fetchHistory();
+		}
+	});
 
 	afterNavigate(() => {
 		containerTop.scrollIntoView({ behavior: "smooth" });
@@ -22,6 +37,18 @@
 			$account.currProfile.id === data.work.author.id
 		) {
 			editMode = !editMode;
+		}
+	}
+
+	async function fetchHistory() {
+		const response = await getReq<ReadingHistory>(
+			`/history/fetch-one?workId=${data.work.id}&profileId=${$account.currProfile?.id}`
+		);
+		if ((response as ResponseError).statusCode) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			history = response as ReadingHistory;
 		}
 	}
 </script>
@@ -68,6 +95,7 @@
 				work={data.work}
 				section={data.section}
 				allSections={data.allSections}
+				{history}
 				on:edit={toggleEditMode}
 			/>
 		{/key}

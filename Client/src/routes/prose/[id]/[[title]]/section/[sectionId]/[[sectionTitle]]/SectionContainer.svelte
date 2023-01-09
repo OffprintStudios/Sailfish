@@ -15,10 +15,12 @@
 	import { account } from "$lib/state/account.state";
 	import { SectionFont } from "$lib/models/util";
 	import { Button } from "$lib/ui/util";
+	import type { ReadingHistory } from "$lib/models/content/library";
 
 	export let work: Work;
 	export let section: Section;
 	export let allSections: Section[] = [];
+	export let history: ReadingHistory;
 	let prevLink = `/prose/${work.id}/${slugify(work.title)}/section/${section.id}/${slugify(
 		section.title
 	)}`;
@@ -110,6 +112,10 @@
 	function onEdit() {
 		dispatch("edit");
 	}
+
+	async function markAsRead() {}
+
+	async function bookmarkSection() {}
 </script>
 
 <div class="lg:rounded-xl lg:mb-6 dark:highlight-shadowed" style="background: var(--accent);">
@@ -147,10 +153,16 @@
 				<span class="button-text hidden lg:block">Edit</span>
 			</Button>
 		{:else if $account.account && $account.currProfile}
-			<Button kind="primary">
-				<BookmarkLine class="button-icon variable-text" />
-				<span class="button-text hidden lg:bock">Bookmark</span>
-			</Button>
+			{#if history}
+				<Button
+					kind="primary"
+					isActive={history.bookmarked.id && history.bookmarked.id === section.id}
+					on:click={bookmarkSection}
+				>
+					<BookmarkLine class="button-icon variable-text" />
+					<span class="button-text hidden lg:block">Mark</span>
+				</Button>
+			{/if}
 		{/if}
 		<div class="mx-0.5"><!--spacer--></div>
 		<Dropdown kind="primary">

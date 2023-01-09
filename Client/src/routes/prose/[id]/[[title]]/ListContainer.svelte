@@ -8,8 +8,10 @@
 	import { AddBoxLine } from "svelte-remixicon";
 	import { openPopup } from "$lib/ui/popup";
 	import VolumeFormDialog from "./VolumeFormDialog.svelte";
+	import type { ReadingHistory } from "$lib/models/content/library";
 
 	export let work: Work;
+	export let history: ReadingHistory;
 	let volList = VolumesList;
 
 	enum ListTabs {
@@ -76,7 +78,7 @@
 	</div>
 	<div>
 		{#if currTab === ListTabs.sections}
-			<SectionsList {work} />
+			<SectionsList {work} {history} />
 		{:else}
 			<VolumesList bind:this={volList} {work} />
 		{/if}
