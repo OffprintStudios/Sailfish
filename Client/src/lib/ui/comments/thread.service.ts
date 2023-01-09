@@ -10,19 +10,30 @@ import toast from "svelte-french-toast";
 
 export class ThreadService {
 	threadId: string;
-	page: Paginate<Comment>;
+	page = writable<Paginate<Comment>>({
+		items: [],
+		metadata: {
+			page: 1,
+			per: 25,
+			total: 0
+		}
+	});
 	url: string;
 	loading = writable<boolean>(false);
 
-	constructor(kind: CommentType, threadId: string, page: Paginate<Comment>) {
+	constructor(kind: CommentType, threadId: string, page: Paginate<Comment>, sectionId?: string) {
 		this.threadId = threadId;
-		this.page = page;
+		this.page.set(page);
 		switch (kind) {
 			case CommentType.Blog:
 				this.url = `/blogs/${this.threadId}/comments`;
 				break;
 			case CommentType.Work:
-				this.url = `/works/${this.threadId}/comments`;
+				if (sectionId) {
+					this.url = `/works/${this.threadId}/comments?sectionId=${sectionId}`;
+				} else {
+					this.url = `/works/${this.threadId}/comments`;
+				}
 				break;
 			case CommentType.Forum:
 				this.url = `/threads/${this.threadId}/posts`;
@@ -41,7 +52,7 @@ export class ThreadService {
 			const error = response as ResponseError;
 			toast.error(error.message);
 		} else {
-			this.page = response as Paginate<Comment>;
+			this.page.update(() => response as Paginate<Comment>);
 		}
 		this.loading.update(() => false);
 	}
@@ -56,18 +67,14 @@ export class ThreadService {
 			toast.error(error.message);
 		} else {
 			const comment = response as Comment;
-			if (this.page.items.length === 0) {
-				this.page = {
-					items: [comment],
-					metadata: {
-						page: 1,
-						per: 25,
-						total: 1
-					}
-				};
-			} else {
-				this.page.items = [...this.page.items, comment];
-			}
+			this.page.update((state) => ({
+				items: [...state.items, comment],
+				metadata: {
+					page: state.metadata.page,
+					per: state.metadata.per,
+					total: state.metadata.total + 1
+				}
+			}));
 			toast.success(`Comment added!`);
 		}
 	}

@@ -26,6 +26,7 @@ struct BlogService: HasComments {
                     .query(on: request.db)
                     .with(\.$profile)
                     .with(\.$history)
+                    .sort(\.$createdAt, .ascending)
                     .paginate(for: request)
             )
         }
@@ -71,7 +72,7 @@ struct BlogService: HasComments {
     }
     
     /// Fetches a new page of comments for a blog.
-    func fetchComments(for id: String) async throws -> Page<Comment> {
+    func fetchComments(for id: String, sectionId: String? = nil) async throws -> Page<Comment> {
         guard let blog: Blog = try await Blog.query(on: request.db).filter(\.$id == id).first() else {
             throw Abort(.notFound, reason: "Blog not found. Are you sure you're looking for the right one?")
         }
@@ -126,8 +127,6 @@ struct BlogService: HasComments {
         if blog.publishedOn != nil {
             guard let comment = try await blog.$comments
                 .query(on: request.db)
-                .with(\.$profile)
-                .with(\.$history)
                 .filter(\.$id == id)
                 .filter(\.$profile.$id == profile.id!)
                 .first() else {
@@ -140,6 +139,7 @@ struct BlogService: HasComments {
                 try await comment.$history.create(newHistory, on: database)
                 try await comment.save(on: database)
             }
+            comment.$profile.value = profile
             try await comment.$history.load(on: request.db)
             return comment
         }

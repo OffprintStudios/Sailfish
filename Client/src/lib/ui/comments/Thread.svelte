@@ -33,7 +33,7 @@
 >
 	<div class="flex-1">
 		<h6 class="text-xl ml-4" style="color: var(--text-color);">
-			{threadService.page.items.length} comment{pluralize(threadService.page.items.length)}
+			{$page.items.length} comment{pluralize($page.items.length)}
 		</h6>
 	</div>
 	{#if $account.account && $account.currProfile}
@@ -44,11 +44,11 @@
 	{/if}
 </div>
 
-{#if threadService.page.items.length > 0}
+{#if $page.items.length > 0}
 	<Paginator
 		currPage={pageNum}
 		{perPage}
-		totalItems={threadService.page.metadata.total}
+		totalItems={$page.metadata.total}
 		on:change={(e) => changePage(e.detail)}
 	/>
 {/if}
@@ -57,21 +57,20 @@
 		<h3>Loading...</h3>
 	</div>
 {:else}
-	{#each threadService.page.items as comment, i}
+	{#each $page.items as comment, i}
 		<Comment
 			{comment}
-			index={threadService.page.metadata.per * (threadService.page.metadata.page - 1) +
-				(i + 1)}
+			index={$page.metadata.per * ($page.metadata.page - 1) + (i + 1)}
 			{threadService}
 		/>
 	{/each}
 {/if}
 
-{#if threadService.page.items.length !== 0}
+{#if $page.items.length !== 0}
 	<Paginator
 		currPage={pageNum}
 		{perPage}
-		totalItems={threadService.page.metadata.total}
+		totalItems={$page.metadata.total}
 		on:change={(e) => changePage(e.detail)}
 	/>
 {/if}

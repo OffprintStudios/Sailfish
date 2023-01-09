@@ -8,30 +8,36 @@ import Fluent
 import LexoRank
 import SwiftSoup
 
-struct WorkService {
+struct WorkService: HasComments {    
     let request: Request
 
     /// Fetches a work given its ID. If no such work exists, throws a `notFound` error.
-    func fetchWork(_ id: String) async throws -> Work {
-        try await request.db.transaction { database in
-            let work = try await Work.query(on: database)
-                .with(\.$author)
-                .with(\.$tags) { tag in
-                    tag.with(\.$parent)
-                }
-                .filter(\.$id == id)
-                .first()
-            
-            if let hasWork = work {
-                if hasWork.publishedOn != nil {
-                    hasWork.views += 1
-                    try await hasWork.save(on: database)
-                }
-                return hasWork
-            } else {
-                throw Abort(.notFound, reason: "Work not found. Are you sure you're looking for the right one?")
-            }
+    func fetchWork(_ id: String, sectionId: String? = nil) async throws -> FetchWork {
+        guard let work: Work = try await Work.query(on: request.db)
+            .with(\.$author)
+            .with(\.$tags, { $0.with(\.$parent) })
+            .filter(\.$id == id)
+            .first() else {
+            throw Abort(.notFound, reason: "Work not found. Are you sure you're looking for the right one?")
         }
+        
+        if work.publishedOn != nil {
+            try await request.db.transaction { database in
+                work.views += 1
+                try await work.save(on: database)
+            }
+            var commentsQuery = work.$comments.query(on: request.db)
+                .with(\.$profile)
+                .with(\.$history)
+            if let hasSectionId = sectionId {
+                commentsQuery = commentsQuery.filter(\.$section.$id == hasSectionId)
+            }
+            return .init(
+                work: work,
+                comments: try await commentsQuery.paginate(for: request)
+            )
+        }
+        return .init(work: work, comments: nil)
     }
     
     /// Fetches a paginated list of published works based on the provided `ContentFilter`.
@@ -197,6 +203,94 @@ struct WorkService {
             }
             try await work.delete(on: database)
         }
+    }
+    
+    /// Fetches a new page of comments for the specified work.
+    func fetchComments(for id: String, sectionId: String? = nil) async throws -> Page<Comment> {
+        guard let work: Work = try await Work.query(on: request.db)
+            .filter(\.$id == id)
+            .first() else {
+            throw Abort(.notFound, reason: "Work not found. Are you sure you're looking for the right one?")
+        }
+        if work.publishedOn != nil {
+            var commentsQuery = work.$comments.query(on: request.db)
+                .with(\.$profile)
+                .with(\.$history)
+                .sort(\.$createdAt, .ascending)
+            if let hasSectionId = sectionId {
+                commentsQuery = commentsQuery.filter(\.$section.$id == hasSectionId)
+            }
+            
+            return try await commentsQuery.paginate(for: request)
+        }
+        throw Abort(.badRequest, reason: "This work is not published, so comments are inaccessible.")
+    }
+    
+    /// Adds a comment to the specified work.
+    func addComment(for id: String, with formInfo: Comment.CommentForm) async throws -> Comment {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        guard let work: Work = try await Work.query(on: request.db)
+            .filter(\.$id == id)
+            .first() else {
+            throw Abort(.notFound, reason: "The work you're commenting on doesn't seem to exist.")
+        }
+        if work.publishedOn != nil {
+            let comment: Comment = try await request.db.transaction { database in
+                let newComment = try Comment(by: profile.id!, with: formInfo)
+                try await newComment.save(on: database)
+                try await work.$comments.attach(newComment, on: database)
+                newComment.$profile.value = profile
+                try await newComment.$history.load(on: database)
+                return newComment
+            }
+            if work.$author.id != profile.id {
+                try await request.queue.dispatch(AddNotificationJob.self, .init(
+                    to: work.$author.id,
+                    from: comment.profile.id,
+                    event: .newWorkComment,
+                    entity: work.id,
+                    context: ["title": work.title, "url": "\(formInfo.locationUrl)#comment-\(comment.id ?? "nil")"]
+                ))
+            }
+            return comment
+        }
+        throw Abort(.badRequest, reason: "Comments are disabled for drafts.")
+    }
+    
+    /// Edits a work comment.
+    func editComment(_ id: String, for itemId: String, with formInfo: Comment.CommentForm) async throws -> Comment {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        guard let work: Work = try await Work.query(on: request.db)
+            .filter(\.$id == id)
+            .first() else {
+            throw Abort(.notFound, reason: "The work you're commenting on doesn't seem to exist.")
+        }
+        if work.publishedOn != nil {
+            guard let comment = try await work.$comments.query(on: request.db)
+                .filter(\.$id == id)
+                .filter(\.$profile.$id == profile.id!)
+                .first() else {
+                throw Abort(.notFound, reason: "The comment you're trying to edit doesn't seem to exist.")
+            }
+            let newHistory = CommentHistory(oldBody: comment.body)
+            comment.body = try SwiftSoup.clean(formInfo.body, defaultWhitelist())!
+            comment.spoiler = formInfo.spoiler
+            try await request.db.transaction { database in
+                try await comment.$history.create(newHistory, on: database)
+                try await comment.save(on: database)
+            }
+            comment.$profile.value = profile
+            try await comment.$history.load(on: request.db)
+            return comment
+        }
+        throw Abort(.badRequest, reason: "Comments are disabled for drafts.")
+    }
+}
+
+extension WorkService {
+    struct FetchWork: Content {
+        var work: Work
+        var comments: Page<Comment>?
     }
 }
 

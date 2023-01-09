@@ -9,12 +9,23 @@
 	import { getReq, type ResponseError } from "$lib/http";
 	import type { ReadingHistory } from "$lib/models/content/library";
 	import toast from "svelte-french-toast";
+	import type { Paginate } from "$lib/util/types";
+	import { type Comment, CommentType } from "$lib/models/comments";
+	import { Thread } from "$lib/ui/comments";
+	import { page } from "$app/stores";
 
-	export let data: { work: Work; section: Section; allSections: Section[] };
+	export let data: {
+		work: Work;
+		comments?: Paginate<Comment>;
+		section: Section;
+		allSections: Section[];
+	};
 
 	let containerTop;
 	let editMode = false;
 	let history: ReadingHistory;
+	let pageNum = +($page.url.searchParams.get("page") ?? "1");
+	let perPage = +($page.url.searchParams.get("per") ?? "25");
 
 	onMount(async () => {
 		if (
@@ -98,6 +109,19 @@
 				{history}
 				on:edit={toggleEditMode}
 			/>
+		{/key}
+		{#key data.comments}
+			{#if data.work.publishedOn && data.section.publishedOn && data.comments}
+				<div class="my-6"><!--spacer--></div>
+				<Thread
+					type={CommentType.Work}
+					threadId={data.work.id}
+					content={data.comments}
+					sectionId={data.section.id}
+					{pageNum}
+					{perPage}
+				/>
+			{/if}
 		{/key}
 	{/if}
 </div>
