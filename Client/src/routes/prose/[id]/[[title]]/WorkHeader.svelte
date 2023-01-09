@@ -7,6 +7,7 @@
 		BarChart2Line,
 		BookLine,
 		Bookmark3Line,
+		Bookmark3Fill,
 		Calendar2Line,
 		CloseCircleLine,
 		DeleteBinLine,
@@ -68,7 +69,7 @@
 			return;
 		}
 		const response = await getReq<{ hasItem: boolean }>(
-			`/history/fetch-one?workId=${work.id}&profileId=${$account.currProfile?.id}`
+			`/library/fetch-one?workId=${work.id}&profileId=${$account.currProfile?.id}`
 		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
@@ -521,10 +522,22 @@
 					<span class="button-text hidden lg:block">Delete</span>
 				</Button>
 			{:else if $account.account && $account.currProfile && $account.currProfile.id !== work.author.id}
-				<Button on:click={setLibrary}>
-					<Bookmark3Line class="button-icon variable-text" />
-					<span class="button-text hidden lg:block">Library</span>
-				</Button>
+				{#if library.hasItem}
+					<Button
+						on:click={setLibrary}
+						loading={isAddingToLibrary}
+						isActive
+						loadingText="Saving"
+					>
+						<Bookmark3Fill class="button-icon variable-text" />
+						<span class="button-text hidden lg:block">Remove</span>
+					</Button>
+				{:else}
+					<Button on:click={setLibrary} loading={isAddingToLibrary} loadingText="Saving">
+						<Bookmark3Line class="button-icon variable-text" />
+						<span class="button-text hidden lg:block">Library</span>
+					</Button>
+				{/if}
 				<div class="mx-0.5"><!--spacer--></div>
 				<Button on:click={addToShelf}>
 					<BarChart2Line class="button-icon variable-text" />

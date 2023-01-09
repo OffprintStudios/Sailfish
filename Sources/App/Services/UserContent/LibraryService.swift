@@ -13,7 +13,12 @@ struct LibraryService {
     /// Fetches a user's library.
     func fetchLibrary() async throws -> Page<Work> {
         let profile = try request.authService.getUser(withProfile: true).profile!
-        return try await profile.$library.query(on: request.db).paginate(for: request)
+        return try await profile.$library.query(on: request.db)
+            .with(\.$author)
+            .with(\.$tags, { $0.with(\.$parent) })
+            .filter(\.$publishedOn <= Date())
+            .sort(\.$publishedOn, .descending)
+            .paginate(for: request)
     }
     
     /// Returns any available library item to verify if a user already has the specified work in their library. Returns `nil` if
@@ -29,7 +34,12 @@ struct LibraryService {
     /// Fetches a user's reading history.
     func fetchHistory() async throws -> Page<ReadingHistory> {
         let profile = try request.authService.getUser(withProfile: true).profile!
-        return try await profile.$history.query(on: request.db).with(\.$work).paginate(for: request)
+        return try await profile.$history.query(on: request.db)
+            .with(\.$work) { work in
+                work.with(\.$author).with(\.$tags, {$0.with(\.$parent)})
+            }
+            .filter(\.$isPublic == true)
+            .paginate(for: request)
     }
     
     /// Updates an existing `ReadingHistory` row with a new `viewedOn` value. If no row exists, creates a new one. In both cases, this

@@ -1,24 +1,38 @@
 <script lang="ts">
+	import { page } from "$app/stores";
 	import { onMount } from "svelte";
-	import { getReq } from "$lib/http";
+	import { getReq, delReq, type ResponseError } from "$lib/http";
 	import type { Paginate } from "$lib/util/types";
-	import type { ResponseError } from "$lib/http";
 	import type { Work } from "$lib/models/content/works";
 	import { WorkCard } from "$lib/ui/content";
 	import { Paginator } from "$lib/ui/util";
 	import toast from "svelte-french-toast";
 	import { account } from "$lib/state/account.state";
+	import { CloseLine, Loader5Line } from "svelte-remixicon";
 
 	let loading = false;
-	let works: Paginate<Work> = null;
+	let removing = false;
+	let currPage = +($page.url.searchParams.get("page") ?? "1");
+	let perPage = +($page.url.searchParams.get("per") ?? "21");
+	let works: Paginate<Work> = {
+		items: [],
+		metadata: {
+			page: currPage,
+			per: perPage,
+			total: 0
+		}
+	};
 
 	onMount(async () => {
 		await loadLibrary(1);
-	})
+	});
 
-	async function loadLibrary(page: number) {
+	async function loadLibrary(newPage: number) {
 		loading = true;
-		const response = await getReq<Paginate<Work>>(`/library/fetch-all?profileId=${$account.currProfile.id}&page=${page}&per=20`);
+		currPage = newPage;
+		const response = await getReq<Paginate<Work>>(
+			`/library/fetch-all?profileId=${$account.currProfile?.id}&page=${currPage}&per=${perPage}`
+		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
 			toast.error(error.message);
@@ -26,6 +40,20 @@
 			works = response as Paginate<Work>;
 		}
 		loading = false;
+	}
+
+	async function removeOne(id: string) {
+		removing = true;
+		const response = await delReq<void>(
+			`/library/remove-one?workId=${id}&profileId=${$account.currProfile?.id}`
+		);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			await loadLibrary(currPage);
+		}
+		removing = false;
 	}
 </script>
 
@@ -37,11 +65,19 @@
 	</div>
 {:else if works}
 	{#if works.items.length > 0}
-		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+		<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4">
 			{#each works.items as favorite}
 				<WorkCard work={favorite}>
 					<svelte:fragment slot="dropdown">
-						hi hello
+						<button type="button" disabled={removing} on:click={removeOne(favorite.id)}>
+							{#if removing}
+								<Loader5Line class="mr-1 animate-spin" size="18px" />
+								<span>Removing...</span>
+							{:else}
+								<CloseLine class="mr-1" size="18px" />
+								<span>Remove from library</span>
+							{/if}
+						</button>
 					</svelte:fragment>
 				</WorkCard>
 			{/each}
@@ -68,9 +104,9 @@
 
 {#if works && works.items.length > 0}
 	<Paginator
-		currPage={works.metadata.page}
-		perPage={works.metadata.per}
+		{currPage}
+		{perPage}
 		totalItems={works.metadata.total}
-		on:change={(page) => loadLibrary(page)}
+		on:change={(event) => loadLibrary(event.detail)}
 	/>
 {/if}
