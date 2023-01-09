@@ -44,7 +44,7 @@
 
 html,
 body {
-  @apply relative w-full h-full overflow-x-hidden overflow-y-hidden;
+  @apply relative lg:w-full lg:h-full lg:overflow-x-hidden lg:overflow-y-hidden;
 }
 body {
   color: var(--text-color);

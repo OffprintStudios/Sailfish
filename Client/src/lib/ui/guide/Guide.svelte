@@ -134,7 +134,7 @@
 
 <style lang="scss">
 	div.guide {
-		@apply h-screen z-40 min-w-full max-w-full md:min-w-[24rem] md:max-w-[24rem];
+		@apply h-full lg:h-screen z-40 min-w-full max-w-full lg:min-w-[24rem] lg:max-w-[24rem];
 		@apply lg:overflow-hidden lg:overflow-y-auto;
 		box-shadow: var(--dropshadow);
 		background: var(--background);
