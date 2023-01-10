@@ -105,8 +105,8 @@ extension Account {
     enum Roles: String, Codable {
         case admin = "Admin"
         case moderator = "Moderator"
-        case workApprover = "Work Approver"
-        case chatModerator = "Chat Moderator"
+        case workApprover = "WorkApprover"
+        case chatModerator = "ChatModerator"
         case maintainer = "Maintainer"
         case contributor = "Contributor"
         case vip = "VIP"
