@@ -17,31 +17,25 @@
 			const formInfo: RegisterForm = {
 				email: values.email,
 				password: values.password,
-				inviteCode: values.inviteCode,
 				termsAgree: values.termsAgree,
 			};
 
-			await fetch('/api/auth/sign-up', { method: 'POST', body: JSON.stringify(formInfo), credentials: 'include' })
-				.then(async (response) => {
-					const data = await response.json();
-
-					if (response.status === 422) {
-						toast.error(data.message);
-					} else if (response.status === 200) {
-						$account.account = data.account;
-						$account.profiles = data.profiles;
-						prevPage();
-					} else {
-						toast.error('Something went wrong! Try again in a little bit.');
-					}
-				});
+			const response = await fetch('/api/auth/sign-up', { method: 'POST', body: JSON.stringify(formInfo), credentials: 'include' });
+			const data = await response.json();
+			if (response.status === 200) {
+				$account.account = data.account;
+				$account.profiles = data.profiles;
+				$account.token = data.accessToken;
+				prevPage();
+			} else {
+				toast.error(data.message);
+			}
 		},
 		validate: (values) => {
 			const errors = {
 				email: '',
 				password: '',
 				repeatPassword: '',
-				inviteCode: '',
 				ageCheck: '',
 				termsAgree: '',
 			};
@@ -56,9 +50,6 @@
 			}
 			if (!values.repeatPassword || values.password !== values.repeatPassword) {
 				errors.repeatPassword = `Passwords must match.`;
-			}
-			if (!values.inviteCode) {
-				errors.inviteCode = `You must provide an invite code.`;
 			}
 			if (values.ageCheck === false) {
 				errors.ageCheck = `You must be at least 13 years or older to join.`;
@@ -97,13 +88,6 @@
 				title="Repeat Password"
 				placeholder="••••••••••"
 				errorMessage={$errors.repeatPassword}
-			/>
-			<TextField
-				name="inviteCode"
-				type="text"
-				title="Invite Code"
-				placeholder="myInviteCode"
-				errorMessage={$errors.inviteCode}
 			/>
 			<div class="my-0.5"></div>
 			<Checkbox bind:value={$data.ageCheck}>I am at least 13 years of age or older.</Checkbox>

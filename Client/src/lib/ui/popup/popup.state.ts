@@ -9,7 +9,7 @@ interface PopupState {
 }
 
 interface PopupOnConfirm {
-	onConfirm(): void;
+	onConfirm(data?: any): void;
 }
 
 export const popup = writable<PopupState>({
@@ -37,10 +37,10 @@ export function closePopup(): void {
 	}));
 }
 
-export function closePopupAndConfirm(): void {
+export function closePopupAndConfirm(data?: any): void {
 	closePopup();
 	if (get(popup).onConfirm) {
-		get(popup).onConfirm?.onConfirm();
+		get(popup).onConfirm?.onConfirm(data);
 	}
 }
 

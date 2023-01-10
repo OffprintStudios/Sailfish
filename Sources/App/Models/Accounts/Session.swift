@@ -51,13 +51,11 @@ extension Session {
             case subject = "sub"
             case expiration = "exp"
             case accountId = "accountId"
-            case accessKey = "accessKey"
         }
 
         var subject: SubjectClaim
         var expiration: ExpirationClaim
-        var accountId: String?
-        var accessKey: UUID
+        var accountId: UUID?
 
         func verify(using signer: JWTSigner) throws {
             try expiration.verifyNotExpired()
@@ -67,6 +65,11 @@ extension Session {
     struct ClientPackage: Content {
         var account: ClientAccount
         var profiles: [Profile]
-        var token: String
+        var accessToken: String
+        var refreshToken: String
+    }
+    
+    struct RefreshPackage: Content {
+        var accessToken: String
     }
 }

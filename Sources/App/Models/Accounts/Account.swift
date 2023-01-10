@@ -10,49 +10,47 @@ import NanoID
 final class Account: Model, Content {
     static let schema = "accounts"
 
-    @ID(custom: "id", generatedBy: .user)
-    var id: String?
+    @ID(key: .id)
+    var id: UUID?
 
-    @Field(key: "email")
+    @Field(key: FieldKeys.email)
     var email: String
 
-    @Field(key: "password")
+    @Field(key: FieldKeys.password)
     var password: String
 
     @Children(for: \.$account)
     var profiles: [Profile]
 
-    @Field(key: "roles")
+    @Field(key: FieldKeys.roles)
     var roles: [Roles]
 
-    @Field(key: "terms_agree")
+    @Field(key: FieldKeys.termsAgree)
     var termsAgree: Bool
 
-    @Field(key: "email_confirmed")
+    @Field(key: FieldKeys.emailConfirmed)
     var emailConfirmed: Bool
 
     @Children(for: \.$account)
     var sessions: [Session]
+    
+    @Children(for: \.$account)
+    var reports: [AccountReport]
 
-    @Timestamp(key: "created_at", on: .create)
+    @Timestamp(key: FieldKeys.createdAt, on: .create)
     var createdAt: Date?
 
-    @Timestamp(key: "updated_at", on: .update)
+    @Timestamp(key: FieldKeys.updatedAt, on: .update)
     var updatedAt: Date?
 
     init() { }
 
-    init(id: String? = nil, formData: RegisterForm) throws {
+    init(id: UUID? = nil, formData: RegisterForm) throws {
         guard let hashedPassword = try? Argon2Swift.hashPasswordString(password: formData.password, salt: Salt.newSalt(), type: Argon2Type.id) else {
             throw Abort(.internalServerError, reason: "Failed to create your account. Contact an administrator for assistance.")
         }
 
-        if let hasId = id {
-            self.id = hasId
-        } else {
-            self.id = NanoID.with(size: NANO_ID_SIZE)
-        }
-
+        self.id = id
         email = formData.email
         password = hashedPassword.encodedString().trimmingCharacters(in: CharacterSet(charactersIn: "\0"))
         roles = [.user]
@@ -62,17 +60,25 @@ final class Account: Model, Content {
 }
 
 extension Account {
+    enum FieldKeys {
+        static let email: FieldKey = "email"
+        static let password: FieldKey = "password"
+        static let roles: FieldKey = "roles"
+        static let termsAgree: FieldKey = "terms_agree"
+        static let emailConfirmed: FieldKey = "email_confirmed"
+        static let createdAt: FieldKey = "created_at"
+        static let updatedAt: FieldKey = "updated_at"
+    }
+    
     struct RegisterForm: Content {
         var email: String
         var password: String
         var termsAgree: Bool
-        var inviteCode: String
     }
 
     struct LoginForm: Content {
         var email: String
         var password: String
-        var rememberMe: Bool
     }
 
     struct ChangeEmail: Content {
@@ -84,12 +90,23 @@ extension Account {
         var newPassword: String
         var oldPassword: String
     }
+    
+    struct AccountWithReports: Content {
+        var id: UUID?
+        var profiles: [Profile]?
+        var roles: [Roles]
+        var terms_agree: Bool
+        var email_confirmed: Bool
+        var created_at: Date?
+        var updated_at: Date?
+        var total: Int64
+    }
 
     enum Roles: String, Codable {
         case admin = "Admin"
         case moderator = "Moderator"
-        case workApprover = "Work Approver"
-        case chatModerator = "Chat Moderator"
+        case workApprover = "WorkApprover"
+        case chatModerator = "ChatModerator"
         case maintainer = "Maintainer"
         case contributor = "Contributor"
         case vip = "VIP"
@@ -102,7 +119,6 @@ extension Account.RegisterForm: Validatable {
         validations.add("email", as: String.self, is: .email)
         validations.add("password", as: String.self, is: .alphanumeric)
         validations.add("password", as: String.self, is: .count(8...))
-        validations.add("inviteCode", as: String.self, is: !.empty)
     }
 }
 

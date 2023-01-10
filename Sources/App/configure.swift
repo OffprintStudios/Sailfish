@@ -3,9 +3,10 @@ import FluentPostgresDriver
 import Vapor
 import QueuesRedisDriver
 import JWT
+import SotoS3
 
 // configures your application
-public func configure(_ app: Application) throws {
+public func configure(_ app: Application) async throws {
     app.logger.notice("Starting Sailfish API...")
 
     // Setting port
@@ -19,35 +20,73 @@ public func configure(_ app: Application) throws {
     // Setting up database connection
     app.logger.notice("Setting up database connection...")
     let databaseUrl = Environment.get("DATABASE_URL") ?? "postgresql://postgres@localhost/sailfish"
-    try app.databases.use(.postgres(url: databaseUrl), as: .psql)
+    try app.databases.use(.postgres(url: databaseUrl, connectionPoolTimeout: .seconds(30)), as: .psql)
 
     // Adding migrations
     app.logger.notice("Adding migrations...")
-    app.migrations.add(CreateAccount())
-    app.migrations.add(CreateProfile())
-    app.migrations.add(CreateSession())
-    app.migrations.add(CreateInviteCode())
-    app.migrations.add(CreateBlog())
-    app.migrations.add(AddFieldEditedOn())
+    app.migrations.add([
+        CreateAccount(),
+        CreateProfile(),
+        CreateSession(),
+        CreateBlog(),
+        CreateFavoriteBlog(),
+        CreateAccountReport(),
+        CreateAccountNote(),
+        CreateAccountWarning(),
+        CreateAccountBan(),
+        CreateAccountLog(),
+        CreateAccountMute(),
+        CreateTag(),
+        CreateWork(),
+        CreateVolume(),
+        CreateSection(),
+        CreateWorkTag(),
+        CreateShelf(),
+        CreateShelfItem(),
+        CreateLibraryItem(),
+        CreateReadingHistory(),
+        CreateApprovalQueue(),
+        CreateComment(),
+        CreateCommentHistory(),
+        CreateReply(),
+        CreateWorkComment(),
+        CreateWorkBlacklist(),
+        CreateBlogComment(),
+        CreateBlogBlacklist(),
+        CreateNotification(),
+        CreateFollower(),
+        CreateProfileView(),
+        AddReportClosedOnField(),
+        CreatePG_TRGMExtension(),
+        CreateBlogTitleIndex(),
+        CreateWorkTitleIndex(),
+    ])
 
-    Task {
-        try await app.autoMigrate()
-    }
+    try await app.autoMigrate()
 
     // Setting up queues
-    // app.logger.notice("Setting up queues...")
-    // try app.queues.use(.redis(url: Environment.get("REDIS_URL") ?? "redis://localhost:6379"))
+    app.logger.notice("Setting up queues...")
+    let redisConfig = try RedisConfiguration(
+        url: Environment.get("REDIS_URL") ?? "redis://127.0.0.1:6379",
+        pool: RedisConfiguration.PoolOptions(connectionRetryTimeout: .minutes(1))
+    )
+    app.queues.use(.redis(redisConfig))
+
+    // Adding Jobs
+    app.logger.notice("Adding jobs...")
+    app.queues.add(AddNotificationJob())
 
     // CORS configuration
     app.logger.notice("Assigning CORS configuration...")
     let corsConfiguration = CORSMiddleware.Configuration(
-        allowedOrigin: CORSMiddleware.AllowOriginSetting.any([
+        allowedOrigin: .any([
             "http://localhost:3000",
             "http://127.0.0.1:3000",
             "https://offprint.net",
             "https://www.offprint.net",
+            "https://staging.offprint.net",
         ]),
-        allowedMethods: [.GET, .POST, .PUT, .PATCH, .OPTIONS],
+        allowedMethods: [.GET, .POST, .PUT, .PATCH, .DELETE, .OPTIONS],
         allowedHeaders: [
             .accept,
             .authorization,
@@ -56,10 +95,20 @@ public func configure(_ app: Application) throws {
             .xRequestedWith,
             .userAgent,
             .accessControlAllowOrigin
-        ]
+        ],
+        allowCredentials: true
     )
     let cors = CORSMiddleware(configuration: corsConfiguration)
     app.middleware.use(cors, at: .beginning)
+
+    // Configuring AWS
+    app.aws.client = AWSClient(
+        credentialProvider: .static(
+            accessKeyId: Environment.get("DIGITALOCEAN_SPACES_ACCESS_KEY") ?? "nil",
+            secretAccessKey: Environment.get("DIGITALOCEAN_SPACES_SECRET") ?? "nil"
+        ),
+        httpClientProvider: .createNew
+    )
 
     // Register routes
     app.logger.notice("Acknowledging routes...")
@@ -74,6 +123,6 @@ public func configure(_ app: Application) throws {
     }
 
     // Starting the queue
-//    app.logger.notice("Restarting any available queues...")
-//    try app.queues.startInProcessJobs(on: .default)
+    app.logger.notice("Restarting any available queues...")
+    try app.queues.startInProcessJobs(on: .default)
 }

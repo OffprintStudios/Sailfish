@@ -5,3 +5,4 @@ export { slugify } from './slugify';
 export { pluralize } from './pluralize';
 export { abbreviate } from './abbreviate';
 export { localeDate } from './locale-date';
+export { hasRoles } from './has-roles';

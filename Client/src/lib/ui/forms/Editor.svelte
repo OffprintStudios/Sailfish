@@ -27,7 +27,7 @@
 		Text as TextIcon,
 		Underline as UnderlineIcon,
 	} from 'svelte-remixicon';
-	import { Editor } from "@tiptap/core";
+	import type { Editor } from "@tiptap/core";
 	import Underline from '@tiptap/extension-underline';
 	import Typography from '@tiptap/extension-typography';
 	import Image from '@tiptap/extension-image';
@@ -52,17 +52,24 @@
 	import Paragraph from '@tiptap/extension-paragraph';
 	import Strike from '@tiptap/extension-strike';
 	import Text from '@tiptap/extension-text';
+	import Youtube from '@tiptap/extension-youtube';
 	import { Dropdown } from "$lib/ui/dropdown";
 
 	let bubbleMenu;
 	let editor: Readable<Editor>;
+	let linkText, imgSrc, vidSrc;
 	let linkMenuOpen = false;
-	let linkText;
 
 	export let label: string;
 	export let value: string;
 	export let errorMessage = null;
 	export let hasHeader = false;
+	export let kind: 'normal' | 'primary' = 'normal';
+
+	let background = "bg-zinc-200 dark:bg-zinc-700";
+	if (kind === 'primary') {
+		background = "bg-zinc-300 dark:bg-zinc-600";
+	}
 
 	onMount(() => {
 		editor = createEditor({
@@ -87,6 +94,11 @@
 				Link.configure({ openOnClick: false }),
 				Blockquote,
 				Code,
+				Youtube.configure({
+					width: 480,
+					height: 360,
+					inline: true,
+				}),
 				TextAlign.configure({ types: ['paragraph', 'heading', 'image'] }),
 				Placeholder.configure({ placeholder: 'Write something here...' }),
 				Dropcursor,
@@ -104,6 +116,20 @@
 			$editor.chain().focus().setLink({ href: linkText }).run();
 			linkText = undefined;
 			linkMenuOpen = false;
+		}
+	}
+
+	function insertImage() {
+		if (imgSrc) {
+			$editor.chain().focus().setImage({ src: imgSrc }).run();
+			imgSrc = undefined;
+		}
+	}
+
+	function insertVideo() {
+		if (vidSrc) {
+			$editor.chain().focus().setYoutubeVideo({ src: vidSrc }).run();
+			vidSrc = undefined;
 		}
 	}
 
@@ -129,7 +155,7 @@
 {/if}
 <div
 	id="offprint-editor"
-	class="w-full flex flex-col rounded-b-lg bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
+	class="w-full flex flex-col rounded-b-lg {background}"
 	class:rounded-t-lg={!hasHeader}
 >
 	{#if $editor}
@@ -249,12 +275,38 @@
 				</svelte:fragment>
 			</Dropdown>
 			<span class="text-lg mx-0.5">|</span>
-			<button type="button" title="Insert Image">
-				<ImageAddLine />
-			</button>
-			<button type="button" title="Insert Media">
-				<FilmLine />
-			</button>
+			<Dropdown>
+				<svelte:fragment slot="button">
+					<ImageAddLine class="button-icon no-text" />
+				</svelte:fragment>
+				<svelte:fragment slot="items">
+					<form class="flex items-center w-[15.75rem]" on:submit|preventDefault|stopPropagation={insertImage}>
+						<input
+							class="bg-zinc-300 dark:bg-zinc-600 rounded-lg focus:ring-0 border-transparent py-2"
+							type="text"
+							placeholder="Paste image link here..."
+							bind:value={imgSrc}
+						/>
+						<button type="submit"><AddBoxLine size="24px" class="mr-0" /></button>
+					</form>
+				</svelte:fragment>
+			</Dropdown>
+			<Dropdown>
+				<svelte:fragment slot="button">
+					<FilmLine class="button-icon no-text" />
+				</svelte:fragment>
+				<svelte:fragment slot="items">
+					<form class="flex items-center w-[15.75rem]" on:submit|preventDefault|stopPropagation={insertVideo}>
+						<input
+							class="bg-zinc-300 dark:bg-zinc-600 rounded-lg focus:ring-0 border-transparent py-2"
+							type="text"
+							placeholder="Paste YouTube link here..."
+							bind:value={vidSrc}
+						/>
+						<button type="submit"><AddBoxLine size="24px" class="mr-0" /></button>
+					</form>
+				</svelte:fragment>
+			</Dropdown>
 			<span class="text-lg mx-0.5">|</span>
 			<button
 				on:click={() => $editor.chain().focus().toggleBlockquote().run()}
@@ -278,10 +330,6 @@
 				title="List"
 			>
 				<ListUnordered />
-			</button>
-			<span class="text-lg mx-0.5">|</span>
-			<button type="button" title="Emojis">
-				<Emotion2Line />
 			</button>
 			<div class="flex-1"></div>
 			<button on:click={() => $editor.chain().focus().undo().run()} type="button" title="Undo">

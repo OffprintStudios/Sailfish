@@ -2,11 +2,13 @@
 	import { createForm } from "felte";
 	import { account } from "$lib/state/account.state";
 	import { Avatar, Button } from "$lib/ui/util";
-	import type { ProfileForm } from "$lib/models/accounts";
+	import type { Profile, ProfileForm } from "$lib/models/accounts";
 	import { Presence } from "$lib/models/accounts";
 	import { TextArea, TextField } from "$lib/ui/forms";
 	import { AddBoxLine, CheckLine, CloseLine, ArrowLeftSLine } from "svelte-remixicon";
-	import { guide, prevPage } from "../guide.state";
+	import { guide, prevPage } from "$lib/ui/guide";
+	import { postReq } from "$lib/http";
+	import type { ResponseError } from "$lib/http";
 	import toast from "svelte-french-toast";
 
 	let showAddForm = false;
@@ -16,32 +18,40 @@
 			const formInfo: ProfileForm = {
 				username: values.username,
 				presence: Presence.Offline,
-				bio: values.bio,
+				bio: values.bio
 			};
-			await fetch('/api/accounts/create-profile', { method: 'POST', body: JSON.stringify(formInfo), credentials: 'include' })
-				.then(async (response) => {
-					const data = await response.json();
-					if (response.status === 200) {
-						$account.profiles = [...$account.profiles, data];
-						toast.success('Profile added!');
-						context.reset();
-						showAddForm = false;
-					} else {
-						toast.error('Something went wrong! Try again in a little bit.');
-					}
-				})
+			const response = await postReq<Profile>(`/accounts/create-profile`, formInfo);
+			if ((response as Profile).id) {
+				$account.profiles = [...$account.profiles, response as Profile];
+				toast.success(`Profile added!`);
+				context.reset();
+				showAddForm = false;
+			} else {
+				const error = response as ResponseError;
+				toast.error(error.message);
+			}
 		},
-		validate: () => {
-			// TODO: implement errors
-			return {
-				username: '',
-				pronouns: '',
+		validate: (values) => {
+			const errors = {
+				username: "",
+				bio: ""
 			};
+
+			if (!values.username || values.username.length < 3 || values.username.length > 36) {
+				errors.username = "Usernames must be between 3 and 36 characters in length";
+			}
+
+			if (values.bio && (values.bio.length < 3 || values.username.length > 120)) {
+				errors.bio = "Profile bios must be between 3 and 120 characters in length";
+			}
+
+			return errors;
 		},
 		initialValues: {
 			username: null,
-			pronouns: [],
+			presence: Presence.Offline,
 			bio: null,
+			tagline: null
 		}
 	});
 </script>
@@ -64,7 +74,7 @@
 		{#each $account.profiles as profile}
 			<div
 				class="profile-box border-zinc-600 dark:border-white"
-				on:click={() => $account.currProfile = profile}
+				on:click={() => ($account.currProfile = profile)}
 			>
 				<Avatar src={profile.avatar} size="64px" />
 				<div class="user-info-container">
@@ -88,7 +98,7 @@
 						/>
 						<TextArea
 							name="bio"
-							title="Bio"
+							title="Bio (Optional)"
 							placeholder="Just another somebody"
 							errorMessage={$errors.bio}
 						/>
@@ -97,7 +107,7 @@
 								<CheckLine class="button-icon" />
 								<span class="button-text">Submit</span>
 							</Button>
-							<div class="mx-0.5"></div>
+							<div class="mx-0.5" />
 							<Button type="button" on:click={() => (showAddForm = false)}>
 								<CloseLine class="button-icon" />
 								<span class="button-text">Cancel</span>
@@ -105,7 +115,10 @@
 						</div>
 					</form>
 				{:else}
-					<button class="absolute w-full h-full" on:click={() => (showAddForm = !showAddForm)}></button>
+					<button
+						class="absolute w-full h-full"
+						on:click={() => (showAddForm = !showAddForm)}
+					/>
 					<AddBoxLine size="24px" class="mr-2" />
 					<span class="uppercase font-bold tracking-widest text-xs">Add profile</span>
 				{/if}
@@ -120,7 +133,7 @@
 </div>
 
 <style lang="scss">
-	@use '../Guide';
+	@use "../Guide";
 
 	div.profile-box {
 		@apply relative border rounded-lg flex items-center p-2 transition transform cursor-pointer select-none mb-4;

@@ -3,20 +3,28 @@
 
 	export let name = 'text';
 	export let type = 'text';
-	export let title = 'Text Input';
+	export let title;
 	export let placeholder = 'Text Input';
 	export let value = null;
 	export let errorMessage;
 	export let autocomplete = 'off';
+	export let kind: 'primary' | 'normal' = 'normal';
+
+	let background = "bg-zinc-200 dark:bg-zinc-700";
+	if (kind === 'primary') {
+		background = "bg-zinc-300 dark:bg-zinc-600";
+	}
 </script>
 
 <div class="text-field">
-	<label
-		for={name}
-		class="text-[0.625rem] relative z-20 top-[0.15rem] left-1 py-0.5 px-1 rounded-t-lg font-semibold tracking-wider uppercase"
-	>
-		{title}
-	</label>
+	{#if title}
+		<label
+			for={name}
+			class="text-[0.625rem] relative z-20 top-[0.15rem] left-1 py-0.5 px-1 rounded-t-lg font-semibold tracking-wider uppercase"
+		>
+			{title}
+		</label>
+	{/if}
 	<input
 		id={name}
 		{type}
@@ -25,7 +33,7 @@
 		{placeholder}
 		{value}
 		autocomplete={autocomplete}
-		class="bg-zinc-200 dark:bg-zinc-700 dark:placeholder-zinc-400 dark:highlight-shadowed"
+		class="{background} dark:placeholder-zinc-400 dark:highlight-shadowed"
 		class:error={!!errorMessage}
 		on:change
 		on:keypress

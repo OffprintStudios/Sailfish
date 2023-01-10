@@ -1,16 +1,18 @@
 <script lang="ts">
-	import { Loader5Line } from 'svelte-remixicon';
+	import { Loader5Line } from "svelte-remixicon";
 
 	export let loading = false;
 	export let isActive = false;
+	export let isPositive = false;
+	export let isNegative = false;
 	export let disabled = false;
-	export let classes = '';
-	export let loadingText = 'Loading...';
-	export let type = 'button';
-	export let kind: 'primary' | 'normal' = 'normal';
-	export let title = '';
+	export let classes = "";
+	export let loadingText = "Loading...";
+	export let type = "button";
+	export let kind: "primary" | "normal" = "normal";
+	export let title = "";
 	export let asLink = false;
-	export let href = '';
+	export let href = "";
 	export let thisButton = null;
 
 	let isDisabled: boolean;
@@ -19,9 +21,9 @@
 
 {#if asLink}
 	<a
-		class:primary={kind === 'primary'}
+		class:primary={kind === "primary"}
 		class:active={isActive}
-		class="{classes}"
+		class={classes}
 		{title}
 		{href}
 		tabindex="0"
@@ -36,11 +38,13 @@
 {:else}
 	<button
 		{type}
-		class:primary={kind === 'primary'}
+		class:primary={kind === "primary"}
 		class:active={isActive}
+		class:positive={isPositive}
+		class:negative={isNegative}
 		{title}
 		class:disabled
-		class="{classes}"
+		class={classes}
 		disabled={isDisabled}
 		tabindex="0"
 		on:click
@@ -56,8 +60,9 @@
 {/if}
 
 <style lang="scss">
-	button, a {
-		@apply flex items-center px-2 py-1.5 transition transform focus:ring-0 m-0 text-base rounded-lg select-none;
+	button,
+	a {
+		@apply flex items-center px-2 py-1.5 transition transform focus:ring-0 m-0 text-base rounded-lg select-none z-[11] relative;
 		text-transform: lowercase;
 		font-variant: small-caps;
 		font-weight: 700;
@@ -77,6 +82,22 @@
 		&.primary.active {
 			@apply text-white;
 			background: var(--accent-light);
+		}
+
+		&.positive {
+			@apply text-white bg-green-600;
+			color: white !important;
+			&:hover {
+				@apply bg-green-500;
+			}
+		}
+
+		&.negative {
+			@apply text-white bg-red-600;
+			color: white !important;
+			&:hover {
+				@apply bg-red-500;
+			}
 		}
 
 		&.disabled {
@@ -122,8 +143,16 @@
 			@apply mr-0;
 		}
 
+		:global(svg.button-icon.variable-text) {
+			@apply mr-0 lg:mr-1.5 relative;
+		}
+
 		:global(span.button-text) {
 			@apply relative -top-0.5;
+		}
+
+		:global(span.button-small-text) {
+			@apply text-sm font-medium;
 		}
 	}
 </style>

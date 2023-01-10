@@ -10,34 +10,67 @@ import SwiftSoup
 final class Profile: Model, Content {
     static let schema = "profiles"
 
-    @ID(custom: "id", generatedBy: .user)
+    @ID(custom: FieldKey.id, generatedBy: .user)
     var id: String?
 
-    @Parent(key: "account_id")
+    @Parent(key: FieldKeys.accountId)
     var account: Account
 
-    @Field(key: "username")
+    @Field(key: FieldKeys.username)
     var username: String
 
-    @Field(key: "avatar")
+    @Field(key: FieldKeys.avatar)
     var avatar: String
+    
+    @OptionalField(key: FieldKeys.bannerArt)
+    var bannerArt: String?
 
-    @Field(key: "info")
-    var info: ProfileInfo
+    @Field(key: FieldKeys.info)
+    var info: Info
+    
+    @Field(key: FieldKeys.links)
+    var links: [String: String]
 
-    @Field(key: "stats")
-    var stats: ProfileStats
+    @Field(key: FieldKeys.stats)
+    var stats: Stats
 
     @Children(for: \.$author)
     var blogs: [Blog]
+    
+    @Children(for: \.$author)
+    var works: [Work]
+    
+    @Children(for: \.$to)
+    var activity: [Notification]
+    
+    @Children(for: \.$profile)
+    var shelves: [Shelf]
+    
+    @Children(for: \.$to)
+    var notifications: [Notification]
+    
+    @Siblings(through: Follower.self, from: \.$profile, to: \.$subscribedTo)
+    var following: [Profile]
+    
+    @Siblings(through: Follower.self, from: \.$subscribedTo, to: \.$profile)
+    var followers: [Profile]
+    
+    @Siblings(through: LibraryItem.self, from: \.$profile, to: \.$work)
+    var library: [Work]
+    
+    @Siblings(through: FavoriteBlog.self, from: \.$profile, to: \.$blog)
+    var favoriteBlogs: [Blog]
+    
+    @Children(for: \.$profile)
+    var history: [ReadingHistory]
 
-    @Timestamp(key: "created_at", on: .create)
+    @Timestamp(key: FieldKeys.createdAt, on: .create)
     var createdAt: Date?
 
-    @Timestamp(key: "updated_at", on: .update)
+    @Timestamp(key: FieldKeys.updatedAt, on: .update)
     var updatedAt: Date?
 
-    @Timestamp(key: "deleted_at", on: .delete)
+    @Timestamp(key: FieldKeys.deletedAt, on: .delete)
     var deletedAt: Date?
 
     init() { }
@@ -51,27 +84,44 @@ final class Profile: Model, Content {
 
         username = try SwiftSoup.clean(formData.username, Whitelist.none())!
         avatar = "https://images.offprint.net/avatars/avatar.png"
-        info = .init()
+        bannerArt = nil
+        if let hasBio = formData.bio {
+            info = .init(bio: try SwiftSoup.clean(hasBio, .none())!)
+        } else {
+            info = .init(bio: "A brand new face")
+        }
+        links = [:]
         stats = .init()
     }
 }
 
 extension Profile {
-    struct ProfileInfo: Codable {
+    enum FieldKeys {
+        static let accountId: FieldKey = "account_id"
+        static let username: FieldKey = "username"
+        static let avatar: FieldKey = "avatar"
+        static let bannerArt: FieldKey = "banner_art"
+        static let info: FieldKey = "info"
+        static let links: FieldKey = "links"
+        static let stats: FieldKey = "stats"
+        static let createdAt: FieldKey = "created_at"
+        static let updatedAt: FieldKey = "updated_at"
+        static let deletedAt: FieldKey = "deleted_at"
+    }
+    
+    struct Info: Content {
         var bio: String?
         var tagline: String?
-        var coverPic: String?
         var presence: Presence
 
-        init() {
-            bio = nil
-            tagline = nil
-            coverPic = nil
-            presence = .offline
+        init(bio: String? = nil, tagline: String? = nil, presence: Presence = .offline) {
+            self.bio = bio
+            self.tagline = tagline
+            self.presence = presence
         }
     }
 
-    struct ProfileStats: Codable {
+    struct Stats: Content {
         var works: Int
         var blogs: Int
         var followers: Int
@@ -90,6 +140,10 @@ extension Profile {
         var presence: Presence
         var bio: String?
         var tagline: String?
+    }
+    
+    struct ProfileLinks: Content {
+        var links: [String: String]
     }
 
     enum Presence: String, Codable {

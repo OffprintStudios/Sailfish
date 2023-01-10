@@ -1,21 +1,52 @@
 <script lang="ts">
 	import { page, navigating } from "$app/stores";
 	import {
-		Home5Fill,
-		Home5Line,
+		CompassDiscoverFill,
+		CompassDiscoverLine,
 		SearchEyeFill,
 		SearchEyeLine,
 		BookOpenFill,
 		Book2Line,
 		BookmarkLine,
 		BookmarkFill,
-		User5Line,
-		User5Fill,
+		NewspaperFill,
+		NewspaperLine,
+		Dashboard2Line,
+		Dashboard2Fill
 	} from "svelte-remixicon";
 	import { guide, openGuide, closeGuide } from "../guide";
-	import { account } from "../../state/account.state";
+	import { account } from "$lib/state/account.state";
+	import { activity } from "$lib/state/activity.state";
+	import { hasRoles } from "$lib/util/functions";
+	import { Roles } from "$lib/models/accounts";
+	import { getReq, type ResponseError } from "$lib/http";
+	import { CountBadge } from "$lib/ui/util";
 
 	const iconSize = "24px";
+
+	$: {
+		if ($account.account && $account.currProfile) {
+			fetchActivityCount();
+		}
+	}
+
+	setInterval(async () => {
+		if ($account.account && $account.currProfile) {
+			await fetchActivityCount();
+		}
+	}, 1000 * 15);
+
+	async function fetchActivityCount() {
+		const response = await getReq<{ count: number }>(
+			`/notifications/fetch-count?profileId=${$account.currProfile?.id}`
+		);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			console.error(`ERROR: ${error.message}`);
+		} else {
+			$activity.count = (response as { count: number }).count;
+		}
+	}
 
 	$: {
 		if ($navigating !== null) {
@@ -26,32 +57,77 @@
 
 <nav>
 	{#if $guide.routing.length > 0}
-		<button
-			class="link"
-			class:active={$guide.routing.length > 0}
-			on:click={closeGuide}
-		>
+		<button class="link" class:active={$guide.routing.length > 0} on:click={closeGuide}>
 			<span class="link-icon"><BookOpenFill size={iconSize} /></span>
 			<span class="link-name">Close</span>
 		</button>
 	{:else}
-		<button
-			class="link"
-			on:click={openGuide}
-		>
+		<button class="link relative" on:click={openGuide}>
+			{#if $activity.count > 0}
+				<CountBadge value={$activity.count} />
+			{/if}
 			<span class="link-icon"><Book2Line size={iconSize} /></span>
 			<span class="link-name">Guide</span>
 		</button>
 	{/if}
-	{#if $account.account && $account.currProfile}
-		<div class="w-10/12 mx-auto border-b border-white my-2"><!--separator--></div>
+	<div
+		class="flex-1 lg:flex-initial lg:block lg:w-10/12 lg:mx-auto lg:border-b lg:border-white lg:my-2"
+	>
+		<!--separator-->
+	</div>
+	{#if $account.account && $account.currProfile && hasRoles( $account.account?.roles, [Roles.Admin, Roles.Moderator, Roles.WorkApprover] )}
 		<a
 			class="link"
-			class:active={$page.url.pathname === '/library' && $guide.open === false}
+			class:active={$page.url.pathname.startsWith("/dashboard") && $guide.open === false}
+			href="/dashboard"
+		>
+			<span class="link-icon">
+				{#if $page.url.pathname.startsWith("/dashboard") && $guide.open === false}
+					<Dashboard2Fill size={iconSize} />
+				{:else}
+					<Dashboard2Line size={iconSize} />
+				{/if}
+			</span>
+			<span class="link-name">Dash</span>
+		</a>
+	{/if}
+	<a
+		class="link"
+		class:active={($page.url.pathname === "/" || $page.url.pathname.includes("/explore")) &&
+			$guide.open === false}
+		href="/"
+	>
+		<span class="link-icon">
+			{#if ($page.url.pathname === "/" || $page.url.pathname.includes("/explore")) && $guide.open === false}
+				<CompassDiscoverFill size={iconSize} />
+			{:else}
+				<CompassDiscoverLine size={iconSize} />
+			{/if}
+		</span>
+		<span class="link-name">Explore</span>
+	</a>
+	<a
+		class="link"
+		class:active={$page.url.pathname.startsWith("/search") && $guide.open === false}
+		href="/search"
+	>
+		<span class="link-icon">
+			{#if $page.url.pathname === "/search" && $guide.open === false}
+				<SearchEyeFill size={iconSize} />
+			{:else}
+				<SearchEyeLine size={iconSize} />
+			{/if}
+		</span>
+		<span class="link-name">Search</span>
+	</a>
+	{#if $account.account && $account.currProfile}
+		<a
+			class="link"
+			class:active={$page.url.pathname.includes("/library") && $guide.open === false}
 			href="/library"
 		>
 			<span class="link-icon">
-				{#if $page.url.pathname === '/library'}
+				{#if $page.url.pathname.includes("/library") && $guide.open === false}
 					<BookmarkFill size={iconSize} />
 				{:else}
 					<BookmarkLine size={iconSize} />
@@ -61,61 +137,30 @@
 		</a>
 		<a
 			class="link"
-			class:active={$page.url.pathname === '/follows' && $guide.open === false}
-			href="/follows"
+			class:active={$page.url.pathname === "/feed" && $guide.open === false}
+			href="/feed"
 		>
 			<span class="link-icon">
-				{#if $page.url.pathname === '/follows'}
-					<User5Fill size={iconSize} />
+				{#if $page.url.pathname === "/feed" && $guide.open === false}
+					<NewspaperFill size={iconSize} />
 				{:else}
-					<User5Line size={iconSize} />
+					<NewspaperLine size={iconSize} />
 				{/if}
 			</span>
-			<span class="link-name">
-				Follows
-			</span>
+			<span class="link-name"> Feed </span>
 		</a>
 	{/if}
-	<div class="w-10/12 mx-auto border-b border-white my-2"><!--separator--></div>
-	<a
-		class="link"
-		class:active={$page.url.pathname === '/' && $guide.open === false}
-		href="/"
-	>
-      	<span class="link-icon">
-        	{#if $page.url.pathname === '/'}
-          		<Home5Fill size={iconSize} />
-        	{:else}
-          		<Home5Line size={iconSize} />
-        	{/if}
-      	</span>
-		<span class="link-name">Home</span>
-	</a>
-	<a
-		class="link"
-		class:active={$page.url.pathname.startsWith('/search') && $guide.open === false}
-		href="/search"
-	>
-      	<span class="link-icon">
-        	{#if $page.url.pathname === '/search'}
-          		<SearchEyeFill size={iconSize} />
-        	{:else}
-          		<SearchEyeLine size={iconSize} />
-        	{/if}
-      	</span>
-		<span class="link-name">Search</span>
-	</a>
 </nav>
 
 <style lang="scss">
 	nav {
-		@apply flex lg:flex-col items-center w-full lg:w-[75px] z-50 relative lg:h-full py-2;
+		@apply flex lg:flex-col items-center w-full lg:w-[75px] z-50 relative lg:h-full px-2 lg:px-0 pt-1.5 pb-1 lg:py-2;
 		background: var(--accent);
 		box-shadow: var(--dropshadow);
 
 		a.link,
 		button.link {
-			@apply p-2 mx-2 mb-1 border-2 border-transparent rounded-lg transition transform text-white flex flex-col items-center justify-center w-[61px] h-[61px] relative;
+			@apply p-2 mx-0.5 lg:mx-2 mb-1 border-2 border-transparent rounded-lg transition transform text-white flex flex-col items-center justify-center lg:w-[61px] lg:h-[61px] relative;
 			&:hover {
 				@apply no-underline;
 				box-shadow: var(--dropshadow);
@@ -136,7 +181,7 @@
 			}
 
 			span.link-name {
-				@apply text-[0.6rem] uppercase font-bold tracking-wider;
+				@apply text-[0.6rem] uppercase font-bold tracking-wider hidden lg:block;
 			}
 		}
 	}

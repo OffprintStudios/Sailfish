@@ -1,6 +1,8 @@
 /* Variables and mixins declared here will be available in all other SCSS files */
 
 @mixin content-body() {
+  font-family: var(--section-text);
+
   // Headers and default image style
   h1 { font-size: 3em; }
   h2 { font-size: 2em; }

@@ -1,33 +1,41 @@
 <script lang="ts">
 	import { fade } from "svelte/transition";
 
-	export let name = 'Textarea';
-	export let title = 'Textarea';
+	export let name = "Textarea";
+	export let title;
 	export let value = null;
-	export let placeholder = 'A Placeholder';
+	export let placeholder = "A Placeholder";
 	export let errorMessage = null;
+	export let kind: "primary" | "normal" = "normal";
+
+	let background = "bg-zinc-200 dark:bg-zinc-700";
+	if (kind === "primary") {
+		background = "bg-zinc-300 dark:bg-zinc-600";
+	}
 </script>
 
 <div class="text-area">
-	<label
-		for={name}
-		class="text-[0.625rem] relative z-20 top-[0.15rem] left-1 py-0.5 px-1 rounded-t-lg font-semibold tracking-wider uppercase"
-	>
-		{title}
-	</label>
+	{#if title}
+		<label
+			for={name}
+			class="text-[0.625rem] relative z-20 top-[0.15rem] left-1 py-0.5 px-1 rounded-t-lg font-semibold tracking-wider uppercase"
+		>
+			{title}
+		</label>
+	{/if}
 	<textarea
 		id={name}
 		{title}
 		{name}
 		{value}
 		{placeholder}
-		class="bg-zinc-300 dark:bg-zinc-700 dark:placeholder-zinc-400 dark:highlight-shadowed"
+		class="{background} dark:placeholder-zinc-400 dark:highlight-shadowed"
 		class:error={!!errorMessage}
 		on:change
 		on:keypress
-	></textarea>
-	{#if !!errorMessage && errorMessage !== ''}
-        <span
+	/>
+	{#if !!errorMessage && errorMessage !== ""}
+		<span
 			class="text-[0.625rem] text-red-500 relative -top-1 left-2"
 			transition:fade|local={{ delay: 0, duration: 350 }}>{errorMessage}</span
 		>

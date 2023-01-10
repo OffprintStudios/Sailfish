@@ -1,11 +1,22 @@
 <script lang="ts">
 	import { fade, fly } from "svelte/transition";
-	import { ChatSmile2Line, Group2Line, HistoryLine, LoginCircleLine, Notification3Line, Settings5Line } from "svelte-remixicon";
+	import {
+		ChatSmile2Line,
+		Group2Line,
+		HistoryLine,
+		LoginCircleLine,
+		Notification3Line,
+		Settings5Line
+	} from "svelte-remixicon";
 	import { closeGuide, guide, GuideTabs, switchTab } from "./guide.state";
-	import { account } from "../../state/account.state";
+	import { account } from "$lib/state/account.state";
+	import { activity } from "$lib/state/activity.state";
 	import { AccountPanel } from "./account";
 	import { SettingsPanel } from "./settings";
 	import { Avatar } from "../util";
+	import { HistoryPanel } from "./history";
+	import { CountBadge } from "../util";
+	import { ActivityTabsPanel } from "./activity";
 
 	const iconSize = "24px";
 
@@ -23,25 +34,36 @@
 				class="absolute z-30 bg-black w-full h-full bg-opacity-50"
 				transition:fade|local={{ delay: 0, duration: 100 }}
 				on:click={close}
-			></div>
+			>
+				<!--backdrop-->
+			</div>
 			<div class="guide" transition:fly|local={{ delay: 0, duration: 200, x: -200 }}>
 				<div class="guide-nav">
 					<button
 						title="History"
+						class:active={$guide.currTab === GuideTabs.HistoryTab}
 						class:disabled={$account.account === null || $account.currProfile === null}
 						disabled={$account.account === null || $account.currProfile === null}
+						on:click={() => switchTab(HistoryPanel, GuideTabs.HistoryTab)}
 					>
 						<HistoryLine size={iconSize} />
 					</button>
 					<button
 						title="Activity"
+						class:active={$guide.currTab === GuideTabs.ActivityTab}
 						class:disabled={$account.account === null || $account.currProfile === null}
 						disabled={$account.account === null || $account.currProfile === null}
+						on:click={() => switchTab(ActivityTabsPanel, GuideTabs.ActivityTab)}
 					>
-            			<span class="flex items-center">
-              				<Notification3Line size={iconSize} />
+						<span class="flex items-center relative">
+							{#if $activity.count > 0}
+								<span class="absolute -top-1 -right-1">
+									<CountBadge value={$activity.count} />
+								</span>
+							{/if}
+							<Notification3Line size={iconSize} />
 							<!--<span class="text-sm ml-0.5">0</span>-->
-            			</span>
+						</span>
 					</button>
 					{#if $account.account === null && $account.currProfile === null}
 						<button
@@ -57,7 +79,11 @@
 							on:click={() => switchTab(AccountPanel, GuideTabs.AccountTab)}
 							class:active={$guide.currTab === GuideTabs.AccountTab}
 						>
-							<Avatar src={$account.currProfile.avatar} borderWidth="1px" size="42px" />
+							<Avatar
+								src={$account.currProfile.avatar}
+								borderWidth="1px"
+								size="42px"
+							/>
 						</button>
 					{:else}
 						<button
@@ -73,8 +99,8 @@
 						class:disabled={$account.account === null || $account.currProfile === null}
 						disabled={$account.account === null || $account.currProfile === null}
 					>
-            			<span class="flex items-center">
-              				<ChatSmile2Line size={iconSize} />
+						<span class="flex items-center">
+							<ChatSmile2Line size={iconSize} />
 							<!--<span class="text-sm ml-0.5">0</span>-->
 						</span>
 					</button>
@@ -88,36 +114,43 @@
 				</div>
 				{#if $guide.routing.length === 1}
 					{#key $guide.currTab}
-						<div in:fly|local={{ delay: 0, duration: 200, x: -200 }}>
-							<svelte:component this={$guide.routing[$guide.currPage]}></svelte:component>
+						<div in:fade|local={{ delay: 0, duration: 200 }}>
+							<svelte:component this={$guide.routing[$guide.currPage]} />
 						</div>
 					{/key}
 				{:else}
-					<div in:fly|local={{ delay: 0, duration: 200, x: -200 }}>
-						<svelte:component this={$guide.routing[$guide.currPage]}></svelte:component>
+					<div in:fade|local={{ delay: 0, duration: 200 }}>
+						<svelte:component this={$guide.routing[$guide.currPage]} />
 					</div>
 				{/if}
 			</div>
 		</div>
 	{/if}
 
-	<div class="h-full lg:h-screen overflow-y-auto">
+	<div class="h-full lg:h-screen lg:overflow-y-auto">
 		<slot />
 	</div>
 </div>
 
 <style lang="scss">
 	div.guide {
-		@apply h-screen z-40 min-w-full max-w-full md:min-w-[24rem] md:max-w-[24rem];
-		@apply overflow-hidden overflow-y-auto;
+		@apply h-full lg:h-screen z-40 min-w-full max-w-full lg:min-w-[24rem] lg:max-w-[24rem];
+		@apply lg:overflow-hidden lg:overflow-y-auto;
 		box-shadow: var(--dropshadow);
 		background: var(--background);
 
 		div.guide-nav {
-			@apply flex items-center justify-center pt-2 pb-4 sticky top-0 z-10;
-			background: linear-gradient(180.2deg, var(--background) 75%, rgba(255,0,0, 0) 100%);
+			@apply flex items-center justify-center mb-2 lg:mb-0 lg:pt-2 lg:pb-4 sticky top-0 z-10;
+			background: var(--accent);
+			@media (min-width: 1024px) {
+				background: linear-gradient(
+					180.2deg,
+					var(--background) 75%,
+					rgba(255, 0, 0, 0) 100%
+				);
+			}
 			button {
-				@apply flex flex-col items-center justify-center w-[70px] h-[62px] relative first:rounded-l-md last:rounded-r-md;
+				@apply relative flex flex-col items-center justify-center w-[60px] h-[62px] lg:w-[70px] lg:h-[62px] relative lg:first:rounded-l-md lg:last:rounded-r-md;
 				@apply transition transform text-white border-b-4 border-t-4 border-t-transparent border-b-transparent transition-all;
 				background: var(--accent);
 				&.active {

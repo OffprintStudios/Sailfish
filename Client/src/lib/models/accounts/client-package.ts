@@ -2,7 +2,8 @@ import type { Account } from "./account";
 import type { Profile } from "./profile";
 
 export interface ClientPackage {
-	account: Account;
-	profiles: Profile[];
-	token: string;
+	readonly account: Account;
+	readonly profiles: Profile[];
+	readonly accessToken: string;
+	refreshToken: string;
 }

@@ -1,6 +1,7 @@
 import { browser } from "$app/environment";
 import { writable } from "svelte/store";
 import { CardSize, ContentFilter, ThemePref } from "$lib/util/constants";
+import { SectionFont } from "../models/util";
 
 interface AppState {
 	isOfAge: boolean;
@@ -8,6 +9,7 @@ interface AppState {
 	theme: ThemePref;
 	darkMode: boolean;
 	cardSize: CardSize;
+	sectionFont: SectionFont;
 }
 
 const defaultAppState: AppState = {
@@ -16,6 +18,7 @@ const defaultAppState: AppState = {
 	theme: ThemePref.Crimson,
 	darkMode: false,
 	cardSize: CardSize.Medium,
+	sectionFont: SectionFont.inter,
 };
 
 const initialAppState: AppState = browser
