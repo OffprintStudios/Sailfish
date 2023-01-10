@@ -12,7 +12,7 @@
 	<h3 class="text-2xl select-none">{profile.username}</h3>
 	<div class="flex items-center text-zinc-400" style="font-family: var(--header-text)">
 		<span>{abbreviate(profile.stats.works)} work{pluralize(profile.stats.works)}</span>
-		<span class="mr-1">•</span>
+		<span class="mx-1">•</span>
 		<span>{abbreviate(profile.stats.blogs)} blog{pluralize(profile.stats.blogs)}</span>
 	</div>
 </div>
