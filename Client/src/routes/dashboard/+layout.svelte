@@ -1,9 +1,15 @@
 <script lang="ts">
 	import { page } from "$app/stores";
 	import { account } from "$lib/state/account.state";
-	import { MistLine, ListUnordered, Hashtag, GroupLine, HistoryLine } from "svelte-remixicon";
+	import { MistLine, ListUnordered, Hashtag, GroupLine } from "svelte-remixicon";
+	import { afterNavigate } from "$app/navigation";
 
 	const iconSize = "24px";
+	let containerTop;
+
+	afterNavigate(() => {
+		containerTop.scrollIntoView({ behavior: "smooth" });
+	});
 </script>
 
 <svelte:head>
@@ -33,6 +39,7 @@
 	<meta property="twitter:image" content="/images/offprint_icon.png" />
 </svelte:head>
 
+<div bind:this={containerTop}><!--intentionally left blank--></div>
 {#if $account.account && $account.currProfile}
 	<div class="mx-auto max-w-7xl">
 		<div

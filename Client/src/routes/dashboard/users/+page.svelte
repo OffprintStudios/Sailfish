@@ -4,7 +4,7 @@
 	import type { ResponseError } from "$lib/http";
 	import { getReq } from "$lib/http";
 	import { page } from "$app/stores";
-	import { Button, Paginator, Avatar } from "$lib/ui/util";
+	import { Paginator, Avatar } from "$lib/ui/util";
 	import { pluralize } from "$lib/util/functions";
 	import {
 		EmotionLine,
@@ -20,27 +20,30 @@
 	import RoleBadge from "$lib/ui/util/RoleBadge.svelte";
 
 	export let data: Paginate<AccountWithReports>;
-	$: pageNum = +($page.url.searchParams.get("page") ?? "1");
-	$: perPage = +($page.url.searchParams.get("per") ?? "20");
+	let currPage = +($page.url.searchParams.get("page") ?? "1");
+	let perPage = +($page.url.searchParams.get("per") ?? "20");
 	let loading = false;
+	let containerTop;
 	const iconSize = "50px";
 
 	async function loadPage(newPage: number) {
 		loading = true;
-		$page.url.searchParams.set("page", `${newPage}`);
+		currPage = newPage;
 		const response = await getReq<Paginate<AccountWithReports>>(
-			`/admin/fetch-users?page=${newPage}&per=${perPage}`
+			`/admin/fetch-users?page=${currPage}&per=${perPage}`
 		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
 			toast.error(error.message);
 		} else {
 			data = response as Paginate<AccountWithReports>;
+			containerTop.scrollIntoView({ behavior: "smooth" });
 		}
 		loading = false;
 	}
 </script>
 
+<div bind:this={containerTop}><!--intentionally left blank--></div>
 <div class="max-w-6xl mx-auto mb-6">
 	{#each data.items as account}
 		<div
@@ -206,7 +209,7 @@
 	{/each}
 	{#if data.metadata.total > 0}
 		<Paginator
-			currPage={pageNum}
+			{currPage}
 			{perPage}
 			totalItems={data.metadata.total}
 			on:change={(event) => loadPage(event.detail)}

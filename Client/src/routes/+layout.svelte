@@ -6,6 +6,7 @@
 	import { Toaster } from "svelte-french-toast";
 	import { account } from "$lib/state/account.state";
 	import { Popup } from "$lib/ui/popup";
+	import { activity } from "$lib/state/activity.state";
 
 	export let data: { hasKey: boolean } = { hasKey: false };
 
@@ -14,6 +15,8 @@
 		$account.currProfile = null;
 		$account.profiles = [];
 		$account.token = null;
+		$activity.count = 0;
+		$activity.markAsRead = [];
 	}
 </script>
 
