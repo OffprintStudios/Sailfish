@@ -4,11 +4,12 @@
 	import { getReq, delReq, type ResponseError } from "$lib/http";
 	import type { Paginate } from "$lib/util/types";
 	import type { Work } from "$lib/models/content/works";
-	import { WorkCard } from "$lib/ui/content";
+	import { AddToShelfPrompt, WorkCard } from "$lib/ui/content";
 	import { Paginator } from "$lib/ui/util";
 	import toast from "svelte-french-toast";
 	import { account } from "$lib/state/account.state";
-	import { CloseLine, Loader5Line } from "svelte-remixicon";
+	import { BarChart2Line, CloseLine, Loader5Line } from "svelte-remixicon";
+	import { openPopup } from "$lib/ui/popup";
 
 	let loading = false;
 	let removing = false;
@@ -55,6 +56,10 @@
 		}
 		removing = false;
 	}
+
+	async function checkShelves(id: string) {
+		openPopup(AddToShelfPrompt, null, { workId: id });
+	}
 </script>
 
 {#if loading && !works}
@@ -69,6 +74,11 @@
 			{#each works.items as favorite}
 				<WorkCard work={favorite}>
 					<svelte:fragment slot="dropdown">
+						<button type="button" on:click={() => checkShelves(favorite.id)}>
+							<BarChart2Line size="18px" class="mr-1" />
+							<span>Shelves</span>
+						</button>
+						<div class="divider"><!--spacer--></div>
 						<button type="button" disabled={removing} on:click={removeOne(favorite.id)}>
 							{#if removing}
 								<Loader5Line class="mr-1 animate-spin" size="18px" />

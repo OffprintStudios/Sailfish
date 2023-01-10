@@ -105,6 +105,7 @@ struct LibraryService {
     func fetchShelves(for profileId: String, onlyPublic: Bool = false) async throws -> Page<Shelf> {
         var query = Shelf.query(on: request.db)
             .filter(\.$profile.$id == profileId)
+            .sort(\.$createdAt, .ascending)
         
         if onlyPublic == true {
             query = query.filter(\.$isPublic == true)
@@ -125,7 +126,10 @@ struct LibraryService {
     func fetchShelfItems(for shelfId: String) async throws -> Page<Work> {
         let shelf = try await Shelf.find(shelfId, on: request.db)
         if let hasShelf = shelf {
-            return try await hasShelf.$items.query(on: request.db).paginate(for: request)
+            return try await hasShelf.$items.query(on: request.db)
+                .with(\.$author)
+                .with(\.$tags, { $0.with(\.$parent) })
+                .paginate(for: request)
         } else {
             throw Abort(.notFound, reason: "The shelf you're trying to access doesn't exist.")
         }
@@ -284,6 +288,8 @@ struct LibraryService {
                 throw Abort(.conflict, reason: "You've already added this work to this shelf!")
             }
             try await shelf.$items.attach(work, on: database)
+            shelf.works += 1
+            try await shelf.save(on: database)
             return CheckShelf(shelf: shelf, hasItem: true)
         }
     }
@@ -302,6 +308,8 @@ struct LibraryService {
                 throw Abort(.conflict, reason: "This work isn't on this shelf to begin with!")
             }
             try await shelf.$items.detach(work, on: database)
+            shelf.works -= 1
+            try await shelf.save(on: database)
             return CheckShelf(shelf: shelf, hasItem: false)
         }
     }

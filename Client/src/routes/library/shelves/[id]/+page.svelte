@@ -77,7 +77,9 @@
 	}
 </script>
 
-<ShelfHeader shelf={data} />
+<div class="max-w-6xl mx-auto">
+	<ShelfHeader shelf={data} />
+</div>
 
 {#if loading && !works}
 	<div class="h-full flex flex-col items-center justify-center">

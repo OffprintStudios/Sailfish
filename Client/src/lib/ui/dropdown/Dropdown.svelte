@@ -73,7 +73,7 @@
 			@apply text-xs uppercase font-bold tracking-wider px-2 py-1.5 relative mb-2;
 		}
 		:global(div.divider) {
-			@apply w-11/12 mx-auto my-2 border-b;
+			@apply w-11/12 mx-auto my-2 border-b border-white;
 		}
 		:global(a.active),
 		:global(button.active) {
