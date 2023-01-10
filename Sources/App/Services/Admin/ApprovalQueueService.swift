@@ -131,6 +131,7 @@ struct ApprovalQueueService {
                     hasItem.reason = try SwiftSoup.clean(reason.reason, .none())!
                     try await hasItem.save(on: database)
                     hasItem.work.approvalStatus = .rejected
+                    hasItem.$claimedBy.id = nil
                     try await hasItem.work.save(on: database)
                     return hasItem
                 }

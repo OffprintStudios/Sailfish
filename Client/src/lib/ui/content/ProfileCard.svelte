@@ -7,6 +7,7 @@
 	export let profile: Profile;
 	export let roles: Roles[];
 	export let showBanner = true;
+	export let showId = false;
 	export let showOptions = true;
 </script>
 
@@ -37,6 +38,9 @@
 					{profile.username}
 				</a>
 			</h4>
+			{#if showId}
+				<span class="font-mono text-zinc-400">{profile.id}</span>
+			{/if}
 			{#if roles}
 				<RoleBadge {roles} size="large" />
 			{/if}

@@ -292,7 +292,7 @@
 				</div>
 			</div>
 		{/if}
-		<div class="section-body px-4 py-2 lg:px-12 lg:py-6">
+		<div class="section-body text-base px-4 py-2 lg:px-12 lg:py-6">
 			{@html section.body}
 		</div>
 		{#if section.noteBottom}

@@ -12,7 +12,7 @@
 	<div class="flex items-center overflow-x-auto">
 		{#each account.profiles as profile}
 			<div class="mb-4 mx-2 border-4 rounded-lg border-zinc-300 dark:border-zinc-600">
-				<ProfileCard {profile} showBanner={false} />
+				<ProfileCard {profile} showBanner={false} showId={true} />
 			</div>
 		{/each}
 	</div>

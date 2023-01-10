@@ -79,14 +79,14 @@
 					<GroupLine class="mr-1" size={iconSize} />
 					<span>Users</span>
 				</a>
-				<a
+				<!--<a
 					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
 					class:active={$page.url.pathname.includes("/audit-log")}
 					href="/dashboard/audit-log"
 				>
 					<HistoryLine class="mr-1" size={iconSize} />
 					<span>Audit Log</span>
-				</a>
+				</a>-->
 			</div>
 		</div>
 		<slot />
