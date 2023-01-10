@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { AccountWithReports } from "$lib/models/accounts";
 	import { RoleBadge, Time, Button } from "$lib/ui/util";
-	import { pluralize } from "$lib/util/functions";
+	import { pluralize, hasRoles } from "$lib/util/functions";
+	import { account } from "$lib/state/account.state";
 	import {
 		AlertLine,
 		CheckboxCircleLine,
@@ -18,9 +19,77 @@
 	import Notes from "./Notes.svelte";
 	import Profiles from "./Profiles.svelte";
 	import AuditLog from "./AuditLog.svelte";
+	import { Roles } from "$lib/models/accounts";
+	import toast from "svelte-french-toast";
+	import { openPopup } from "$lib/ui/popup";
+	import WarnPrompt from "./WarnPrompt.svelte";
+	import { goto } from "$app/navigation";
+	import MutePrompt from "./MutePrompt.svelte";
+	import BanPrompt from "./BanPrompt.svelte";
 
 	export let data: AccountWithReports;
 	const iconSize = "50px";
+
+	async function warnUser() {
+		if (canAction()) {
+			openPopup(
+				WarnPrompt,
+				{ onConfirm: () => goto(`/dashboard/users`) },
+				{
+					accountId: data.id
+				}
+			);
+		} else {
+			toast.error(`Insufficient privileges.`);
+		}
+	}
+
+	async function muteUser() {
+		if (canAction()) {
+			openPopup(
+				MutePrompt,
+				{ onConfirm: () => goto(`/dashboard/users`) },
+				{
+					accountId: data.id
+				}
+			);
+		} else {
+			toast.error(`Insufficient privileges.`);
+		}
+	}
+
+	async function banUser() {
+		if (canAction()) {
+			openPopup(
+				BanPrompt,
+				{ onConfirm: () => goto(`/dashboard/users`) },
+				{
+					accountId: data.id
+				}
+			);
+		} else {
+			toast.error(`Insufficient privileges.`);
+		}
+	}
+
+	function canAction(): boolean {
+		if ($account.account) {
+			if (hasRoles(data.roles, [Roles.Admin])) {
+				// if the account being actioned is an admin, return false
+				return false;
+			} else if (
+				hasRoles(data.roles, [Roles.Moderator]) &&
+				hasRoles($account.account.roles, [Roles.Moderator])
+			) {
+				// if a moderator is trying to action another moderator, return false
+				return false;
+			} else {
+				// if an action is being done to any other type of account, return true
+				return true;
+			}
+		}
+		return false;
+	}
 </script>
 
 <div class="w-11/12 lg:w-full max-w-6xl mx-auto mb-6">
@@ -31,17 +100,17 @@
 				<RoleBadge roles={data.roles} size="large" />
 			</div>
 			<div class="flex-1"><!--spacer--></div>
-			<Button>
+			<Button on:click={warnUser}>
 				<ErrorWarningLine class="button-icon" />
 				<span class="button-text">Warn</span>
 			</Button>
 			<div class="mx-0.5"><!--spacer--></div>
-			<Button>
+			<Button on:click={muteUser}>
 				<VolumeMuteLine class="button-icon" />
 				<span class="button-text">Mute</span>
 			</Button>
 			<div class="mx-0.5"><!--spacer--></div>
-			<Button>
+			<Button on:click={banUser}>
 				<ForbidLine class="button-icon" />
 				<span class="button-text">Ban</span>
 			</Button>

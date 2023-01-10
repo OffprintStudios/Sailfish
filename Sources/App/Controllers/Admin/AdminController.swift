@@ -75,37 +75,23 @@ struct AdminController: RouteCollection {
         }
 
         adminCheckProfile.post("warn-user") { request async throws -> Response in
-            let warnUserDTO = try request.content.decode(WarnUserDTO.self)
-            let profile = try request.authService.getUser(withProfile: true).profile!
-            try await request.adminService.warnUser(
-                warnUserDTO.accountId,
-                byWho: profile.id!,
-                reason: warnUserDTO.reason
-            )
+            try AccountWarning.WarningForm.validate(content: request)
+            let formInfo = try request.content.decode(AccountWarning.WarningForm.self)
+            try await request.adminService.warnUser(using: formInfo)
             return .init(status: .ok)
         }
 
         adminCheckProfile.post("mute-user") { request async throws -> Response in
-            let muteUserDTO = try request.content.decode(MuteUserDTO.self)
-            let profile = try request.authService.getUser(withProfile: true).profile!
-            try await request.adminService.muteUser(
-                muteUserDTO.accountId,
-                byWho: profile.id!,
-                reason: muteUserDTO.reason,
-                duration: muteUserDTO.duration
-            )
+            try AccountMute.MuteForm.validate(content: request)
+            let formInfo = try request.content.decode(AccountMute.MuteForm.self)
+            try await request.adminService.muteUser(using: formInfo)
             return .init(status: .ok)
         }
 
         adminCheckProfile.post("ban-user") { request async throws -> Response in
-            let banUserDTO = try request.content.decode(BanUserDTO.self)
-            let profile = try request.authService.getUser(withProfile: true).profile!
-            try await request.adminService.banUser(
-                banUserDTO.accountId,
-                byWho: profile.id!,
-                reason: banUserDTO.reason,
-                duration: banUserDTO.duration
-            )
+            try AccountBan.BanForm.validate(content: request)
+            let formInfo = try request.content.decode(AccountBan.BanForm.self)
+            try await request.adminService.banUser(using: formInfo)
             return .init(status: .ok)
         }
     }
@@ -114,22 +100,5 @@ struct AdminController: RouteCollection {
 extension AdminController {
     struct ChangeRolesDTO: Content {
         var newRoles: [Account.Roles]
-    }
-
-    struct WarnUserDTO: Content {
-        var accountId: UUID
-        var reason: String
-    }
-
-    struct MuteUserDTO: Content {
-        var accountId: UUID
-        var reason: String
-        var duration: Date
-    }
-
-    struct BanUserDTO: Content {
-        var accountId: UUID
-        var reason: String
-        var duration: Date?
     }
 }

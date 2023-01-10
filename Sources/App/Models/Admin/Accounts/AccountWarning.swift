@@ -38,12 +38,14 @@ extension AccountWarning {
     struct WarningForm: Codable {
         var accountId: UUID
         var reason: String
+        var duration: Durations?
     }
 }
 
 extension AccountWarning.WarningForm: Validatable {
     static func validations(_ validations: inout Validations) {
         validations.add("accountId", as: String.self, is: !.empty)
-        validations.add("reason", as: String.self, is: .count(8...))
+        validations.add("reason", as: String.self, is: .count(3...))
+        validations.add("durations", as: String.self, is: .in(Durations.allCases.compactMap { $0.rawValue }), required: false)
     }
 }

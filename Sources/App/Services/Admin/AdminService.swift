@@ -117,24 +117,73 @@ struct AdminService {
     }
 
     /// Warns a user
-    func warnUser(_ id: UUID, byWho: String, reason: String) async throws {
-        let warning = try AccountWarning(warnedBy: byWho, warningForm: .init(accountId: id, reason: reason))
+    func warnUser(using formInfo: AccountWarning.WarningForm) async throws {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        guard let toWarn = try await Account.find(formInfo.accountId, on: request.db) else {
+            throw Abort(.notFound, reason: "The account you're trying to action does not exist.")
+        }
+        if try canAction(toWarn) == false {
+            throw Abort(.forbidden, reason: "Insufficient privileges.")
+        }
+        let warning = try AccountWarning(warnedBy: profile.id!, warningForm: formInfo)
         try await warning.save(on: request.db)
-        try await request.auditLogService.warn(id, byWho: byWho, reason: reason)
+        try await request.auditLogService.warn(try toWarn.requireID(), byWho: profile.id!, reason: warning.reason)
+        try await notifyAccount(toWarn, event: .userWarned, reason: warning.reason)
     }
 
     /// Mutes a user for a given duration
-    func muteUser(_ id: UUID, byWho: String, reason: String, duration: Date) async throws {
-        let muted = try AccountMute(mutedBy: byWho, muteForm: .init(accountId: id, reason: reason, duration: duration))
+    func muteUser(using formInfo: AccountMute.MuteForm) async throws {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        guard let toMute = try await Account.find(formInfo.accountId, on: request.db) else {
+            throw Abort(.notFound, reason: "The account you're trying to action does not exist.")
+        }
+        if try canAction(toMute) == false {
+            throw Abort(.forbidden, reason: "Insufficient privileges.")
+        }
+        let muted = try AccountMute(mutedBy: profile.id!, muteForm: formInfo)
         try await muted.save(on: request.db)
-        try await request.auditLogService.mute(id, byWho: byWho, reason: reason, duration: duration)
+        try await request.auditLogService.mute(try toMute.requireID(), byWho: profile.id!, reason: formInfo.reason, duration: muted.expiresOn)
+        try await notifyAccount(toMute, event: .userMuted, reason: muted.reason, duration: formInfo.duration)
     }
 
     /// Bans a user for a given duration. If no duration is set, the ban is permanent
-    func banUser(_ id: UUID, byWho: String, reason: String, duration: Date? = nil) async throws {
-        let banned = try AccountBan(bannedBy: byWho, banForm: .init(accountId: id, reason: reason, duration: duration))
+    func banUser(using formInfo: AccountBan.BanForm) async throws {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        guard let toBan = try await Account.find(formInfo.accountId, on: request.db) else {
+            throw Abort(.notFound, reason: "The account you're trying to action does not exist.")
+        }
+        if try canAction(toBan) == false {
+            throw Abort(.forbidden, reason: "Insufficient privileges.")
+        }
+        let banned = try AccountBan(bannedBy: profile.id!, banForm: formInfo)
         try await banned.save(on: request.db)
-        try await request.auditLogService.ban(id, byWho: byWho, reason: reason, duration: duration)
+        try await request.auditLogService.ban(try toBan.requireID(), byWho: profile.id!, reason: formInfo.reason, duration: banned.expiresOn)
+        try await notifyAccount(toBan, event: .userBanned, reason: banned.reason, duration: formInfo.duration)
+    }
+    
+    private func canAction(_ toAction: Account) throws -> Bool {
+        let account = try request.authService.getUser().account
+        if canAccess(needs: [.admin], has: toAction.roles) {
+            // if the user being actioned is an admin
+            return false
+        } else if canAccess(needs: [.moderator], has: toAction.roles) && canAccess(needs: [.moderator], has: account.roles) {
+            // if a moderator is trying to action another moderator
+            return false
+        } else {
+            return true
+        }
+    }
+    
+    private func notifyAccount(_ account: Account, event: Notification.EventType, reason: String, duration: Durations? = nil) async throws {
+        let profiles = try await account.$profiles.get(on: request.db)
+        for profile in profiles {
+            try await request.queue.dispatch(AddNotificationJob.self, .init(
+                to: profile.id!,
+                from: nil,
+                event: event,
+                context: ["reason": reason, "duration": duration == nil ? "nil" : duration!.rawValue]
+            ))
+        }
     }
 }
 
