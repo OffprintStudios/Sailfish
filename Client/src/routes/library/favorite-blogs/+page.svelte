@@ -5,21 +5,33 @@
 	import type { FavoriteBlog } from "$lib/models/content";
 	import { BlogCard } from "$lib/ui/content";
 	import { Paginator } from "$lib/ui/util";
-	import { getReq } from "$lib/http";
-	import type { ResponseError } from "$lib/http";
+	import { postReq, getReq, type ResponseError } from "$lib/http";
 	import toast from "svelte-french-toast";
+	import { page } from "$app/stores";
+	import { CloseLine, Loader5Line } from "svelte-remixicon";
 
 	let loading = false;
-	let blogs: Paginate<FavoriteBlog> = null;
+	let stateChanging = false;
+	let currPage = +($page.url.searchParams.get("page") ?? "1");
+	let perPage = +($page.url.searchParams.get("per") ?? "21");
+	let blogs: Paginate<FavoriteBlog> = {
+		items: [],
+		metadata: {
+			page: currPage,
+			per: perPage,
+			total: 0
+		}
+	};
 
 	onMount(async () => {
 		await loadFavorites(1);
 	});
 
-	async function loadFavorites(page: number) {
+	async function loadFavorites(newPage: number) {
 		loading = true;
+		currPage = newPage;
 		const response = await getReq<Paginate<FavoriteBlog>>(
-			`/blogs/fetch-favorites?profileId=${$account.currProfile.id}&page=${page}&per=15`
+			`/blogs/fetch-favorites?profileId=${$account.currProfile?.id}&page=${currPage}&per=${perPage}`
 		);
 		if ((response as ResponseError).error) {
 			const errorMsg = response as ResponseError;
@@ -28,6 +40,21 @@
 			blogs = response as Paginate<FavoriteBlog>;
 		}
 		loading = false;
+	}
+
+	async function unfavoriteBlog(id: string) {
+		stateChanging = true;
+		const response = await postReq<void>(
+			`/blogs/${id}/remove-favorite?profileId=${$account.currProfile?.id}`,
+			{}
+		);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			await loadFavorites(currPage);
+		}
+		stateChanging = false;
 	}
 </script>
 
@@ -41,7 +68,23 @@
 	{#if blogs.items.length > 0}
 		<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4">
 			{#each blogs.items as favorite}
-				<BlogCard showAvatar blog={favorite} />
+				<BlogCard showAvatar blog={favorite}>
+					<svelte:fragment slot="dropdown">
+						<button
+							type="button"
+							disabled={stateChanging}
+							on:click={unfavoriteBlog(favorite.id)}
+						>
+							{#if stateChanging}
+								<Loader5Line class="mr-1 animate-spin" size="18px" />
+								<span>Saving...</span>
+							{:else}
+								<CloseLine class="mr-1" size="18px" />
+								<span>Remove</span>
+							{/if}
+						</button>
+					</svelte:fragment>
+				</BlogCard>
 			{/each}
 		</div>
 	{:else}

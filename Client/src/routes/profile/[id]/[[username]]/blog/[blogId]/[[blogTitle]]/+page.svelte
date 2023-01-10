@@ -86,8 +86,10 @@
 	}
 
 	async function unfavoriteBlog() {
-		const response = await delReq<void>(
-			`/blogs/${blog.id}/remove-favorite?profileId=${$account.currProfile?.id}`
+		loadingFavorite = true;
+		const response = await postReq<void>(
+			`/blogs/${blog.id}/remove-favorite?profileId=${$account.currProfile?.id}`,
+			{}
 		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
