@@ -38,11 +38,7 @@
 {#if data.metadata.total > 0}
 	<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 w-full">
 		{#each data.items as work}
-			<WorkCard {work}>
-				<svelte:fragment slot="dropdown">
-					<!--TODO: implement this-->
-				</svelte:fragment>
-			</WorkCard>
+			<WorkCard {work} withDropdown={false} />
 		{/each}
 	</div>
 {:else}

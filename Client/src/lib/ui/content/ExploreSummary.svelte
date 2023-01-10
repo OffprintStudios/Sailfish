@@ -101,11 +101,7 @@
 	{:else}
 		<div class="section-items grid-cols-1 lg:grid-cols-3">
 			{#each newWorks?.items as work}
-				<WorkCard {work}>
-					<svelte:fragment slot="dropdown">
-						<!--TODO: implement this-->
-					</svelte:fragment>
-				</WorkCard>
+				<WorkCard {work} withDropdown={false} />
 			{/each}
 		</div>
 	{/if}
@@ -132,11 +128,7 @@
 	{:else}
 		<div class="section-items grid-cols-1 lg:grid-cols-3">
 			{#each updatedWorks?.items as work}
-				<WorkCard {work}>
-					<svelte:fragment slot="dropdown">
-						<!--TODO: implement this-->
-					</svelte:fragment>
-				</WorkCard>
+				<WorkCard {work} withDropdown={false} />
 			{/each}
 		</div>
 	{/if}
