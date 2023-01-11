@@ -9,14 +9,12 @@ struct AuthController: RouteCollection {
         let auth = routes.grouped("auth")
 
         auth.post("register") { request async throws -> Session.ClientPackage in
-            print("Register Hit")
             try Account.RegisterForm.validate(content: request)
             let registerForm = try request.content.decode(Account.RegisterForm.self)
             return try await request.authService.register(with: registerForm)
         }
 
         auth.post("login") { request async throws -> Session.ClientPackage in
-            print("Login Hit")
             try Account.LoginForm.validate(content: request)
             let loginForm = try request.content.decode(Account.LoginForm.self)
             return try await request.authService.login(with: loginForm)

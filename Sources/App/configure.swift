@@ -8,7 +8,6 @@ import SotoS3
 // configures your application
 public func configure(_ app: Application) async throws {
     app.logger.notice("Starting Sailfish API...")
-    app.logger.logLevel = .debug
 
     // Setting port
     let port = Int(Environment.get("PORT") ?? "8080")!
