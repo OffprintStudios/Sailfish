@@ -5,8 +5,6 @@ import type { LoginForm } from "$lib/models/accounts/forms";
 import { BASE_URL } from "$lib/http";
 
 export const POST: RequestHandler = async ({ request, cookies, fetch }) => {
-	console.log("trying to log in");
-	console.log(BASE_URL);
 	const formInfo: LoginForm = await request.json();
 	const userAgent = request.headers.get("User-Agent") ?? "";
 	const response = await fetch(`${BASE_URL}/auth/login`, {
@@ -17,7 +15,6 @@ export const POST: RequestHandler = async ({ request, cookies, fetch }) => {
 			"Content-Type": "application/json"
 		}
 	});
-	console.log(response);
 
 	if (response.status === 200) {
 		const data: ClientPackage = await response.json();
