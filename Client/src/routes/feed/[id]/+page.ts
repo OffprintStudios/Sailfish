@@ -1,14 +1,14 @@
 import { error } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
 import type { Profile } from "$lib/models/accounts";
-import { BASE_URL } from "$lib/http";
+import { getReq, type ResponseError } from "$lib/http";
 
-export const load: PageLoad = async ({ params, fetch }): Promise<Profile> => {
-	const response = await fetch(`${BASE_URL}/profiles/fetch-profile/${params.id}`);
-	if (response.status === 200) {
-		return await response.json();
+export const load: PageLoad = async ({ params }): Promise<Profile> => {
+	const response = await getReq<Profile>(`/profiles/fetch-profile/${params.id}`);
+	if ((response as ResponseError).statusCode) {
+		const err = response as ResponseError;
+		throw error(err.statusCode, { message: err.message });
 	} else {
-		const errorMsg: { error: boolean; reason: string } = await response.json();
-		throw error(response.status, { message: errorMsg.reason });
+		return response as Profile;
 	}
 };

@@ -1,27 +1,22 @@
 import type { RequestHandler } from "./$types";
 import type { SessionInfo } from "$lib/models/accounts";
-import { BASE_URL } from "$lib/http";
+import { postReqServer } from "$lib/server";
 
 export const POST: RequestHandler = async ({ cookies, url }) => {
-	const accountId = url.searchParams.get('accountId');
+	const accountId = url.searchParams.get("accountId");
 
 	if (!accountId) {
 		return new Response(null, { status: 422 });
 	}
 
-	if (cookies.get('refreshToken')) {
+	if (cookies.get("refreshToken")) {
 		const sessionInfo: SessionInfo = {
 			accountId: accountId,
-			refreshToken: cookies.get('refreshToken') ?? '',
-		}
-		await fetch(`${BASE_URL}/auth/logout`, {
-			body: JSON.stringify(sessionInfo),
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		});
+			refreshToken: cookies.get("refreshToken") ?? ""
+		};
+
+		await postReqServer<void>(`/auth/logout`, sessionInfo);
 	}
-	cookies.delete('refreshToken');
+	cookies.delete("refreshToken");
 	return new Response(null, { status: 200 });
-}
+};
