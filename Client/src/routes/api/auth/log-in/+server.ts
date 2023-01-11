@@ -4,6 +4,7 @@ import type { ClientPackage } from "$lib/models/accounts";
 import type { LoginForm } from "$lib/models/accounts/forms";
 import { BASE_URL } from "$lib/http";
 
+
 // this better fucking work
 export const POST: RequestHandler = async ({ request, cookies, fetch }) => {
 	const formInfo: LoginForm = await request.json();
