@@ -1,16 +1,15 @@
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import type { Work } from "$lib/models/content/works";
-import { BASE_URL } from "$lib/http";
+import { getReqServer, type ServerResponseError } from "$lib/server";
 
-export const load: PageServerLoad = async ({ params, fetch }): Promise<Work> => {
-	const response = await fetch(`${BASE_URL}/works/fetch-work/${params.id}`);
-
-	if (response.status === 200) {
-		const { work } = await response.json();
-		return work;
+export const load: PageServerLoad = async ({ params }): Promise<Work> => {
+	const response = await getReqServer<{ work: Work }>(`/works/fetch-work/${params.id}`);
+	if ((response as ServerResponseError).statusCode) {
+		const err = response as ServerResponseError;
+		throw error(err.statusCode, { message: err.message });
 	} else {
-		const errorRes: { error: boolean; reason: string } = await response.json();
-		throw error(response.status, { message: errorRes.reason });
+		const { work } = response as { work: Work };
+		return work;
 	}
 };

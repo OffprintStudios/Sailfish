@@ -1,37 +1,27 @@
 import type { RequestHandler } from "./$types";
-import type { ResponseError } from "$lib/http";
 import type { ClientPackage } from "$lib/models/accounts";
 import type { RegisterForm } from "$lib/models/accounts/forms";
-import { BASE_URL } from "$lib/http";
+import { postReqServer, type ServerResponseError } from "$lib/server";
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
 	const formInfo: RegisterForm = await request.json();
-	const userAgent = request.headers.get('User-Agent') ?? '';
-	const response = await fetch(`${BASE_URL}/auth/register`, {
-		body: JSON.stringify(formInfo),
-		method: 'POST',
+	const userAgent = request.headers.get("User-Agent") ?? "";
+	const response = await postReqServer<ClientPackage>(`/auth/register`, formInfo, {
 		headers: {
-			'User-Agent': userAgent,
-			'Content-Type': 'application/json'
+			"User-Agent": userAgent
 		}
 	});
-
-	if (response.status === 200) {
-		const data: ClientPackage = await response.json();
-		cookies.set('refreshToken', data.refreshToken, {
-			path: '/',
-			httpOnly: true,
-			expires: new Date(Date.now() + 2592000),
-		});
-		data.refreshToken = '';
-		return new Response(JSON.stringify(data), { status: 200 });
+	if ((response as ServerResponseError).statusCode) {
+		const error = response as ServerResponseError;
+		return new Response(JSON.stringify(error), { status: error.statusCode });
 	} else {
-		const error: { error: boolean, reason: string } = await response.json();
-		const errorMsg: ResponseError = {
-			statusCode: response.status,
-			error: response.statusText,
-			message: error.reason,
-		};
-		return new Response(JSON.stringify(errorMsg), { status: response.status });
+		const data = response as ClientPackage;
+		cookies.set("refreshToken", data.refreshToken, {
+			path: "/",
+			httpOnly: true,
+			expires: new Date(Date.now() + 2592000)
+		});
+		data.refreshToken = "";
+		return new Response(JSON.stringify(data), { status: 200 });
 	}
-}
+};

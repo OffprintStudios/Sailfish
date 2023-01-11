@@ -1,10 +1,9 @@
 import type { RequestHandler } from "./$types";
 import type { RefreshPackage, SessionInfo } from "$lib/models/accounts";
-import { BASE_URL } from "$lib/http";
-import type { ResponseError } from "$lib/http";
+import { postReqServer, type ServerResponseError } from "$lib/server";
 
-export const POST: RequestHandler = async ({ url, cookies, fetch }) => {
-	const accountId = url.searchParams.get('accountId');
+export const POST: RequestHandler = async ({ url, cookies }) => {
+	const accountId = url.searchParams.get("accountId");
 
 	if (!accountId) {
 		return new Response(null, { status: 422 });
@@ -12,27 +11,15 @@ export const POST: RequestHandler = async ({ url, cookies, fetch }) => {
 
 	const info: SessionInfo = {
 		accountId: accountId,
-		refreshToken: cookies.get('refreshToken') ?? '',
+		refreshToken: cookies.get("refreshToken") ?? ""
 	};
 
-	const response = await fetch(`${BASE_URL}/auth/refresh`, {
-		body: JSON.stringify(info),
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	});
-
-	if (response.status === 200) {
-		const data: RefreshPackage = await response.json();
-		return new Response(JSON.stringify(data), { status: 200 });
+	const response = await postReqServer<RefreshPackage>(`/auth/refresh`, info);
+	if ((response as ServerResponseError).statusCode) {
+		const error = response as ServerResponseError;
+		return new Response(JSON.stringify(error), { status: error.statusCode });
 	} else {
-		const error: { error: boolean, reason: string } = await response.json();
-		const errorMsg: ResponseError = {
-			statusCode: response.status,
-			error: response.statusText,
-			message: error.reason,
-		};
-		return new Response(JSON.stringify(errorMsg), { status: response.status });
+		const data = response as RefreshPackage;
+		return new Response(JSON.stringify(data), { status: 200 });
 	}
-}
+};
