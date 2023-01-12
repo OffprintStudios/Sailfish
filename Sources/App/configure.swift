@@ -8,6 +8,7 @@ import SotoS3
 // configures your application
 public func configure(_ app: Application) async throws {
     app.logger.notice("Starting Sailfish API...")
+    app.routes.defaultMaxBodySize = "3mb"
 
     // Setting port
     let port = Int(Environment.get("PORT") ?? "8080")!
@@ -85,6 +86,7 @@ public func configure(_ app: Application) async throws {
             "https://offprint.net",
             "https://www.offprint.net",
             "https://staging.offprint.net",
+            "https://sailfish.onrender.com",
         ]),
         allowedMethods: [.GET, .POST, .PUT, .PATCH, .DELETE, .OPTIONS],
         allowedHeaders: [
