@@ -508,7 +508,7 @@
 					{/if}
 				{/if}
 				<div class="mx-0.5"><!--spacer--></div>
-				<Button on:click={() => goto(`/prose/${work.id}/${slugify(work.title)}/edit`)}>
+				<Button on:click={() => goto(`/work/${work.id}/${slugify(work.title)}/edit`)}>
 					<Edit2Line class="button-icon variable-text" />
 					<span class="button-text hidden lg:block">Edit</span>
 				</Button>

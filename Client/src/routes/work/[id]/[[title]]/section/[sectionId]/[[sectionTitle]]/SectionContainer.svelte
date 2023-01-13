@@ -24,10 +24,10 @@
 	export let section: Section;
 	export let allSections: Section[] = [];
 	export let history: ReadingHistory;
-	let prevLink = `/prose/${work.id}/${slugify(work.title)}/section/${section.id}/${slugify(
+	let prevLink = `/work/${work.id}/${slugify(work.title)}/section/${section.id}/${slugify(
 		section.title
 	)}`;
-	let nextLink = `/prose/${work.id}/${slugify(work.title)}/section/${section.id}/${slugify(
+	let nextLink = `/work/${work.id}/${slugify(work.title)}/section/${section.id}/${slugify(
 		section.title
 	)}`;
 	let bookmarking = false;
