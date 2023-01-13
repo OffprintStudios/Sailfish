@@ -68,7 +68,7 @@
 		if (idx >= 1) {
 			thisSection = sections[idx - 1];
 		}
-		prevLink = `/prose/${work.id}/${slugify(work.title)}/section/${thisSection.id}/${slugify(
+		prevLink = `/work/${work.id}/${slugify(work.title)}/section/${thisSection.id}/${slugify(
 			thisSection.title
 		)}`;
 	}
@@ -86,7 +86,7 @@
 		if (idx < sections.length - 1) {
 			thisSection = sections[idx + 1];
 		}
-		nextLink = `/prose/${work.id}/${slugify(work.title)}/section/${thisSection?.id}/${slugify(
+		nextLink = `/work/${work.id}/${slugify(work.title)}/section/${thisSection?.id}/${slugify(
 			thisSection.title
 		)}`;
 	}
@@ -167,7 +167,7 @@
 		{/if}
 		<div class="flex-1 text-center lg:text-left">
 			<h3 class="text-white font-light ml-0.5">
-				<a class="text-white hover:text-white" href="/prose/{work.id}/{slugify(work.title)}"
+				<a class="text-white hover:text-white" href="/work/{work.id}/{slugify(work.title)}"
 					>{work.title}</a
 				>
 				<span class="text-white mx-[0.075rem] text-lg">•</span>
@@ -255,7 +255,7 @@
 				{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
 					{#each allSections as thisSection}
 						<a
-							href="/prose/{work.id}/{slugify(
+							href="/work/{work.id}/{slugify(
 								work.title
 							)}/section/{thisSection.id}/{slugify(thisSection.title)}"
 						>
@@ -267,7 +267,7 @@
 				{:else}
 					{#each published as thisSection}
 						<a
-							href="/prose/{work.id}/{slugify(
+							href="/work/{work.id}/{slugify(
 								work.title
 							)}/section/{thisSection.id}/{slugify(thisSection.title)}"
 						>
@@ -324,7 +324,7 @@
 				{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
 					{#each allSections as thisSection}
 						<a
-							href="/prose/{work.id}/{slugify(
+							href="/work/{work.id}/{slugify(
 								work.title
 							)}/section/{thisSection.id}/{slugify(thisSection.title)}"
 						>
@@ -336,7 +336,7 @@
 				{:else}
 					{#each published as thisSection}
 						<a
-							href="/prose/{work.id}/{slugify(
+							href="/work/{work.id}/{slugify(
 								work.title
 							)}/section/{thisSection.id}/{slugify(thisSection.title)}"
 						>
