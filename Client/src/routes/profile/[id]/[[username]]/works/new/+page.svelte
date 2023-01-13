@@ -132,7 +132,7 @@
 				toast.error(error.message);
 			} else {
 				const work = response as Work;
-				await goto(`/prose/${work.id}/${slugify(work.title)}`);
+				await goto(`/work/${work.id}/${slugify(work.title)}`);
 			}
 		},
 		validate(values) {

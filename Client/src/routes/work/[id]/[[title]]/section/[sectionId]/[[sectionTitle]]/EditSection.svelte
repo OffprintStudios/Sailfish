@@ -23,33 +23,40 @@
 			const formInfo: SectionForm = {
 				title: values.title,
 				body: values.body,
-				noteTop: hasTop ? values.noteTop : null,
-				noteBottom: hasBottom ? values.noteBottom : null,
+				noteTop: hasTop ? (values.noteTop === "" ? undefined : values.noteTop) : undefined,
+				noteBottom: hasBottom
+					? values.noteBottom === ""
+						? undefined
+						: values.noteBottom
+					: undefined
 			};
 
-			const response = await patchReq<Section>(`/api/content/works/${work.id}/sections/${section.id}/update-section?profileId=${$account.currProfile.id}`, formInfo);
+			const response = await patchReq<Section>(
+				`/sections/update-section/${section.id}?workId=${work.id}&profileId=${$account.currProfile?.id}`,
+				formInfo
+			);
 			if ((response as ResponseError).error) {
 				const error = response as ResponseError;
 				toast.error(error.message);
 			} else {
 				section = response as Section;
-				dispatch('save');
+				dispatch("save");
 			}
 		},
 		validate(values) {
 			const errors = {
-				title: '',
-				body: '',
-				noteTop: '',
-				noteBottom: '',
+				title: "",
+				body: "",
+				noteTop: "",
+				noteBottom: ""
 			};
 
 			if (!values.title || values.title.length < 3 || values.title.length > 120) {
-				errors.title = 'Titles must be between 3 and 120 characters';
+				errors.title = "Titles must be between 3 and 120 characters";
 			}
 
 			if (!values.body || values.body.length < 3) {
-				errors.body = 'Body text must not be empty';
+				errors.body = "Body text must not be empty";
 			}
 
 			if (values.noteTop && values.noteTop.length < 3) {
@@ -63,15 +70,15 @@
 			return errors;
 		},
 		initialValues: {
-			title: section?.title,
-			body: section?.body,
-			noteTop: section?.noteTop ?? null,
-			noteBottom: section?.noteBottom ?? null
+			title: section.title,
+			body: section.body,
+			noteTop: section?.noteTop ?? "",
+			noteBottom: section?.noteBottom ?? ""
 		}
 	});
 
 	function cancel() {
-		dispatch('cancel');
+		dispatch("cancel");
 	}
 </script>
 
@@ -80,9 +87,16 @@
 		<form class="bg-zinc-200 dark:bg-zinc-700 rounded-xl overflow-hidden" use:form>
 			<div class="p-4" style="background: var(--accent);">
 				<h3 class="text-white font-light ml-0.5">
-					<a class="text-white hover:text-white" href="/prose/{work.id}/{slugify(work.title)}">{work.title}</a>
+					<a
+						class="text-white hover:text-white"
+						href="/prose/{work.id}/{slugify(work.title)}">{work.title}</a
+					>
 					<span class="text-white mx-[0.075rem] text-lg">•</span>
-					<a class="text-white hover:text-white" href="/profile/{work.author.id}/{slugify(work.author.username)}">{work.author.username}</a>
+					<a
+						class="text-white hover:text-white"
+						href="/profile/{work.author.id}/{slugify(work.author.username)}"
+						>{work.author.username}</a
+					>
 				</h3>
 				<h1 class="text-white text-4xl">Editing "{section.title}"</h1>
 			</div>
@@ -100,7 +114,7 @@
 				{#if hasTop}
 					<div class="flex items-center mt-4 mx-4 mb-2">
 						<h5 class="text-white flex-1 text-xl">Author's Note (Top)</h5>
-						<Button type="button" on:click={() => hasTop = false}>
+						<Button type="button" on:click={() => (hasTop = false)}>
 							<CloseLine class="button-icon" />
 							<span class="button-text">Cancel</span>
 						</Button>
@@ -109,7 +123,7 @@
 				{:else}
 					<button
 						class="add-note border-zinc-300 dark:border-zinc-600 hover:bg-zinc-300 dark:hover:bg-zinc-600 hover:border-zinc-400 hover:dark:border-zinc-500"
-						on:click={() => hasTop = true}
+						on:click={() => (hasTop = true)}
 						type="button"
 					>
 						<span>Add Note</span>
@@ -122,7 +136,7 @@
 				{#if hasBottom}
 					<div class="flex items-center mt-4 mx-4 mb-2">
 						<h5 class="text-white flex-1 text-xl">Author's Note (Bottom)</h5>
-						<Button type="button" on:click={() => hasBottom = false}>
+						<Button type="button" on:click={() => (hasBottom = false)}>
 							<CloseLine class="button-icon" />
 							<span class="button-text">Cancel</span>
 						</Button>
@@ -131,7 +145,7 @@
 				{:else}
 					<button
 						class="add-note border-zinc-300 dark:border-zinc-600 hover:bg-zinc-300 dark:hover:bg-zinc-600 hover:border-zinc-400 hover:dark:border-zinc-500"
-						on:click={() => hasBottom = true}
+						on:click={() => (hasBottom = true)}
 						type="button"
 					>
 						<span>Add Note</span>
@@ -144,7 +158,12 @@
 					<span class="button-text">Cancel</span>
 				</Button>
 				<div class="mx-0.5"><!--spacer--></div>
-				<Button kind="primary" type="submit" loading={$isSubmitting} loadingText="Saving...">
+				<Button
+					kind="primary"
+					type="submit"
+					loading={$isSubmitting}
+					loadingText="Saving..."
+				>
 					<Save2Line class="button-icon" />
 					<span class="button-text">Save</span>
 				</Button>

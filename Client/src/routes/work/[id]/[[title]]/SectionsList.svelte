@@ -186,7 +186,7 @@
 					{/if}
 				{/if}
 				<a
-					href="/prose/{work.id}/{slugify(work.title)}/section/{section.id}/{slugify(
+					href="/work/{work.id}/{slugify(work.title)}/section/{section.id}/{slugify(
 						section.title
 					)}"
 					data-sveltekit-preload-data

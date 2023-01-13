@@ -34,7 +34,7 @@
 >
 	<a
 		class="absolute top-0 right-0 left-0 bottom-0 z-[2]"
-		href="/prose/{work.id}/{slugify(work.title)}"
+		href="/work/{work.id}/{slugify(work.title)}"
 		data-sveltekit-preload-data
 	>
 		<!--should be empty-->

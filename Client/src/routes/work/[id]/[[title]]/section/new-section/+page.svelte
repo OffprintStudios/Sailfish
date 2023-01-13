@@ -21,49 +21,56 @@
 			const formInfo: SectionForm = {
 				title: values.title,
 				body: values.body,
-				noteTop: hasTop ? values.noteTop : null,
-				noteBottom: hasBottom ? values.noteBottom : null,
+				noteTop: hasTop ? (values.noteTop === "" ? undefined : values.noteTop) : undefined,
+				noteBottom: hasBottom
+					? values.noteBottom === ""
+						? undefined
+						: values.noteBottom
+					: undefined
 			};
 
-			const response = await postReq<void>(`/sections/create-section?workId=${work.id}&profileId=${$account.currProfile.id}`, formInfo);
+			const response = await postReq<void>(
+				`/sections/create-section?workId=${work.id}&profileId=${$account.currProfile?.id}`,
+				formInfo
+			);
 			if ((response as ResponseError).error) {
 				const error = response as ResponseError;
 				toast.error(error.message);
 			} else {
-				await goto(`/prose/${work.id}/${slugify(work.title)}`);
+				await goto(`/work/${work.id}/${slugify(work.title)}`);
 			}
 		},
 		validate(values) {
 			const errors = {
-				title: '',
-				body: '',
-				noteTop: '',
-				noteBottom: '',
+				title: "",
+				body: "",
+				noteTop: "",
+				noteBottom: ""
 			};
 
-			if (!values.title || values.title.length < 3 || values.title.length > 120) {
-				errors.title = 'Titles must be between 3 and 120 characters';
+			if (values.title.length < 3 || values.title.length > 120) {
+				errors.title = "Titles must be between 3 and 120 characters";
 			}
 
-			if (!values.body || values.body.length < 3) {
-				errors.body = 'Body text must not be empty';
+			if (values.body.length < 3) {
+				errors.body = "Body text must not be empty";
 			}
 
-			if (values.noteTop && values.noteTop.length < 3) {
+			if (values.noteTop !== "" && (values.noteTop as string).length < 3) {
 				errors.noteTop = `Author's notes must be bigger than 3 characters`;
 			}
 
-			if (values.noteBottom && values.noteBottom.length < 3) {
+			if (values.noteBottom !== "" && (values.noteBottom as string).length < 3) {
 				errors.noteTop = `Author's notes must be bigger than 3 characters`;
 			}
 
 			return errors;
 		},
 		initialValues: {
-			title: null,
-			body: null,
-			noteTop: null,
-			noteBottom: null,
+			title: "",
+			body: "",
+			noteTop: "",
+			noteBottom: ""
 		}
 	});
 </script>
@@ -77,9 +84,16 @@
 		<form class="bg-zinc-200 dark:bg-zinc-700 rounded-xl overflow-hidden" use:form>
 			<div class="p-4" style="background: var(--accent);">
 				<h3 class="text-white font-light ml-0.5">
-					<a class="text-white hover:text-white" href="/prose/{work.id}/{slugify(work.title)}">{work.title}</a>
+					<a
+						class="text-white hover:text-white"
+						href="/prose/{work.id}/{slugify(work.title)}">{work.title}</a
+					>
 					<span class="text-white mx-[0.075rem] text-lg">•</span>
-					<a class="text-white hover:text-white" href="/profile/{work.author.id}/{slugify(work.author.username)}">{work.author.username}</a>
+					<a
+						class="text-white hover:text-white"
+						href="/profile/{work.author.id}/{slugify(work.author.username)}"
+						>{work.author.username}</a
+					>
 				</h3>
 				<h1 class="text-white text-4xl">Create a New Chapter</h1>
 			</div>
@@ -97,7 +111,7 @@
 				{#if hasTop}
 					<div class="flex items-center mt-4 mx-4 mb-2">
 						<h5 class="text-white flex-1 text-xl">Author's Note (Top)</h5>
-						<Button type="button" on:click={() => hasTop = false}>
+						<Button type="button" on:click={() => (hasTop = false)}>
 							<CloseLine class="button-icon" />
 							<span class="button-text">Cancel</span>
 						</Button>
@@ -106,7 +120,7 @@
 				{:else}
 					<button
 						class="add-note border-zinc-300 dark:border-zinc-600 hover:bg-zinc-300 dark:hover:bg-zinc-600 hover:border-zinc-400 hover:dark:border-zinc-500"
-						on:click={() => hasTop = true}
+						on:click={() => (hasTop = true)}
 						type="button"
 					>
 						<span>Add Note</span>
@@ -119,7 +133,7 @@
 				{#if hasBottom}
 					<div class="flex items-center mt-4 mx-4 mb-2">
 						<h5 class="text-white flex-1 text-xl">Author's Note (Bottom)</h5>
-						<Button type="button" on:click={() => hasBottom = false}>
+						<Button type="button" on:click={() => (hasBottom = false)}>
 							<CloseLine class="button-icon" />
 							<span class="button-text">Cancel</span>
 						</Button>
@@ -128,7 +142,7 @@
 				{:else}
 					<button
 						class="add-note border-zinc-300 dark:border-zinc-600 hover:bg-zinc-300 dark:hover:bg-zinc-600 hover:border-zinc-400 hover:dark:border-zinc-500"
-						on:click={() => hasBottom = true}
+						on:click={() => (hasBottom = true)}
 						type="button"
 					>
 						<span>Add Note</span>

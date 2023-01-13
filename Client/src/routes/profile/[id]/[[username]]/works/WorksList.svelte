@@ -47,7 +47,7 @@
 	{#if works.length > 0}
 		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 			{#each works as work}
-				<WorkCard {work} />
+				<WorkCard {work} withDropdown={false} />
 			{/each}
 		</div>
 	{:else}
