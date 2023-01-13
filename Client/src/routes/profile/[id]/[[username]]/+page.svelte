@@ -86,16 +86,18 @@
 			<p>Well this is rather empty, isn't it?</p>
 		</div>
 	{:else}
-		<div class="lg:px-8 mx-auto border-b pb-6 mb-6">
-			<BlogCard blog={blogs.items[0]} hasDropdown={false} />
-		</div>
+		{#if blogs.items[0]}
+			<div class="lg:px-8 mx-auto border-b pb-6 mb-6">
+				<BlogCard blog={blogs.items[0]} hasDropdown={false} />
+			</div>
+		{/if}
 		{#if works.items.length === 0}
 			<div class="empty">
 				<h3>No works added</h3>
 				<p>Well this is rather empty, isn't it?</p>
 			</div>
 		{:else}
-			<div class="w-full grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-2">
+			<div class="w-full grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-2 gap-4">
 				{#each works.items as work}
 					<WorkCard {work} withDropdown={false} />
 				{/each}

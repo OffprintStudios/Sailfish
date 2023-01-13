@@ -8,7 +8,14 @@
 	import toast from "svelte-french-toast";
 
 	let loading = false;
-	let history: Paginate<ReadingHistory> = null;
+	let history: Paginate<ReadingHistory> = {
+		items: [],
+		metadata: {
+			page: 1,
+			per: 5,
+			total: 0
+		}
+	};
 
 	onMount(async () => {
 		await loadHistory();
@@ -37,7 +44,7 @@
 	</div>
 {:else if history}
 	{#if history.items.length > 0}
-		<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+		<div class="grid grid-cols-1 gap-4">
 			{#each history.items as item}
 				<WorkCard work={item.work}>
 					<svelte:fragment slot="dropdown">
@@ -51,7 +58,7 @@
 			<div class="empty">
 				<h3>Nothing read yet</h3>
 				<p>The last five things you've read<br />will show up here.</p>
-				<div class="my-4" />
+				<div class="my-4"><!--spacer--></div>
 				<p>For your full reading history,<br />go to Library > Reading History</p>
 			</div>
 		</div>
