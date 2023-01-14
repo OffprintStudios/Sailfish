@@ -19,7 +19,7 @@
 		loading = true;
 		$page.url.searchParams.set("page", `${pageNum}`);
 		const response = await getReq<Paginate<Work>>(
-			`/explore/new-works?filter=${$app.filter}?page=${currPage}&per=${perPage}`
+			`/explore/new-works?filter=${$app.filter}&page=${currPage}&per=${perPage}`
 		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
