@@ -61,6 +61,7 @@ public func configure(_ app: Application) async throws {
         CreatePG_TRGMExtension(),
         CreateBlogTitleIndex(),
         CreateWorkTitleIndex(),
+        AddUniqueConstraintToApprovalQueue(),
     ])
 
     try await app.autoMigrate()
