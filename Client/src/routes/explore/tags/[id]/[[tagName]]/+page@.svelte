@@ -23,8 +23,11 @@
 		SearchEyeLine,
 		SkullLine,
 		SpyLine,
-		SwordLine
+		SwordLine,
+		Contrast2Fill,
+		EmotionSadLine
 	} from "svelte-remixicon";
+	import { app } from "$lib/state/app.state";
 
 	export let data: { tag: Tag; works: number; page: Paginate<Work> };
 	$: pageNum = +($page.url.searchParams.get("page") ?? "1");
@@ -36,7 +39,7 @@
 		loading = true;
 		$page.url.searchParams.set("page", `${newPage}`);
 		const response = await getReq<Paginate<Work>>(
-			`/explore/works-by-tag?tagId=${$page.params.id}&page=${newPage}&per=${perPage}`
+			`/explore/works-by-tag?tagId=${$page.params.id}&filter=${$app.filter}&page=${newPage}&per=${perPage}`
 		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
@@ -80,6 +83,10 @@
 			<SkullLine size={iconSize} class="ml-2 mr-4" />
 		{:else if data.tag.name === "Action/Adventure"}
 			<SwordLine size={iconSize} class="ml-2 mr-4" />
+		{:else if data.tag.name === "Dark"}
+			<Contrast2Fill size={iconSize} class="ml-2 mr-4" />
+		{:else if data.tag.name === "Sad"}
+			<EmotionSadLine size={iconSize} class="ml-2 mr-4" />
 		{/if}
 	{/if}
 	<div class="flex-1">
