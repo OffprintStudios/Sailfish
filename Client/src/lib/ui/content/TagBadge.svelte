@@ -2,7 +2,7 @@
 	import { Category, Status } from "$lib/models/content/works";
 	import type { Tag } from "$lib/models/tags";
 	import { TagKind } from "$lib/models/tags";
-	import { ContentRating } from '$lib/models/content';
+	import { ContentRating } from "$lib/models/content";
 	import {
 		EmpathizeLine,
 		Loader2Line,
@@ -19,9 +19,11 @@
 		SpyLine,
 		SkullLine,
 		SwordLine,
-	} from 'svelte-remixicon';
+		Contrast2Fill,
+		EmotionSadLine
+	} from "svelte-remixicon";
 
-	export let size: 'small' | 'medium' | 'large' = 'medium';
+	export let size: "small" | "medium" | "large" = "medium";
 	export let hasIcon = true;
 	export let kind: TagKind;
 	export let category: Category = null;
@@ -38,8 +40,8 @@
 	class:category={kind === TagKind.category}
 	class:genre={kind === TagKind.genre}
 	class:user={kind === TagKind.user}
-	class:small-text={size === 'small'}
-	class:big-text={size === 'large'}
+	class:small-text={size === "small"}
+	class:big-text={size === "large"}
 	class:no-icon={!hasIcon}
 	class:everyone={rating === ContentRating.Everyone}
 	class:teen={rating === ContentRating.Teen}
@@ -57,32 +59,36 @@
 			<span class="tag-label pr-0.5">Original</span>
 		{/if}
 	{:else if kind === TagKind.genre}
-		{#if tag.name === 'Comedy'}
+		{#if tag.name === "Comedy"}
 			<EmotionLaughLine />
-		{:else if tag.name === 'Drama'}
+		{:else if tag.name === "Drama"}
 			<FilePaper2Line />
-		{:else if tag.name === 'Erotica'}
+		{:else if tag.name === "Erotica"}
 			<DoorClosedLine />
-		{:else if tag.name === 'Fantasy'}
+		{:else if tag.name === "Fantasy"}
 			<MagicLine />
-		{:else if tag.name === 'Horror'}
+		{:else if tag.name === "Horror"}
 			<Ghost2Line />
-		{:else if tag.name === 'Mystery'}
+		{:else if tag.name === "Mystery"}
 			<SearchEyeLine />
-		{:else if tag.name === 'Romance'}
+		{:else if tag.name === "Romance"}
 			<HeartsLine />
-		{:else if tag.name === 'Science Fiction'}
+		{:else if tag.name === "Science Fiction"}
 			<AliensLine />
-		{:else if tag.name === 'Slice of Life'}
+		{:else if tag.name === "Slice of Life"}
 			<Home3Line />
-		{:else if tag.name === 'Speculative Fiction'}
+		{:else if tag.name === "Speculative Fiction"}
 			<MeteorLine />
-		{:else if tag.name === 'Thriller'}
+		{:else if tag.name === "Thriller"}
 			<SpyLine />
-		{:else if tag.name === 'Tragedy'}
+		{:else if tag.name === "Tragedy"}
 			<SkullLine />
-		{:else if tag.name === 'Action/Adventure'}
+		{:else if tag.name === "Action/Adventure"}
 			<SwordLine />
+		{:else if tag.name === "Dark"}
+			<Contrast2Fill />
+		{:else if tag.name === "Sad"}
+			<EmotionSadLine />
 		{/if}
 		<span class="tag-label pr-0.5">{tag.name}</span>
 	{:else if kind === TagKind.rating}
@@ -100,13 +106,13 @@
 			<span class="rating-label-small">X</span>
 		{/if}
 	{:else if kind === TagKind.fandom && tag !== null}
-        <span class="tag-label">
+		<span class="tag-label">
 			{#if tag.parent}
 				{tag.parent.name}&mdash;{tag.name}
 			{:else}
 				{tag.name}
 			{/if}
-        </span>
+		</span>
 	{:else if kind === TagKind.status}
 		<span class="tag-label">{status}</span>
 	{/if}
