@@ -5,13 +5,12 @@
 	import type { Blog, BlogForm } from "$lib/models/content";
 	import { ContentRating } from "$lib/models/content";
 	import { account } from "$lib/state/account.state";
-	import { QuillPenLine, AddLine } from "svelte-remixicon";
+	import { QuillPenLine, Save3Line } from "svelte-remixicon";
 	import { TextField, TextArea, Editor } from "$lib/ui/forms";
 	import { Button } from "$lib/ui/util";
 	import { goto } from "$app/navigation";
 	import { slugify, hasRoles } from "$lib/util/functions";
-	import { postReq } from "$lib/http";
-	import type { ResponseError } from "$lib/http";
+	import { patchReq, type ResponseError } from "$lib/http";
 	import { Roles } from "$lib/models/accounts";
 	import toast from "svelte-french-toast";
 
@@ -20,7 +19,7 @@
 
 	const { form, data, errors, isSubmitting } = createForm({
 		async onSubmit(values) {
-			const response = await postReq<Blog>(
+			const response = await patchReq<Blog>(
 				`/blogs/${blog.id}/update?profileId=${$account.currProfile?.id}`,
 				values as BlogForm
 			);
@@ -242,7 +241,7 @@
 		{/if}
 		<div class="flex items-center justify-center bg-zinc-300 dark:bg-zinc-600 p-3">
 			<Button type="submit" loading={$isSubmitting} loadingText="Saving...">
-				<AddLine class="button-icon" />
+				<Save3Line class="button-icon" />
 				<span class="button-text">Save Changes</span>
 			</Button>
 		</div>
