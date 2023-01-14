@@ -14,7 +14,9 @@
 		MeteorLine,
 		SpyLine,
 		SkullLine,
-		SwordLine
+		SwordLine,
+		Contrast2Fill,
+		EmotionSadLine
 	} from "svelte-remixicon";
 
 	export let data: { data: { tag: Tag; works: number }[] };
@@ -62,6 +64,10 @@
 						<SkullLine size={iconSize} class="ml-2 mr-4" />
 					{:else if item.tag.name === "Action/Adventure"}
 						<SwordLine size={iconSize} class="ml-2 mr-4" />
+					{:else if item.tag.name === "Dark"}
+						<Contrast2Fill size={iconSize} class="ml-2 mr-4" />
+					{:else if item.tag.name === "Sad"}
+						<EmotionSadLine size={iconSize} class="ml-2 mr-4" />
 					{/if}
 				</svelte:fragment>
 			</TagCard>
