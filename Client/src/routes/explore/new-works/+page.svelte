@@ -12,12 +12,12 @@
 	export let data: Paginate<Work>;
 	let loading = false;
 
-	$: currPage = +($page.url.searchParams.get("page") ?? "1");
-	$: perPage = +($page.url.searchParams.get("per") ?? "24");
+	let currPage = +($page.url.searchParams.get("page") ?? "1");
+	let perPage = +($page.url.searchParams.get("per") ?? "24");
 
 	async function fetchPage(pageNum: number) {
 		loading = true;
-		$page.url.searchParams.set("page", `${pageNum}`);
+		currPage = pageNum;
 		const response = await getReq<Paginate<Work>>(
 			`/explore/new-works?filter=${$app.filter}&page=${currPage}&per=${perPage}`
 		);
