@@ -7,10 +7,8 @@
 	import { account } from "$lib/state/account.state";
 	import { Popup } from "$lib/ui/popup";
 	import { activity } from "$lib/state/activity.state";
-	import { afterNavigate } from "$app/navigation";
 
 	export let data: { hasKey: boolean } = { hasKey: false };
-	let containerTop;
 
 	if (!data.hasKey) {
 		$account.account = null;
@@ -20,10 +18,6 @@
 		$activity.count = 0;
 		$activity.markAsRead = [];
 	}
-
-	afterNavigate(() => {
-		containerTop.scrollIntoView({ behavior: "smooth" });
-	});
 </script>
 
 <Popup />
@@ -34,7 +28,6 @@
 >
 	<Nav />
 	<Guide>
-		<div bind:this={containerTop}><!--intentionally left blank--></div>
 		<slot />
 	</Guide>
 	<Toaster />
