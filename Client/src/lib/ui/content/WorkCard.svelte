@@ -70,6 +70,8 @@
 				<div class="flex-1"><!--spacer--></div>
 				<TagBadge category={work.category} kind={TagKind.category} size="small" />
 				<div class="mx-[0.025rem]"><!--spacer--></div>
+				<TagBadge kind={TagKind.workKind} workKind={work.kind} size="small" />
+				<div class="mx-[0.075rem]" />
 				<TagBadge kind={TagKind.status} size="small" status={work.status} />
 				<div class="mx-[0.025rem]"><!--spacer--></div>
 				<TagBadge kind={TagKind.rating} rating={work.rating} size="small" />

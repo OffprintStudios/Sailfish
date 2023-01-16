@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Category, Status } from "$lib/models/content/works";
+	import { Category, Kind, Status } from "$lib/models/content/works";
 	import type { Tag } from "$lib/models/tags";
 	import { TagKind } from "$lib/models/tags";
 	import { ContentRating } from "$lib/models/content";
@@ -26,10 +26,11 @@
 	export let size: "small" | "medium" | "large" = "medium";
 	export let hasIcon = true;
 	export let kind: TagKind;
-	export let category: Category = null;
-	export let rating: ContentRating = null;
+	export let workKind: Kind;
+	export let category: Category;
+	export let rating: ContentRating;
 	export let status: Status;
-	export let tag: Tag = null;
+	export let tag: Tag;
 </script>
 
 <button
@@ -40,6 +41,7 @@
 	class:category={kind === TagKind.category}
 	class:genre={kind === TagKind.genre}
 	class:user={kind === TagKind.user}
+	class:work-kind={kind === TagKind.workKind}
 	class:small-text={size === "small"}
 	class:big-text={size === "large"}
 	class:no-icon={!hasIcon}
@@ -115,6 +117,8 @@
 		</span>
 	{:else if kind === TagKind.status}
 		<span class="tag-label">{status}</span>
+	{:else if kind === TagKind.workKind}
+		<span class="tag-label">{workKind}</span>
 	{/if}
 </button>
 
@@ -186,12 +190,16 @@
 		&.user {
 		}
 
+		&.work-kind {
+			@apply bg-cyan-700 hover:bg-cyan-600;
+		}
+
 		&.everyone {
 			@apply bg-green-700 hover:bg-green-900;
 		}
 
 		&.teen {
-			@apply bg-yellow-400 hover:bg-yellow-600;
+			@apply bg-yellow-500 hover:bg-yellow-600;
 		}
 
 		&.mature {

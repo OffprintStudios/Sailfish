@@ -6,4 +6,5 @@ export enum TagKind {
 	category = "Category",
 	rating = "Rating",
 	status = "Status",
+	workKind = "WorkKind"
 }
