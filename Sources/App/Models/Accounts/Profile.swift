@@ -157,7 +157,7 @@ extension Profile {
 extension Profile.ProfileForm: Validatable {
     static func validations(_ validations: inout Validations) {
         validations.add("username", as: String.self, is: .count(3...32), required: true)
-        validations.add("bio", as: String.self, is: .count(3...240), required: false)
+        validations.add("bio", as: String.self, is: .count(3...120), required: false)
         validations.add("tagline", as: String.self, is: .count(3...32), required: false)
     }
 }

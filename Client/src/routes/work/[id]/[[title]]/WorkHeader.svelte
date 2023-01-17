@@ -359,7 +359,7 @@
 	</div>
 	<div class="title-bar">
 		<div class="flex-1 hidden lg:block">
-			<h1 class="text-2xl lg:text-3xl" style="color: var(--text-color);">
+			<h1 class="text-2xl lg:text-3xl">
 				{work.title}
 			</h1>
 			<div class="flex items-center flex-wrap">
@@ -447,7 +447,7 @@
 	</div>
 	<div class="tool-bar">
 		<div class="basis-full block mb-2 lg:hidden">
-			<h1 class="text-2xl lg:text-3xl" style="color: var(--text-color);">
+			<h1 class="text-2xl lg:text-3xl">
 				{work.title}
 			</h1>
 			<span
