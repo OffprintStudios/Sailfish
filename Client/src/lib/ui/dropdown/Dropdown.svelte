@@ -8,6 +8,8 @@
 	export let kind: "primary" | "normal" = "normal";
 	export let open = false;
 	export let position: Placement = "bottom-start";
+	export let inline = false;
+	export let noAxis = false;
 
 	function determineOpenState() {
 		open = !open;
@@ -39,6 +41,8 @@
 	<Button
 		kind={kind === "normal" ? "normal" : "primary"}
 		isActive={open}
+		{inline}
+		{noAxis}
 		on:click={determineOpenState}
 		bind:thisButton={button}
 	>
@@ -59,7 +63,7 @@
 
 <style lang="scss">
 	:global(div.dropdown-items) {
-		@apply absolute rounded-lg z-10 p-1 min-w-[12rem] max-w-[24rem];
+		@apply absolute rounded-lg z-50 p-1 min-w-[12rem] max-w-[24rem];
 		box-shadow: var(--dropshadow);
 		background: var(--accent);
 		:global(a),
