@@ -14,6 +14,8 @@
 	export let asLink = false;
 	export let href = "";
 	export let thisButton = null;
+	export let inline = false;
+	export let noAxis = false;
 
 	let isDisabled: boolean;
 	$: isDisabled = disabled || loading;
@@ -23,6 +25,7 @@
 	<a
 		class:primary={kind === "primary"}
 		class:active={isActive}
+		class:z-10={!noAxis}
 		class={classes}
 		{title}
 		{href}
@@ -42,6 +45,8 @@
 		class:active={isActive}
 		class:positive={isPositive}
 		class:negative={isNegative}
+		class:position-inline={inline}
+		class:z-10={!noAxis}
 		{title}
 		class:disabled
 		class={classes}
@@ -62,7 +67,7 @@
 <style lang="scss">
 	button,
 	a {
-		@apply flex items-center px-2 py-1.5 transition transform focus:ring-0 m-0 text-base rounded-lg select-none z-[11] relative;
+		@apply flex items-center px-2 py-1.5 transition transform focus:ring-0 m-0 text-base rounded-lg select-none relative;
 		text-transform: lowercase;
 		font-variant: small-caps;
 		font-weight: 700;
@@ -98,6 +103,10 @@
 			&:hover {
 				@apply bg-red-500;
 			}
+		}
+
+		&.position-inline {
+			@apply rounded-none px-3 h-full;
 		}
 
 		&.disabled {

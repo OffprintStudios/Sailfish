@@ -10,7 +10,8 @@
 		PlayListAddLine,
 		ListCheck2,
 		BookOpenLine,
-		BookLine
+		BookLine,
+		More2Fill
 	} from "svelte-remixicon";
 	import { slugify, localeDate } from "$lib/util/functions";
 	import toast from "svelte-french-toast";
@@ -20,6 +21,9 @@
 	import DeleteSectionPrompt from "./DeleteSectionPrompt.svelte";
 	import { openPopup } from "$lib/ui/popup";
 	import type { ReadingHistory } from "$lib/models/content/library";
+	import { abbreviate } from "$lib/util/functions/index.js";
+	import Dropdown from "$lib/ui/dropdown/Dropdown.svelte";
+	import Button from "$lib/ui/util/Button.svelte";
 
 	export let work: Work;
 	export let history: ReadingHistory;
@@ -139,50 +143,15 @@
 	<ul class="mt-4 w-full">
 		{#each sections as section}
 			<li class="section-item odd:bg-zinc-200 odd:dark:bg-zinc-700">
-				{#if $account.currProfile && $account.currProfile.id === work.author.id}
-					{#if publishing}
-						<button>
-							<Loader5Line class="animate-spin" />
-						</button>
-					{:else}
-						<button
-							on:click={() => publishSection(section.id)}
-							title="Publish/Unpublish"
-						>
-							{#if section.publishedOn}
-								<CheckboxCircleLine class="button-icon no-text" />
-							{:else}
-								<CheckboxBlankCircleLine class="button-icon no-text" />
-							{/if}
-						</button>
-					{/if}
-					{#if section.volume}
-						<button
-							title="Remove From Volume"
-							disabled={loadingVolumeAction}
-							on:click={() => removeFromVolume(section.id)}
-						>
-							{#if loadingVolumeAction}
-								<Loader5Line class="animate-spin" />
-							{:else}
-								<ListCheck2 />
-							{/if}
-						</button>
-					{:else}
-						<button title="Add To Volume" on:click={() => addToVolume(section.id)}>
-							<PlayListAddLine />
-						</button>
-					{/if}
-				{/if}
 				{#if $account.account && $account.currProfile && $account.currProfile.id !== work.author.id}
 					{#if history && history.sectionsRead.includes(section.id)}
-						<button title="Read">
+						<Button inline={true} title="Read">
 							<BookOpenLine />
-						</button>
+						</Button>
 					{:else}
-						<button title="Unread">
+						<Button inline={true} title="Unread">
 							<BookLine />
-						</button>
+						</Button>
 					{/if}
 				{/if}
 				<a
@@ -202,7 +171,13 @@
 					<span
 						class="flex items-center text-xs lg:text-sm text-zinc-400 relative -top-0.5 lg:top-0"
 					>
-						<span class="words">{section.words} words</span>
+						{#if section.volume}
+							<span class="text-zinc-400 block lg:hidden">
+								{section.volume.title}
+							</span>
+							<span class="mx-1 block lg:hidden">•</span>
+						{/if}
+						<span class="words">{abbreviate(section.words)} words</span>
 						<span class="mx-1">•</span>
 						{#if section.publishedOn}
 							<span>{localeDate(section.publishedOn, "shortDate")}</span>
@@ -212,15 +187,71 @@
 					</span>
 				</a>
 				{#if $account.currProfile && $account.currProfile.id === work.author.id}
-					{#if deleting}
-						<button>
-							<Loader5Line class="animate-spin" />
-						</button>
-					{:else}
-						<button on:click={() => deleteSection(section.id)} title="Delete">
-							<DeleteBinLine class="button-icon no-text" />
-						</button>
-					{/if}
+					<Dropdown inline={true} position="left-start">
+						<svelte:fragment slot="button">
+							<More2Fill class="button-icon no-text" size="18px" />
+						</svelte:fragment>
+						<svelte:fragment slot="items">
+							{#if publishing}
+								<button type="button">
+									<Loader5Line class="animate-spin mr-2" />
+									<span>Saving...</span>
+								</button>
+							{:else}
+								<button
+									on:click={() => publishSection(section.id)}
+									title="Publish/Unpublish"
+									type="button"
+								>
+									{#if section.publishedOn}
+										<CheckboxCircleLine class="mr-2" />
+										<span>Unpublish</span>
+									{:else}
+										<CheckboxBlankCircleLine class="mr-2" />
+										<span>Publish</span>
+									{/if}
+								</button>
+							{/if}
+							{#if section.volume}
+								<button
+									title="Remove From Volume"
+									type="button"
+									disabled={loadingVolumeAction}
+									on:click={() => removeFromVolume(section.id)}
+								>
+									{#if loadingVolumeAction}
+										<Loader5Line class="animate-spin mr-2" />
+									{:else}
+										<ListCheck2 class="mr-2" />
+										<span>Remove from Volume</span>
+									{/if}
+								</button>
+							{:else}
+								<button
+									title="Add To Volume"
+									type="button"
+									on:click={() => addToVolume(section.id)}
+								>
+									<PlayListAddLine class="mr-2" />
+									<span>Add to Volume</span>
+								</button>
+							{/if}
+							<div class="divider"><!--divider--></div>
+							<button
+								type="button"
+								disabled={deleting}
+								on:click={() => deleteSection(section.id)}
+							>
+								{#if deleting}
+									<Loader5Line class="animate-spin mr-2" />
+									<span>Saving...</span>
+								{:else}
+									<DeleteBinLine class="mr-2" />
+									<span>Delete</span>
+								{/if}
+							</button>
+						</svelte:fragment>
+					</Dropdown>
 				{/if}
 			</li>
 		{/each}

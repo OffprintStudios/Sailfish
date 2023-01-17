@@ -30,14 +30,13 @@
 	import { app } from "$lib/state/app.state";
 
 	export let data: { tag: Tag; works: number; page: Paginate<Work> };
-	$: pageNum = +($page.url.searchParams.get("page") ?? "1");
-	$: perPage = +($page.url.searchParams.get("per") ?? "24");
+	let pageNum = +($page.url.searchParams.get("page") ?? "1");
+	let perPage = +($page.url.searchParams.get("per") ?? "24");
 	let loading = false;
-	const iconSize = "42px";
 
 	async function fetchPage(newPage: number) {
 		loading = true;
-		$page.url.searchParams.set("page", `${newPage}`);
+		pageNum = newPage;
 		const response = await getReq<Paginate<Work>>(
 			`/explore/works-by-tag?tagId=${$page.params.id}&filter=${$app.filter}&page=${newPage}&per=${perPage}`
 		);
@@ -58,39 +57,39 @@
 <div class="tag-header">
 	{#if data.tag.kind === TagKind.genre}
 		{#if data.tag.name === "Comedy"}
-			<EmotionLaughLine size={iconSize} class="ml-2 mr-4" />
+			<EmotionLaughLine class="w-[36px] h-[36px] lg:w-[42px] lg:h-[42px] ml-2 mr-4" />
 		{:else if data.tag.name === "Drama"}
-			<FilePaper2Line size={iconSize} class="ml-2 mr-4" />
+			<FilePaper2Line class="w-[36px] h-[36px] lg:w-[42px] lg:h-[42px] ml-2 mr-4" />
 		{:else if data.tag.name === "Erotica"}
-			<DoorClosedLine size={iconSize} class="ml-2 mr-4" />
+			<DoorClosedLine class="w-[36px] h-[36px] lg:w-[42px] lg:h-[42px] ml-2 mr-4" />
 		{:else if data.tag.name === "Fantasy"}
-			<MagicLine size={iconSize} class="ml-2 mr-4" />
+			<MagicLine class="w-[36px] h-[36px] lg:w-[42px] lg:h-[42px] ml-2 mr-4" />
 		{:else if data.tag.name === "Horror"}
-			<Ghost2Line size={iconSize} class="ml-2 mr-4" />
+			<Ghost2Line class="w-[36px] h-[36px] lg:w-[42px] lg:h-[42px] ml-2 mr-4" />
 		{:else if data.tag.name === "Mystery"}
-			<SearchEyeLine size={iconSize} class="ml-2 mr-4" />
+			<SearchEyeLine class="w-[36px] h-[36px] lg:w-[42px] lg:h-[42px] ml-2 mr-4" />
 		{:else if data.tag.name === "Romance"}
-			<HeartsLine size={iconSize} class="ml-2 mr-4" />
+			<HeartsLine class="w-[36px] h-[36px] lg:w-[42px] lg:h-[42px] ml-2 mr-4" />
 		{:else if data.tag.name === "Science Fiction"}
-			<AliensLine size={iconSize} class="ml-2 mr-4" />
+			<AliensLine class="w-[36px] h-[36px] lg:w-[42px] lg:h-[42px] ml-2 mr-4" />
 		{:else if data.tag.name === "Slice of Life"}
-			<Home3Line size={iconSize} class="ml-2 mr-4" />
+			<Home3Line class="w-[36px] h-[36px] lg:w-[42px] lg:h-[42px] ml-2 mr-4" />
 		{:else if data.tag.name === "Speculative Fiction"}
-			<MeteorLine size={iconSize} class="ml-2 mr-4" />
+			<MeteorLine class="w-[36px] h-[36px] lg:w-[42px] lg:h-[42px] ml-2 mr-4" />
 		{:else if data.tag.name === "Thriller"}
-			<SpyLine size={iconSize} class="ml-2 mr-4" />
+			<SpyLine class="w-[36px] h-[36px] lg:w-[42px] lg:h-[42px] ml-2 mr-4" />
 		{:else if data.tag.name === "Tragedy"}
-			<SkullLine size={iconSize} class="ml-2 mr-4" />
+			<SkullLine class="w-[36px] h-[36px] lg:w-[42px] lg:h-[42px] ml-2 mr-4" />
 		{:else if data.tag.name === "Action/Adventure"}
-			<SwordLine size={iconSize} class="ml-2 mr-4" />
+			<SwordLine class="w-[36px] h-[36px] lg:w-[42px] lg:h-[42px] ml-2 mr-4" />
 		{:else if data.tag.name === "Dark"}
-			<Contrast2Fill size={iconSize} class="ml-2 mr-4" />
+			<Contrast2Fill class="w-[36px] h-[36px] lg:w-[42px] lg:h-[42px] ml-2 mr-4" />
 		{:else if data.tag.name === "Sad"}
-			<EmotionSadLine size={iconSize} class="ml-2 mr-4" />
+			<EmotionSadLine class="w-[36px] h-[36px] lg:w-[42px] lg:h-[42px] ml-2 mr-4" />
 		{/if}
 	{/if}
 	<div class="flex-1">
-		<h1 class="text-white text-4xl relative top-1">{data.tag.name}</h1>
+		<h1 class="text-white text-2xl lg:text-4xl relative top-1">{data.tag.name}</h1>
 		{#if data.tag.parent}
 			<h3 class="text-white italic">{data.tag.parent.name}</h3>
 		{/if}
@@ -99,13 +98,15 @@
 		class="flex items-end text-white relative top-0.5"
 		style="font-family: var(--header-text);"
 	>
-		<h2 class="text-4xl text-white mr-1">{abbreviate(data.works)}</h2>
-		<span class="uppercase tracking-wider relative bottom-1">works</span>
+		<h2 class="text-2xl lg:text-4xl text-white mr-1">{abbreviate(data.works)}</h2>
+		<span class="uppercase tracking-wider relative bottom-1 text-xs lg:text-sm">works</span>
 	</div>
 </div>
 
 {#if data.page.metadata.total > 0}
-	<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 max-w-6xl mx-auto">
+	<div
+		class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 max-w-6xl w-11/12 xl:w-full mx-auto"
+	>
 		{#each data.page.items as work}
 			<WorkCard {work} withDropdown={false} />
 		{/each}
@@ -119,7 +120,7 @@
 
 {#if data.page.metadata.total > 0}
 	<Paginator
-		{pageNum}
+		currPage={pageNum}
 		{perPage}
 		totalItems={data.page.metadata.total}
 		on:change={(event) => fetchPage(event.detail)}
@@ -128,7 +129,7 @@
 
 <style lang="scss">
 	div.tag-header {
-		@apply max-w-7xl mx-auto text-white my-6 flex items-center rounded-xl px-4 py-6;
+		@apply max-w-7xl mx-auto text-white mb-6 xl:mt-6 flex items-center xl:w-11/12 xl:rounded-xl px-4 py-6;
 		background: var(--accent);
 	}
 </style>

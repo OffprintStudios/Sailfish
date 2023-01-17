@@ -104,7 +104,7 @@
 	<meta property="twitter:image" content={data.work.coverArt ?? data.work.author.avatar} />
 </svelte:head>
 
-<div class="max-w-7xl mx-auto mb-6 lg:mt-6">
+<div class="max-w-7xl mx-auto mb-6 xl:mt-6">
 	<WorkHeader work={data.work} {history} />
 	{#if !data.work.publishedOn && !queueItem}
 		<InfoBar
