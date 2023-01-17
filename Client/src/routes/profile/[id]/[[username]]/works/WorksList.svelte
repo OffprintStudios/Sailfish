@@ -45,7 +45,7 @@
 
 <div class="my-6 w-11/12 lg:w-full mx-auto">
 	{#if works.length > 0}
-		<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+		<div class="w-11/12 xl:w-full mx-auto grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
 			{#each works as work}
 				<WorkCard {work} withDropdown={false} />
 			{/each}
