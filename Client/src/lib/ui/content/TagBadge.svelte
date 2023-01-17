@@ -4,8 +4,6 @@
 	import { TagKind } from "$lib/models/tags";
 	import { ContentRating } from "$lib/models/content";
 	import {
-		EmpathizeLine,
-		Loader2Line,
 		EmotionLaughLine,
 		FilePaper2Line,
 		DoorClosedLine,
@@ -54,11 +52,9 @@
 >
 	{#if kind === TagKind.category}
 		{#if category === Category.Fanwork}
-			<EmpathizeLine />
-			<span class="tag-label pr-0.5">Fanwork</span>
+			<span class="tag-label">Fanwork</span>
 		{:else if category === Category.Original}
-			<Loader2Line />
-			<span class="tag-label pr-0.5">Original</span>
+			<span class="tag-label">Original</span>
 		{/if}
 	{:else if kind === TagKind.genre}
 		{#if tag.name === "Comedy"}
