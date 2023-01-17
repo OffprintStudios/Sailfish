@@ -176,7 +176,6 @@
 			{/if}
 			{#if $account.account && $account.currProfile && $account.currProfile.id === data.id}
 				<div class="absolute top-2 right-2 z-[2]">
-					<div class="mx-2 text-white text-lg relative top-[0.1625rem]">|</div>
 					<div class="relative top-0.5">
 						<Button on:click={updateBanner} kind="primary">
 							{#if data.bannerArt}
@@ -216,7 +215,7 @@
 					</a>
 				</div>
 			</div>
-			<div class="flex items-center bg-zinc-300 dark:bg-zinc-600 rounded-xl p-0.5">
+			<div class="flex items-center bg-zinc-300 dark:bg-zinc-600 rounded-xl p-1">
 				{#if $account.account && $account.currProfile}
 					{#if $account.currProfile.id !== data.id}
 						{#if hasFollowed.isFollowing}
@@ -238,25 +237,14 @@
 								<span class="button-small-text lg:button-text">Follow</span>
 							</Button>
 						{/if}
+						<div class="mx-0.5"><!--spacer--></div>
 					{/if}
-					<div class="mx-0.5"><!--spacer--></div>
 					<Dropdown>
 						<svelte:fragment slot="button">
 							<More2Fill class="button-icon no-text" size="20px" />
 						</svelte:fragment>
 						<svelte:fragment slot="items">
 							{#if $account.currProfile.id === data.id}
-								{#if data.bannerArt}
-									<button on:click={updateBanner}>
-										<ImageEditLine class="mr-2" size="18px" />
-										<span>Edit Banner</span>
-									</button>
-								{:else}
-									<button on:click={updateBanner}>
-										<ImageAddLine class="mr-2" size="18px" />
-										<span>Add Banner</span>
-									</button>
-								{/if}
 								<button on:click={updateLinks}>
 									<Link class="mr-2" size="18px" />
 									<span>Update Links</span>
