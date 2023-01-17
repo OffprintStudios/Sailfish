@@ -143,6 +143,9 @@ extension Work {
     enum Kind: String, Codable {
         case prose = "Prose"
         case poetry = "Poetry"
+        case nonfiction = "Nonfiction"
+        case script = "Script"
+        case anthology = "Anthology"
     }
     
     enum ApprovalStatus: String, Codable {

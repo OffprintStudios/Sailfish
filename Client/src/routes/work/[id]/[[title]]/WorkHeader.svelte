@@ -316,6 +316,8 @@
 			<div class="lg:flex items-center hidden">
 				<TagBadge kind={TagKind.category} category={work.category} />
 				<div class="mx-[0.075rem]"><!--spacer--></div>
+				<TagBadge kind={TagKind.workKind} workKind={work.kind} />
+				<div class="mx-[0.075rem]"><!--spacer--></div>
 				<TagBadge kind={TagKind.status} status={work.status} />
 				<div class="mx-[0.075rem]"><!--spacer--></div>
 				<TagBadge kind={TagKind.rating} rating={work.rating} />
@@ -334,6 +336,8 @@
 			</div>
 			<div class="flex items-center lg:hidden">
 				<TagBadge kind={TagKind.category} category={work.category} size="small" />
+				<div class="mx-[0.075rem]"><!--spacer--></div>
+				<TagBadge kind={TagKind.workKind} workKind={work.kind} size="small" />
 				<div class="mx-[0.075rem]"><!--spacer--></div>
 				<TagBadge kind={TagKind.status} status={work.status} size="small" />
 				<div class="mx-[0.075rem]"><!--spacer--></div>

@@ -99,7 +99,7 @@
 			<p>Just watch out for the tumbleweeds.</p>
 		</div>
 	{:else}
-		<div class="section-items grid-cols-1 lg:grid-cols-3">
+		<div class="section-items grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
 			{#each newWorks?.items as work}
 				<WorkCard {work} withDropdown={false} />
 			{/each}
@@ -126,7 +126,7 @@
 			<p>Just watch out for the tumbleweeds.</p>
 		</div>
 	{:else}
-		<div class="section-items grid-cols-1 lg:grid-cols-3">
+		<div class="section-items grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
 			{#each updatedWorks?.items as work}
 				<WorkCard {work} withDropdown={false} />
 			{/each}
