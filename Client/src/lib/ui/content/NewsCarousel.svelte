@@ -182,7 +182,7 @@
 
 <style lang="scss">
 	div.carousel-container {
-		@apply rounded-xl overflow-hidden my-6 w-full;
+		@apply xl:rounded-xl overflow-hidden mb-6 xl:mt-6 w-full;
 		div.home-header {
 			@apply text-white text-center px-4 py-2 flex items-center justify-center;
 			background: var(--accent);

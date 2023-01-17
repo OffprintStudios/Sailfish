@@ -113,7 +113,10 @@
 		{@html work.shortDesc}
 	</div>
 	<div class="flex-1"><!--spacer--></div>
-	<div class="flex items-center text-zinc-400 px-2 py-1" style="font-family: var(--header-text);">
+	<div
+		class="flex items-center text-zinc-400 lg:text-sm text-xs px-2 py-1"
+		style="font-family: var(--header-text);"
+	>
 		<span class="flex items-center relative z-[2] text-green-600" title="Likes">
 			{#if work.likes > work.dislikes}
 				<ThumbUpFill class="mr-1" size="16px" />
