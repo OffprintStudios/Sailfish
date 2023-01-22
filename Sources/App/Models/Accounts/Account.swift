@@ -35,6 +35,12 @@ final class Account: Model, Content {
     var sessions: [Session]
     
     @Children(for: \.$account)
+    var recovery: [PasswordReset]
+    
+    @Children(for: \.$account)
+    var confirmation: [EmailConfirmation]
+    
+    @Children(for: \.$account)
     var reports: [AccountReport]
 
     @Timestamp(key: FieldKeys.createdAt, on: .create)

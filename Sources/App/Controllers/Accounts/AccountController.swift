@@ -32,7 +32,6 @@ struct AccountController: RouteCollection {
         accounts.grouped(BannedGuard()).post("file-report") { request async throws -> Response in
             try AccountReport.ReportForm.validate(content: request)
             let formInfo = try request.content.decode(AccountReport.ReportForm.self)
-            print(formInfo)
             return try await request.adminService.reportUser(with: formInfo)
         }
     }
