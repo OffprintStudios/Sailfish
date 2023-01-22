@@ -6,7 +6,10 @@ import Vapor
 
 struct SessionController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
-        let sessions = routes.grouped("sessions").grouped(IdentityGuard(needs: [.user]))
+        let sessions = routes.grouped("sessions").grouped([
+            IdentityGuard(needs: [.user]),
+            ConfirmationGuard()
+        ])
 
         sessions.get("fetch-sessions") { request async throws -> [Session] in
             try await request.sessionService.fetchSessions()

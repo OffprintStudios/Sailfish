@@ -12,6 +12,7 @@ struct VolumeController: RouteCollection {
         let volumes = routes.grouped("volumes")
         let volumesWithAuth = volumes.grouped([
             IdentityGuard(needs: [.user], checkProfile: true),
+            ConfirmationGuard(),
             BannedGuard()
         ])
         

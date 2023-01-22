@@ -10,6 +10,7 @@ struct TagController: RouteCollection {
         let tags = routes.grouped("tags")
         let tagsWithAuth = tags.grouped([
             IdentityGuard(needs: [.admin, .moderator]),
+            ConfirmationGuard(),
             BannedGuard(),
         ])
         

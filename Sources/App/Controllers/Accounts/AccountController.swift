@@ -17,19 +17,19 @@ struct AccountController: RouteCollection {
             try await request.accountService.fetchProfiles()
         }
 
-        accounts.grouped(BannedGuard()).post("create-profile") { request async throws -> Profile in
+        accounts.grouped([ConfirmationGuard(), BannedGuard()]).post("create-profile") { request async throws -> Profile in
             try Profile.ProfileForm.validate(content: request)
             let profileForm = try request.content.decode(Profile.ProfileForm.self)
             return try await request.accountService.createProfile(with: profileForm)
         }
 
-        accounts.grouped(BannedGuard()).delete("delete-profile", ":profileId") { request async throws -> Response in
+        accounts.grouped([ConfirmationGuard(), BannedGuard()]).delete("delete-profile", ":profileId") { request async throws -> Response in
             let profileId = request.parameters.get("profileId")!
             try await request.accountService.deleteProfile(profileId)
             return Response(status: .ok)
         }
         
-        accounts.grouped(BannedGuard()).post("file-report") { request async throws -> Response in
+        accounts.grouped([ConfirmationGuard(), BannedGuard()]).post("file-report") { request async throws -> Response in
             try AccountReport.ReportForm.validate(content: request)
             let formInfo = try request.content.decode(AccountReport.ReportForm.self)
             return try await request.adminService.reportUser(with: formInfo)

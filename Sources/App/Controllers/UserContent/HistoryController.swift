@@ -10,6 +10,7 @@ struct HistoryController: RouteCollection {
         let history = routes.grouped("history")
             .grouped([
                 IdentityGuard(needs: [.user], checkProfile: true),
+                ConfirmationGuard(),
                 BannedGuard(),
             ])
         

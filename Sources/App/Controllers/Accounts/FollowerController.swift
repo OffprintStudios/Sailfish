@@ -10,6 +10,7 @@ struct FollowerController: RouteCollection {
         let followers = routes.grouped("followers")
         let followersWithAuth = followers.grouped([
             IdentityGuard(needs: [.user], checkProfile: true),
+            ConfirmationGuard(),
             MutedGuard(),
             BannedGuard(),
         ])

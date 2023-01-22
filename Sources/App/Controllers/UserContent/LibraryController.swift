@@ -10,6 +10,7 @@ struct LibraryController: RouteCollection {
         let library = routes.grouped("library")
             .grouped([
                 IdentityGuard(needs: [.user], checkProfile: true),
+                ConfirmationGuard(),
                 MutedGuard(),
                 BannedGuard(),
             ])

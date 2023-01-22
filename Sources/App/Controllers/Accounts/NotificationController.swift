@@ -10,6 +10,7 @@ struct NotificationController: RouteCollection {
         let notifications = routes.grouped("notifications")
             .grouped([
                 IdentityGuard(needs: [.user], checkProfile: true),
+                ConfirmationGuard(),
             ])
         
         notifications.get("fetch-count") { request async throws -> ActivityCount in
