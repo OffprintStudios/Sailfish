@@ -26,7 +26,7 @@
 		items: [],
 		metadata: {
 			page: 1,
-			per: 4,
+			per: 3,
 			total: 0
 		}
 	};
@@ -63,7 +63,7 @@
 				`published=${true}&` +
 				`filter=${$app.filter}&` +
 				`page=1&` +
-				`per=4`
+				`per=3`
 		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
@@ -100,7 +100,9 @@
 			{:else}
 				<div class="col-span-1">
 					{#each works.items as work}
-						<WorkCard {work} withDropdown={false} />
+						<div class="my-2 first:mt-0 last:mb-0">
+							<WorkCard {work} withDropdown={false} />
+						</div>
 					{/each}
 				</div>
 			{/if}

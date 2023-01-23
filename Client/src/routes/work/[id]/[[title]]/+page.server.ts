@@ -7,12 +7,18 @@ import { getReqServer, type ServerResponseError } from "$lib/server";
 
 export const load: PageServerLoad = async ({
 	url,
-	params
+	params,
+	getClientAddress
 }): Promise<{ work: Work; comments: Paginate<Comment> }> => {
 	const page = url.searchParams.get("page") ?? "1";
 	const per = url.searchParams.get("per") ?? "25";
 	const response = await getReqServer<{ work: Work; comments: Paginate<Comment> }>(
-		`/works/fetch-work/${params.id}?page=${page}&per=${per}`
+		`/works/fetch-work/${params.id}?page=${page}&per=${per}`,
+		{
+			headers: {
+				"X-Offprint-Client-IP": getClientAddress()
+			}
+		}
 	);
 	if ((response as ServerResponseError).statusCode) {
 		const err = response as ServerResponseError;
