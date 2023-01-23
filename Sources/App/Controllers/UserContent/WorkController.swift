@@ -10,10 +10,12 @@ struct WorkController: RouteCollection {
         let works = routes.grouped("works")
         let worksWithAuth = works.grouped([
             IdentityGuard(needs: [.user], checkProfile: true),
+            ConfirmationGuard(),
             BannedGuard(),
         ])
         let workComments = works.grouped([
             IdentityGuard(needs: [.user], checkProfile: true),
+            ConfirmationGuard(),
             MutedGuard(),
             BannedGuard(),
         ])

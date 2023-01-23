@@ -9,11 +9,13 @@ struct AdminController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let admin = routes.grouped("admin").grouped([
             IdentityGuard(needs: [.moderator, .admin]),
+            ConfirmationGuard(),
             BannedGuard(),
         ])
         
         let adminCheckProfile = routes.grouped("admin").grouped([
             IdentityGuard(needs: [.moderator, .admin], checkProfile: true),
+            ConfirmationGuard(),
             BannedGuard()
         ])
 

@@ -6,38 +6,45 @@
 	import type { RegisterForm } from "$lib/models/accounts/forms";
 	import toast from "svelte-french-toast";
 	import { account } from "$lib/state/account.state";
-	import { prevPage } from "../guide.state";
+	import { closeGuide } from "$lib/ui/guide";
 
-	const termsUrl = 'https://offprint.notion.site/Terms-of-Service-131ffadce0eb4e8a947144ddc70ef89b';
-	const privacyUrl = 'https://offprint.notion.site/Privacy-Policy-f22e8ccb9e9043dca23a29a7089c72f4';
-	const constitutionUrl = 'https://offprint.notion.site/The-Offprint-Constitution-ae58c23db7264280a319d1cdfa10bc41';
+	const termsUrl =
+		"https://offprint.notion.site/Terms-of-Service-131ffadce0eb4e8a947144ddc70ef89b";
+	const privacyUrl =
+		"https://offprint.notion.site/Privacy-Policy-f22e8ccb9e9043dca23a29a7089c72f4";
+	const constitutionUrl =
+		"https://offprint.notion.site/The-Offprint-Constitution-ae58c23db7264280a319d1cdfa10bc41";
 
 	const { form, data, errors, isSubmitting } = createForm({
 		onSubmit: async (values) => {
 			const formInfo: RegisterForm = {
 				email: values.email,
 				password: values.password,
-				termsAgree: values.termsAgree,
+				termsAgree: values.termsAgree
 			};
 
-			const response = await fetch('/api/auth/sign-up', { method: 'POST', body: JSON.stringify(formInfo), credentials: 'include' });
+			const response = await fetch("/api/auth/sign-up", {
+				method: "POST",
+				body: JSON.stringify(formInfo),
+				credentials: "include"
+			});
 			const data = await response.json();
 			if (response.status === 200) {
 				$account.account = data.account;
 				$account.profiles = data.profiles;
 				$account.token = data.accessToken;
-				prevPage();
+				closeGuide();
 			} else {
 				toast.error(data.message);
 			}
 		},
 		validate: (values) => {
 			const errors = {
-				email: '',
-				password: '',
-				repeatPassword: '',
-				ageCheck: '',
-				termsAgree: '',
+				email: "",
+				password: "",
+				repeatPassword: "",
+				ageCheck: "",
+				termsAgree: ""
 			};
 			if (!values.email || !/^[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/.test(values.email)) {
 				errors.email = `That's not a valid email address.`;
@@ -58,7 +65,7 @@
 				errors.termsAgree = `You must agree in order to join.`;
 			}
 			return errors;
-		},
+		}
 	});
 </script>
 
@@ -89,14 +96,23 @@
 				placeholder="••••••••••"
 				errorMessage={$errors.repeatPassword}
 			/>
-			<div class="my-0.5"></div>
+			<div class="my-0.5" />
 			<Checkbox bind:value={$data.ageCheck}>I am at least 13 years of age or older.</Checkbox>
 			<Checkbox bind:value={$data.termsAgree}>
-				I agree to the <a href={termsUrl} target="_blank">Terms of Service</a>, <a href={privacyUrl} target="_blank">Privacy Policy</a>, and <a href={constitutionUrl} target="_blank">Offprint Constitution</a>.
+				I agree to the <a href={termsUrl} target="_blank" rel="noreferrer"
+					>Terms of Service</a
+				>, <a href={privacyUrl} target="_blank" rel="noreferrer">Privacy Policy</a>, and
+				<a href={constitutionUrl} target="_blank" rel="noreferrer">Offprint Constitution</a
+				>.
 			</Checkbox>
 			<div class="flex items-center mt-6">
-				<div class="flex-1"></div>
-				<Button kind="primary" type="submit" loading={$isSubmitting} loadingText="Signing up...">
+				<div class="flex-1" />
+				<Button
+					kind="primary"
+					type="submit"
+					loading={$isSubmitting}
+					loadingText="Signing up..."
+				>
 					<UserAddLine class="button-icon" />
 					<span class="button-text">Sign up</span>
 				</Button>
@@ -106,5 +122,5 @@
 </div>
 
 <style lang="scss">
-	@use '../Guide';
+	@use "../Guide";
 </style>
