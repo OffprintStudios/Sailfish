@@ -120,6 +120,16 @@ struct AccountService {
         }
         return ClientAccount(from: account)
     }
+    
+    /// Sets the `termsAgree` account flag to `true`
+    func agreeToTerms() async throws -> ClientAccount {
+        let account = try request.authService.getUser().account
+        account.termsAgree = true
+        try await request.db.transaction { database in
+            try await account.save(on: database)
+        }
+        return .init(from: account)
+    }
 
     /// Soft-deletes a given profile
     func deleteProfile(_ id: String) async throws {

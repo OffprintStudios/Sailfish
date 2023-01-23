@@ -34,5 +34,19 @@ struct AccountController: RouteCollection {
             let formInfo = try request.content.decode(AccountReport.ReportForm.self)
             return try await request.adminService.reportUser(with: formInfo)
         }
+        
+        accounts.grouped(BannedGuard()).get("send-confirmation-email") { request async throws -> Response in
+            try await request.accountService.sendConfirmationEmail()
+        }
+        
+        accounts.grouped(BannedGuard()).patch("confirm-email") { request async throws -> ClientAccount in
+            try EmailConfirmation.EmailConfirmationForm.validate(content: request)
+            let formInfo = try request.content.decode(EmailConfirmation.EmailConfirmationForm.self)
+            return try await request.accountService.confirmEmail(with: formInfo)
+        }
+        
+        accounts.grouped(BannedGuard()).patch("agree-to-terms") { request async throws -> ClientAccount in
+            try await request.accountService.agreeToTerms()
+        }
     }
 }

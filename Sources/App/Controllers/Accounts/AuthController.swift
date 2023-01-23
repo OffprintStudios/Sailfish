@@ -29,6 +29,20 @@ struct AuthController: RouteCollection {
             let logoutInfo = try request.content.decode(SessionService.SessionInfo.self)
             return try await request.authService.logout(with: logoutInfo)
         }
+        
+        auth.get("send-recovery-email") { request async throws -> Response in
+            let accountId: String? = request.query["accountId"]
+            guard let accountUuid = UUID(uuidString: accountId ?? "nil") else {
+                throw Abort(.badRequest, reason: "Invalid account ID provided")
+            }
+            return try await request.accountService.sendPasswordResetEmail(accountId: accountUuid)
+        }
+        
+        auth.patch("reset-password") { request async throws -> Response in
+            try PasswordReset.PasswordResetForm.validate(content: request)
+            let formInfo = try request.content.decode(PasswordReset.PasswordResetForm.self)
+            return try await request.accountService.resetPassword(with: formInfo)
+        }
 
         auth.grouped(IdentityGuard(needs: [.user])).post("check-roles") { request async throws -> HasRoles in
             let info = try request.content.decode(CheckRoles.self)
