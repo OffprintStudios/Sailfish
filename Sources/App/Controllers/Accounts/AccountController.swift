@@ -7,6 +7,7 @@ import Vapor
 struct AccountController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let accounts = routes.grouped(IdentityGuard(needs: [.user])).grouped("accounts")
+        let accountsNoAuth = routes.grouped("accounts")
 
         accounts.get("fetch-profile", ":profileId") { request async throws -> Profile in
             let profileId = request.parameters.get("profileId")!
@@ -39,7 +40,7 @@ struct AccountController: RouteCollection {
             try await request.accountService.sendConfirmationEmail()
         }
         
-        accounts.grouped(BannedGuard()).patch("confirm-email") { request async throws -> ClientAccount in
+        accountsNoAuth.patch("confirm-email") { request async throws -> Response in
             try EmailConfirmation.EmailConfirmationForm.validate(content: request)
             let formInfo = try request.content.decode(EmailConfirmation.EmailConfirmationForm.self)
             return try await request.accountService.confirmEmail(with: formInfo)

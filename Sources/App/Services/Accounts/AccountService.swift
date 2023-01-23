@@ -108,10 +108,12 @@ struct AccountService {
     }
     
     /// Confirms a user's email
-    func confirmEmail(with formInfo: EmailConfirmation.EmailConfirmationForm) async throws -> ClientAccount {
-        let account = try request.authService.getUser().account
+    func confirmEmail(with formInfo: EmailConfirmation.EmailConfirmationForm) async throws -> Response {
+        guard let account = try await Account.find(formInfo.accountId, on: request.db) else {
+            return .init(status: .ok)
+        }
         guard let confirmation = try await account.$confirmation.query(on: request.db).filter(\.$confirmationCode == formInfo.confirmCode).filter(\.$used == false).filter(\.$expiresOn > Date()).first() else {
-            throw Abort(.badRequest, reason: "You haven't initiated any confirmation process.")
+            return .init(status: .ok)
         }
         account.emailConfirmed = true
         confirmation.used = true
@@ -120,7 +122,7 @@ struct AccountService {
             try await account.save(on: database)
             try await confirmation.save(on: database)
         }
-        return ClientAccount(from: account)
+        return .init(status: .ok)
     }
     
     /// Sets the `termsAgree` account flag to `true`

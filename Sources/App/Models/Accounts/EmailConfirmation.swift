@@ -42,9 +42,11 @@ final class EmailConfirmation: Model, Content {
 
 extension EmailConfirmation {
     struct EmailConfirmationForm: Content, Validatable {
+        var accountId: UUID
         var confirmCode: String
         
         static func validations(_ validations: inout Validations) {
+            validations.add("accountId", as: UUID.self, is: .valid, required: true)
             validations.add("confirmCode", as: String.self, required: true)
         }
     }
