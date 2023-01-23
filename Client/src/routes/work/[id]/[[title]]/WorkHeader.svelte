@@ -92,17 +92,25 @@
 				isVoting = false;
 				return;
 			}
-			const response = await patchReq<ReadingHistory>(
-				`/history/set-vote?workId=${work.id}&profileId=${$account.currProfile.id}`,
-				{
-					vote: history.vote === vote ? Vote.noVote : vote
-				}
-			);
+			const response = await patchReq<{
+				history: ReadingHistory;
+				likes: number;
+				dislikes: number;
+			}>(`/history/set-vote?workId=${work.id}&profileId=${$account.currProfile.id}`, {
+				vote: history.vote === vote ? Vote.noVote : vote
+			});
 			if ((response as ResponseError).error) {
 				const error = response as ResponseError;
 				toast.error(error.message);
 			} else {
-				history = response as ReadingHistory;
+				const result = response as {
+					history: ReadingHistory;
+					likes: number;
+					dislikes: number;
+				};
+				history = result.history;
+				work.likes = result.likes;
+				work.dislikes = result.dislikes;
 			}
 		} else {
 			toast.error(`You must be logged in to perform this action.`);
@@ -407,7 +415,7 @@
 				>
 					{#if history.vote === Vote.liked}
 						<ThumbUpFill class="button-icon" />
-						<span class="button-small-text">{abbreviate(work.likes + 1)}</span>
+						<span class="button-small-text">{abbreviate(work.likes)}</span>
 					{:else}
 						<ThumbUpLine class="button-icon text-green-600" />
 						<span class="button-small-text text-green-600"
@@ -424,7 +432,7 @@
 				>
 					{#if history.vote === Vote.disliked}
 						<ThumbDownFill class="button-icon" />
-						<span class="button-small-text">{abbreviate(work.dislikes + 1)}</span>
+						<span class="button-small-text">{abbreviate(work.dislikes)}</span>
 					{:else}
 						<ThumbDownLine class="button-icon text-red-600" />
 						<span class="button-small-text text-red-600"

@@ -30,7 +30,7 @@ struct HistoryController: RouteCollection {
             try await request.libraryService.fetchLatestProgress()
         }
         
-        history.patch("set-vote") { request async throws -> ReadingHistory in
+        history.patch("set-vote") { request async throws -> LibraryService.VoteChanged in
             let workId: String? = request.query["workId"]
             if let id = workId {
                 try ReadingHistory.ChangeVote.validate(content: request)
