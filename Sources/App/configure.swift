@@ -79,6 +79,7 @@ public func configure(_ app: Application) async throws {
     // Adding Jobs
     app.logger.notice("Adding jobs...")
     app.queues.add(AddNotificationJob())
+    app.queues.add(AddEmailJob())
 
     // CORS configuration
     app.logger.notice("Assigning CORS configuration...")

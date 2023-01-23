@@ -51,11 +51,11 @@ struct AccountService {
     }
     
     /// Sends a password reset email
-    func sendPasswordResetEmail(accountId: UUID) async throws -> Response {
-        guard let account = try await Account.find(accountId, on: request.db) else {
+    func sendPasswordResetEmail(email: String) async throws -> Response {
+        guard let account = try await Account.query(on: request.db).filter(\.$email == email).first() else {
             return .init(status: .ok)
         }
-        let resetCode = NanoID.with(size: NANO_ID_SIZE)
+        let resetCode = NanoID.with(size: NANO_ID_CODE_SIZE)
         let recovery = PasswordReset(code: resetCode)
         try await request.db.transaction { database in
             try await account.$recovery.create(recovery, on: database)
@@ -72,7 +72,7 @@ struct AccountService {
     /// Sends a confirmation email
     func sendConfirmationEmail() async throws -> Response {
         let account = try request.authService.getUser().account
-        let confirmCode = NanoID.with(size: NANO_ID_SIZE)
+        let confirmCode = NanoID.with(size: NANO_ID_CODE_SIZE)
         let confirmation = EmailConfirmation(code: confirmCode)
         try await request.db.transaction { database in
             try await account.$confirmation.create(confirmation, on: database)
@@ -91,7 +91,7 @@ struct AccountService {
         guard let account = try await Account.find(formInfo.accountId, on: request.db) else {
             return .init(status: .ok)
         }
-        guard let resetPassword = try await account.$recovery.query(on: request.db).filter(\.$recoveryCode == formInfo.resetCode).filter(\.$used == false).filter(\.$expiresOn < Date()).first() else {
+        guard let resetPassword = try await account.$recovery.query(on: request.db).filter(\.$recoveryCode == formInfo.resetCode).filter(\.$used == false).filter(\.$expiresOn > Date()).first() else {
             return .init(status: .ok)
         }
         guard let hashedPassword = try? Argon2Swift.hashPasswordString(password: formInfo.newPassword, salt: Salt.newSalt(), type: Argon2Type.id) else {
@@ -99,6 +99,7 @@ struct AccountService {
         }
         account.password = hashedPassword.encodedString().trimmingCharacters(in: CharacterSet(charactersIn: "\0"))
         resetPassword.used = true
+        resetPassword.expiresOn = Date()
         try await request.db.transaction { database in
             try await account.save(on: database)
             try await resetPassword.save(on: database)
@@ -109,11 +110,12 @@ struct AccountService {
     /// Confirms a user's email
     func confirmEmail(with formInfo: EmailConfirmation.EmailConfirmationForm) async throws -> ClientAccount {
         let account = try request.authService.getUser().account
-        guard let confirmation = try await account.$confirmation.query(on: request.db).filter(\.$confirmationCode == formInfo.confirmCode).filter(\.$used == false).filter(\.$expiresOn < Date()).first() else {
+        guard let confirmation = try await account.$confirmation.query(on: request.db).filter(\.$confirmationCode == formInfo.confirmCode).filter(\.$used == false).filter(\.$expiresOn > Date()).first() else {
             throw Abort(.badRequest, reason: "You haven't initiated any confirmation process.")
         }
         account.emailConfirmed = true
         confirmation.used = true
+        confirmation.expiresOn = Date()
         try await request.db.transaction { database in
             try await account.save(on: database)
             try await confirmation.save(on: database)

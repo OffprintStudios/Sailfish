@@ -31,11 +31,11 @@ struct AuthController: RouteCollection {
         }
         
         auth.get("send-recovery-email") { request async throws -> Response in
-            let accountId: String? = request.query["accountId"]
-            guard let accountUuid = UUID(uuidString: accountId ?? "nil") else {
-                throw Abort(.badRequest, reason: "Invalid account ID provided")
+            let email: String? = request.query["email"]
+            if let hasEmail = email {
+                return try await request.accountService.sendPasswordResetEmail(email: hasEmail)
             }
-            return try await request.accountService.sendPasswordResetEmail(accountId: accountUuid)
+            throw Abort(.badRequest, reason: "You must provide an email address.")
         }
         
         auth.patch("reset-password") { request async throws -> Response in
