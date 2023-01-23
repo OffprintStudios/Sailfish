@@ -12,6 +12,7 @@ struct SectionController: RouteCollection {
         let sections = routes.grouped("sections")
         let sectionsWithAuth = sections.grouped([
             IdentityGuard(needs: [.user], checkProfile: true),
+            ConfirmationGuard(),
             BannedGuard()
         ])
         

@@ -10,6 +10,7 @@ struct ProfileController: RouteCollection {
         let profiles = routes.grouped("profiles")
         let profilesWithAuth = profiles.grouped([
             IdentityGuard(needs: [.user], checkProfile: true),
+            ConfirmationGuard(),
             BannedGuard()
         ])
 

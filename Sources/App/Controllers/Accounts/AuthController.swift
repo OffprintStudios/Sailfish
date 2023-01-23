@@ -29,6 +29,20 @@ struct AuthController: RouteCollection {
             let logoutInfo = try request.content.decode(SessionService.SessionInfo.self)
             return try await request.authService.logout(with: logoutInfo)
         }
+        
+        auth.get("send-recovery-email") { request async throws -> Response in
+            let email: String? = request.query["email"]
+            if let hasEmail = email {
+                return try await request.accountService.sendPasswordResetEmail(email: hasEmail)
+            }
+            throw Abort(.badRequest, reason: "You must provide an email address.")
+        }
+        
+        auth.patch("reset-password") { request async throws -> Response in
+            try PasswordReset.PasswordResetForm.validate(content: request)
+            let formInfo = try request.content.decode(PasswordReset.PasswordResetForm.self)
+            return try await request.accountService.resetPassword(with: formInfo)
+        }
 
         auth.grouped(IdentityGuard(needs: [.user])).post("check-roles") { request async throws -> HasRoles in
             let info = try request.content.decode(CheckRoles.self)

@@ -10,8 +10,14 @@ let SESSION_EXPIRATION: TimeInterval = 60.0 * 60.0 * 24.0 * 30.0
 /// A short session is one 24-hour cycle, calculated as Seconds * Minutes * Hours * Days
 let TOKEN_EXPIRATION: TimeInterval = 60.0 * 60.0 * 24.0 * 1.0
 
+/// Any account update requires email confirmation with an expiration of 1 hour, calculated as Seconds * Minutes * Hours
+let ACCOUNT_UPDATE_EXPIRATION: TimeInterval = 60.0 * 60.0 * 1.0
+
 /// The number of characters for NanoID generation
 let NANO_ID_SIZE: Int = 10
+
+/// The number of characters for NanoID secure code generation
+let NANO_ID_CODE_SIZE: Int = 20
 
 /// Sets the maximum number of profiles allowed per-account
 let MAX_PROFILE_LIMIT: Int = 3
