@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { AppleFill, ArrowRightSLine, GoogleFill, LoginCircleLine, UserAddLine } from "svelte-remixicon";
+	import {
+		AppleFill,
+		ArrowRightSLine,
+		GoogleFill,
+		LoginCircleLine,
+		UserAddLine
+	} from "svelte-remixicon";
 	import { toast } from "svelte-french-toast";
 	import { nextPage } from "../guide.state";
 	import LoginPanel from "./LoginPanel.svelte";
@@ -12,6 +18,13 @@
 	<div class="flex-1 flex flex-col items-center justify-center">
 		<h1 class="text-3xl px-4 py-2">Welcome to Offprint</h1>
 		<img alt="Beatriz" src="/images/Beatriz.png" class="object-cover max-h-72" />
+		<span class="text-xs italic"
+			>Beatriz, illustrated by <a
+				href="https://momoruuu.carrd.co"
+				target="_blank"
+				rel="noreferrer">Momo</a
+			></span
+		>
 	</div>
 	<div class="content-container">
 		<div class="panel-section">
@@ -27,11 +40,17 @@
 			</button>
 		</div>
 		<div class="mt-4 py-4 border-t border-zinc-300 dark:border-zinc-700">
-			<button class="oauth-sign-in bg-black text-white hover:bg-zinc-800" on:click={() => toast.error('This feature is not yet available.')}>
+			<button
+				class="oauth-sign-in bg-black text-white hover:bg-zinc-800"
+				on:click={() => toast.error("This feature is not yet available.")}
+			>
 				<AppleFill size="24px" />
 				<span>Log in with Apple</span>
 			</button>
-			<button class="oauth-sign-in bg-blue-500 hover:bg-blue-400 text-white" on:click={() => toast.error('This feature is not yet available.')}>
+			<button
+				class="oauth-sign-in bg-blue-500 hover:bg-blue-400 text-white"
+				on:click={() => toast.error("This feature is not yet available.")}
+			>
 				<GoogleFill size="24px" />
 				<span>Log in with Google</span>
 			</button>
@@ -40,7 +59,7 @@
 </div>
 
 <style lang="scss">
-	@use '../Guide';
+	@use "../Guide";
 
 	button.oauth-sign-in {
 		@apply flex items-center justify-center py-4 w-full rounded-lg transition transform drop-shadow-md mb-2 last:mb-0;
