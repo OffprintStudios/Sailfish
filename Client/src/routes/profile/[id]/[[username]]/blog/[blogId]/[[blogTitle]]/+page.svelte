@@ -345,14 +345,14 @@
 	</div>
 	<section class="blog-body">{@html blog.body}</section>
 	{#if blog.editedOn}
-		<span class="text-xs italic border-t pt-4">
+		<div class="text-xs italic border-t pt-4 w-11/12 mx-auto lg:w-full">
 			Last edited <Time timestamp={blog.editedOn} relative="true" />
-		</span>
+		</div>
 	{/if}
 </div>
 
 {#if data.blog.publishedOn && data.comments}
-	<div class="max-w-4xl mx-auto">
+	<div class="max-w-4xl w-11/12 lg:w-full mx-auto">
 		<Thread
 			type={CommentType.Blog}
 			threadId={data.blog.id}
@@ -367,16 +367,16 @@
 	div.blog-container {
 		@apply max-w-[52rem] mx-auto mb-6;
 		div.header-block {
-			@apply relative mb-6 rounded-xl overflow-hidden w-full;
+			@apply relative mb-6 lg:rounded-xl overflow-hidden w-full;
 			background: var(--accent);
 			div.blog-header {
 				@apply px-4 pt-4;
 				font-family: var(--header-text);
 				h1 {
-					@apply text-white text-4xl font-medium relative -left-0.5;
+					@apply text-white text-3xl lg:text-4xl font-medium relative -left-0.5;
 				}
 				span.stat {
-					@apply flex items-center;
+					@apply flex items-center text-xs lg:text-sm;
 				}
 			}
 		}

@@ -17,6 +17,7 @@
 	import { slugify } from "$lib/util/functions";
 	import { account } from "$lib/state/account.state";
 	import { Button } from "$lib/ui/util";
+	import Time from "$lib/ui/util/Time.svelte";
 
 	export let notification: Notification;
 	const iconSize = "24px";
@@ -200,6 +201,12 @@
 			<span>Duration: {notification.context["duration"]}</span>
 		</div>
 	{/if}
+	<span
+		class="mx-4 mb-2 text-xs text-right font-bold text-zinc-400"
+		style="font-family: var(--header-text);"
+	>
+		<Time relative timestamp={notification.createdAt} />
+	</span>
 </div>
 
 <style lang="scss">
