@@ -51,8 +51,8 @@
 				noteBottom: ""
 			};
 
-			if (!values.title || values.title.length < 3 || values.title.length > 120) {
-				errors.title = "Titles must be between 3 and 120 characters";
+			if (!values.title || values.title.length < 1 || values.title.length > 120) {
+				errors.title = "Titles must be between 1 and 120 characters";
 			}
 
 			if (!values.body || values.body.length < 3) {
