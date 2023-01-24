@@ -9,8 +9,9 @@ struct CreateWorkIPView: AsyncMigration {
         return try await database.schema("work_ip_views")
             .id()
             .field("work_id", .string, .required, .references("works", "id", onDelete: .cascade))
-            .field("ip_addr", .string, .required)
+            .field("ip_address", .string, .required)
             .field("created_at", .datetime)
+            .unique(on: "work_id", "ip_address")
             .create()
     }
     

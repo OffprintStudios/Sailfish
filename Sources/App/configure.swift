@@ -64,6 +64,7 @@ public func configure(_ app: Application) async throws {
         CreateWorkTitleIndex(),
         CreateEmailConfirmation(),
         CreatePasswordReset(),
+        CreateWorkIPView(),
     ])
 
     try await app.autoMigrate()

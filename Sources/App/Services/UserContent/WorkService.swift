@@ -22,8 +22,17 @@ struct WorkService: HasComments {
         }
         
         if work.publishedOn != nil {
+            if let ipAddress = request.headers.first(name: "X-Offprint-Client-IP") {
+                let existingView = try await work.$ipViews.query(on: request.db).filter(\.$ipAddress == ipAddress).first()
+                if existingView == nil {
+                    let newView = WorkIPView(ipAddress: ipAddress)
+                    try await request.db.transaction { database in
+                        try await work.$ipViews.create(newView, on: database)
+                    }
+                }
+            }
+            work.views = Int64(try await work.$ipViews.query(on: request.db).count())
             try await request.db.transaction { database in
-                work.views += 1
                 try await work.save(on: database)
             }
             var commentsQuery = work.$comments.query(on: request.db)
