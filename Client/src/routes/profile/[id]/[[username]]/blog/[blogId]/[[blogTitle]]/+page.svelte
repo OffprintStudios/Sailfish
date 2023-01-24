@@ -381,7 +381,7 @@
 			}
 		}
 		section.blog-body {
-			@apply mx-6 text-[16px];
+			@apply mx-6 mb-8 text-[16px];
 		}
 	}
 </style>

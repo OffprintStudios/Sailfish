@@ -44,13 +44,9 @@
 	</div>
 {:else if history}
 	{#if history.items.length > 0}
-		<div class="grid grid-cols-1 gap-4">
+		<div class="grid grid-cols-1 gap-4 mx-4">
 			{#each history.items as item}
-				<WorkCard work={item.work}>
-					<svelte:fragment slot="dropdown">
-						<!--TODO: populate this with appropriate options-->
-					</svelte:fragment>
-				</WorkCard>
+				<WorkCard work={item.work} withDropdown={false} />
 			{/each}
 		</div>
 	{:else}
