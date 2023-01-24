@@ -16,8 +16,17 @@ struct BlogService: HasComments {
             throw Abort(.notFound, reason: "Blog not found. Are you sure you're looking for the right one?")
         }
         if blog.publishedOn != nil {
+            if let ipAddress = request.headers.first(name: "X-Offprint-Client-IP") {
+                let existingView = try await blog.$ipViews.query(on: request.db).filter(\.$ipAddress == ipAddress).first()
+                if existingView == nil {
+                    let newView = BlogIPView(ipAddress: ipAddress)
+                    try await request.db.transaction { database in
+                        try await blog.$ipViews.create(newView, on: database)
+                    }
+                }
+            }
+            blog.stats.views = try await blog.$ipViews.query(on: request.db).count()
             try await request.db.transaction { database in
-                blog.stats.views += 1
                 try await blog.save(on: database)
             }
             return .init(
