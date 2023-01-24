@@ -26,7 +26,7 @@
 		items: [],
 		metadata: {
 			page: 1,
-			per: 3,
+			per: 2,
 			total: 0
 		}
 	};
@@ -63,7 +63,7 @@
 				`published=${true}&` +
 				`filter=${$app.filter}&` +
 				`page=1&` +
-				`per=3`
+				`per=2`
 		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
