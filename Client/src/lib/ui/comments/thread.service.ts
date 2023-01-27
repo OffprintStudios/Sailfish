@@ -20,6 +20,7 @@ export class ThreadService {
 	});
 	url: string;
 	loading = writable<boolean>(false);
+	replies = writable<Comment[]>([]);
 
 	constructor(kind: CommentType, threadId: string, page: Paginate<Comment>, sectionId?: string) {
 		this.threadId = threadId;

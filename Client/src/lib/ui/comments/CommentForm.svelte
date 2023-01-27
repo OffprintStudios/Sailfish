@@ -28,7 +28,7 @@
 			const errors = {
 				body: ""
 			};
-			if (!values.body || values.body.length < 10) {
+			if (values.body.length < 10) {
 				errors.body = "Comments must be at least 10 characters long.";
 			}
 			return errors;
