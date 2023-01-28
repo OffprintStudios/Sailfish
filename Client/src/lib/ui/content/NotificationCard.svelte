@@ -75,7 +75,9 @@
 				</Button>
 			</div>
 			<div class="activity-description">
-				{notification.from.username} has replied to your comment!
+				{notification.from.username} has replied to your comment on "{notification.context[
+					"title"
+				]}"
 			</div>
 		{:else if notification.eventType === EventType.addFavorite}
 			<a

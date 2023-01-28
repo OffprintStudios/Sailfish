@@ -123,7 +123,7 @@ struct BlogService: HasComments {
                     from: comment.profile.id,
                     event: .newReply,
                     entity: comment.id,
-                    context: ["url": "\(formInfo.locationUrl)#comment-\(comment.id ?? "nil")"]
+                    context: ["title": blog.title, "url": "\(formInfo.locationUrl)#comment-\(comment.id ?? "nil")"]
                 ))
             }
             if blog.$author.id != profile.id {
