@@ -58,6 +58,25 @@
 			<div class="activity-description">
 				{notification.from.username} has followed you!
 			</div>
+		{:else if notification.eventType === EventType.newReply}
+			<a class="hidden-link" href={notification.context["url"]}
+				><!--left intentionally blank--></a
+			>
+			<div class="flex items-center px-2 py-1">
+				<DiscussLine size={iconSize} class="mr-2" />
+				<span class="activity-title">New Reply</span>
+				<div class="flex-1"><!--spacer--></div>
+				<Button on:click={markToRead}>
+					{#if $activity.markAsRead.includes(notification.id)}
+						<CheckboxCircleLine class="button-icon no-text" />
+					{:else}
+						<CheckboxBlankCircleLine class="button-icon no-text" />
+					{/if}
+				</Button>
+			</div>
+			<div class="activity-description">
+				{notification.from.username} has replied to your comment!
+			</div>
 		{:else if notification.eventType === EventType.addFavorite}
 			<a
 				class="hidden-link"

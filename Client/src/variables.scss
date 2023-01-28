@@ -13,9 +13,16 @@
   img { max-width: 100%; display: inline; }
 
   blockquote {
-    margin-left: 0.75rem;
-    padding-left: 0.75rem;
-    border-left: 2px solid var(--borders);
+    @apply bg-zinc-300 rounded-xl m-3 px-3 pt-0.5 pb-2;
+    p:first-child {
+     @apply pt-0 my-0 font-bold text-base tracking-wider all-small-caps;
+    }
+    p:nth-child(2) {
+      @apply mt-0
+    }
+    p:last-child {
+      @apply pb-0 mb-0;
+    }
   }
 
   // CKEditor-generated image styles

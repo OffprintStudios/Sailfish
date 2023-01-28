@@ -76,6 +76,7 @@ export class ThreadService {
 					total: state.metadata.total + 1
 				}
 			}));
+			this.replies.set([]);
 			toast.success(`Comment added!`);
 		}
 	}

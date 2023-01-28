@@ -7,11 +7,14 @@
 	import { CheckboxBlankCircleLine, CheckboxCircleLine, CheckLine } from "svelte-remixicon";
 	import type { CommentForm } from "$lib/models/comments";
 	import type { ThreadService } from "./thread.service";
+	import { stripHtml } from "string-strip-html";
 
 	export let threadService: ThreadService;
 	export let sectionId: string;
+	const { replies } = threadService;
+	let resetCounter = 0;
 
-	const { form, data, isSubmitting } = createForm({
+	const { form, data, reset, isSubmitting, setInitialValues } = createForm({
 		async onSubmit(values, context) {
 			const formData: CommentForm = {
 				itemId: threadService.threadId,
@@ -19,10 +22,13 @@
 				sectionId: sectionId,
 				body: values.body,
 				spoiler: values.spoiler,
-				repliesTo: []
+				repliesTo: $replies.map((comment) => comment.id)
 			};
 
-			await threadService.addComment(formData).then(() => context.reset());
+			await threadService.addComment(formData).then(() => {
+				context.reset();
+				resetCounter = 0;
+			});
 		},
 		validate(values) {
 			const errors = {
@@ -37,6 +43,37 @@
 			body: "",
 			spoiler: false
 		}
+	});
+
+	replies.subscribe((values) => {
+		let bodyValue = ``;
+		for (const reply of values) {
+			const strippedComment = stripHtml(reply.body, {
+				onlyStripTags: ["blockquote", "script", "style", "xml"],
+				stripTogetherWithTheirContents: ["blockquote", "script", "style", "xml"]
+			}).result;
+			const blockquote = `
+				<blockquote class="quote-post">
+					<span style="font-size: 0.75rem;"><a href="${$page.url.pathname}#comment-${reply.id}">${reply.profile.username} said:</a></span>
+					<em>${strippedComment}</em>
+				</blockquote>
+			`;
+			bodyValue += blockquote;
+		}
+		if (values.length !== 0) {
+			setInitialValues({
+				body: `${bodyValue}<p></p>`,
+				spoiler: false
+			});
+			resetCounter += 1;
+		} else {
+			setInitialValues({
+				body: "",
+				spoiler: false
+			});
+			resetCounter = 0;
+		}
+		reset();
 	});
 </script>
 
@@ -66,5 +103,7 @@
 			<span class="button-text">Post</span>
 		</Button>
 	</div>
-	<Editor hasHeader bind:value={$data.body} />
+	{#key resetCounter}
+		<Editor hasHeader bind:value={$data.body} />
+	{/key}
 </form>

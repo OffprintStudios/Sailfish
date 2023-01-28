@@ -68,6 +68,7 @@
 	export let errorMessage = null;
 	export let hasHeader = false;
 	export let kind: "normal" | "primary" = "normal";
+	export let context: "normal" | "comment" = "normal";
 
 	let background = "bg-zinc-200 dark:bg-zinc-700";
 	if (kind === "primary") {

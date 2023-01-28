@@ -113,6 +113,19 @@ struct BlogService: HasComments {
                 try await newComment.$history.load(on: database)
                 return newComment
             }
+            let repliesTo = try await blog.$comments.query(on: request.db).filter(\.$id ~~ formInfo.repliesTo).all()
+            try await request.db.transaction { database in
+                try await comment.$repliesTo.attach(repliesTo, on: database)
+            }
+            for reply in repliesTo {
+                try await request.queue.dispatch(AddNotificationJob.self, .init(
+                    to: reply.$profile.id,
+                    from: comment.profile.id,
+                    event: .newReply,
+                    entity: comment.id,
+                    context: ["url": "\(formInfo.locationUrl)#comment-\(comment.id ?? "nil")"]
+                ))
+            }
             if blog.$author.id != profile.id {
                 try await request.queue.dispatch(AddNotificationJob.self, .init(
                     to: blog.$author.id,
