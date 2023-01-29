@@ -10,7 +10,9 @@
 		ListUnordered,
 		Edit2Line,
 		BookmarkLine,
-		BookmarkFill
+		BookmarkFill,
+		CheckboxBlankCircleLine,
+		CheckboxCircleLine
 	} from "svelte-remixicon";
 	import { Dropdown } from "$lib/ui/dropdown";
 	import { account } from "$lib/state/account.state";
@@ -31,6 +33,7 @@
 		section.title
 	)}`;
 	let bookmarking = false;
+	let publishing = false;
 
 	const published: Section[] = allSections.filter((item) => {
 		if (item.publishedOn !== undefined) {
@@ -153,6 +156,21 @@
 		}
 		bookmarking = false;
 	}
+
+	async function publishSection() {
+		publishing = true;
+		const response = await patchReq<Section>(
+			`/sections/publish-section/${section.id}?workId=${work.id}&profileId=${$account.currProfile?.id}`,
+			{}
+		);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			section = response as Section;
+		}
+		publishing = false;
+	}
 </script>
 
 <div class="lg:rounded-xl lg:mb-6 dark:highlight-shadowed" style="background: var(--accent);">
@@ -185,6 +203,17 @@
 		style="border-color: var(--accent-light);"
 	>
 		{#if $account.account && $account.currProfile && $account.currProfile.id === work.author.id}
+			{#if section.publishedOn}
+				<Button kind="primary" on:click={publishSection}>
+					<CheckboxCircleLine class="button-icon variable-text" />
+					<span class="button-text hidden lg:block">Publish</span>
+				</Button>
+			{:else}
+				<Button kind="primary" on:click={publishSection}>
+					<CheckboxBlankCircleLine class="button-icon variable-text" />
+					<span class="button-text hidden lg:block">Publish</span>
+				</Button>
+			{/if}
 			<Button kind="primary" on:click={onEdit}>
 				<Edit2Line class="button-icon variable-text" />
 				<span class="button-text hidden lg:block">Edit</span>

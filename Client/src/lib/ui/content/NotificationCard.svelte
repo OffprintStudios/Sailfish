@@ -17,6 +17,7 @@
 	import { slugify } from "$lib/util/functions";
 	import { account } from "$lib/state/account.state";
 	import { Button } from "$lib/ui/util";
+	import Time from "$lib/ui/util/Time.svelte";
 
 	export let notification: Notification;
 	const iconSize = "24px";
@@ -56,6 +57,27 @@
 			</div>
 			<div class="activity-description">
 				{notification.from.username} has followed you!
+			</div>
+		{:else if notification.eventType === EventType.newReply}
+			<a class="hidden-link" href={notification.context["url"]}
+				><!--left intentionally blank--></a
+			>
+			<div class="flex items-center px-2 py-1">
+				<DiscussLine size={iconSize} class="mr-2" />
+				<span class="activity-title">New Reply</span>
+				<div class="flex-1"><!--spacer--></div>
+				<Button on:click={markToRead}>
+					{#if $activity.markAsRead.includes(notification.id)}
+						<CheckboxCircleLine class="button-icon no-text" />
+					{:else}
+						<CheckboxBlankCircleLine class="button-icon no-text" />
+					{/if}
+				</Button>
+			</div>
+			<div class="activity-description">
+				{notification.from.username} has replied to your comment on "{notification.context[
+					"title"
+				]}"
 			</div>
 		{:else if notification.eventType === EventType.addFavorite}
 			<a
@@ -200,6 +222,12 @@
 			<span>Duration: {notification.context["duration"]}</span>
 		</div>
 	{/if}
+	<span
+		class="mx-4 mb-2 text-xs text-right font-bold text-zinc-400"
+		style="font-family: var(--header-text);"
+	>
+		<Time relative timestamp={notification.createdAt} />
+	</span>
 </div>
 
 <style lang="scss">

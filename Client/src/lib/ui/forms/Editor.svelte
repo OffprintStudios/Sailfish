@@ -12,7 +12,6 @@
 		ArrowGoForwardLine,
 		Bold as BoldIcon,
 		DoubleQuotesR,
-		Emotion2Line,
 		FilmLine,
 		H1,
 		H2,
@@ -26,33 +25,37 @@
 		Strikethrough,
 		Text as TextIcon,
 		Underline as UnderlineIcon,
-	} from 'svelte-remixicon';
+		EraserLine,
+		PaintFill
+	} from "svelte-remixicon";
 	import type { Editor } from "@tiptap/core";
-	import Underline from '@tiptap/extension-underline';
-	import Typography from '@tiptap/extension-typography';
-	import Image from '@tiptap/extension-image';
-	import Link from '@tiptap/extension-link';
-	import Blockquote from '@tiptap/extension-blockquote';
-	import Code from '@tiptap/extension-code';
-	import TextAlign from '@tiptap/extension-text-align';
-	import Placeholder from '@tiptap/extension-placeholder';
-	import Dropcursor from '@tiptap/extension-dropcursor';
-	import BubbleMenu from '@tiptap/extension-bubble-menu';
-	import Bold from '@tiptap/extension-bold';
-	import BulletList from '@tiptap/extension-bullet-list';
-	import Document from '@tiptap/extension-document';
-	import Gapcursor from '@tiptap/extension-gapcursor';
-	import HardBreak from '@tiptap/extension-hard-break';
-	import Heading from '@tiptap/extension-heading';
-	import History from '@tiptap/extension-history';
-	import HorizontalRule from '@tiptap/extension-horizontal-rule';
-	import Italic from '@tiptap/extension-italic';
-	import ListItem from '@tiptap/extension-list-item';
-	import OrderedList from '@tiptap/extension-ordered-list';
-	import Paragraph from '@tiptap/extension-paragraph';
-	import Strike from '@tiptap/extension-strike';
-	import Text from '@tiptap/extension-text';
-	import Youtube from '@tiptap/extension-youtube';
+	import Underline from "@tiptap/extension-underline";
+	import Typography from "@tiptap/extension-typography";
+	import Image from "@tiptap/extension-image";
+	import Link from "@tiptap/extension-link";
+	import Blockquote from "@tiptap/extension-blockquote";
+	import Code from "@tiptap/extension-code";
+	import TextAlign from "@tiptap/extension-text-align";
+	import Placeholder from "@tiptap/extension-placeholder";
+	import Dropcursor from "@tiptap/extension-dropcursor";
+	import BubbleMenu from "@tiptap/extension-bubble-menu";
+	import Bold from "@tiptap/extension-bold";
+	import BulletList from "@tiptap/extension-bullet-list";
+	import Document from "@tiptap/extension-document";
+	import Gapcursor from "@tiptap/extension-gapcursor";
+	import HardBreak from "@tiptap/extension-hard-break";
+	import Heading from "@tiptap/extension-heading";
+	import History from "@tiptap/extension-history";
+	import HorizontalRule from "@tiptap/extension-horizontal-rule";
+	import Italic from "@tiptap/extension-italic";
+	import ListItem from "@tiptap/extension-list-item";
+	import OrderedList from "@tiptap/extension-ordered-list";
+	import Paragraph from "@tiptap/extension-paragraph";
+	import Strike from "@tiptap/extension-strike";
+	import Text from "@tiptap/extension-text";
+	import Youtube from "@tiptap/extension-youtube";
+	import TextStyle from "@tiptap/extension-text-style";
+	import Color from "@tiptap/extension-color";
 	import { Dropdown } from "$lib/ui/dropdown";
 
 	let bubbleMenu;
@@ -64,10 +67,11 @@
 	export let value: string;
 	export let errorMessage = null;
 	export let hasHeader = false;
-	export let kind: 'normal' | 'primary' = 'normal';
+	export let kind: "normal" | "primary" = "normal";
+	export let context: "normal" | "comment" = "normal";
 
 	let background = "bg-zinc-200 dark:bg-zinc-700";
-	if (kind === 'primary') {
+	if (kind === "primary") {
 		background = "bg-zinc-300 dark:bg-zinc-600";
 	}
 
@@ -94,20 +98,22 @@
 				Link.configure({ openOnClick: false }),
 				Blockquote,
 				Code,
+				TextStyle,
+				Color,
 				Youtube.configure({
 					width: 480,
 					height: 360,
-					inline: true,
+					inline: true
 				}),
-				TextAlign.configure({ types: ['paragraph', 'heading', 'image'] }),
-				Placeholder.configure({ placeholder: 'Write something here...' }),
+				TextAlign.configure({ types: ["paragraph", "heading", "image"] }),
+				Placeholder.configure({ placeholder: "Write something here..." }),
 				Dropcursor,
-				BubbleMenu.configure({ element: bubbleMenu }),
+				BubbleMenu.configure({ element: bubbleMenu })
 			],
 			content: value,
 			onUpdate: (props) => {
 				value = props.editor.getHTML();
-			},
+			}
 		});
 	});
 
@@ -135,7 +141,7 @@
 
 	$: {
 		if ($editor) {
-			if (value === '' || value === undefined || value === null) {
+			if (value === "" || value === undefined || value === null) {
 				$editor.commands.setContent(value);
 			}
 		}
@@ -162,7 +168,7 @@
 		<div class="editor-bar">
 			<button
 				on:click={() => $editor.chain().focus().toggleBold().run()}
-				class:active={$editor.isActive('bold')}
+				class:active={$editor.isActive("bold")}
 				type="button"
 				title="Bold"
 			>
@@ -170,7 +176,7 @@
 			</button>
 			<button
 				on:click={() => $editor.chain().focus().toggleItalic().run()}
-				class:active={$editor.isActive('italic')}
+				class:active={$editor.isActive("italic")}
 				type="button"
 				title="Italic"
 			>
@@ -178,7 +184,7 @@
 			</button>
 			<button
 				on:click={() => $editor.chain().focus().toggleUnderline().run()}
-				class:active={$editor.isActive('underline')}
+				class:active={$editor.isActive("underline")}
 				type="button"
 				title="Underline"
 			>
@@ -186,7 +192,7 @@
 			</button>
 			<button
 				on:click={() => $editor.chain().focus().toggleStrike().run()}
-				class:active={$editor.isActive('strike')}
+				class:active={$editor.isActive("strike")}
 				type="button"
 				title="Strikethrough"
 			>
@@ -201,7 +207,7 @@
 				<svelte:fragment slot="items">
 					<button
 						on:click={() => $editor.chain().focus().setParagraph().run()}
-						class:active={$editor.isActive('paragraph')}
+						class:active={$editor.isActive("paragraph")}
 						type="button"
 					>
 						<TextIcon class="mr-2" />
@@ -209,7 +215,7 @@
 					</button>
 					<button
 						on:click={() => $editor.chain().focus().toggleHeading({ level: 2 }).run()}
-						class:active={$editor.isActive('heading', { level: 2 })}
+						class:active={$editor.isActive("heading", { level: 2 })}
 						type="button"
 					>
 						<H1 class="mr-2" />
@@ -217,7 +223,7 @@
 					</button>
 					<button
 						on:click={() => $editor.chain().focus().toggleHeading({ level: 3 }).run()}
-						class:active={$editor.isActive('heading', { level: 3 })}
+						class:active={$editor.isActive("heading", { level: 3 })}
 						type="button"
 					>
 						<H2 class="mr-2" />
@@ -225,7 +231,7 @@
 					</button>
 					<button
 						on:click={() => $editor.chain().focus().toggleHeading({ level: 4 }).run()}
-						class:active={$editor.isActive('heading', { level: 4 })}
+						class:active={$editor.isActive("heading", { level: 4 })}
 						type="button"
 					>
 						<H3 class="mr-2" />
@@ -241,32 +247,32 @@
 				</svelte:fragment>
 				<svelte:fragment slot="items">
 					<button
-						on:click={() => $editor.chain().focus().setTextAlign('left').run()}
-						class:active={$editor.isActive({ textAlign: 'left' })}
+						on:click={() => $editor.chain().focus().setTextAlign("left").run()}
+						class:active={$editor.isActive({ textAlign: "left" })}
 						type="button"
 					>
 						<AlignLeft class="mr-2" />
 						<span>Align Left</span>
 					</button>
 					<button
-						on:click={() => $editor.chain().focus().setTextAlign('center').run()}
-						class:active={$editor.isActive({ textAlign: 'center' })}
+						on:click={() => $editor.chain().focus().setTextAlign("center").run()}
+						class:active={$editor.isActive({ textAlign: "center" })}
 						type="button"
 					>
 						<AlignCenter class="mr-2" />
 						<span>Align Center</span>
 					</button>
 					<button
-						on:click={() => $editor.chain().focus().setTextAlign('right').run()}
-						class:active={$editor.isActive({ textAlign: 'right' })}
+						on:click={() => $editor.chain().focus().setTextAlign("right").run()}
+						class:active={$editor.isActive({ textAlign: "right" })}
 						type="button"
 					>
 						<AlignRight class="mr-2" />
 						<span>Align Right</span>
 					</button>
 					<button
-						on:click={() => $editor.chain().focus().setTextAlign('justify').run()}
-						class:active={$editor.isActive({ textAlign: 'justify' })}
+						on:click={() => $editor.chain().focus().setTextAlign("justify").run()}
+						class:active={$editor.isActive({ textAlign: "justify" })}
 						type="button"
 					>
 						<AlignJustify class="mr-2" />
@@ -280,7 +286,10 @@
 					<ImageAddLine class="button-icon no-text" />
 				</svelte:fragment>
 				<svelte:fragment slot="items">
-					<form class="flex items-center w-[15.75rem]" on:submit|preventDefault|stopPropagation={insertImage}>
+					<form
+						class="flex items-center w-[15.75rem]"
+						on:submit|preventDefault|stopPropagation={insertImage}
+					>
 						<input
 							class="bg-zinc-300 dark:bg-zinc-600 rounded-lg focus:ring-0 border-transparent py-2"
 							type="text"
@@ -296,7 +305,10 @@
 					<FilmLine class="button-icon no-text" />
 				</svelte:fragment>
 				<svelte:fragment slot="items">
-					<form class="flex items-center w-[15.75rem]" on:submit|preventDefault|stopPropagation={insertVideo}>
+					<form
+						class="flex items-center w-[15.75rem]"
+						on:submit|preventDefault|stopPropagation={insertVideo}
+					>
 						<input
 							class="bg-zinc-300 dark:bg-zinc-600 rounded-lg focus:ring-0 border-transparent py-2"
 							type="text"
@@ -310,7 +322,7 @@
 			<span class="text-lg mx-0.5">|</span>
 			<button
 				on:click={() => $editor.chain().focus().toggleBlockquote().run()}
-				class:active={$editor.isActive('blockquote')}
+				class:active={$editor.isActive("blockquote")}
 				type="button"
 				title="Quote"
 			>
@@ -325,17 +337,25 @@
 			</button>
 			<button
 				on:click={() => $editor.chain().focus().toggleBulletList().run()}
-				class:active={$editor.isActive('bulletList')}
+				class:active={$editor.isActive("bulletList")}
 				type="button"
 				title="List"
 			>
 				<ListUnordered />
 			</button>
-			<div class="flex-1"></div>
-			<button on:click={() => $editor.chain().focus().undo().run()} type="button" title="Undo">
+			<div class="flex-1"><!--spacer--></div>
+			<button
+				on:click={() => $editor.chain().focus().undo().run()}
+				type="button"
+				title="Undo"
+			>
 				<ArrowGoBackLine />
 			</button>
-			<button on:click={() => $editor.chain().focus().redo().run()} type="button" title="Redo">
+			<button
+				on:click={() => $editor.chain().focus().redo().run()}
+				type="button"
+				title="Redo"
+			>
 				<ArrowGoForwardLine />
 			</button>
 		</div>
@@ -347,37 +367,58 @@
 				<div class="flex items-center p-0.5">
 					<button
 						on:click={() => $editor.chain().focus().toggleBold().run()}
-						class:active={$editor.isActive('bold')}
+						class:active={$editor.isActive("bold")}
 						type="button"
 					>
 						<BoldIcon />
 					</button>
 					<button
 						on:click={() => $editor.chain().focus().toggleItalic().run()}
-						class:active={$editor.isActive('italic')}
+						class:active={$editor.isActive("italic")}
 						type="button"
 					>
 						<ItalicIcon />
 					</button>
 					<button
 						on:click={() => $editor.chain().focus().toggleUnderline().run()}
-						class:active={$editor.isActive('underline')}
+						class:active={$editor.isActive("underline")}
 						type="button"
 					>
 						<UnderlineIcon />
 					</button>
 					<button
 						on:click={() => $editor.chain().focus().toggleStrike().run()}
-						class:active={$editor.isActive('strike')}
+						class:active={$editor.isActive("strike")}
 						type="button"
 					>
 						<Strikethrough />
 					</button>
+					<input
+						type="color"
+						class="color-picker"
+						title="Text Color"
+						on:change={(event) =>
+							$editor.chain().focus().setColor(event.target.value).run()}
+					/>
+					<button
+						on:click={() => $editor.chain().focus().unsetColor().run()}
+						type="button"
+						title="Clear Color"
+					>
+						<PaintFill />
+					</button>
+					<button
+						on:click={() => $editor.chain().focus().clearNodes().unsetAllMarks().run()}
+						type="button"
+						title="Clear Formatting"
+					>
+						<EraserLine />
+					</button>
 					<span class="text-lg mx-0.5 text-white">|</span>
-					{#if $editor.isActive('link')}
+					{#if $editor.isActive("link")}
 						<button
 							on:click={() => $editor.chain().focus().unsetLink().run()}
-							class:active={$editor.isActive('link')}
+							class:active={$editor.isActive("link")}
 							type="button"
 						>
 							<LinkUnlink />
@@ -440,6 +481,16 @@
 		&:hover,
 		&.active {
 			@apply bg-zinc-400 bg-opacity-75;
+		}
+	}
+	input[type="color"].color-picker {
+		@apply rounded-full w-4 h-4 mx-1;
+		&::-webkit-color-swatch-wrapper {
+			@apply p-0.5;
+		}
+		&::-webkit-color-swatch {
+			border: var(--borders);
+			@apply rounded-full;
 		}
 	}
 </style>

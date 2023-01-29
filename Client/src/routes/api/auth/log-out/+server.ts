@@ -17,6 +17,6 @@ export const POST: RequestHandler = async ({ cookies, url }) => {
 
 		await postReqServer<void>(`/auth/logout`, sessionInfo);
 	}
-	cookies.delete("refreshToken");
+	cookies.delete("refreshToken", { path: "/" });
 	return new Response(null, { status: 200 });
 };

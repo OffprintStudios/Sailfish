@@ -84,7 +84,7 @@ struct SessionService {
         return Session.DeviceInfo(
             browserName: parsedInfo.browser?.name ?? "unknown name",
             browserVer: parsedInfo.browser?.version ?? "unknown version",
-            ipAddr: request.remoteAddress?.ipAddress ?? "unknown",
+            ipAddr: request.headers.first(name: "X-Offprint-Client-IP") ?? "unknown IP",
             osName: parsedInfo.os?.name ?? "unknown name",
             osVer: parsedInfo.os?.version ?? "unknown version"
         )

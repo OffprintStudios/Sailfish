@@ -20,6 +20,7 @@ export class ThreadService {
 	});
 	url: string;
 	loading = writable<boolean>(false);
+	replies = writable<Comment[]>([]);
 
 	constructor(kind: CommentType, threadId: string, page: Paginate<Comment>, sectionId?: string) {
 		this.threadId = threadId;
@@ -75,6 +76,7 @@ export class ThreadService {
 					total: state.metadata.total + 1
 				}
 			}));
+			this.replies.set([]);
 			toast.success(`Comment added!`);
 		}
 	}

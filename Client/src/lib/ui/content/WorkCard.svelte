@@ -29,7 +29,7 @@
 </script>
 
 <div
-	class="work-card bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed hover:bg-zinc-300 dark:hover:bg-zinc-600"
+	class="work-card bg-zinc-00 dark:bg-zinc-700 dark:highlight-shadowed hover:bg-zinc-300 dark:hover:bg-zinc-600"
 	title={work.title}
 >
 	<a
@@ -44,7 +44,7 @@
 			<div class="cover-art">
 				<img
 					src={work.coverArt}
-					class="border-4 border-zinc-300 dark:border-zinc-600 object-contain rounded-xl max-w-[6rem] max-h-[6rem]"
+					class="bg-zinc-300 dark:bg-zinc-600 border-4 border-zinc-300 dark:border-zinc-600 object-contain rounded-xl max-w-[6rem] max-h-[6rem]"
 					style="box-shadow: var(--dropshadow);"
 					alt="cover-art"
 				/>

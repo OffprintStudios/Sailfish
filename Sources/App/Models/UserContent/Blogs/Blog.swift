@@ -34,6 +34,9 @@ final class Blog: Model, Content {
 
     @Field(key: "stats")
     var stats: BlogStats
+    
+    @Children(for: \.$blog)
+    var ipViews: [BlogIPView]
 
     @Field(key: "news_post")
     var newsPost: Bool
