@@ -20,8 +20,8 @@ export interface Work {
 	readonly bannerArt?: string;
 	readonly words: number;
 	readonly views: number;
-	readonly likes: number;
-	readonly dislikes: number;
+	likes: number;
+	dislikes: number;
 	readonly comments: number;
 	readonly kind: Kind;
 	approvalStatus: ApprovalStatus;

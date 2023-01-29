@@ -165,12 +165,6 @@
 				errors.genres = `You must select at least one genre.`;
 			}
 
-			if (values.category === Category.Fanwork) {
-				if (selectedFandoms.length < 1) {
-					errors.fandoms = `You must select at least one fandom.`;
-				}
-			}
-
 			return errors;
 		},
 		initialValues: {
@@ -357,6 +351,11 @@
 			<div
 				class="w-full lg:w-3/4 px-2.5 py-2.5 flex items-center lg:justify-center flex-wrap"
 			>
+				{#if !!$errors.genres && $errors.genres !== ""}
+					<span class="text-[0.625rem] text-red-500 relative -top-1 left-2"
+						>{$errors.genres}</span
+					>
+				{/if}
 				{#each genres as genre}
 					<div
 						class="mx-[0.075rem] px-0.5 pb-1 rounded-lg border border-transparent"

@@ -48,7 +48,7 @@ struct ApprovalQueueService {
                 guard let work = try await profile.$works.query(on: database).filter(\.$id == id).first() else {
                     throw Abort(.notFound, reason: "The work you're trying to add to the queue doesn't exist.")
                 }
-                if work.words < MIN_WORD_COUNT {
+                if work.kind != .poetry && work.words < MIN_WORD_COUNT {
                     throw Abort(.badRequest, reason: "Your work must meet a minimum word count of \(MIN_WORD_COUNT) words before submission.")
                 }
                 let newItem = ApprovalQueue(workId: id)

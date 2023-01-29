@@ -1,6 +1,7 @@
 export enum EventType {
 	// User events
 	follow = "follow",
+	newReply = "new-reply",
 
 	// Blog events
 	addFavorite = "add-favorite",

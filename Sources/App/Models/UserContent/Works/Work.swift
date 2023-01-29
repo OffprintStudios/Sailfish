@@ -55,6 +55,9 @@ final class Work: Model, Content {
     @Field(key: "views")
     var views: Int64
     
+    @Children(for: \.$work)
+    var ipViews: [WorkIPView]
+    
     @Field(key: "likes")
     var likes: Int64
     

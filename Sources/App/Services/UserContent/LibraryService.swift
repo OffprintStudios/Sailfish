@@ -190,7 +190,7 @@ struct LibraryService {
     
     /// Sets the vote value for a user's reading history regarding a particular work. Also updates that work's `likes` and `dislikes` with
     /// their latest values.
-    func setVote(for workId: String, vote: ReadingHistory.Vote) async throws -> ReadingHistory {
+    func setVote(for workId: String, vote: ReadingHistory.Vote) async throws -> VoteChanged {
         let profile = try request.authService.getUser(withProfile: true).profile!
         return try await request.db.transaction { database in
             guard let work: Work = try await Work.find(workId, on: database) else {
@@ -204,10 +204,12 @@ struct LibraryService {
             historyInfo.vote = vote
             historyInfo.voteChanged = Date()
             try await historyInfo.save(on: database)
-            work.likes = Int64(try await work.$votes.query(on: database).filter(\.$vote == ReadingHistory.Vote.liked).count())
-            work.dislikes = Int64(try await work.$votes.query(on: database).filter(\.$vote == ReadingHistory.Vote.disliked).count())
+            let likesCount = try await work.$votes.query(on: database).filter(\.$vote == ReadingHistory.Vote.liked).count()
+            let dislikesCount = try await work.$votes.query(on: database).filter(\.$vote == ReadingHistory.Vote.disliked).count()
+            work.likes = Int64(likesCount)
+            work.dislikes = Int64(dislikesCount)
             try await work.save(on: database)
-            return historyInfo
+            return .init(history: historyInfo, likes: likesCount, dislikes: dislikesCount)
         }
     }
     
@@ -341,6 +343,12 @@ extension LibraryService {
     struct CheckProgress: Content {
         var history: ReadingHistory
         var progress: Int32
+    }
+    
+    struct VoteChanged: Content {
+        var history: ReadingHistory
+        var likes: Int
+        var dislikes: Int
     }
 }
 

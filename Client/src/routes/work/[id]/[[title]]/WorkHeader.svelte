@@ -92,17 +92,25 @@
 				isVoting = false;
 				return;
 			}
-			const response = await patchReq<ReadingHistory>(
-				`/history/set-vote?workId=${work.id}&profileId=${$account.currProfile.id}`,
-				{
-					vote: history.vote === vote ? Vote.noVote : vote
-				}
-			);
+			const response = await patchReq<{
+				history: ReadingHistory;
+				likes: number;
+				dislikes: number;
+			}>(`/history/set-vote?workId=${work.id}&profileId=${$account.currProfile.id}`, {
+				vote: history.vote === vote ? Vote.noVote : vote
+			});
 			if ((response as ResponseError).error) {
 				const error = response as ResponseError;
 				toast.error(error.message);
 			} else {
-				history = response as ReadingHistory;
+				const result = response as {
+					history: ReadingHistory;
+					likes: number;
+					dislikes: number;
+				};
+				history = result.history;
+				work.likes = result.likes;
+				work.dislikes = result.dislikes;
 			}
 		} else {
 			toast.error(`You must be logged in to perform this action.`);
@@ -270,7 +278,7 @@
 	{#if work.coverArt}
 		<div class="cover-art">
 			<div
-				class="relative overflow-hidden w-max flex flex-col items-center justify-center bg-zinc-200 dark:bg-zinc-700 border-4 border-zinc-300 dark:border-zinc-600 rounded-xl z-[2]"
+				class="relative overflow-hidden w-max flex flex-col items-center justify-center bg-zinc-300 dark:bg-zinc-600 border-4 border-zinc-300 dark:border-zinc-600 rounded-xl z-[2]"
 				style="box-shadow: var(--dropshadow);"
 			>
 				<img
@@ -407,7 +415,7 @@
 				>
 					{#if history.vote === Vote.liked}
 						<ThumbUpFill class="button-icon" />
-						<span class="button-small-text">{abbreviate(work.likes + 1)}</span>
+						<span class="button-small-text">{abbreviate(work.likes)}</span>
 					{:else}
 						<ThumbUpLine class="button-icon text-green-600" />
 						<span class="button-small-text text-green-600"
@@ -424,7 +432,7 @@
 				>
 					{#if history.vote === Vote.disliked}
 						<ThumbDownFill class="button-icon" />
-						<span class="button-small-text">{abbreviate(work.dislikes + 1)}</span>
+						<span class="button-small-text">{abbreviate(work.dislikes)}</span>
 					{:else}
 						<ThumbDownLine class="button-icon text-red-600" />
 						<span class="button-small-text text-red-600"

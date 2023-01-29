@@ -4,12 +4,13 @@ import type { LoginForm } from "$lib/models/accounts/forms";
 import type { ServerResponseError } from "$lib/server";
 import { postReqServer } from "$lib/server";
 
-export const POST: RequestHandler = async ({ request, cookies }) => {
+export const POST: RequestHandler = async ({ request, cookies, getClientAddress }) => {
 	const formInfo: LoginForm = await request.json();
 	const userAgent = request.headers.get("User-Agent") ?? "";
 	const response = await postReqServer<ClientPackage>(`/auth/login`, formInfo, {
 		headers: {
-			"User-Agent": userAgent
+			"User-Agent": userAgent,
+			"X-Offprint-Client-IP": getClientAddress()
 		}
 	});
 	if ((response as ServerResponseError).statusCode) {
