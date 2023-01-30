@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fade, fly } from "svelte/transition";
 	import {
-		ChatSmile2Line,
+		QuestionAnswerLine,
 		Group2Line,
 		HistoryLine,
 		LoginCircleLine,
@@ -17,6 +17,7 @@
 	import { HistoryPanel } from "./history";
 	import { CountBadge } from "../util";
 	import { ActivityTabsPanel } from "./activity";
+	import { MessagesPanel } from "./messages";
 
 	const iconSize = "24px";
 
@@ -98,9 +99,11 @@
 						title="Messages"
 						class:disabled={$account.account === null || $account.currProfile === null}
 						disabled={$account.account === null || $account.currProfile === null}
+						on:click={() => switchTab(MessagesPanel, GuideTabs.MessagesTab)}
+						class:active={$guide.currTab === GuideTabs.MessagesTab}
 					>
 						<span class="flex items-center">
-							<ChatSmile2Line size={iconSize} />
+							<QuestionAnswerLine size={iconSize} />
 							<!--<span class="text-sm ml-0.5">0</span>-->
 						</span>
 					</button>
