@@ -2,16 +2,14 @@ import type { RequestHandler } from "./$types";
 import type { SessionInfo } from "$lib/models/accounts";
 import { postReqServer } from "$lib/server";
 
-export const POST: RequestHandler = async ({ cookies, url }) => {
-	const accountId = url.searchParams.get("accountId");
-
-	if (!accountId) {
+export const POST: RequestHandler = async ({ cookies, locals }) => {
+	if (!locals.user) {
 		return new Response(null, { status: 422 });
 	}
 
 	if (cookies.get("refreshToken")) {
 		const sessionInfo: SessionInfo = {
-			accountId: accountId,
+			accountId: locals.user.id,
 			refreshToken: cookies.get("refreshToken") ?? ""
 		};
 
