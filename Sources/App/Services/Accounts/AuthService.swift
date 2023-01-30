@@ -25,7 +25,7 @@ struct AuthService {
         let newAccount = try Account(formData: registerForm)
         try await newAccount.save(on: request.db)
         try await request.auditLogService.create(newAccount.id!, reason: "Account Created")
-        return try await request.sessionService.createSession(for: newAccount)
+        return try await request.sessionService.createSession(for: newAccount, rememberMe: true)
     }
 
     /// Logs in an existing user by first verifying that the account exists, then verifying the password
@@ -44,7 +44,7 @@ struct AuthService {
         }
 
         if compareResult == true {
-            return try await request.sessionService.createSession(for: existingAccount)
+            return try await request.sessionService.createSession(for: existingAccount, rememberMe: loginForm.rememberMe)
         } else {
             throw Abort(.notFound, reason: "Your email or password don't match our records.")
         }
@@ -65,7 +65,6 @@ struct AuthService {
         return .init(status: .ok)
     }
 
-
     /// Retrieves a user's account from `request.user`. If `withProfile` is true, we also retrieve
     /// the associated profile. Otherwise, `profile` is `nil`
     func getUser(withProfile: Bool = false) throws -> (account: Account, profile: Profile?) {
@@ -82,6 +81,18 @@ struct AuthService {
                 throw Abort(.unauthorized, reason: "You don't have permission to do that.")
             }
         }
+    }
+    
+    /// Checks a session ID to see if it's valid. If it is, returns a `ClientAccount` object.
+    func getAccountFromSession(_ id: UUID) async throws -> ClientAccount {
+        guard let session = try await Session.query(on: request.db)
+            .with(\.$account, { $0.with(\.$profiles) })
+            .filter(\.$id == id)
+            .filter(\.$expires > Date())
+            .first() else {
+            throw Abort(.unauthorized, reason: "Requires a valid session ID.")
+        }
+        return ClientAccount(from: session.account)
     }
 }
 
