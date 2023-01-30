@@ -162,6 +162,10 @@
 			<span class="link-name"> Feed </span>
 		</a>
 	{/if}
+	<div class="flex-1 hidden lg:block"><!--spacer--></div>
+	<div class="hidden lg:block font-bold tracking-widest border-2 border-white pl-2 pr-1 py-1">
+		BETA
+	</div>
 </nav>
 
 <style lang="scss">
