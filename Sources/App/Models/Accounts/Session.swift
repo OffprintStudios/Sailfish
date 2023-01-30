@@ -67,6 +67,7 @@ extension Session {
         var profiles: [Profile]
         var accessToken: String
         var refreshToken: String
+        var refreshExpirationTime: Double
     }
     
     struct RefreshPackage: Content {

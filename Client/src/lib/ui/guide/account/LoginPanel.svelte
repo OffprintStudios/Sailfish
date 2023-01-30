@@ -1,18 +1,19 @@
 <script lang="ts">
 	import { createForm } from "felte";
-	import { TextField } from "$lib/ui/forms";
+	import { TextField, Checkbox } from "$lib/ui/forms";
 	import { Button } from "$lib/ui/util";
 	import { LoginCircleLine } from "svelte-remixicon";
 	import { account } from "$lib/state/account.state";
 	import type { LoginForm } from "$lib/models/accounts";
 	import toast from "svelte-french-toast";
-	import { prevPage } from "../guide.state";
+	import { prevPage } from "$lib/ui/guide";
 
-	const { form, errors, isSubmitting } = createForm({
+	const { form, data, errors, isSubmitting } = createForm({
 		onSubmit: async (values) => {
 			const formInfo: LoginForm = {
 				email: values.email,
-				password: values.password
+				password: values.password,
+				rememberMe: values.rememberMe
 			};
 			const response = await fetch("/api/auth/log-in", {
 				method: "POST",
@@ -47,7 +48,8 @@
 		},
 		initialValues: {
 			email: "",
-			password: ""
+			password: "",
+			rememberMe: false
 		}
 	});
 </script>
@@ -77,7 +79,9 @@
 			<div class="my-4">
 				<a href="/recovery/send-reset-email" class="text-sm">Forgot your password?</a>
 			</div>
-			<div class="flex items-center justify-center">
+			<div class="flex items-center">
+				<Checkbox bind:value={$data.rememberMe}>Remember Me</Checkbox>
+				<div class="flex-1"><!--spacer--></div>
 				<Button
 					kind="primary"
 					type="submit"

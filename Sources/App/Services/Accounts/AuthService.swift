@@ -25,7 +25,7 @@ struct AuthService {
         let newAccount = try Account(formData: registerForm)
         try await newAccount.save(on: request.db)
         try await request.auditLogService.create(newAccount.id!, reason: "Account Created")
-        return try await request.sessionService.createSession(for: newAccount)
+        return try await request.sessionService.createSession(for: newAccount, rememberMe: true)
     }
 
     /// Logs in an existing user by first verifying that the account exists, then verifying the password
@@ -44,7 +44,7 @@ struct AuthService {
         }
 
         if compareResult == true {
-            return try await request.sessionService.createSession(for: existingAccount)
+            return try await request.sessionService.createSession(for: existingAccount, rememberMe: loginForm.rememberMe)
         } else {
             throw Abort(.notFound, reason: "Your email or password don't match our records.")
         }
