@@ -5,14 +5,14 @@
 		CompassDiscoverLine,
 		SearchEyeFill,
 		SearchEyeLine,
-		BookOpenFill,
-		Book2Line,
+		CloseLine,
 		BookmarkLine,
 		BookmarkFill,
 		NewspaperFill,
 		NewspaperLine,
 		Dashboard2Line,
-		Dashboard2Fill
+		Dashboard2Fill,
+		LoginCircleLine
 	} from "svelte-remixicon";
 	import { guide, openGuide, closeGuide } from "../guide";
 	import { account } from "$lib/state/account.state";
@@ -58,16 +58,28 @@
 <nav>
 	{#if $guide.routing.length > 0}
 		<button class="link" class:active={$guide.routing.length > 0} on:click={closeGuide}>
-			<span class="link-icon"><BookOpenFill size={iconSize} /></span>
+			<span class="link-icon"><CloseLine size={iconSize} /></span>
 			<span class="link-name">Close</span>
 		</button>
 	{:else}
-		<button class="link relative" on:click={openGuide}>
+		<button class="link avatar relative" on:click={openGuide}>
 			{#if $activity.count > 0}
 				<CountBadge value={$activity.count} />
 			{/if}
-			<span class="link-icon"><Book2Line size={iconSize} /></span>
-			<span class="link-name">Guide</span>
+			{#if $account.account && $account.currProfile}
+				<span
+					class="rounded-full border-2 border-white w-[32px] h-[32px] lg:w-[40px] lg:h-[40px] bg-zinc-300 dark:bg-white overflow-hidden"
+				>
+					<img
+						src={$account.currProfile.avatar}
+						alt="Your avatar"
+						class="object-cover w-full h-full"
+					/>
+				</span>
+			{:else}
+				<span class="link-icon"><LoginCircleLine size={iconSize} /></span>
+				<span class="link-name">Log In</span>
+			{/if}
 		</button>
 	{/if}
 	<div
@@ -182,6 +194,10 @@
 
 			span.link-name {
 				@apply text-[0.6rem] uppercase font-bold tracking-wider hidden lg:block;
+			}
+
+			&.avatar {
+				@apply p-0 lg:p-2 w-[44px] h-[44px] lg:w-[61px] lg:h-[61px];
 			}
 		}
 	}
