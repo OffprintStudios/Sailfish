@@ -6,6 +6,7 @@ import Vapor
 
 struct ClientAccount: Content {
     var id: UUID?
+    var profiles: [Profile]
     var roles: [Account.Roles]
     var termsAgree: Bool
     var emailConfirmed: Bool
@@ -14,6 +15,7 @@ struct ClientAccount: Content {
 
     init(from account: Account) {
         id = account.id
+        profiles = account.$profiles.value ?? []
         roles = account.roles
         termsAgree = account.termsAgree
         emailConfirmed = account.emailConfirmed

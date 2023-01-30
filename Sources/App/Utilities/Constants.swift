@@ -5,7 +5,10 @@
 import Foundation
 
 /// A long session is effectively 30 days, calculated as Seconds * Minutes * Hours * Days
-let SESSION_EXPIRATION: TimeInterval = 60.0 * 60.0 * 24.0 * 30.0
+let LONG_SESSION: TimeInterval = 60.0 * 60.0 * 24.0 * 30.0
+
+/// A short session is effecitvely 2 hours, calculated as Seconds * Minutes * Hours
+let SHORT_SESSION: TimeInterval = 60.0 * 60.0 * 2.0
 
 /// A short session is one 24-hour cycle, calculated as Seconds * Minutes * Hours * Days
 let TOKEN_EXPIRATION: TimeInterval = 60.0 * 60.0 * 24.0 * 1.0

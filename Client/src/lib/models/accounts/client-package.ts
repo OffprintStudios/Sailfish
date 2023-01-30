@@ -6,4 +6,5 @@ export interface ClientPackage {
 	readonly profiles: Profile[];
 	readonly accessToken: string;
 	refreshToken: string;
+	refreshExpirationTime: number;
 }
