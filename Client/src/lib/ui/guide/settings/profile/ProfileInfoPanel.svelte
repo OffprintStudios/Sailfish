@@ -1,20 +1,72 @@
 <script lang="ts">
 	import { createForm } from "felte";
 	import { account } from "$lib/state/account.state";
-	import { ArrowLeftSLine, ImageEditLine } from "svelte-remixicon";
+	import { ArrowLeftSLine, ImageEditLine, Save3Line } from "svelte-remixicon";
 	import { Button, Avatar } from "$lib/ui/util";
 	import { prevPage } from "$lib/ui/guide";
 	import { openPopup } from "$lib/ui/popup";
 	import { UploadAvatar } from "$lib/ui/upload";
-	import type { Profile } from "$lib/models/accounts";
+	import { TextField, TextArea } from "$lib/ui/forms";
+	import { hasRoles } from "$lib/util/functions";
+	import { Roles, Presence, type Profile, type ProfileForm } from "$lib/models/accounts";
+	import { patchReq, type ResponseError } from "$lib/http";
+	import toast from "svelte-french-toast";
 
-	const { form } = createForm({
+	const { form, isSubmitting, errors } = createForm({
 		async onSubmit(values) {
-			console.log(values);
+			const formInfo: ProfileForm = {
+				presence: Presence.Offline,
+				username: values.username,
+				bio: values.bio,
+				tagline: values.tagline === "" ? undefined : values.tagline
+			};
+
+			const response = await patchReq<Profile>(
+				`/profiles/update-profile?profileId=${$account.currProfile?.id}`,
+				formInfo
+			);
+			if ((response as ResponseError).statusCode) {
+				const error = response as ResponseError;
+				toast.error(error.message);
+			} else {
+				$account.profiles = $account.profiles.map((val) => {
+					if (val.id === (response as Profile).id) {
+						return response as Profile;
+					} else {
+						return val;
+					}
+				});
+				$account.currProfile = response as Profile;
+			}
+		},
+		validate: (values) => {
+			const errors = {
+				username: "",
+				bio: "",
+				tagline: ""
+			};
+
+			if (values.username.length < 3 || values.username.length > 36) {
+				errors.username = "Usernames must be between 3 and 36 characters in length";
+			}
+
+			if (values.bio !== "" && (values.bio.length < 3 || values.username.length > 120)) {
+				errors.bio = "Profile bios must be between 3 and 120 characters in length";
+			}
+
+			if (
+				values.tagline !== "" &&
+				(values.tagline.length < 3 || values.tagline.length > 36)
+			) {
+				errors.tagline = "Taglines must be between 3 and 36 characters in length";
+			}
+
+			return errors;
 		},
 		initialValues: {
 			username: $account.currProfile?.username,
-			bio: $account.currProfile?.info.bio
+			bio: $account.currProfile?.info.bio,
+			tagline: $account.currProfile?.info.tagline ? $account.currProfile?.info.tagline : ""
 		}
 	});
 
@@ -52,36 +104,68 @@
 			</div>
 		</div>
 		<div class="panel-section">
-			<h3>Profile Info</h3>
+			<h3>Username & Bio</h3>
 			<div class="panel-box">
 				<form class="w-full" use:form>
-					<label class="flex flex-col w-full">
-						<span
-							class="font-bold text-[0.7rem] relative left-2 uppercase tracking-wide"
-							>Username</span
+					<TextField
+						name="username"
+						title="Username"
+						placeholder="Somebody"
+						kind="primary"
+						errorMessage={$errors.username}
+					/>
+					<TextArea
+						name="bio"
+						title="Bio"
+						placeholder="Just another friendly face"
+						kind="primary"
+						errorMessage={$errors.bio}
+					/>
+					<div class="flex items-center justify-center">
+						<Button
+							type="submit"
+							kind="primary"
+							loading={$isSubmitting}
+							loadingText="Saving"
 						>
-						<input
-							type="text"
-							name="username"
-							placeholder="A New Face"
-							class="w-full rounded-lg border-transparent py-2.5 bg-zinc-300 dark:bg-zinc-600"
-						/>
-					</label>
-					<div class="my-4"><!--spacer--></div>
-					<label class="flex flex-col w-full">
-						<span
-							class="font-bold text-[0.7rem] relative left-2 uppercase tracking-wide"
-							>Bio</span
-						>
-						<textarea
-							name="bio"
-							placeholder="Just Another Somebody"
-							class="w-full rounded-lg border-transparent py-2.5 bg-zinc-300 dark:bg-zinc-600 min-h-[8rem] max-h-[8rem]"
-						/>
-					</label>
+							<Save3Line class="button-icon" />
+							<span class="button-text">Save</span>
+						</Button>
+					</div>
 				</form>
 			</div>
 		</div>
+		<div class="panel-section">
+			<h3>Links</h3>
+			<div class="panel-box">yup yup</div>
+		</div>
+		{#if hasRoles( $account.account.roles, [Roles.Admin, Roles.Moderator, Roles.ChatModerator, Roles.VIP] )}
+			<div class="panel-section">
+				<h3>VIP Options</h3>
+				<div class="panel-box">
+					<form class="w-full" use:form>
+						<TextField
+							name="tagline"
+							title="Tagline"
+							placeholder="Just another friendly face"
+							kind="primary"
+							errorMessage={$errors.tagline}
+						/>
+						<div class="flex items-center justify-center">
+							<Button
+								type="submit"
+								kind="primary"
+								loading={$isSubmitting}
+								loadingText="Saving"
+							>
+								<Save3Line class="button-icon" />
+								<span class="button-text">Save</span>
+							</Button>
+						</div>
+					</form>
+				</div>
+			</div>
+		{/if}
 	</div>
 </div>
 
