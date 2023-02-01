@@ -30,7 +30,6 @@
 	import SvelteMarkdown from "svelte-markdown";
 	import Dropdown from "$lib/ui/dropdown/Dropdown.svelte";
 	import LinkTag from "$lib/ui/content/LinkTag.svelte";
-	import UpdateLinksPrompt from "./UpdateLinksPrompt.svelte";
 	import { ReportForm } from "$lib/ui/admin";
 	import { ReportKind } from "$lib/models/admin/users/reports";
 
@@ -58,18 +57,6 @@
 				}
 			},
 			{ profileId: data.id }
-		);
-	}
-
-	function updateLinks() {
-		openPopup(
-			UpdateLinksPrompt,
-			{
-				onConfirm: async (value: Map<string, string>) => {
-					console.log(value);
-				}
-			},
-			{ links: data.links }
 		);
 	}
 
@@ -174,9 +161,13 @@
 			{#if data.bannerArt}
 				<img src={data.bannerArt} alt="cover art" class="w-full h-full object-cover" />
 			{/if}
-			{#if $account.account && $account.currProfile && $account.currProfile.id === data.id}
-				<div class="absolute top-2 right-2 z-[2]">
-					<div class="relative top-0.5">
+			<div class="absolute top-2 right-2 z-[2]">
+				<div class="relative top-0.5">
+					<div class="lg:hidden">
+						<RoleBadge roles={data.account.roles} size="large" />
+					</div>
+					{#if $account.account && $account.currProfile && $account.currProfile.id === data.id}
+						<div class="mx-2 text-white text-lg relative top-[0.1625rem]">|</div>
 						<Button on:click={updateBanner} kind="primary">
 							{#if data.bannerArt}
 								<ImageEditLine class="button-icon no-text" size="18px" />
@@ -184,9 +175,9 @@
 								<ImageAddLine class="button-icon no-text" size="18px" />
 							{/if}
 						</Button>
-					</div>
+					{/if}
 				</div>
-			{/if}
+			</div>
 		</div>
 		<div class="user">
 			<div class="flex-1">
@@ -213,6 +204,10 @@
 					>
 						{abbreviate(data.stats.following)} following
 					</a>
+					<span class="mx-1">•</span>
+					<span>
+						Joined <Time timestamp={data.createdAt} />
+					</span>
 				</div>
 			</div>
 			<div class="flex items-center bg-zinc-300 dark:bg-zinc-600 rounded-xl p-1">
@@ -224,8 +219,8 @@
 								loading={loadingFollow}
 								loadingText="Saving..."
 							>
-								<UserUnfollowLine class="button-icon" />
-								<span class="button-small-text lg:button-text">Unfollow</span>
+								<UserUnfollowLine class="button-icon variable-text" />
+								<span class="button-text hidden lg:block">Unfollow</span>
 							</Button>
 						{:else}
 							<Button
@@ -233,8 +228,8 @@
 								loading={loadingFollow}
 								loadingText="Saving..."
 							>
-								<UserFollowLine class="button-icon" />
-								<span class="button-small-text lg:button-text">Follow</span>
+								<UserFollowLine class="button-icon variable-text" />
+								<span class="button-text hidden lg:block">Follow</span>
 							</Button>
 						{/if}
 						<div class="mx-0.5"><!--spacer--></div>
@@ -244,12 +239,7 @@
 							<More2Fill class="button-icon no-text" size="20px" />
 						</svelte:fragment>
 						<svelte:fragment slot="items">
-							{#if $account.currProfile.id === data.id}
-								<button on:click={updateLinks}>
-									<Link class="mr-2" size="18px" />
-									<span>Update Links</span>
-								</button>
-							{:else}
+							{#if $account.currProfile.id !== data.id}
 								<button on:click={reportUser}>
 									<AlarmWarningLine class="mr-2" size="18px" />
 									<span>Report</span>
@@ -259,8 +249,8 @@
 					</Dropdown>
 				{:else}
 					<Button disabled>
-						<UserFollowLine class="button-icon" />
-						<span class="button-text">Follow</span>
+						<UserFollowLine class="button-icon variable-text" />
+						<span class="button-text hidden lg:block">Follow</span>
 					</Button>
 					<div class="mx-0.5"><!--spacer--></div>
 					<Button disabled>
@@ -277,7 +267,7 @@
 					</a>
 				</h1>
 			</div>
-			<div class="flex items-center lg:hidden text-xs relative -top-1.5">
+			<div class="flex items-center lg:hidden text-xs relative">
 				<a
 					style="color: var(--text-color);"
 					href="/profile/{data.id}/{slugify(data.username)}/followers"
@@ -292,24 +282,14 @@
 					{abbreviate(data.stats.following)} following
 				</a>
 				<div class="flex-1"><!--spacer--></div>
-				<RoleBadge roles={data.account.roles} size="large" />
+				<span>
+					Joined <Time timestamp={data.createdAt} />
+				</span>
 			</div>
 			<div
-				class="flex flex-col lg:flex-row px-3 py-2 mb-4 lg:mb-0 bg-zinc-300 dark:bg-zinc-600 lg:max-h-[85px] lg:max-w-[600px] rounded-xl"
+				class="flex flex-col lg:flex-row px-3 py-2 my-4 lg:my-0 bg-zinc-300 dark:bg-zinc-600 lg:max-h-[85px] lg:max-w-[600px] rounded-xl"
 			>
-				<div class="mb-2 lg:mb-0 lg:min-w-[90px]">
-					<div class="flex items-center">
-						<Cake2Line size="20px" class="mr-1" />
-						<span
-							class="all-small-caps font-bold tracking-wider relative -top-0.5 text-lg"
-						>
-							Joined
-						</span>
-					</div>
-					<Time timestamp={data.createdAt} />
-				</div>
-				<div class="mx-2"><!--spacer--></div>
-				<div class="lg:min-w-[300px]">
+				<div class="lg:min-w-[250px] mb-2 lg:mb-0 lg:mr-4">
 					<div class="flex items-center">
 						<InformationLine size="20px" class="mr-1" />
 						<span
@@ -322,10 +302,8 @@
 						<SvelteMarkdown source={data.info.bio} />
 					</div>
 				</div>
-			</div>
-			<!--
 				{#if Object.keys(data.links).length !== 0}
-					<div class="mt-4">
+					<div>
 						<div class="flex items-center">
 							<LinksFill size="20px" class="mr-1" />
 							<span class="all-small-caps font-bold tracking-wider text-lg">
@@ -339,10 +317,10 @@
 						</div>
 					</div>
 				{/if}
-				-->
+			</div>
 			<div class="flex-1"><!--spacer--></div>
 			<div
-				class="flex items-center justify-center w-full lg:w-fit self-end bg-zinc-300 dark:bg-zinc-600 rounded-xl overflow-hidden"
+				class="flex items-center justify-center lg:ml-4 w-full lg:w-fit self-end bg-zinc-300 dark:bg-zinc-600 rounded-xl overflow-hidden"
 			>
 				<a
 					class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500"
