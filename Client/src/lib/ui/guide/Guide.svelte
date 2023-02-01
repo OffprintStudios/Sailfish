@@ -143,7 +143,7 @@
 		background: var(--background);
 
 		div.guide-nav {
-			@apply flex items-center justify-center mb-2 lg:mb-0 lg:pt-2 lg:pb-4 sticky top-0 z-10;
+			@apply flex items-center justify-center mb-2 lg:mb-0 lg:pt-2 lg:pb-4 sticky top-0 z-20;
 			background: var(--accent);
 			@media (min-width: 1024px) {
 				background: linear-gradient(

@@ -1,16 +1,38 @@
 <script lang="ts">
 	import { createForm } from "felte";
+	import { slide } from "svelte/transition";
 	import { account } from "$lib/state/account.state";
-	import { ArrowLeftSLine, ImageEditLine, Save3Line } from "svelte-remixicon";
+	import {
+		AddBoxLine,
+		ArrowLeftSLine,
+		CheckLine,
+		CloseLine,
+		ImageEditLine,
+		Save3Line,
+		Loader5Line,
+		DeleteBinLine
+	} from "svelte-remixicon";
 	import { Button, Avatar } from "$lib/ui/util";
 	import { prevPage } from "$lib/ui/guide";
 	import { openPopup } from "$lib/ui/popup";
 	import { UploadAvatar } from "$lib/ui/upload";
 	import { TextField, TextArea } from "$lib/ui/forms";
 	import { hasRoles } from "$lib/util/functions";
-	import { Roles, Presence, type Profile, type ProfileForm } from "$lib/models/accounts";
+	import {
+		Roles,
+		Presence,
+		LinkKinds,
+		type Profile,
+		type ProfileForm
+	} from "$lib/models/accounts";
 	import { patchReq, type ResponseError } from "$lib/http";
 	import toast from "svelte-french-toast";
+
+	let showAddTagForm = false;
+	let addingLink = false;
+	let deletingLink = false;
+	let key = LinkKinds.Other;
+	let value: string;
 
 	const { form, isSubmitting, errors } = createForm({
 		async onSubmit(values) {
@@ -80,6 +102,75 @@
 			}
 		});
 	}
+
+	async function addLink() {
+		addingLink = true;
+		if ($account.currProfile) {
+			let currLinks = $account.currProfile.links;
+			if (currLinks[key]) {
+				toast.error("You've already added a link of this kind!");
+				return;
+			}
+			currLinks[key] = value;
+			const response = await patchReq<Profile>(
+				`/profiles/update-links?profileId=${$account.currProfile.id}`,
+				{ links: currLinks }
+			);
+			if ((response as ResponseError).statusCode) {
+				const error = response as ResponseError;
+				toast.error(error.message);
+			} else {
+				const updatedProfile = response as Profile;
+				$account.profiles = $account.profiles.map((val) => {
+					if (val.id === updatedProfile.id) {
+						return updatedProfile;
+					} else {
+						return val;
+					}
+				});
+				$account.currProfile = updatedProfile;
+			}
+		} else {
+			toast.error("No profile signed in. How did you manage to do that?");
+		}
+		addingLink = false;
+		toggleAddLink();
+	}
+
+	async function deleteLink(linkKey: string) {
+		deletingLink = true;
+		if ($account.currProfile) {
+			let currLinks = $account.currProfile.links;
+			delete currLinks[linkKey];
+			const response = await patchReq<Profile>(
+				`/profiles/update-links?profileId=${$account.currProfile.id}`,
+				{ links: currLinks }
+			);
+			if ((response as ResponseError).statusCode) {
+				const error = response as ResponseError;
+				toast.error(error.message);
+			} else {
+				const updatedProfile = response as Profile;
+				$account.profiles = $account.profiles.map((val) => {
+					if (val.id === updatedProfile.id) {
+						return updatedProfile;
+					} else {
+						return val;
+					}
+				});
+				$account.currProfile = updatedProfile;
+			}
+		} else {
+			toast.error("No profile signed in. How did you manage that?");
+		}
+		deletingLink = false;
+	}
+
+	function toggleAddLink() {
+		key = LinkKinds.Other;
+		value = "";
+		showAddTagForm = showAddTagForm !== true;
+	}
 </script>
 
 <div class="panel-container">
@@ -137,7 +228,86 @@
 		</div>
 		<div class="panel-section">
 			<h3>Links</h3>
-			<div class="panel-box">yup yup</div>
+			<div class="panel-box">
+				<ul class="w-full">
+					{#each Object.keys($account.currProfile?.links) as key}
+						<li
+							class="flex items-center bg-zinc-300 dark:bg-zinc-600 rounded-xl text-xs overflow-hidden mb-2"
+						>
+							<span class="py-3 px-4">{key}</span>
+							<span class="flex-1 truncate">{$account.currProfile?.links[key]}</span>
+							<button
+								class="px-2 pt-[0.70rem] pb-[0.675rem]"
+								title="Delete Link"
+								disabled={deletingLink}
+								on:click={() => deleteLink(key)}
+							>
+								{#if addingLink}
+									<Loader5Line class="animate-spin" size="18px" />
+								{:else}
+									<DeleteBinLine size="18px" />
+								{/if}
+							</button>
+						</li>
+					{/each}
+					{#if showAddTagForm}
+						<li
+							transition:slide={{ delay: 0, duration: 150 }}
+							class="flex items-center mb-2"
+						>
+							<select
+								class="py-3 w-1/3 text-xs border-0 rounded-l-xl bg-zinc-300 dark:bg-zinc-600 focus:ring-0"
+								bind:value={key}
+							>
+								{#each Object.keys(LinkKinds) as kind}
+									<option value={LinkKinds[kind]}>{LinkKinds[kind]}</option>
+								{/each}
+							</select>
+							<input
+								type="text"
+								bind:value
+								class="bg-zinc-300 w-2/3 dark:bg-zinc-600 focus:ring-0 border-0 text-xs py-3"
+								placeholder="Paste link here"
+							/>
+							<button
+								class="rounded-r-xl bg-zinc-300 dark:bg-zinc-600 px-2 pt-[0.70rem] pb-[0.675rem]"
+								on:click={addLink}
+								disabled={addingLink}
+							>
+								{#if addingLink}
+									<Loader5Line class="animate-spin" size="18px" />
+								{:else}
+									<CheckLine size="18px" />
+								{/if}
+							</button>
+						</li>
+					{/if}
+					<li
+						class="w-full border-2 border-dashed rounded-xl border-zinc-300 dark:border-zinc-600"
+					>
+						<button
+							class="w-full py-2.5 flex rounded-xl transition items-center justify-center"
+							on:click={toggleAddLink}
+						>
+							{#if showAddTagForm}
+								<CloseLine class="mr-2" size="18px" />
+								<span
+									class="relative top-[0.075rem] uppercase tracking-wider text-xs font-bold"
+								>
+									Cancel
+								</span>
+							{:else}
+								<AddBoxLine class="mr-2" size="18px" />
+								<span
+									class="relative top-[0.075rem] uppercase tracking-wider text-xs font-bold"
+								>
+									Add Link
+								</span>
+							{/if}
+						</button>
+					</li>
+				</ul>
+			</div>
 		</div>
 		{#if hasRoles( $account.account.roles, [Roles.Admin, Roles.Moderator, Roles.ChatModerator, Roles.VIP] )}
 			<div class="panel-section">
