@@ -38,9 +38,9 @@
 	<meta property="twitter:image" content="/images/offprint_icon.png" />
 </svelte:head>
 
-<div class="mx-auto max-w-7xl">
+<div class="mx-auto xl:w-11/12 max-w-7xl">
 	<div
-		class="lg:flex lg:flex-col lg:items-center lg:justify-center lg:mt-6 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed lg:rounded-xl overflow-hidden"
+		class="lg:flex lg:flex-col lg:items-center lg:justify-center xl:mt-6 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed xl:rounded-xl overflow-hidden"
 	>
 		<div class="flex items-center justify-center p-4 w-full" style="background: var(--accent)">
 			<CompassDiscoverLine
@@ -111,7 +111,7 @@
 			</a>-->
 		</div>
 	</div>
-	<div class="w-11/12 my-6 mx-auto lg:w-full">
+	<div class="w-11/12 my-6 mx-auto xl:w-full">
 		<slot />
 	</div>
 </div>

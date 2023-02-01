@@ -30,7 +30,6 @@
 	import SvelteMarkdown from "svelte-markdown";
 	import Dropdown from "$lib/ui/dropdown/Dropdown.svelte";
 	import LinkTag from "$lib/ui/content/LinkTag.svelte";
-	import UpdateLinksPrompt from "./UpdateLinksPrompt.svelte";
 	import { ReportForm } from "$lib/ui/admin";
 	import { ReportKind } from "$lib/models/admin/users/reports";
 
@@ -58,18 +57,6 @@
 				}
 			},
 			{ profileId: data.id }
-		);
-	}
-
-	function updateLinks() {
-		openPopup(
-			UpdateLinksPrompt,
-			{
-				onConfirm: async (value: Map<string, string>) => {
-					console.log(value);
-				}
-			},
-			{ links: data.links }
 		);
 	}
 
@@ -157,107 +144,130 @@
 	<meta property="twitter:image" content={data.avatar} />
 </svelte:head>
 
-<div
-	class="w-11/12 mx-auto my-6 max-w-7xl relative justify-items-start grid grid-cols-1 lg:grid-cols-3 lg:gap-12"
->
-	<div
-		class="profile-block lg:sticky lg:top-6 col-span-1 w-full h-fit bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
-	>
-		<div class="h-32 overflow-hidden w-full relative">
-			{#if data.bannerArt !== null && data.bannerArt !== undefined}
-				<img src={data.bannerArt} class="h-full w-full object-cover" alt="profile avatar" />
-			{:else}
-				<div class="h-full w-full" style="background: var(--accent);">
-					<!--intentionally left blank-->
-				</div>
-			{/if}
-		</div>
-		<div class="relative flex items-center p-2">
-			<div class="absolute -bottom-0">
-				<div
-					class="w-[115px] h-[115px] border-4 border-zinc-300 dark:border-zinc-600 rounded-full bg-zinc-300 dark:bg-zinc-600 overflow-hidden"
-				>
-					<img
-						src={data.avatar}
-						alt="{data.username}'s Avatar"
-						class="object-cover w-full h-full"
-					/>
-				</div>
+<div class="xl:w-11/12 mx-auto mb-6 xl:mt-6 max-w-7xl">
+	<div class="profile-header bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
+		<div class="avatar">
+			<div
+				class="w-[115px] h-[115px] lg:w-[175px] lg:h-[175px] border-4 border-zinc-300 dark:border-zinc-600 rounded-full bg-zinc-300 dark:bg-zinc-600 overflow-hidden"
+			>
+				<img
+					src={data.avatar}
+					alt="{data.username}'s Avatar"
+					class="object-cover w-full h-full"
+				/>
 			</div>
-			<div class="flex-1"><!--spacer--></div>
-			{#if $account.account && $account.currProfile}
-				{#if $account.currProfile.id !== data.id}
-					{#if hasFollowed.isFollowing}
-						<Button
-							on:click={unfollowUser}
-							loading={loadingFollow}
-							loadingText="Saving..."
-						>
-							<UserUnfollowLine class="button-icon" />
-							<span class="button-text">Unfollow</span>
-						</Button>
-					{:else}
-						<Button
-							on:click={followUser}
-							loading={loadingFollow}
-							loadingText="Saving..."
-						>
-							<UserFollowLine class="button-icon" />
-							<span class="button-text">Follow</span>
+		</div>
+		<div class="banner {data.bannerArt ? 'big-art' : 'small-art'}">
+			{#if data.bannerArt}
+				<img src={data.bannerArt} alt="cover art" class="w-full h-full object-cover" />
+			{/if}
+			<div class="absolute top-2 right-2 z-[2]">
+				<div class="relative top-0.5 flex items-center">
+					<div class="lg:hidden">
+						<RoleBadge roles={data.account.roles} size="large" />
+					</div>
+					{#if $account.account && $account.currProfile && $account.currProfile.id === data.id}
+						<div class="lg:hidden mx-2 text-white text-lg relative">|</div>
+						<Button on:click={updateBanner} kind="primary">
+							{#if data.bannerArt}
+								<ImageEditLine class="button-icon no-text" size="18px" />
+							{:else}
+								<ImageAddLine class="button-icon no-text" size="18px" />
+							{/if}
 						</Button>
 					{/if}
-				{/if}
-				<div class="mx-0.5"><!--spacer--></div>
-				<Dropdown>
-					<svelte:fragment slot="button">
-						<More2Fill class="button-icon no-text" size="20px" />
-					</svelte:fragment>
-					<svelte:fragment slot="items">
-						{#if $account.currProfile.id === data.id}
-							{#if data.bannerArt}
-								<button on:click={updateBanner}>
-									<ImageEditLine class="mr-2" size="18px" />
-									<span>Edit Banner</span>
-								</button>
-							{:else}
-								<button on:click={updateBanner}>
-									<ImageAddLine class="mr-2" size="18px" />
-									<span>Add Banner</span>
+				</div>
+			</div>
+		</div>
+		<div class="user">
+			<div class="flex-1">
+				<div class="hidden lg:flex items-center">
+					<h1 class="text-4xl">
+						<a href="/profile/{data.id}/{slugify(data.username)}">
+							{data.username}
+						</a>
+					</h1>
+					<div class="mx-1"><!--spacer--></div>
+					<RoleBadge roles={data.account.roles} size="large" />
+				</div>
+				<div class="hidden lg:flex items-center text-xs relative">
+					<a
+						style="color: var(--text-color);"
+						href="/profile/{data.id}/{slugify(data.username)}/followers"
+					>
+						{abbreviate(data.stats.followers)} follower{pluralize(data.stats.followers)}
+					</a>
+					<span class="mx-1">•</span>
+					<a
+						style="color: var(--text-color);"
+						href="/profile/{data.id}/{slugify(data.username)}/following"
+					>
+						{abbreviate(data.stats.following)} following
+					</a>
+					<span class="mx-1">•</span>
+					<span>
+						Joined <Time timestamp={data.createdAt} />
+					</span>
+				</div>
+			</div>
+			<div class="flex items-center bg-zinc-300 dark:bg-zinc-600 rounded-xl p-1">
+				{#if $account.account && $account.currProfile}
+					{#if $account.currProfile.id !== data.id}
+						{#if hasFollowed.isFollowing}
+							<Button
+								on:click={unfollowUser}
+								loading={loadingFollow}
+								loadingText="Saving..."
+							>
+								<UserUnfollowLine class="button-icon variable-text" />
+								<span class="button-text hidden lg:block">Unfollow</span>
+							</Button>
+						{:else}
+							<Button
+								on:click={followUser}
+								loading={loadingFollow}
+								loadingText="Saving..."
+							>
+								<UserFollowLine class="button-icon variable-text" />
+								<span class="button-text hidden lg:block">Follow</span>
+							</Button>
+						{/if}
+						<div class="mx-0.5"><!--spacer--></div>
+					{/if}
+					<Dropdown>
+						<svelte:fragment slot="button">
+							<More2Fill class="button-icon no-text" size="20px" />
+						</svelte:fragment>
+						<svelte:fragment slot="items">
+							{#if $account.currProfile.id !== data.id}
+								<button on:click={reportUser}>
+									<AlarmWarningLine class="mr-2" size="18px" />
+									<span>Report</span>
 								</button>
 							{/if}
-							<button on:click={updateLinks}>
-								<Link class="mr-2" size="18px" />
-								<span>Update Links</span>
-							</button>
-						{:else}
-							<button on:click={reportUser}>
-								<AlarmWarningLine class="mr-2" size="18px" />
-								<span>Report</span>
-							</button>
-						{/if}
-					</svelte:fragment>
-				</Dropdown>
-			{:else}
-				<Button disabled>
-					<UserFollowLine class="button-icon" />
-					<span class="button-text">Follow</span>
-				</Button>
-				<div class="mx-0.5"><!--spacer--></div>
-				<Button disabled>
-					<More2Fill class="button-icon no-text" size="20px" />
-				</Button>
-			{/if}
+						</svelte:fragment>
+					</Dropdown>
+				{:else}
+					<Button disabled>
+						<UserFollowLine class="button-icon variable-text" />
+						<span class="button-text hidden lg:block">Follow</span>
+					</Button>
+					<div class="mx-0.5"><!--spacer--></div>
+					<Button disabled>
+						<More2Fill class="button-icon no-text" size="20px" />
+					</Button>
+				{/if}
+			</div>
 		</div>
-		<div class="pb-1 pt-1 px-4">
-			<h4 class="text-3xl truncate">
-				<a
-					class="text-ellipsis overflow-hidden"
-					href="/profile/{data.id}/{slugify(data.username)}"
-				>
-					{data.username}
-				</a>
-			</h4>
-			<div class="flex items-center text-xs relative -top-1">
+		<div class="tool-bar lg:border-t-2 border-zinc-300 dark:border-zinc-600 lg:mt-4">
+			<div class="flex items-center lg:hidden">
+				<h1 class="text-4xl">
+					<a href="/profile/{data.id}/{slugify(data.username)}">
+						{data.username}
+					</a>
+				</h1>
+			</div>
+			<div class="flex items-center lg:hidden text-xs relative">
 				<a
 					style="color: var(--text-color);"
 					href="/profile/{data.id}/{slugify(data.username)}/followers"
@@ -272,96 +282,129 @@
 					{abbreviate(data.stats.following)} following
 				</a>
 				<div class="flex-1"><!--spacer--></div>
-				<RoleBadge roles={data.account.roles} size="large" />
+				<span>
+					Joined <Time timestamp={data.createdAt} />
+				</span>
 			</div>
-		</div>
-		<div
-			class="w-full flex items-center justify-center border-t border-b border-zinc-300 dark:border-zinc-600 mt-0.5"
-		>
-			<a
-				class="stat-box hover:bg-zinc-300 dark:hover:bg-zinc-600"
-				href="/profile/{data.id}/{slugify(data.username)}/works"
-				class:active={$page.url.pathname.includes("/works")}
+			<div
+				class="flex flex-col lg:flex-row px-3 py-2 my-4 lg:my-0 bg-zinc-300 dark:bg-zinc-600 lg:max-h-[85px] lg:max-w-[600px] rounded-xl"
 			>
-				<div class="stat">
-					<QuillPenLine size="18.4px" class="mr-1" />
-					<span class="select-none">{abbreviate(data.stats.works)}</span>
-				</div>
-				<div class="stat-label">Work{pluralize(data.stats.works)}</div>
-			</a>
-			<a
-				class="stat-box border-l border-r border-zinc-300 dark:border-zinc-600 hover:bg-zinc-300 dark:hover:bg-zinc-600"
-				href="/profile/{data.id}/{slugify(data.username)}/blogs"
-				class:active={$page.url.pathname.includes("/blogs")}
-			>
-				<div class="stat">
-					<CupLine size="18.4px" class="mr-1" />
-					<span class="select-none">{abbreviate(data.stats.blogs)}</span>
-				</div>
-				<div class="stat-label">Blog{pluralize(data.stats.blogs)}</div>
-			</a>
-			<a
-				class="stat-box hover:bg-zinc-300 dark:hover:bg-zinc-600"
-				href="/profile/{data.id}/{slugify(data.username)}/shelves"
-				class:active={$page.url.pathname.includes("/shelves")}
-			>
-				<div class="relative top-0.5 flex flex-col items-center">
-					<div class="stat">
-						<BarChart2Line size="18.4px" />
-					</div>
-					<div class="stat-label">Shelves</div>
-				</div>
-			</a>
-		</div>
-		<div class="px-4 py-2 mx-4 my-4 bg-zinc-300 dark:bg-zinc-600 rounded-xl">
-			<div class="mb-4">
-				<div class="flex items-center">
-					<Cake2Line size="20px" class="mr-1" />
-					<span class="all-small-caps font-bold tracking-wider text-lg"> Joined </span>
-				</div>
-				<Time timestamp={data.createdAt} />
-			</div>
-			<div class="mt-4" class:mb-4={Object.keys(data.links).length > 0}>
-				<div class="flex items-center">
-					<InformationLine size="20px" class="mr-1" />
-					<span class="all-small-caps font-bold tracking-wider text-lg"> About Me </span>
-				</div>
-				<div class="markdown-text pb-1">
-					<SvelteMarkdown source={data.info.bio} />
-				</div>
-			</div>
-			{#if Object.keys(data.links).length !== 0}
-				<div class="mt-4">
+				<div class="lg:min-w-[250px] mb-2 lg:mb-0 lg:mr-4">
 					<div class="flex items-center">
-						<LinksFill size="20px" class="mr-1" />
-						<span class="all-small-caps font-bold tracking-wider text-lg"> Links </span>
+						<InformationLine size="20px" class="mr-1" />
+						<span
+							class="all-small-caps font-bold tracking-wider relative -top-0.5 text-lg"
+						>
+							About Me
+						</span>
 					</div>
-					<div class="flex items-center flex-wrap">
-						{#each Object.keys(data.links) as key}
-							<LinkTag kind={key} href={data.links[key]} />
-						{/each}
+					<div class="markdown-text">
+						<SvelteMarkdown source={data.info.bio} />
 					</div>
 				</div>
-			{/if}
+				{#if Object.keys(data.links).length !== 0}
+					<div>
+						<div class="flex items-center">
+							<LinksFill size="20px" class="mr-1" />
+							<span class="all-small-caps font-bold tracking-wider text-lg">
+								Links
+							</span>
+						</div>
+						<div class="flex items-center flex-wrap">
+							{#each Object.keys(data.links) as key}
+								<LinkTag kind={key} href={data.links[key]} />
+							{/each}
+						</div>
+					</div>
+				{/if}
+			</div>
+			<div class="flex-1"><!--spacer--></div>
+			<div
+				class="flex items-center justify-center lg:ml-4 w-full lg:w-fit self-end bg-zinc-300 dark:bg-zinc-600 rounded-xl overflow-hidden"
+			>
+				<a
+					class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500"
+					href="/profile/{data.id}/{slugify(data.username)}/works"
+					class:active={$page.url.pathname.includes("/works")}
+				>
+					<div class="stat">
+						<QuillPenLine size="18.4px" class="mr-1" />
+						<span class="select-none">{abbreviate(data.stats.works)}</span>
+					</div>
+					<div class="stat-label">Work{pluralize(data.stats.works)}</div>
+				</a>
+				<a
+					class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500"
+					href="/profile/{data.id}/{slugify(data.username)}/blogs"
+					class:active={$page.url.pathname.includes("/blogs")}
+				>
+					<div class="stat">
+						<CupLine size="18.4px" class="mr-1" />
+						<span class="select-none">{abbreviate(data.stats.blogs)}</span>
+					</div>
+					<div class="stat-label">Blog{pluralize(data.stats.blogs)}</div>
+				</a>
+				<a
+					class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500"
+					href="/profile/{data.id}/{slugify(data.username)}/shelves"
+					class:active={$page.url.pathname.includes("/shelves")}
+				>
+					<div class="relative top-0.5 flex flex-col items-center">
+						<div class="stat">
+							<BarChart2Line size="18.4px" />
+						</div>
+						<div class="stat-label">Shelves</div>
+					</div>
+				</a>
+			</div>
 		</div>
 	</div>
-	<div class="col-span-2 my-6 w-full">
-		<slot />
-	</div>
+	<slot />
 </div>
 
 <style lang="scss">
-	div.profile-block {
-		@apply flex flex-col overflow-hidden rounded-xl;
+	div.profile-header {
+		@apply grid xl:rounded-xl relative w-full mb-6 xl:mt-6 overflow-hidden;
+		grid-template-areas:
+			"banner banner"
+			"avatar user"
+			"action action";
+		grid-template-rows: 1fr auto auto;
+		grid-template-columns: auto 1fr;
+		div.avatar {
+			grid-area: banner / banner / avatar / avatar;
+			display: flex;
+			align-items: flex-end;
+			@apply p-4 pb-0 relative z-[2] items-end justify-self-start;
+		}
+		div.banner {
+			background: var(--accent);
+			grid-area: banner;
+			@apply relative;
+		}
+		div.user {
+			grid-area: user;
+			@apply p-4 pb-0 pl-0 flex items-center z-[2] relative;
+		}
+		div.tool-bar {
+			grid-area: action;
+			@apply flex flex-col lg:flex-row lg:items-center px-4 pb-4 lg:pt-4 flex-wrap;
+		}
+	}
+	div.big-art {
+		@apply h-[200px] lg:h-[250px];
+	}
+	div.small-art {
+		@apply h-[100px] lg:h-[150px];
 	}
 	a.stat-box {
-		@apply block cursor-pointer flex flex-col items-center select-none no-underline p-4 w-1/3 h-[70px] transition;
+		@apply block cursor-pointer flex flex-col items-center select-none no-underline p-4 w-1/3 h-[65px] transition;
 		color: var(--text-color);
 		div.stat {
-			@apply flex items-center;
+			@apply flex items-center relative -top-0.5;
 		}
 		div.stat-label {
-			@apply text-xs uppercase font-bold tracking-wider;
+			@apply text-xs uppercase font-bold tracking-wider relative -top-0.5;
 		}
 		&.active {
 			@apply text-white;

@@ -138,7 +138,7 @@
 
 <div class="max-w-7xl mx-auto">
 	<form
-		class="max-w-5xl mx-auto mb-6 lg:mt-6 lg:rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
+		class="xl:max-w-5xl mx-auto mb-6 xl:mt-6 xl:rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed"
 		use:form
 	>
 		<div class="flex border-b-2 border-zinc-300 dark:border-zinc-600">

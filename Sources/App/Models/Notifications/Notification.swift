@@ -53,6 +53,7 @@ extension Notification {
     enum EventType: String, Codable {
         // User events
         case follow = "follow"
+        case newReply = "new-reply"
         
         // Blog events
         case addFavorite = "add-favorite"

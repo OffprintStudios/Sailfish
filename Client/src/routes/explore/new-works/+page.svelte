@@ -12,14 +12,14 @@
 	export let data: Paginate<Work>;
 	let loading = false;
 
-	$: currPage = +($page.url.searchParams.get("page") ?? "1");
-	$: perPage = +($page.url.searchParams.get("per") ?? "24");
+	let currPage = +($page.url.searchParams.get("page") ?? "1");
+	let perPage = +($page.url.searchParams.get("per") ?? "24");
 
 	async function fetchPage(pageNum: number) {
 		loading = true;
-		$page.url.searchParams.set("page", `${pageNum}`);
+		currPage = pageNum;
 		const response = await getReq<Paginate<Work>>(
-			`/explore/new-works?filter=${$app.filter}?page=${currPage}&per=${perPage}`
+			`/explore/new-works?filter=${$app.filter}&page=${currPage}&per=${perPage}`
 		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
@@ -36,7 +36,7 @@
 </svelte:head>
 
 {#if data.metadata.total > 0}
-	<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 w-full">
+	<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 w-full">
 		{#each data.items as work}
 			<WorkCard {work} withDropdown={false} />
 		{/each}

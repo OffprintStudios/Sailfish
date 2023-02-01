@@ -92,17 +92,25 @@
 				isVoting = false;
 				return;
 			}
-			const response = await patchReq<ReadingHistory>(
-				`/history/set-vote?workId=${work.id}&profileId=${$account.currProfile.id}`,
-				{
-					vote: history.vote === vote ? Vote.noVote : vote
-				}
-			);
+			const response = await patchReq<{
+				history: ReadingHistory;
+				likes: number;
+				dislikes: number;
+			}>(`/history/set-vote?workId=${work.id}&profileId=${$account.currProfile.id}`, {
+				vote: history.vote === vote ? Vote.noVote : vote
+			});
 			if ((response as ResponseError).error) {
 				const error = response as ResponseError;
 				toast.error(error.message);
 			} else {
-				history = response as ReadingHistory;
+				const result = response as {
+					history: ReadingHistory;
+					likes: number;
+					dislikes: number;
+				};
+				history = result.history;
+				work.likes = result.likes;
+				work.dislikes = result.dislikes;
 			}
 		} else {
 			toast.error(`You must be logged in to perform this action.`);
@@ -270,7 +278,7 @@
 	{#if work.coverArt}
 		<div class="cover-art">
 			<div
-				class="relative overflow-hidden w-max flex flex-col items-center justify-center bg-zinc-200 dark:bg-zinc-700 border-4 border-zinc-300 dark:border-zinc-600 rounded-xl z-[2]"
+				class="relative overflow-hidden w-max flex flex-col items-center justify-center bg-zinc-300 dark:bg-zinc-600 border-4 border-zinc-300 dark:border-zinc-600 rounded-xl z-[2]"
 				style="box-shadow: var(--dropshadow);"
 			>
 				<img
@@ -313,8 +321,10 @@
 			<img src={work.bannerArt} alt="cover art" class="w-full h-full object-cover" />
 		{/if}
 		<div class="absolute top-2 right-2 z-[2]">
-			<div class="lg:flex items-center hidden">
+			<div class="xl:flex items-center hidden">
 				<TagBadge kind={TagKind.category} category={work.category} />
+				<div class="mx-[0.075rem]"><!--spacer--></div>
+				<TagBadge kind={TagKind.workKind} workKind={work.kind} />
 				<div class="mx-[0.075rem]"><!--spacer--></div>
 				<TagBadge kind={TagKind.status} status={work.status} />
 				<div class="mx-[0.075rem]"><!--spacer--></div>
@@ -332,8 +342,10 @@
 					</div>
 				{/if}
 			</div>
-			<div class="flex items-center lg:hidden">
+			<div class="flex items-center xl:hidden">
 				<TagBadge kind={TagKind.category} category={work.category} size="small" />
+				<div class="mx-[0.075rem]"><!--spacer--></div>
+				<TagBadge kind={TagKind.workKind} workKind={work.kind} size="small" />
 				<div class="mx-[0.075rem]"><!--spacer--></div>
 				<TagBadge kind={TagKind.status} status={work.status} size="small" />
 				<div class="mx-[0.075rem]"><!--spacer--></div>
@@ -355,7 +367,7 @@
 	</div>
 	<div class="title-bar">
 		<div class="flex-1 hidden lg:block">
-			<h1 class="text-2xl lg:text-3xl" style="color: var(--text-color);">
+			<h1 class="text-2xl lg:text-3xl">
 				{work.title}
 			</h1>
 			<div class="flex items-center flex-wrap">
@@ -369,8 +381,8 @@
 						>{work.author.username}</a
 					>
 				</span>
-				<span class="mx-1 text-zinc-400 hidden lg:block">•</span>
-				<div class="hidden lg:flex items-center flex-wrap">
+				<span class="mx-1 text-zinc-400 hidden xl:block">•</span>
+				<div class="hidden xl:flex items-center flex-wrap">
 					{#each work.tags as tag}
 						{#if tag.kind === TagKind.genre}
 							<TagBadge {tag} kind={tag.kind} />
@@ -392,7 +404,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="flex-1 lg:hidden"><!--spacer--></div>
+		<div class="flex-1 xl:hidden"><!--spacer--></div>
 		<div class="flex items-center bg-zinc-300 dark:bg-zinc-600 rounded-xl p-1">
 			{#if history}
 				<Button
@@ -403,7 +415,7 @@
 				>
 					{#if history.vote === Vote.liked}
 						<ThumbUpFill class="button-icon" />
-						<span class="button-small-text">{abbreviate(work.likes + 1)}</span>
+						<span class="button-small-text">{abbreviate(work.likes)}</span>
 					{:else}
 						<ThumbUpLine class="button-icon text-green-600" />
 						<span class="button-small-text text-green-600"
@@ -420,7 +432,7 @@
 				>
 					{#if history.vote === Vote.disliked}
 						<ThumbDownFill class="button-icon" />
-						<span class="button-small-text">{abbreviate(work.dislikes + 1)}</span>
+						<span class="button-small-text">{abbreviate(work.dislikes)}</span>
 					{:else}
 						<ThumbDownLine class="button-icon text-red-600" />
 						<span class="button-small-text text-red-600"
@@ -443,7 +455,7 @@
 	</div>
 	<div class="tool-bar">
 		<div class="basis-full block mb-2 lg:hidden">
-			<h1 class="text-2xl lg:text-3xl" style="color: var(--text-color);">
+			<h1 class="text-2xl lg:text-3xl">
 				{work.title}
 			</h1>
 			<span
@@ -457,7 +469,7 @@
 				>
 			</span>
 		</div>
-		<div class="flex items-center flex-wrap basis-full mb-4 lg:hidden">
+		<div class="flex items-center flex-wrap basis-full mb-4 xl:hidden">
 			{#each work.tags as tag}
 				{#if tag.kind === TagKind.genre}
 					<TagBadge {tag} kind={tag.kind} size="small" />
@@ -601,7 +613,7 @@
 
 <style lang="scss">
 	div.header-container {
-		@apply grid lg:rounded-xl relative w-full mb-6 overflow-hidden;
+		@apply grid xl:rounded-xl relative w-full mb-6 xl:mt-6 overflow-hidden;
 		grid-template-areas:
 			"banner banner"
 			"cover title"
@@ -627,7 +639,7 @@
 		}
 		div.title-bar {
 			grid-area: title;
-			@apply p-4 pl-0 flex items-center z-[2] relative;
+			@apply p-4 lg:pt-2 pl-0 flex items-center z-[2] relative;
 		}
 		div.tool-bar {
 			grid-area: action;

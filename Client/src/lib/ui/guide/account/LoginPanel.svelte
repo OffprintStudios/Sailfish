@@ -1,20 +1,25 @@
 <script lang="ts">
 	import { createForm } from "felte";
-	import { TextField } from "$lib/ui/forms";
+	import { TextField, Checkbox } from "$lib/ui/forms";
 	import { Button } from "$lib/ui/util";
 	import { LoginCircleLine } from "svelte-remixicon";
 	import { account } from "$lib/state/account.state";
 	import type { LoginForm } from "$lib/models/accounts";
 	import toast from "svelte-french-toast";
-	import { prevPage } from "../guide.state";
+	import { prevPage } from "$lib/ui/guide";
 
-	const { form, errors, isSubmitting } = createForm({
+	const { form, data, errors, isSubmitting } = createForm({
 		onSubmit: async (values) => {
 			const formInfo: LoginForm = {
 				email: values.email,
 				password: values.password,
+				rememberMe: values.rememberMe
 			};
-			const response = await fetch('/api/auth/log-in', { method: 'POST', body: JSON.stringify(formInfo), credentials: 'include' });
+			const response = await fetch("/api/auth/log-in", {
+				method: "POST",
+				body: JSON.stringify(formInfo),
+				credentials: "include"
+			});
 			const data = await response.json();
 			if (response.status === 200) {
 				$account.account = data.account;
@@ -27,20 +32,24 @@
 		},
 		validate: (values) => {
 			const errors = {
-				email: '',
-				password: '',
+				email: "",
+				password: ""
 			};
-			if (!values.email || !/^[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/.test(values.email)) {
-				errors.email = 'Not a valid email address.';
+			if (
+				values.email === "" ||
+				!/^[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/.test(values.email)
+			) {
+				errors.email = "Not a valid email address.";
 			}
-			if (!values.password) {
+			if (values.password === "") {
 				errors.password = `Aren't you forgetting something?`;
 			}
 			return errors;
 		},
 		initialValues: {
-			email: null,
-			password: null,
+			email: "",
+			password: "",
+			rememberMe: false
 		}
 	});
 </script>
@@ -68,10 +77,17 @@
 				errorMessage={$errors.password}
 			/>
 			<div class="my-4">
-				<a href="/registration/request-password-reset" class="text-sm">Forgot your password?</a>
+				<a href="/recovery/send-reset-email" class="text-sm">Forgot your password?</a>
 			</div>
-			<div class="flex items-center justify-center">
-				<Button kind="primary" type="submit" loading={$isSubmitting} loadingText="Signing in...">
+			<div class="flex items-center">
+				<Checkbox bind:value={$data.rememberMe}>Remember Me</Checkbox>
+				<div class="flex-1"><!--spacer--></div>
+				<Button
+					kind="primary"
+					type="submit"
+					loading={$isSubmitting}
+					loadingText="Signing in..."
+				>
 					<LoginCircleLine class="button-icon" />
 					<span class="button-text">Log In</span>
 				</Button>
@@ -81,5 +97,5 @@
 </div>
 
 <style lang="scss">
-	@use '../Guide';
+	@use "../Guide";
 </style>

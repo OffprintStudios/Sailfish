@@ -44,7 +44,7 @@
 			<div class="cover-art">
 				<img
 					src={work.coverArt}
-					class="border-4 border-zinc-300 dark:border-zinc-600 object-contain rounded-xl max-w-[6rem] max-h-[6rem]"
+					class="bg-zinc-300 dark:bg-zinc-600 border-4 border-zinc-300 dark:border-zinc-600 object-contain rounded-xl max-w-[6rem] max-h-[6rem]"
 					style="box-shadow: var(--dropshadow);"
 					alt="cover-art"
 				/>
@@ -70,6 +70,8 @@
 				<div class="flex-1"><!--spacer--></div>
 				<TagBadge category={work.category} kind={TagKind.category} size="small" />
 				<div class="mx-[0.025rem]"><!--spacer--></div>
+				<TagBadge kind={TagKind.workKind} workKind={work.kind} size="small" />
+				<div class="mx-[0.075rem]" />
 				<TagBadge kind={TagKind.status} size="small" status={work.status} />
 				<div class="mx-[0.025rem]"><!--spacer--></div>
 				<TagBadge kind={TagKind.rating} rating={work.rating} size="small" />
@@ -111,7 +113,10 @@
 		{@html work.shortDesc}
 	</div>
 	<div class="flex-1"><!--spacer--></div>
-	<div class="flex items-center text-zinc-400 px-2 py-1" style="font-family: var(--header-text);">
+	<div
+		class="flex items-center text-zinc-400 lg:text-sm text-xs px-2 py-1"
+		style="font-family: var(--header-text);"
+	>
 		<span class="flex items-center relative z-[2] text-green-600" title="Likes">
 			{#if work.likes > work.dislikes}
 				<ThumbUpFill class="mr-1" size="16px" />

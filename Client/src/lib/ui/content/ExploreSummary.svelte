@@ -99,7 +99,7 @@
 			<p>Just watch out for the tumbleweeds.</p>
 		</div>
 	{:else}
-		<div class="section-items grid-cols-1 lg:grid-cols-3">
+		<div class="section-items grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
 			{#each newWorks?.items as work}
 				<WorkCard {work} withDropdown={false} />
 			{/each}
@@ -126,7 +126,7 @@
 			<p>Just watch out for the tumbleweeds.</p>
 		</div>
 	{:else}
-		<div class="section-items grid-cols-1 lg:grid-cols-3">
+		<div class="section-items grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
 			{#each updatedWorks?.items as work}
 				<WorkCard {work} withDropdown={false} />
 			{/each}
@@ -207,7 +207,7 @@
 </div>-->
 <style lang="scss">
 	div.section {
-		@apply max-w-6xl mx-auto my-6 first:mt-0;
+		@apply max-w-6xl w-11/12 xl:w-full mx-auto my-6 first:mt-0;
 		div.section-header {
 			@apply flex items-center border-b pb-2 mb-4;
 			font-family: var(--header-text);

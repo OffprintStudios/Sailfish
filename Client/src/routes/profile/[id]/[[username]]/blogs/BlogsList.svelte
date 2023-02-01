@@ -49,7 +49,7 @@
 
 <div class="my-6 w-11/12 lg:w-full mx-auto">
 	{#if blogs.metadata.total > 0}
-		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+		<div class="w-11/12 xl:w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-4">
 			{#each blogs.items as blog}
 				<BlogCard {blog} hasDropdown={false} />
 			{/each}

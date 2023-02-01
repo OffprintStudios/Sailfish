@@ -87,7 +87,7 @@ extension Section {
 
 extension Section.SectionForm: Validatable {
     static func validations(_ validations: inout Validations) {
-        validations.add("title", as: String.self, is: .count(3...120), required: true)
+        validations.add("title", as: String.self, is: .count(1...120), required: true)
         validations.add("body", as: String.self, is: .count(3...), required: true)
         validations.add("noteTop", as: String.self, is: .count(3...), required: false)
         validations.add("noteBottom", as: String.self, is: .count(3...), required: false)

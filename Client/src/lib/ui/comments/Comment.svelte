@@ -179,14 +179,9 @@
 			{/if}
 			<Dropdown position="bottom-end">
 				<svelte:fragment slot="button">
-					<More2Line class="button-icon no-text" />
+					<More2Line class="button-icon no-text" size="20px" />
 				</svelte:fragment>
 				<svelte:fragment slot="items">
-					<button type="button">
-						<DoubleQuotesL class="mr-2" />
-						<span>Add to multi-quote</span>
-					</button>
-					<div class="my-0.5"><!--spacer--></div>
 					<button type="button" on:click={reportComment}>
 						<AlarmWarningLine class="mr-2" />
 						<span>Report</span>

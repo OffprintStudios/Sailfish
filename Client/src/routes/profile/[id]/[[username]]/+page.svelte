@@ -26,7 +26,7 @@
 		items: [],
 		metadata: {
 			page: 1,
-			per: 4,
+			per: 2,
 			total: 0
 		}
 	};
@@ -63,7 +63,7 @@
 				`published=${true}&` +
 				`filter=${$app.filter}&` +
 				`page=1&` +
-				`per=4`
+				`per=2`
 		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
@@ -86,22 +86,26 @@
 			<p>Well this is rather empty, isn't it?</p>
 		</div>
 	{:else}
-		{#if blogs.items[0]}
-			<div class="lg:px-8 mx-auto border-b pb-6 mb-6">
-				<BlogCard blog={blogs.items[0]} hasDropdown={false} />
-			</div>
-		{/if}
-		{#if works.items.length === 0}
-			<div class="empty">
-				<h3>No works added</h3>
-				<p>Well this is rather empty, isn't it?</p>
-			</div>
-		{:else}
-			<div class="w-full grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-2 gap-4">
-				{#each works.items as work}
-					<WorkCard {work} withDropdown={false} />
-				{/each}
-			</div>
-		{/if}
+		<div class="w-11/12 mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4">
+			{#if blogs.items[0]}
+				<div class="lg:col-span-2">
+					<BlogCard blog={blogs.items[0]} hasDropdown={false} bigPreview={true} />
+				</div>
+			{/if}
+			{#if works.items.length === 0}
+				<div class="empty">
+					<h3>No works added</h3>
+					<p>Well this is rather empty, isn't it?</p>
+				</div>
+			{:else}
+				<div class="col-span-1">
+					{#each works.items as work}
+						<div class="my-2 first:mt-0 last:mb-0">
+							<WorkCard {work} withDropdown={false} />
+						</div>
+					{/each}
+				</div>
+			{/if}
+		</div>
 	{/if}
 </div>

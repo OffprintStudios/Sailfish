@@ -35,6 +35,12 @@ final class Account: Model, Content {
     var sessions: [Session]
     
     @Children(for: \.$account)
+    var recovery: [PasswordReset]
+    
+    @Children(for: \.$account)
+    var confirmation: [EmailConfirmation]
+    
+    @Children(for: \.$account)
     var reports: [AccountReport]
 
     @Timestamp(key: FieldKeys.createdAt, on: .create)
@@ -79,6 +85,7 @@ extension Account {
     struct LoginForm: Content {
         var email: String
         var password: String
+        var rememberMe: Bool
     }
 
     struct ChangeEmail: Content {
@@ -126,5 +133,6 @@ extension Account.LoginForm: Validatable {
     static func validations(_ validations: inout Validations) {
         validations.add("email", as: String.self, is: !.empty)
         validations.add("password", as: String.self, is: !.empty)
+        validations.add("rememberMe", as: Bool.self, is: .valid)
     }
 }

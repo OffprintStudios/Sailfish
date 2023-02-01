@@ -10,6 +10,7 @@ struct ShelfController: RouteCollection {
         let shelves = routes.grouped("shelves")
         let shelvesWithAuth = shelves.grouped([
             IdentityGuard(needs: [.user], checkProfile: true),
+            ConfirmationGuard(),
             MutedGuard(),
             BannedGuard(),
         ])

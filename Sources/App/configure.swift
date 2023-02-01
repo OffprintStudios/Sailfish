@@ -4,6 +4,7 @@ import Vapor
 import QueuesRedisDriver
 import JWT
 import SotoS3
+import SendGrid
 
 // configures your application
 public func configure(_ app: Application) async throws {
@@ -62,6 +63,10 @@ public func configure(_ app: Application) async throws {
         CreateBlogTitleIndex(),
         CreateWorkTitleIndex(),
         AddUniqueConstraintToApprovalQueue(),
+        CreateEmailConfirmation(),
+        CreatePasswordReset(),
+        CreateWorkIPView(),
+        CreateBlogIPView(),
     ])
 
     try await app.autoMigrate()
@@ -77,6 +82,7 @@ public func configure(_ app: Application) async throws {
     // Adding Jobs
     app.logger.notice("Adding jobs...")
     app.queues.add(AddNotificationJob())
+    app.queues.add(AddEmailJob())
 
     // CORS configuration
     app.logger.notice("Assigning CORS configuration...")
@@ -105,6 +111,7 @@ public func configure(_ app: Application) async throws {
     app.middleware.use(cors, at: .beginning)
 
     // Configuring AWS
+    app.logger.notice("Configuring AWS...")
     app.aws.client = AWSClient(
         credentialProvider: .static(
             accessKeyId: Environment.get("DIGITALOCEAN_SPACES_ACCESS_KEY") ?? "nil",
@@ -112,6 +119,10 @@ public func configure(_ app: Application) async throws {
         ),
         httpClientProvider: .createNew
     )
+    
+    // Configuring SendGrid
+    app.logger.notice("Configuring SendGrid...")
+    app.sendgrid.initialize()
 
     // Register routes
     app.logger.notice("Acknowledging routes...")

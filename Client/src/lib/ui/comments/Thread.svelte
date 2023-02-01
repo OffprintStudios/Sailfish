@@ -20,11 +20,15 @@
 	export let perPage = 25;
 
 	const threadService = new ThreadService(type, threadId, content);
-	const { loading, page } = threadService;
+	const { loading, page, replies } = threadService;
 
 	async function changePage(newPage: number) {
 		pageNum = newPage;
 		await threadService.fetchPage(pageNum, perPage, sectionId);
+	}
+
+	function onReply(comment: CommentModel) {
+		$replies = [...$replies, comment];
 	}
 </script>
 
@@ -62,6 +66,7 @@
 			{comment}
 			index={$page.metadata.per * ($page.metadata.page - 1) + (i + 1)}
 			{threadService}
+			on:reply={(event) => onReply(event.detail)}
 		/>
 	{/each}
 {/if}

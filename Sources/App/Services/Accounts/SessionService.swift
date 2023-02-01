@@ -17,9 +17,15 @@ struct SessionService {
     }
 
     /// Creates a new session for the specified account, saving it to the database.
-    func createSession(for account: Account) async throws -> Session.ClientPackage {
+    func createSession(for account: Account, rememberMe: Bool) async throws -> Session.ClientPackage {
         let sessionId = UUID()
-        let newSession = Session(id: sessionId, via: getUserAgent(), expires: Date(timeInterval: SESSION_EXPIRATION, since: Date()))
+        var sessionExpiration: Date
+        if rememberMe {
+            sessionExpiration = .init(timeIntervalSinceNow: LONG_SESSION)
+        } else {
+            sessionExpiration = .init(timeIntervalSinceNow: SHORT_SESSION)
+        }
+        let newSession = Session(id: sessionId, via: getUserAgent(), expires: sessionExpiration)
         try await account.$sessions.create(newSession, on: request.db)
 
         let token = try request.jwt.sign(Session.TokenPayload(
@@ -35,7 +41,8 @@ struct SessionService {
             account: .init(from: account),
             profiles: profiles,
             accessToken: token,
-            refreshToken: base64Session
+            refreshToken: base64Session,
+            refreshExpirationTime: rememberMe ? LONG_SESSION : SHORT_SESSION
         )
     }
 
@@ -84,7 +91,7 @@ struct SessionService {
         return Session.DeviceInfo(
             browserName: parsedInfo.browser?.name ?? "unknown name",
             browserVer: parsedInfo.browser?.version ?? "unknown version",
-            ipAddr: request.remoteAddress?.ipAddress ?? "unknown",
+            ipAddr: request.headers.first(name: "X-Offprint-Client-IP") ?? "unknown IP",
             osName: parsedInfo.os?.name ?? "unknown name",
             osVer: parsedInfo.os?.version ?? "unknown version"
         )

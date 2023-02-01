@@ -10,6 +10,7 @@
 	export let blog: Blog;
 	export let showAvatar = false;
 	export let hasDropdown = true;
+	export let bigPreview = false;
 </script>
 
 <div
@@ -48,7 +49,11 @@
 			</Dropdown>
 		{/if}
 	</div>
-	<div class="blog-preview">
+	<div
+		class="blog-preview blog-body"
+		class:small-preview={!bigPreview}
+		class:big-preview={bigPreview}
+	>
 		{@html blog.body}
 	</div>
 	<div class="blog-stats bg-zinc-300 dark:bg-zinc-600">
@@ -84,7 +89,13 @@
 			background: var(--accent);
 		}
 		div.blog-preview {
-			@apply px-6 line-clamp-[8] max-h-[14rem];
+			@apply px-6;
+			&.small-preview {
+				@apply max-h-[14rem] line-clamp-[8];
+			}
+			&.big-preview {
+				@apply max-h-[24rem] line-clamp-[16];
+			}
 		}
 		div.blog-stats {
 			@apply flex items-center rounded-xl mx-2 my-2.5 px-2 py-1;

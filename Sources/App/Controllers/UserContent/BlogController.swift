@@ -10,10 +10,12 @@ struct BlogController: RouteCollection {
         let blogs = routes.grouped("blogs")
         let blogsWithAuth = blogs.grouped([
             IdentityGuard(needs: [.user], checkProfile: true),
+            ConfirmationGuard(),
             BannedGuard(),
         ])
         let blogComments = blogs.grouped([
             IdentityGuard(needs: [.user], checkProfile: true),
+            ConfirmationGuard(),
             MutedGuard(),
             BannedGuard(),
         ])

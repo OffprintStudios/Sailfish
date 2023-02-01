@@ -36,7 +36,7 @@
 </svelte:head>
 
 {#if data.metadata.total > 0}
-	<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 w-full">
+	<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 w-full">
 		{#each data.items as work}
 			<WorkCard {work} withDropdown={false} />
 		{/each}

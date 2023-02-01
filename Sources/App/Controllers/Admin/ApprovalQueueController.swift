@@ -10,11 +10,13 @@ struct ApprovalQueueController: RouteCollection {
         let queue = routes.grouped("approval-queue")
             .grouped([
                 IdentityGuard(needs: [.admin, .moderator, .workApprover]),
+                ConfirmationGuard(),
                 BannedGuard()
             ])
         let queueCheckProfile = routes.grouped("approval-queue")
             .grouped([
                 IdentityGuard(needs: [.admin, .moderator, .workApprover], checkProfile: true),
+                ConfirmationGuard(),
                 BannedGuard(),
             ])
         

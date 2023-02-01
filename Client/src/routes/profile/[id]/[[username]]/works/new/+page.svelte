@@ -160,12 +160,6 @@
 				errors.genres = `You must select at least one genre.`;
 			}
 
-			if (values.category === Category.Fanwork) {
-				if (selectedFandoms.length < 1) {
-					errors.fandoms = `You must select at least one fandom.`;
-				}
-			}
-
 			return errors;
 		},
 		initialValues: {
@@ -231,6 +225,47 @@
 					<div class="text-xs hidden lg:block">
 						Derivative works&mdash;labors of love and naval combat, inspired by worlds
 						of other origin.
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="flex flex-col lg:flex-row border-b border-zinc-400 dark:border-zinc-500">
+			<div
+				class="w-full lg:w-1/4 flex items-center lg:flex-col lg:items-end px-4 pt-2 pb-0 lg:pt-2 lg:pb-3 lg:border-r border-zinc-400 dark:border-zinc-500"
+			>
+				<h3 class="text-lg" style="color: var(--text-color);">Kind</h3>
+				<span class="text-xs italic text-zinc-400 text-right hidden lg:block">
+					What kind of work is this? Select from the dropdown to view a short description.
+				</span>
+			</div>
+			<div class="w-full lg:w-3/4 px-2.5 py-2.5 flex flex-col items-center justify-center">
+				<div class="w-full bg-cyan-800 bg-opacity-10 border border-cyan-700 rounded-xl">
+					<select
+						name="kind"
+						class="w-full rounded-t-xl lg:border-b-2 border-cyan-700 bg-transparent border-0 focus:ring-0 focus:border-cyan-700"
+					>
+						<option value={Kind.Prose}>{Kind.Prose}</option>
+						<option value={Kind.Poetry}>{Kind.Poetry}</option>
+						<option value={Kind.Nonfiction}>{Kind.Nonfiction}</option>
+						<option value={Kind.Script}>{Kind.Script}</option>
+						<option value={Kind.Anthology}>{Kind.Anthology}</option>
+					</select>
+					<div class="self-start hidden px-4 py-4 lg:flex flex-col">
+						<span class="uppercase font-bold tracking-wider mb-2">DESCRIPTION</span>
+						{#if $data.kind === Kind.Prose}
+							Fictional works written plainly—the Standard Writing Method.
+						{:else if $data.kind === Kind.Poetry}
+							Lines organized with or without meter, playing with often abstract forms
+							of language.
+						{:else if $data.kind === Kind.Nonfiction}
+							A story told from reality, written by either someone who was there or
+							someone who did their research.
+						{:else if $data.kind === Kind.Script}
+							A story written for the stage or the screen.
+						{:else if $data.kind === Kind.Anthology}
+							A collection of drabbles, short stories, accounts, you name it. Best for
+							collections of disparate things than a cohesive whole.
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -311,6 +346,11 @@
 			<div
 				class="w-full lg:w-3/4 px-2.5 py-2.5 flex items-center lg:justify-center flex-wrap"
 			>
+				{#if !!$errors.genres && $errors.genres !== ""}
+					<span class="text-[0.625rem] text-red-500 relative -top-1 left-2"
+						>{$errors.genres}</span
+					>
+				{/if}
 				{#each genres as genre}
 					<div
 						class="mx-[0.075rem] px-0.5 pb-1 rounded-lg border border-transparent"
