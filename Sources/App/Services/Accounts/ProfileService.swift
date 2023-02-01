@@ -22,6 +22,7 @@ struct ProfileService {
     
     /// Updates an existing profile
     func updateProfile(with profileForm: Profile.ProfileForm) async throws -> Profile {
+        let account = try request.authService.getUser().account
         let profile = try request.authService.getUser(withProfile: true).profile!
         let existingUsername = try await Profile.query(on: request.db).filter(\.$username == profileForm.username).first()
         if let alreadyExists = existingUsername {
@@ -34,10 +35,14 @@ struct ProfileService {
         if let bio = profileForm.bio {
             profile.info.bio = try SwiftSoup.clean(bio, .none())!
         }
-        if let tagline = profileForm.tagline {
-            profile.info.tagline = try SwiftSoup.clean(tagline, .none())!
+        if canAccess(needs: [.admin, .moderator, .chatModerator, .vip], has: account.roles) {
+            if let tagline = profileForm.tagline {
+                profile.info.tagline = try SwiftSoup.clean(tagline, .none())!
+            }
         }
-        try await profile.save(on: request.db)
+        try await request.db.transaction { database in
+            try await profile.save(on: database)
+        }
         return profile
     }
     
