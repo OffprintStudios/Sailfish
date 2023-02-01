@@ -29,7 +29,7 @@
 </script>
 
 <div
-	class="work-card bg-zinc-00 dark:bg-zinc-700 dark:highlight-shadowed hover:bg-zinc-300 dark:hover:bg-zinc-600"
+	class="work-card bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed hover:bg-zinc-300 dark:hover:bg-zinc-600"
 	title={work.title}
 >
 	<a

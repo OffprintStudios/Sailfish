@@ -106,7 +106,7 @@ struct ApprovalQueueService {
             throw Abort(.notFound, reason: "This work was either claimed by someone else or its queue entry does not exist.")
         }
         try await request.queue.dispatch(AddNotificationJob.self, .init(
-            to: profile.id!,
+            to: item.work.author.id!,
             from: nil,
             event: .workApproved,
             entity: item.work.id,
@@ -140,7 +140,7 @@ struct ApprovalQueueService {
             throw Abort(.notFound, reason: "This work was either claimed by someone else or its queue entry does not exist.")
         }
         try await request.queue.dispatch(AddNotificationJob.self, .init(
-            to: profile.id!,
+            to: item.work.author.id!,
             from: nil,
             event: .workRejected,
             entity: item.work.id,
