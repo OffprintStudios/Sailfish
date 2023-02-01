@@ -162,12 +162,12 @@
 				<img src={data.bannerArt} alt="cover art" class="w-full h-full object-cover" />
 			{/if}
 			<div class="absolute top-2 right-2 z-[2]">
-				<div class="relative top-0.5">
+				<div class="relative top-0.5 flex items-center">
 					<div class="lg:hidden">
 						<RoleBadge roles={data.account.roles} size="large" />
 					</div>
 					{#if $account.account && $account.currProfile && $account.currProfile.id === data.id}
-						<div class="mx-2 text-white text-lg relative top-[0.1625rem]">|</div>
+						<div class="lg:hidden mx-2 text-white text-lg relative">|</div>
 						<Button on:click={updateBanner} kind="primary">
 							{#if data.bannerArt}
 								<ImageEditLine class="button-icon no-text" size="18px" />
