@@ -35,7 +35,6 @@ func defaultWhitelist() throws -> Whitelist {
         .addAttributes("iframe", "width", "height", "allowfullscreen", "src", "start")
         .addAttributes("div", "data-youtube-video", "contenteditable", "draggable", "class")
         .addAttributes("p", "style")
-        .addAtributes("a", "href")
         .addAttributes("span", "style")
         .addAttributes("hr", "contenteditable")
 }
