@@ -14,7 +14,14 @@
 
 	export let data: Profile;
 	let loading = false;
-	let shelves: Paginate<Shelf> = null;
+	let shelves: Paginate<Shelf> = {
+		items: [],
+		metadata: {
+			page: 1,
+			per: 20,
+			total: 0
+		}
+	};
 
 	onMount(async () => {
 		try {
@@ -51,7 +58,7 @@
 			onConfirm: async () => {
 				let result = await toast.promise<void | ResponseError>(
 					delReq<void>(
-						`/shelves/delete?profileId=${$account.currProfile.id}&shelfId=${id}`
+						`/shelves/delete?profileId=${$account.currProfile?.id}&shelfId=${id}`
 					),
 					{
 						loading: "Deleting...",

@@ -13,17 +13,19 @@
 	import type { ResponseError } from "$lib/http";
 
 	let blogs: Blog[] = [];
-	let pageNum = $page.url.searchParams.has("page") ? $page.url.searchParams.get("page") : 1;
-	let per = $page.url.searchParams.has("per") ? $page.url.searchParams.get("per") : 10;
+	let pageNum = +($page.url.searchParams.get("page") ?? "1");
+	let perPage = +($page.url.searchParams.get("per") ?? "10");
 	let total = 1;
 	let loading = false;
 
 	onMount(async () => {
-		await fetchPending();
+		await fetchPending(pageNum);
 	});
 
-	async function fetchPending() {
+	async function fetchPending(newPage: number) {
 		loading = true;
+		pageNum = newPage;
+		$page.url.searchParams.set("page", `${newPage}`);
 		const response = await getReq<Paginate<Blog>>(
 			"/blogs/fetch?" +
 				"authorId=" +
@@ -39,7 +41,7 @@
 				pageNum +
 				"&" +
 				"per=" +
-				per
+				perPage
 		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
@@ -48,7 +50,7 @@
 			const result = response as Paginate<Blog>;
 			blogs = result.items;
 			pageNum = result.metadata.page;
-			per = result.metadata.per;
+			perPage = result.metadata.per;
 			total = result.metadata.total;
 		}
 		loading = false;
@@ -74,7 +76,12 @@
 			</div>
 		{/if}
 		{#if blogs.length > 0}
-			<Paginator currPage={pageNum} perPage={per} totalItems={total} />
+			<Paginator
+				currPage={pageNum}
+				{perPage}
+				totalItems={total}
+				on:change={(event) => fetchPending(event.detail)}
+			/>
 		{/if}
 	</div>
 {/if}

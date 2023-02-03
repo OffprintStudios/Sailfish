@@ -42,5 +42,5 @@
 {#if $account.account && $account.currProfile && $account.currProfile.id === data.id}
 	<WorksManagement profile={data} />
 {:else}
-	<WorksList profile={data} page={pageNum} {per} />
+	<WorksList profile={data} />
 {/if}

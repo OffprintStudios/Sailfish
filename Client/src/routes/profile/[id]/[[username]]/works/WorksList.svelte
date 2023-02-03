@@ -9,26 +9,29 @@
 	import type { ResponseError } from "$lib/http";
 	import type { Profile } from "$lib/models/accounts";
 	import toast from "svelte-french-toast";
+	import { page } from "$app/stores";
 
 	export let profile: Profile;
-	export let page = 1;
-	export let per = 10;
+	let pageNum = +($page.url.searchParams.get("page") ?? "1");
+	let perPage = +($page.url.searchParams.get("per") ?? "10");
 	let works: Work[] = [];
 	let total = 1;
 
 	onMount(async () => {
-		await fetchWorks(page);
+		await fetchWorks(pageNum);
 	});
 
 	async function fetchWorks(newPage: number) {
-		page = newPage;
+		pageNum = newPage;
+		$page.url.searchParams.set("page", `${pageNum}`);
+		$page.url.searchParams.set("per", `${perPage}`);
 		const response = await getReq<Paginate<Work>>(
 			`/works/fetch-works?` +
 				`authorId=${profile.id}&` +
 				`published=${true}&` +
 				`filter=${$app.filter}&` +
-				`page=${page}&` +
-				`per=${per}`
+				`page=${pageNum}&` +
+				`per=${perPage}`
 		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
@@ -36,8 +39,8 @@
 		} else {
 			const result = response as Paginate<Work>;
 			works = result.items;
-			page = result.metadata.page;
-			per = result.metadata.per;
+			pageNum = result.metadata.page;
+			perPage = result.metadata.per;
 			total = result.metadata.total;
 		}
 	}
@@ -58,8 +61,8 @@
 	{/if}
 	{#if works.length > 0}
 		<Paginator
-			currPage={page}
-			perPage={per}
+			currPage={pageNum}
+			{perPage}
 			totalItems={total}
 			on:change={(event) => fetchWorks(event.detail)}
 		/>

@@ -16,24 +16,27 @@
 	import DeleteWorkPrompt from "./DeleteWorkPrompt.svelte";
 
 	let works: Work[] = [];
-	let pageNum = $page.url.searchParams.has("page") ? $page.url.searchParams.get("page") : 1;
-	let per = $page.url.searchParams.has("per") ? $page.url.searchParams.get("per") : 10;
+	let pageNum = +($page.url.searchParams.get("page") ?? "1");
+	let perPage = +($page.url.searchParams.get("per") ?? "10");
 	let total = 1;
 	let loading = false;
 
 	onMount(async () => {
-		await fetchPublished();
+		await fetchPublished(pageNum);
 	});
 
-	async function fetchPublished() {
+	async function fetchPublished(newPage: number) {
 		loading = true;
+		pageNum = newPage;
+		$page.url.searchParams.set("page", `${pageNum}`);
+		$page.url.searchParams.set("per", `${perPage}`);
 		const response = await getReq<Paginate<Work>>(
 			`/works/fetch-works?` +
 				`authorId=${$account.currProfile?.id}&` +
 				`published=${true}&` +
 				`filter=${ContentFilter.everything}&` +
 				`page=${pageNum}&` +
-				`per=${per}&`
+				`per=${perPage}&`
 		);
 		if ((response as ResponseError).error) {
 			const error = response as ResponseError;
@@ -42,7 +45,7 @@
 			const result = response as Paginate<Work>;
 			works = result.items;
 			pageNum = result.metadata.page;
-			per = result.metadata.per;
+			perPage = result.metadata.per;
 			total = result.metadata.total;
 		}
 		loading = false;
@@ -63,7 +66,7 @@
 					const error = result as ResponseError;
 					toast.error(error.message);
 				} else {
-					await fetchPublished();
+					await fetchPublished(pageNum);
 				}
 			}
 		});
@@ -105,5 +108,10 @@
 {/if}
 
 {#if works.length > 0}
-	<Paginator currPage={pageNum} perPage={per} totalItems={total} />
+	<Paginator
+		currPage={pageNum}
+		{perPage}
+		totalItems={total}
+		on:change={(event) => fetchPublished(event.detail)}
+	/>
 {/if}

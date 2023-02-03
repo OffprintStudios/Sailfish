@@ -24,8 +24,8 @@
 			total: 0
 		}
 	};
-	$: pageNum = +($page.url.searchParams.get("page") ?? "1");
-	$: perPage = +($page.url.searchParams.get("per") ?? "10");
+	let pageNum = +($page.url.searchParams.get("page") ?? "1");
+	let perPage = +($page.url.searchParams.get("per") ?? "10");
 	let loading = false;
 
 	onMount(async () => {
@@ -34,6 +34,7 @@
 
 	async function fetchPublished(newPage: number) {
 		loading = true;
+		pageNum = newPage;
 		$page.url.searchParams.set("page", `${newPage}`);
 		const response = await getReq<Paginate<Blog>>(
 			"/blogs/fetch?" +
