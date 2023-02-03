@@ -86,7 +86,7 @@
 			<p>Well this is rather empty, isn't it?</p>
 		</div>
 	{:else}
-		<div class="w-11/12 mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4">
+		<div class="w-full lg:w-11/12 xl:w-full mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4">
 			{#if blogs.items[0]}
 				<div class="lg:col-span-2">
 					<BlogCard blog={blogs.items[0]} hasDropdown={false} bigPreview={true} />
