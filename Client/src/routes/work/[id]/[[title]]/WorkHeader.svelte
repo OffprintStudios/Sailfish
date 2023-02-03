@@ -392,7 +392,7 @@
 					{#each fandoms as tag, i}
 						{#if i === 0}
 							<TagBadge {tag} kind={tag.kind} />
-							{#if fandoms.length > 0}
+							{#if fandoms.length > 1}
 								<button
 									class="relative text-lg top-0.5 ml-2 text-zinc-400"
 									style="font-family: var(--header-text);"
