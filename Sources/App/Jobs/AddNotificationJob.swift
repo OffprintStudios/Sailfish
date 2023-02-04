@@ -37,7 +37,7 @@ struct AddNotificationJob: AsyncJob {
             )
         )
         try await context.application.db.transaction { database in
-            try await newNotification.save(on: context.application.db)
+            try await newNotification.save(on: database)
         }
     }
 
