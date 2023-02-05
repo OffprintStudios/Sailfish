@@ -14,12 +14,13 @@
 		items: data.items,
 		metadata: data.metadata
 	};
-	$: pageNum = +($page.url.searchParams.get("page") ?? "1");
-	$: perPage = +($page.url.searchParams.get("per") ?? "21");
+	let pageNum = +($page.url.searchParams.get("page") ?? "1");
+	let perPage = +($page.url.searchParams.get("per") ?? "21");
 	let loading = false;
 
 	async function fetchPage(newPage: number) {
 		loading = true;
+		pageNum = newPage;
 		$page.url.searchParams.set("page", `${newPage}`);
 		$page.url.searchParams.set("per", `${perPage}`);
 		const response = await getReq<Paginate<Profile>>(

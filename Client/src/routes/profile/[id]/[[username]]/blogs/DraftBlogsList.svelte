@@ -24,8 +24,8 @@
 			total: 0
 		}
 	};
-	$: pageNum = +($page.url.searchParams.get("page") ?? "1");
-	$: perPage = +($page.url.searchParams.get("per") ?? "10");
+	let pageNum = +($page.url.searchParams.get("page") ?? "1");
+	let perPage = +($page.url.searchParams.get("per") ?? "10");
 	let loading = false;
 
 	onMount(async () => {
@@ -34,6 +34,7 @@
 
 	async function fetchDrafts(newPage: number) {
 		loading = true;
+		pageNum = newPage;
 		$page.url.searchParams.set("page", `${newPage}`);
 		const response = await getReq<Paginate<Blog>>(
 			"/blogs/fetch?" +
@@ -86,7 +87,7 @@
 {:else}
 	<div class="my-6 w-11/12 mx-auto">
 		{#if blogs.metadata.total > 0}
-			<div class="w-11/12 xl:w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-4">
+			<div class="w-full lg:w-11/12 xl:w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-4">
 				{#each blogs.items as blog}
 					<BlogCard {blog}>
 						<svelte:fragment slot="dropdown">

@@ -62,6 +62,7 @@ public func configure(_ app: Application) async throws {
         CreatePG_TRGMExtension(),
         CreateBlogTitleIndex(),
         CreateWorkTitleIndex(),
+        AddUniqueConstraintToApprovalQueue(),
         CreateEmailConfirmation(),
         CreatePasswordReset(),
         CreateWorkIPView(),

@@ -99,13 +99,15 @@
 		{#each fandoms as tag, i}
 			{#if i === 0}
 				<TagBadge {tag} kind={tag.kind} size="small" />
-				<button
-					class="relative z-[2] text-sm top-1 lg:top-0.5 ml-2 text-zinc-400"
-					style="font-family: var(--header-text);"
-					on:click={openAllTags}
-				>
-					+ {fandoms.length - 1} more
-				</button>
+				{#if fandoms.length > 1}
+					<button
+						class="relative z-[2] text-sm top-1 lg:top-0.5 ml-2 text-zinc-400"
+						style="font-family: var(--header-text);"
+						on:click={openAllTags}
+					>
+						+ {fandoms.length - 1} more
+					</button>
+				{/if}
 			{/if}
 		{/each}
 	</div>

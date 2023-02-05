@@ -289,7 +289,7 @@
 			<div
 				class="flex flex-col lg:flex-row px-3 py-2 my-4 lg:my-0 bg-zinc-300 dark:bg-zinc-600 lg:max-h-[85px] lg:max-w-[600px] rounded-xl"
 			>
-				<div class="lg:min-w-[250px] mb-2 lg:mb-0 lg:mr-4">
+				<div class="lg:min-w-[250px] mb-2 lg:mb-0">
 					<div class="flex items-center">
 						<InformationLine size="20px" class="mr-1" />
 						<span
@@ -303,7 +303,7 @@
 					</div>
 				</div>
 				{#if Object.keys(data.links).length !== 0}
-					<div>
+					<div class="lg:ml-2 lg:pl-2 lg:border-l-2 border-zinc-400 dark:border-zinc-500">
 						<div class="flex items-center">
 							<LinksFill size="20px" class="mr-1" />
 							<span class="all-small-caps font-bold tracking-wider text-lg">
