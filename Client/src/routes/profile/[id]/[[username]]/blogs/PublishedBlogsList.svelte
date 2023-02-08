@@ -15,27 +15,30 @@
 	import { DeleteBin2Line, Edit2Line } from "svelte-remixicon";
 	import { openPopup } from "$lib/ui/popup";
 	import DeleteBlogPrompt from "../blog/[blogId]/[[blogTitle]]/DeleteBlogPrompt.svelte";
+	import { goto } from "$app/navigation";
 
+	let pageNum = +($page.url.searchParams.get("page") ?? "1");
+	let perPage = +($page.url.searchParams.get("per") ?? "10");
 	let blogs: Paginate<Blog> = {
 		items: [],
 		metadata: {
-			page: 1,
-			per: 10,
+			page: pageNum,
+			per: perPage,
 			total: 0
 		}
 	};
-	let pageNum = +($page.url.searchParams.get("page") ?? "1");
-	let perPage = +($page.url.searchParams.get("per") ?? "10");
 	let loading = false;
 
 	onMount(async () => {
 		await fetchPublished(pageNum);
 	});
 
-	async function fetchPublished(newPage: number) {
+	async function fetchPublished(newPage: number, updateQuery = false) {
 		loading = true;
 		pageNum = newPage;
-		$page.url.searchParams.set("page", `${newPage}`);
+		let query = new URLSearchParams($page.url.searchParams.toString());
+		query.set("page", `${pageNum}`);
+		query.set("per", `${perPage}`);
 		const response = await getReq<Paginate<Blog>>(
 			"/blogs/fetch?" +
 				"authorId=" +
@@ -58,6 +61,11 @@
 			toast.error(error.message);
 		} else {
 			blogs = response as Paginate<Blog>;
+			pageNum = blogs.metadata.page;
+			perPage = blogs.metadata.per;
+			if (updateQuery) {
+				await goto(`?${query.toString()}`);
+			}
 		}
 		loading = false;
 	}
@@ -119,7 +127,8 @@
 				currPage={pageNum}
 				{perPage}
 				totalItems={blogs.metadata.total}
-				on:change={(event) => fetchPublished(event.detail)}
+				on:change={(event) => fetchPublished(event.detail, true)}
+				{loading}
 			/>
 		{/if}
 	</div>

@@ -11,21 +11,30 @@
 	import { Paginator } from "$lib/ui/util";
 	import { getReq } from "$lib/http";
 	import type { ResponseError } from "$lib/http";
+	import { goto } from "$app/navigation";
 
-	let blogs: Blog[] = [];
 	let pageNum = +($page.url.searchParams.get("page") ?? "1");
 	let perPage = +($page.url.searchParams.get("per") ?? "10");
-	let total = 1;
+	let blogs: Paginate<Blog> = {
+		items: [],
+		metadata: {
+			page: pageNum,
+			per: perPage,
+			total: 0
+		}
+	};
 	let loading = false;
 
 	onMount(async () => {
 		await fetchPending(pageNum);
 	});
 
-	async function fetchPending(newPage: number) {
+	async function fetchPending(newPage: number, updateQuery = false) {
 		loading = true;
 		pageNum = newPage;
-		$page.url.searchParams.set("page", `${newPage}`);
+		let query = new URLSearchParams($page.url.searchParams.toString());
+		query.set("page", `${pageNum}`);
+		query.set("per", `${perPage}`);
 		const response = await getReq<Paginate<Blog>>(
 			"/blogs/fetch?" +
 				"authorId=" +
@@ -47,11 +56,12 @@
 			const error = response as ResponseError;
 			toast.error(error.message);
 		} else {
-			const result = response as Paginate<Blog>;
-			blogs = result.items;
-			pageNum = result.metadata.page;
-			perPage = result.metadata.per;
-			total = result.metadata.total;
+			blogs = response as Paginate<Blog>;
+			pageNum = blogs.metadata.page;
+			perPage = blogs.metadata.per;
+			if (updateQuery) {
+				await goto(`?${query.toString()}`);
+			}
 		}
 		loading = false;
 	}
@@ -63,7 +73,7 @@
 	</div>
 {:else}
 	<div class="my-6 w-11/12 mx-auto">
-		{#if blogs.length > 0}
+		{#if blogs.items.length > 0}
 			<div class="w-full lg:w-11/12 xl:w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-4">
 				{#each blogs as blog}
 					<BlogCard {blog} />
@@ -75,12 +85,12 @@
 				<p>Add a blog and it'll show up here.</p>
 			</div>
 		{/if}
-		{#if blogs.length > 0}
+		{#if blogs.items.length > 0}
 			<Paginator
 				currPage={pageNum}
 				{perPage}
-				totalItems={total}
-				on:change={(event) => fetchPending(event.detail)}
+				totalItems={blogs.metadata.total}
+				on:change={(event) => fetchPending(event.detail, true)}
 			/>
 		{/if}
 	</div>
