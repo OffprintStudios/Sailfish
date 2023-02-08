@@ -8,7 +8,7 @@
 	export let totalItems: number;
 	export let loading = false;
 
-	let totalPages = Math.floor(totalItems / perPage);
+	let totalPages = Math.ceil(totalItems / perPage);
 	if (totalPages === 0) {
 		totalPages = 1;
 	}
