@@ -10,21 +10,31 @@
 	import type { Profile } from "$lib/models/accounts";
 	import toast from "svelte-french-toast";
 	import { page } from "$app/stores";
+	import { goto } from "$app/navigation";
 
 	export let profile: Profile;
 	let pageNum = +($page.url.searchParams.get("page") ?? "1");
-	let perPage = +($page.url.searchParams.get("per") ?? "10");
-	let works: Work[] = [];
-	let total = 1;
+	let perPage = +($page.url.searchParams.get("per") ?? "12");
+	let loadingPage = false;
+	let works: Paginate<Work> = {
+		items: [],
+		metadata: {
+			page: pageNum,
+			per: perPage,
+			total: 0
+		}
+	};
 
 	onMount(async () => {
 		await fetchWorks(pageNum);
 	});
 
-	async function fetchWorks(newPage: number) {
+	async function fetchWorks(newPage: number, updateQuery = false) {
+		loadingPage = true;
 		pageNum = newPage;
-		$page.url.searchParams.set("page", `${pageNum}`);
-		$page.url.searchParams.set("per", `${perPage}`);
+		let query = new URLSearchParams($page.url.searchParams.toString());
+		query.set("page", `${pageNum}`);
+		query.set("per", `${perPage}`);
 		const response = await getReq<Paginate<Work>>(
 			`/works/fetch-works?` +
 				`authorId=${profile.id}&` +
@@ -38,20 +48,23 @@
 			toast.error(error.message);
 		} else {
 			const result = response as Paginate<Work>;
-			works = result.items;
+			works = result;
 			pageNum = result.metadata.page;
 			perPage = result.metadata.per;
-			total = result.metadata.total;
+			if (updateQuery) {
+				await goto(`?${query.toString()}`);
+			}
 		}
+		loadingPage = false;
 	}
 </script>
 
 <div class="my-6 w-11/12 lg:w-full mx-auto">
-	{#if works.length > 0}
+	{#if works.items.length > 0}
 		<div
 			class="w-full lg:w-11/12 xl:w-full mx-auto grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"
 		>
-			{#each works as work}
+			{#each works.items as work}
 				<WorkCard {work} withDropdown={false} />
 			{/each}
 		</div>
@@ -61,12 +74,13 @@
 			<p>Check back later!</p>
 		</div>
 	{/if}
-	{#if works.length > 0}
+	{#if works.items.length > 0}
 		<Paginator
 			currPage={pageNum}
 			{perPage}
-			totalItems={total}
-			on:change={(event) => fetchWorks(event.detail)}
+			totalItems={works.metadata.total}
+			on:change={(event) => fetchWorks(event.detail, true)}
+			loading={loadingPage}
 		/>
 	{/if}
 </div>
