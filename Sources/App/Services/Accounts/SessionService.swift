@@ -51,12 +51,10 @@ struct SessionService {
             guard let sessionId = UUID(uuidString: idString) else {
                 throw Abort(.internalServerError, reason: GENERIC_ERROR_MESSAGE)
             }
-            print("sessionId: \(sessionId)")
             if try await account.$sessions.query(on: request.db)
                 .filter(\.$id == sessionId)
                 .filter(\.$expires > Date())
                 .first() == nil {
-                print("Fails to find session")
                 throw Abort(.forbidden, reason: "You aren't allowed to access this function.")
             }
             return .init(accessToken: try createAccessToken(for: account))
