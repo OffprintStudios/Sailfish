@@ -27,6 +27,11 @@ export const POST: RequestHandler = async ({ request, cookies, getClientAddress 
 			httpOnly: true,
 			expires: expirationDate
 		});
+		cookies.set("accountId", data.account.id, {
+			path: "/",
+			httpOnly: true,
+			expires: expirationDate
+		});
 		data.refreshToken = "";
 		data.refreshExpirationTime = 0;
 		return new Response(JSON.stringify(data), { status: 200 });

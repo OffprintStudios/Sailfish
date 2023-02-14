@@ -28,19 +28,13 @@ struct SessionService {
         let newSession = Session(id: sessionId, via: getUserAgent(), expires: sessionExpiration)
         try await account.$sessions.create(newSession, on: request.db)
 
-        let token = try request.jwt.sign(Session.TokenPayload(
-            subject: "offprint",
-            expiration: .init(value: Date(timeInterval: TOKEN_EXPIRATION, since: Date())),
-            accountId: account.id
-        ))
-
         let profiles = try await account.$profiles.get(on: request.db)
         let base64Session = sessionId.uuidString.toBase64()
         
         return Session.ClientPackage(
             account: .init(from: account),
             profiles: profiles,
-            accessToken: token,
+            accessToken: try createAccessToken(for: account),
             refreshToken: base64Session,
             refreshExpirationTime: rememberMe ? LONG_SESSION : SHORT_SESSION
         )
@@ -57,20 +51,15 @@ struct SessionService {
             guard let sessionId = UUID(uuidString: idString) else {
                 throw Abort(.internalServerError, reason: GENERIC_ERROR_MESSAGE)
             }
-            guard (try await account.$sessions
-                .query(on: request.db)
+            print("sessionId: \(sessionId)")
+            if try await account.$sessions.query(on: request.db)
                 .filter(\.$id == sessionId)
-                .filter(\.$expires <= Date())
-                .first() != nil
-            ) else {
+                .filter(\.$expires > Date())
+                .first() == nil {
+                print("Fails to find session")
                 throw Abort(.forbidden, reason: "You aren't allowed to access this function.")
             }
-            let newToken = try request.jwt.sign(Session.TokenPayload(
-                subject: "offprint",
-                expiration: .init(value: Date(timeInterval: TOKEN_EXPIRATION, since: Date())),
-                accountId: account.id
-            ))
-            return .init(accessToken: newToken)
+            return .init(accessToken: try createAccessToken(for: account))
         } else {
             throw Abort(.internalServerError, reason: GENERIC_ERROR_MESSAGE)
         }
@@ -82,6 +71,15 @@ struct SessionService {
         return try await account.$sessions.query(on: request.db)
             .filter(\.$id == id)
             .delete()
+    }
+    
+    /// Creates a JSON Web Token
+    func createAccessToken(for account: Account, expires: Date = Date(timeIntervalSinceNow: TOKEN_EXPIRATION)) throws -> String {
+        return try request.jwt.sign(Session.TokenPayload(
+            subject: "offprint",
+            expiration: .init(value: expires),
+            accountId: account.id
+        ))
     }
 
     /// Gets the user agent from request headers and returns a `DeviceInfo` object containing browser, ip address, and

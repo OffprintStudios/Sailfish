@@ -12,11 +12,13 @@
 	import Button from "$lib/ui/util/Button.svelte";
 	import type { Account } from "$lib/models/accounts";
 
-	export let data: { hasKey: boolean } = { hasKey: false };
+	export let data: { token: string | null } = { token: null };
 	let loadingTerms = false;
 	let loadingConfirm = false;
 
-	if (!data.hasKey) {
+	if (data.token) {
+		$account.token = data.token;
+	} else {
 		$account.account = null;
 		$account.currProfile = null;
 		$account.profiles = [];

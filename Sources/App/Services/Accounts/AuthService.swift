@@ -82,18 +82,6 @@ struct AuthService {
             }
         }
     }
-    
-    /// Checks a session ID to see if it's valid. If it is, returns a `ClientAccount` object.
-    func getAccountFromSession(_ id: UUID) async throws -> ClientAccount {
-        guard let session = try await Session.query(on: request.db)
-            .with(\.$account, { $0.with(\.$profiles) })
-            .filter(\.$id == id)
-            .filter(\.$expires > Date())
-            .first() else {
-            throw Abort(.unauthorized, reason: "Requires a valid session ID.")
-        }
-        return ClientAccount(from: session.account)
-    }
 }
 
 extension Request {
