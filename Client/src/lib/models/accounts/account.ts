@@ -9,6 +9,7 @@ export interface Account {
 	emailConfirmed: boolean;
 	readonly createdAt: Date;
 	readonly updatedAt: Date;
+	readonly token?: string;
 }
 
 export interface AccountWithReports extends Account {

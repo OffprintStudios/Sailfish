@@ -2,13 +2,9 @@ import type { RequestHandler } from "./$types";
 import type { RefreshPackage, SessionInfo } from "$lib/models/accounts";
 import { postReqServer, type ServerResponseError } from "$lib/server";
 
-export const POST: RequestHandler = async ({ cookies, locals }) => {
-	if (!locals.user) {
-		return new Response(null, { status: 422 });
-	}
-
+export const POST: RequestHandler = async ({ cookies }) => {
 	const info: SessionInfo = {
-		accountId: locals.user.id,
+		accountId: cookies.get("accountId") ?? "",
 		refreshToken: cookies.get("refreshToken") ?? ""
 	};
 

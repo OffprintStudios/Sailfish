@@ -1,3 +1,4 @@
-export * from './http-service';
-export { BASE_URL } from './base-url';
-export type { ResponseError } from './response-error';
+export * from "./http-service";
+export { BASE_URL } from "./base-url";
+export type { ResponseError } from "./response-error";
+export { queryClient } from "./query-client";
