@@ -4,6 +4,10 @@ func routes(_ app: Application) throws {
     app.get { req in
         "Sailfish Ready!"
     }
+    
+    app.get("version") { req in
+        "1.0.0-beta.4"
+    }
 
     try app.register(collection: AdminController())
     try app.register(collection: AuthController())

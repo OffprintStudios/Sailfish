@@ -20,10 +20,16 @@ export const POST: RequestHandler = async ({ request, cookies, getClientAddress 
 		return new Response(JSON.stringify(error), { status: error.statusCode });
 	} else {
 		const data = response as ClientPackage;
+		const expirationDate = new Date(Date.now() + data.refreshExpirationTime * 1000);
 		cookies.set("refreshToken", data.refreshToken, {
 			path: "/",
 			httpOnly: true,
-			expires: new Date(Date.now() + data.refreshExpirationTime * 1000)
+			expires: expirationDate
+		});
+		cookies.set("accountId", data.account.id, {
+			path: "/",
+			httpOnly: true,
+			expires: expirationDate
 		});
 		data.refreshToken = "";
 		data.refreshExpirationTime = 0;

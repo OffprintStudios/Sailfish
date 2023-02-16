@@ -49,7 +49,7 @@
 		initialValues: {
 			email: "",
 			password: "",
-			rememberMe: false
+			rememberMe: true
 		}
 	});
 </script>

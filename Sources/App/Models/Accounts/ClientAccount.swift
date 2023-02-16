@@ -12,8 +12,9 @@ struct ClientAccount: Content {
     var emailConfirmed: Bool
     var createdAt: Date?
     var updatedAt: Date?
+    var token: String?
 
-    init(from account: Account) {
+    init(from account: Account, token: String? = nil) {
         id = account.id
         profiles = account.$profiles.value ?? []
         roles = account.roles
@@ -21,5 +22,6 @@ struct ClientAccount: Content {
         emailConfirmed = account.emailConfirmed
         createdAt = account.createdAt
         updatedAt = account.updatedAt
+        self.token = token
     }
 }

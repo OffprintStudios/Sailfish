@@ -30,20 +30,6 @@ struct AuthController: RouteCollection {
             return try await request.authService.logout(with: logoutInfo)
         }
         
-        auth.get("get-account-from-session") { request async throws -> ClientAccount in
-            let errorMsg = "Requires a valid session ID."
-            guard let sessionId: String = request.query["sessionId"] else {
-                throw Abort(.badRequest, reason: errorMsg)
-            }
-            guard let idString: String = sessionId.fromBase64() else {
-                throw Abort(.badRequest, reason: errorMsg)
-            }
-            guard let id = UUID(uuidString: idString) else {
-                throw Abort(.badRequest, reason: errorMsg)
-            }
-            return try await request.authService.getAccountFromSession(id)
-        }
-        
         auth.get("send-recovery-email") { request async throws -> Response in
             let email: String? = request.query["email"]
             if let hasEmail = email {

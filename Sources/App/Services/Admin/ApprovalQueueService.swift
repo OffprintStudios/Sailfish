@@ -12,7 +12,7 @@ struct ApprovalQueueService {
     /// Fetches the approval queue.
     func fetchQueue(ascending: Bool = true, status: ApprovalQueue.Status = .waiting) async throws -> Page<ApprovalQueue> {
         try await ApprovalQueue.query(on: request.db)
-            .with(\.$work) { $0.with(\.$author).with(\.$tags) }
+            .with(\.$work) { $0.with(\.$author).with(\.$tags) { $0.with(\.$parent) } }
             .with(\.$claimedBy)
             .filter(\.$status == status)
             .sort(\.$createdAt, ascending ? .ascending : .descending)

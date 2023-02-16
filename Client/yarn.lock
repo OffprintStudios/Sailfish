@@ -315,11 +315,6 @@
     svelte-hmr "^0.15.1"
     vitefu "^0.2.3"
 
-"@sveltestack/svelte-query@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@sveltestack/svelte-query/-/svelte-query-1.6.0.tgz#d175863557a7abe6a8dcb0da2080a9f43ae8d1d1"
-  integrity sha512-C0wWuh6av1zu3Pzwrg6EQmX3BhDZQ4gMAdYu6Tfv4bjbEZTB00uEDz52z92IZdONh+iUKuyo0xRZ2e16k2Xifg==
-
 "@tailwindcss/aspect-ratio@^0.4.2":
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/@tailwindcss/aspect-ratio/-/aspect-ratio-0.4.2.tgz#9ffd52fee8e3c8b20623ff0dcb29e5c21fb0a9ba"
@@ -346,6 +341,18 @@
     lodash.isplainobject "^4.0.6"
     lodash.merge "^4.6.2"
     postcss-selector-parser "6.0.10"
+
+"@tanstack/query-core@4.24.6":
+  version "4.24.6"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-4.24.6.tgz#8f102bc922308f0c6c5ddea34fe253688314265a"
+  integrity sha512-Tfru6YTDTCpX7dKVwHp/sosw/dNjEdzrncduUjIkQxn7n7u+74HT2ZrGtwwrU6Orws4x7zp3FKRqBPWVVhpx9w==
+
+"@tanstack/svelte-query@^4.24.6":
+  version "4.24.6"
+  resolved "https://registry.yarnpkg.com/@tanstack/svelte-query/-/svelte-query-4.24.6.tgz#028c370e0d223b76ae183cb22409b3c6b2ed5ec6"
+  integrity sha512-bBA2r8iH6jKy/oq4JDMRt3WOzZWuvIvRvXU9dE8RmtMZfm42yRcDBd7zNmoo8kNlNvhuLulx8zVh9B9mE++Bsw==
+  dependencies:
+    "@tanstack/query-core" "4.24.6"
 
 "@tiptap/core@^2.0.0-beta.199":
   version "2.0.0-beta.202"
