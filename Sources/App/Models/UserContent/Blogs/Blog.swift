@@ -84,7 +84,7 @@ final class Blog: Model, Content {
         bannerArt = nil
         rating = formData.rating
         stats = .init(words: try SwiftSoup.clean(formData.body, Whitelist.none())!.split { !$0.isLetter }.count)
-        if canMakeNewsPost {
+        if canMakeNewsPost == true {
             newsPost = formData.newsPost
         } else {
             newsPost = false

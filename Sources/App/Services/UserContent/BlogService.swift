@@ -182,6 +182,7 @@ struct BlogService: HasComments {
     /// Creates a blog given the provided `formInfo`.
     func createBlog(with formInfo: Blog.BlogForm) async throws -> Blog {
         let (account, profile) = try request.authService.getUser(withProfile: true)
+        print(account.roles)
         let newBlog = try Blog.init(from: formInfo, canMakeNewsPost: canAccess(needs: [.admin, .moderator, .contributor], has: account.roles))
         try await profile!.$blogs.create(newBlog, on: request.db)
         try await newBlog.$author.load(on: request.db)
