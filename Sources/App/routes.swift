@@ -6,7 +6,7 @@ func routes(_ app: Application) throws {
     }
     
     app.get("version") { req in
-        "1.0.0-beta.4"
+        "1.0.0-beta.5"
     }
 
     try app.register(collection: AdminController())
