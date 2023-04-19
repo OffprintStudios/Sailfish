@@ -67,7 +67,7 @@ final class Blog: Model, Content {
 
     init() { }
 
-    init(id: String? = nil, from formData: BlogForm, canMakeNewsPost: Bool = false) throws {
+    init(id: String? = nil, from formData: BlogForm) throws {
         if let hasId = id {
             self.id = hasId
         } else {
@@ -84,11 +84,7 @@ final class Blog: Model, Content {
         bannerArt = nil
         rating = formData.rating
         stats = .init(words: try SwiftSoup.clean(formData.body, Whitelist.none())!.split { !$0.isLetter }.count)
-        if canMakeNewsPost {
-            newsPost = formData.newsPost
-        } else {
-            newsPost = false
-        }
+        newsPost = formData.newsPost
         publishedOn = nil
         editedOn = nil
     }
