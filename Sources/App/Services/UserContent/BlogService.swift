@@ -182,7 +182,12 @@ struct BlogService: HasComments {
     /// Creates a blog given the provided `formInfo`.
     func createBlog(with formInfo: Blog.BlogForm) async throws -> Blog {
         let (account, profile) = try request.authService.getUser(withProfile: true)
-        let newBlog = try Blog.init(from: formInfo, canMakeNewsPost: canAccess(needs: [.admin, .moderator, .contributor], has: account.roles))
+        if canAccess(needs: [.admin, .moderator, .contributor], has: account.roles) == false {
+            if formInfo.newsPost == true {
+                throw Abort(.forbidden, reason: "You aren't allowed to do that.")
+            }
+        }
+        let newBlog = try Blog(from: formInfo)
         try await profile!.$blogs.create(newBlog, on: request.db)
         try await newBlog.$author.load(on: request.db)
         return newBlog

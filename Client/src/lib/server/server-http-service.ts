@@ -1,4 +1,4 @@
-import Axios, { AxiosError, type AxiosInstance, type AxiosRequestConfig } from "axios";
+import Axios, { type AxiosError, type AxiosInstance, type AxiosRequestConfig } from "axios";
 import { PUBLIC_API_URL } from "$env/static/public";
 import type { ServerResponseError } from "$lib/server/server-response-error";
 
@@ -143,10 +143,9 @@ function getError(err: AxiosError): ServerResponseError {
 			error: response.statusText === "" ? "Internal Server Error" : response.statusText
 		};
 	}
-
 	return {
 		statusCode: 500,
-		message: `An unknown error has occurred. Please try again in a little bit.`,
+		message: "An unknown error has occurred. Please try again in a little bit.",
 		error: "Internal Server Error"
 	};
 }
