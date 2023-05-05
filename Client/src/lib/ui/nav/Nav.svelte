@@ -3,16 +3,17 @@
 	import {
 		CompassDiscoverFill,
 		CompassDiscoverLine,
-		SearchEyeFill,
-		SearchEyeLine,
 		CloseLine,
+		LoginCircleFill,
 		BookmarkLine,
 		BookmarkFill,
 		NewspaperFill,
 		NewspaperLine,
 		Dashboard2Line,
 		Dashboard2Fill,
-		LoginCircleLine
+		LoginCircleLine,
+		UserAddLine,
+		UserAddFill
 	} from "svelte-remixicon";
 	import { guide, openGuide, closeGuide } from "../guide";
 	import { account } from "$lib/state/account.state";
@@ -56,7 +57,7 @@
 </script>
 
 <nav>
-	{#if $guide.routing.length > 0}
+	<!--{#if $guide.routing.length > 0}
 		<button class="link" class:active={$guide.routing.length > 0} on:click={closeGuide}>
 			<span class="link-icon"><CloseLine size={iconSize} /></span>
 			<span class="link-name">Close</span>
@@ -81,11 +82,39 @@
 				<span class="link-name">Log In</span>
 			{/if}
 		</button>
-	{/if}
+	{/if}-->
+	<a
+		class="link"
+		class:active={$page.url.pathname.startsWith("/log-in") && $guide.open === false}
+		href="/log-in"
+	>
+		<span class="link-icon">
+			{#if $page.url.pathname.startsWith("/log-in") && $guide.open === false}
+				<LoginCircleFill size={iconSize} />
+			{:else}
+				<LoginCircleLine size={iconSize} />
+			{/if}
+		</span>
+		<span class="link-name">Log In</span>
+	</a>
+	<a
+		class="link"
+		class:active={$page.url.pathname.startsWith("/sign-up") && $guide.open === false}
+		href="/sign-up"
+	>
+		<span class="link-icon">
+			{#if $page.url.pathname.startsWith("/sign-up") && $guide.open === false}
+				<UserAddFill size={iconSize} />
+			{:else}
+				<UserAddLine size={iconSize} />
+			{/if}
+		</span>
+		<span class="link-name">Register</span>
+	</a>
 	<div
 		class="flex-1 lg:flex-initial lg:block lg:w-10/12 lg:mx-auto lg:border-b lg:border-white lg:my-2"
 	>
-		<!--separator-->
+		<!--spacer-->
 	</div>
 	{#if $account.account && $account.currProfile && hasRoles( $account.account?.roles, [Roles.Admin, Roles.Moderator, Roles.WorkApprover] )}
 		<a
@@ -118,7 +147,7 @@
 		</span>
 		<span class="link-name">Explore</span>
 	</a>
-	<a
+	<!--<a
 		class="link"
 		class:active={$page.url.pathname.startsWith("/search") && $guide.open === false}
 		href="/search"
@@ -131,7 +160,7 @@
 			{/if}
 		</span>
 		<span class="link-name">Search</span>
-	</a>
+	</a>-->
 	{#if $account.account && $account.currProfile}
 		<a
 			class="link"
@@ -172,9 +201,20 @@
 
 <style lang="scss">
 	nav {
-		@apply flex lg:flex-col items-center w-full lg:w-[75px] z-50 relative lg:h-full px-2 lg:px-0 pt-1.5 pb-1 lg:py-2;
+		@apply flex lg:flex-col items-center relative w-full lg:w-[75px] z-50 lg:h-[calc(100vh-60px)] px-2 lg:px-0 pt-1.5 pb-1 lg:py-2 rounded-tr-[-50%];
 		background: var(--accent);
-		box-shadow: var(--dropshadow);
+
+		&::before {
+			content: "";
+			position: absolute;
+			background: transparent;
+			top: 0;
+			right: -50px;
+			height: 50px;
+			width: 50px;
+			border-top-left-radius: 25px;
+			box-shadow: -8px -8px 0 0 var(--accent);
+		}
 
 		a.link,
 		button.link {

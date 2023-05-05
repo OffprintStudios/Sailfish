@@ -1,6 +1,6 @@
 <script lang="ts">
 	import "../app.scss";
-	import { Nav } from "$lib/ui/nav";
+	import { Nav, NavTopBar } from "$lib/ui/nav";
 	import { app } from "$lib/state/app.state";
 	import { Guide } from "$lib/ui/guide";
 	import toast, { Toaster } from "svelte-french-toast";
@@ -62,7 +62,24 @@
 	}
 </script>
 
-<QueryClientProvider client={queryClient}>
+<main
+	class="flex flex-col overflow-y-auto {$app.theme}"
+	class:light={$app.darkMode === false}
+	class:dark={$app.darkMode === true}
+>
+	<NavTopBar />
+	<div
+		class="flex overflow-y-hidden lg:h-[calc(100vh-60px)]"
+		style="background: var(--background);"
+	>
+		<Nav />
+		<div class="w-full overflow-y-auto lg:h-[calc(100vh-60px)]">
+			<slot />
+		</div>
+	</div>
+</main>
+
+<!--<QueryClientProvider client={queryClient}>
 	<Popup />
 	<main
 		class="flex flex-col min-h-[100vh] h-full overflow-y-scroll lg:overflow-y-hidden lg:flex-row lg:h-screen {$app.theme}"
@@ -120,13 +137,13 @@
 		</Guide>
 		<Toaster />
 	</main>
-</QueryClientProvider>
+</QueryClientProvider>-->
 
 <style lang="scss">
-	:global(main) {
+	/*:global(main) {
 		color: var(--text-color);
 		font-family: var(--body-text);
 		background: var(--background);
 		@apply transition transform relative;
-	}
+	}*/
 </style>
