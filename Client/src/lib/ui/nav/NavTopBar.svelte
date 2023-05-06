@@ -1,33 +1,48 @@
 <script lang="ts">
-	import { LoginCircleLine, SearchEyeLine, More2Fill, UserLine } from "svelte-remixicon";
+	import {
+		LoginCircleLine,
+		UserSharedLine,
+		UserAddLine,
+		Settings5Line,
+		CloseLine
+	} from "svelte-remixicon";
+	import SearchDropdown from "$lib/ui/nav/SearchDropdown.svelte";
+	import { navigating } from "$app/stores";
+	import { closeGuide, openGuide, guide } from "$lib/ui/guide";
 	import Button from "$lib/ui/util/Button.svelte";
 
-	const searchSlogans = [
-		"Need help finding anything?",
-		"What are you looking for today?",
-		"Let's find something you'll love.",
-		"Need a hand?",
-		"Offprint's got you covered.",
-		"Only the best for a connoisseur like you."
-	];
-	const currSlogan = searchSlogans[Math.floor(Math.random() * searchSlogans.length)];
+	$: {
+		if ($navigating !== null) {
+			closeGuide();
+		}
+	}
 </script>
 
 <div
 	class="flex items-center text-white w-full px-4 h-[60px] sticky z-[50]"
 	style="background: var(--accent); box-shadow: var(--dropshadow);"
 >
-	<div class="w-1/3 flex items-center">placeholder</div>
+	<div class="w-1/3 flex items-center">
+		<h3 class="text-white text-3xl tracking-wide mr-2">Offprint</h3>
+		<div
+			class="hidden lg:block text-white font-bold tracking-widest border-2 border-white mb-1 pl-1.5 pr-1 py-1"
+		>
+			BETA
+		</div>
+	</div>
 	<div class="w-1/3 relative">
-		<button class="search-button">
-			<SearchEyeLine size="20px" class="mr-2" />
-			<span>{currSlogan}</span>
-		</button>
+		<SearchDropdown />
 	</div>
 	<div class="w-1/3 flex items-center flex-row-reverse">
-		<Button kind="primary">
-			<UserLine class="button-icon no-text" size="20px" />
-		</Button>
+		{#if $guide.open}
+			<Button kind="primary" on:click={closeGuide}>
+				<CloseLine class="button-icon no-text" size="26px" />
+			</Button>
+		{:else}
+			<Button kind="primary" on:click={openGuide}>
+				<UserSharedLine class="button-icon no-text" size="26px" />
+			</Button>
+		{/if}
 	</div>
 </div>
 
@@ -38,6 +53,12 @@
 		box-shadow: var(--dropshadow);
 		&:hover {
 			@apply scale-[1.025];
+		}
+	}
+	a.dropdown-link {
+		@apply flex items-center;
+		&:hover {
+			background: var(--accent) !important;
 		}
 	}
 </style>

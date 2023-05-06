@@ -48,74 +48,9 @@
 			$activity.count = (response as { count: number }).count;
 		}
 	}
-
-	$: {
-		if ($navigating !== null) {
-			closeGuide();
-		}
-	}
 </script>
 
 <nav>
-	<!--{#if $guide.routing.length > 0}
-		<button class="link" class:active={$guide.routing.length > 0} on:click={closeGuide}>
-			<span class="link-icon"><CloseLine size={iconSize} /></span>
-			<span class="link-name">Close</span>
-		</button>
-	{:else}
-		<button class="link avatar relative" on:click={openGuide}>
-			{#if $activity.count > 0}
-				<CountBadge value={$activity.count} />
-			{/if}
-			{#if $account.account && $account.currProfile}
-				<span
-					class="rounded-full border-2 border-white w-[32px] h-[32px] lg:w-[40px] lg:h-[40px] bg-zinc-300 dark:bg-white overflow-hidden"
-				>
-					<img
-						src={$account.currProfile.avatar}
-						alt="Your avatar"
-						class="object-cover w-full h-full"
-					/>
-				</span>
-			{:else}
-				<span class="link-icon"><LoginCircleLine size={iconSize} /></span>
-				<span class="link-name">Log In</span>
-			{/if}
-		</button>
-	{/if}-->
-	<a
-		class="link"
-		class:active={$page.url.pathname.startsWith("/log-in") && $guide.open === false}
-		href="/log-in"
-	>
-		<span class="link-icon">
-			{#if $page.url.pathname.startsWith("/log-in") && $guide.open === false}
-				<LoginCircleFill size={iconSize} />
-			{:else}
-				<LoginCircleLine size={iconSize} />
-			{/if}
-		</span>
-		<span class="link-name">Log In</span>
-	</a>
-	<a
-		class="link"
-		class:active={$page.url.pathname.startsWith("/sign-up") && $guide.open === false}
-		href="/sign-up"
-	>
-		<span class="link-icon">
-			{#if $page.url.pathname.startsWith("/sign-up") && $guide.open === false}
-				<UserAddFill size={iconSize} />
-			{:else}
-				<UserAddLine size={iconSize} />
-			{/if}
-		</span>
-		<span class="link-name">Register</span>
-	</a>
-	<div
-		class="flex-1 lg:flex-initial lg:block lg:w-10/12 lg:mx-auto lg:border-b lg:border-white lg:my-2"
-	>
-		<!--spacer-->
-	</div>
 	{#if $account.account && $account.currProfile && hasRoles( $account.account?.roles, [Roles.Admin, Roles.Moderator, Roles.WorkApprover] )}
 		<a
 			class="link"
@@ -147,56 +82,34 @@
 		</span>
 		<span class="link-name">Explore</span>
 	</a>
-	<!--<a
+	<a
 		class="link"
-		class:active={$page.url.pathname.startsWith("/search") && $guide.open === false}
-		href="/search"
+		class:active={$page.url.pathname.includes("/library") && $guide.open === false}
+		href="/library"
 	>
 		<span class="link-icon">
-			{#if $page.url.pathname === "/search" && $guide.open === false}
-				<SearchEyeFill size={iconSize} />
+			{#if $page.url.pathname.includes("/library") && $guide.open === false}
+				<BookmarkFill size={iconSize} />
 			{:else}
-				<SearchEyeLine size={iconSize} />
+				<BookmarkLine size={iconSize} />
 			{/if}
 		</span>
-		<span class="link-name">Search</span>
-	</a>-->
-	{#if $account.account && $account.currProfile}
-		<a
-			class="link"
-			class:active={$page.url.pathname.includes("/library") && $guide.open === false}
-			href="/library"
-		>
-			<span class="link-icon">
-				{#if $page.url.pathname.includes("/library") && $guide.open === false}
-					<BookmarkFill size={iconSize} />
-				{:else}
-					<BookmarkLine size={iconSize} />
-				{/if}
-			</span>
-			<span class="link-name">Library</span>
-		</a>
-		<a
-			class="link"
-			class:active={$page.url.pathname === "/feed" && $guide.open === false}
-			href="/feed"
-		>
-			<span class="link-icon">
-				{#if $page.url.pathname === "/feed" && $guide.open === false}
-					<NewspaperFill size={iconSize} />
-				{:else}
-					<NewspaperLine size={iconSize} />
-				{/if}
-			</span>
-			<span class="link-name"> Feed </span>
-		</a>
-	{/if}
-	<div class="flex-1 hidden lg:block"><!--spacer--></div>
-	<div
-		class="hidden lg:block text-white font-bold tracking-widest border-2 border-white mb-2 pl-2 pr-1 py-1"
+		<span class="link-name">Library</span>
+	</a>
+	<a
+		class="link"
+		class:active={$page.url.pathname === "/feed" && $guide.open === false}
+		href="/feed"
 	>
-		BETA
-	</div>
+		<span class="link-icon">
+			{#if $page.url.pathname === "/feed" && $guide.open === false}
+				<NewspaperFill size={iconSize} />
+			{:else}
+				<NewspaperLine size={iconSize} />
+			{/if}
+		</span>
+		<span class="link-name"> Feed </span>
+	</a>
 </nav>
 
 <style lang="scss">
