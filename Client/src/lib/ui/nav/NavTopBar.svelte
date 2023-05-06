@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LoginCircleLine, SearchEyeLine, More2Fill, UserAddLine } from "svelte-remixicon";
+	import { LoginCircleLine, SearchEyeLine, More2Fill, UserLine } from "svelte-remixicon";
 	import Button from "$lib/ui/util/Button.svelte";
 
 	const searchSlogans = [
@@ -26,7 +26,7 @@
 	</div>
 	<div class="w-1/3 flex items-center flex-row-reverse">
 		<Button kind="primary">
-			<More2Fill class="button-icon no-text" size="20px" />
+			<UserLine class="button-icon no-text" size="20px" />
 		</Button>
 	</div>
 </div>
