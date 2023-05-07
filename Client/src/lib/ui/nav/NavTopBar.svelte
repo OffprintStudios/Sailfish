@@ -34,7 +34,19 @@
 	<div class="w-1/3 relative">
 		<SearchDropdown />
 	</div>
-	<div class="w-1/3 flex items-center flex-row-reverse">
+	<div class="w-1/3 flex items-center">
+		<div class="flex-1"><!--spacer--></div>
+		<Button kind="primary" asLink href="/registration/log-in">
+			<LoginCircleLine class="button-icon" />
+			<span class="button-text">Log in</span>
+		</Button>
+		<div class="mx-0.5"><!--spacer--></div>
+		<Button kind="primary" asLink href="/registration/sign-up">
+			<UserAddLine class="button-icon" />
+			<span class="button-text">Sign up</span>
+		</Button>
+	</div>
+	<!--<div class="w-1/3 flex items-center flex-row-reverse">
 		{#if $guide.open}
 			<Button kind="primary" on:click={closeGuide}>
 				<CloseLine class="button-icon no-text" size="26px" />
@@ -44,7 +56,7 @@
 				<UserSharedLine class="button-icon no-text" size="26px" />
 			</Button>
 		{/if}
-	</div>
+	</div>-->
 </div>
 
 <style lang="scss">
