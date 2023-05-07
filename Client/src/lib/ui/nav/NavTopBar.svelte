@@ -36,12 +36,12 @@
 	</div>
 	<div class="w-1/3 flex items-center">
 		<div class="flex-1"><!--spacer--></div>
-		<Button kind="primary" asLink href="/registration/log-in">
+		<Button kind="primary" asLink href="/registration/log-in" title="Log In">
 			<LoginCircleLine class="button-icon" />
 			<span class="button-text">Log in</span>
 		</Button>
 		<div class="mx-0.5"><!--spacer--></div>
-		<Button kind="primary" asLink href="/registration/sign-up">
+		<Button kind="primary" asLink href="/registration/sign-up" title="Sign Up">
 			<UserAddLine class="button-icon" />
 			<span class="button-text">Sign up</span>
 		</Button>
