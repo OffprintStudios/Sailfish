@@ -10,6 +10,7 @@
 	import { navigating } from "$app/stores";
 	import { closeGuide, openGuide, guide } from "$lib/ui/guide";
 	import Button from "$lib/ui/util/Button.svelte";
+	import { RegistrationPanel } from "$lib/ui/guide/account";
 
 	$: {
 		if ($navigating !== null) {
@@ -23,7 +24,7 @@
 	style="background: var(--accent); box-shadow: var(--dropshadow);"
 >
 	<div class="w-1/3 flex items-center">
-		<h3 class="text-white text-3xl tracking-wide mr-2">Offprint</h3>
+		<h3 class="text-white text-2xl tracking-wide mr-2">Offprint</h3>
 		<div
 			class="hidden lg:block text-white font-bold tracking-widest border-2 border-white mb-1 pl-1.5 pr-1 py-1"
 		>
@@ -39,7 +40,7 @@
 				<CloseLine class="button-icon no-text" size="26px" />
 			</Button>
 		{:else}
-			<Button kind="primary" on:click={openGuide}>
+			<Button kind="primary" on:click={() => openGuide(RegistrationPanel)}>
 				<UserSharedLine class="button-icon no-text" size="26px" />
 			</Button>
 		{/if}

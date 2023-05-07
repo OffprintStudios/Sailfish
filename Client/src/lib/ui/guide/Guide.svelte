@@ -1,25 +1,6 @@
 <script lang="ts">
 	import { fade, fly } from "svelte/transition";
-	import {
-		QuestionAnswerLine,
-		Group2Line,
-		HistoryLine,
-		LoginCircleLine,
-		Notification3Line,
-		Settings5Line
-	} from "svelte-remixicon";
-	import { closeGuide, guide, GuideTabs, switchTab } from "./guide.state";
-	import { account } from "$lib/state/account.state";
-	import { activity } from "$lib/state/activity.state";
-	import { AccountPanel } from "./account";
-	import { SettingsPanel } from "./settings";
-	import { Avatar } from "../util";
-	import { HistoryPanel } from "./history";
-	import { CountBadge } from "../util";
-	import { ActivityTabsPanel } from "./activity";
-	import { MessagesPanel } from "./messages";
-
-	const iconSize = "24px";
+	import { closeGuide, guide } from "./guide.state";
 
 	function close() {
 		if ($guide.canClose) {
@@ -39,17 +20,9 @@
 				<!--backdrop-->
 			</div>
 			<div class="guide" transition:fly|local={{ delay: 0, duration: 200, x: 200 }}>
-				{#if $guide.routing.length === 1}
-					{#key $guide.currTab}
-						<div in:fade|local={{ delay: 0, duration: 200 }}>
-							<svelte:component this={$guide.routing[$guide.currPage]} />
-						</div>
-					{/key}
-				{:else}
-					<div in:fade|local={{ delay: 0, duration: 200 }}>
-						<svelte:component this={$guide.routing[$guide.currPage]} />
-					</div>
-				{/if}
+				<div in:fade|local={{ delay: 0, duration: 200 }}>
+					<svelte:component this={$guide.routing[$guide.currPage]} />
+				</div>
 			</div>
 		</div>
 	{/if}
