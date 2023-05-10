@@ -74,6 +74,7 @@
 			<Button
 				kind="primary"
 				disabled={!$account.currProfile}
+				isActive={currTab === GuideTabs.History}
 				on:click={() => toggleGuide(HistoryPanel, GuideTabs.History)}
 			>
 				<HistoryLine class="button-icon no-text" size="26px" />
@@ -82,6 +83,7 @@
 			<Button
 				kind="primary"
 				disabled={!$account.currProfile}
+				isActive={currTab === GuideTabs.Messages}
 				on:click={() => toggleGuide(MessagesPanel, GuideTabs.Messages)}
 			>
 				<QuestionAnswerLine class="button-icon no-text" size="26px" />
@@ -90,15 +92,18 @@
 			<Button
 				kind="primary"
 				disabled={!$account.currProfile}
+				isActive={currTab === GuideTabs.Activity}
 				on:click={() => toggleGuide(ActivityPanel, GuideTabs.Activity)}
 			>
 				<Notification2Line class="button-icon no-text" size="26px" />
 			</Button>
 			<div class="mx-1"><!--spacer--></div>
-			<Button kind="primary" on:click={() => toggleGuide(AccountPanel, GuideTabs.Account)}>
-				{#if $guide.open && currTab === GuideTabs.Account}
-					<CloseLine class="button-icon no-text" size="36px" />
-				{:else if $account.currProfile}
+			<Button
+				kind="primary"
+				on:click={() => toggleGuide(AccountPanel, GuideTabs.Account)}
+				isActive={currTab === GuideTabs.Account}
+			>
+				{#if $account.currProfile}
 					<Avatar src={$account.currProfile.avatar} size="36px" borderWidth="1px" />
 				{:else}
 					<ArrowLeftRightLine class="button-icon no-text -rotate-45" size="36px" />
