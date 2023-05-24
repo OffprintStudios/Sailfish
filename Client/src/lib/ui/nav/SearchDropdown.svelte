@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { computePosition, flip, offset, shift } from "@floating-ui/dom";
 	import type { Placement } from "@floating-ui/dom";
-	import { slide, scale } from "svelte/transition";
-	import { Button } from "$lib/ui/util";
+	import { slide } from "svelte/transition";
 	import { clickOutside } from "$lib/util/functions";
 	import { DEFAULT_SLOGANS } from "$lib/util/constants";
 	import { SearchEyeLine } from "svelte-remixicon";
+	import { onMount } from "svelte";
 
 	export let open = false;
 	export let position: Placement = "bottom";
@@ -18,6 +18,14 @@
 	function determineState() {
 		open = !open;
 	}
+
+	onMount(() => {
+		document.addEventListener("keydown", (event) => {
+			if (event.key === "Escape" && open === true) {
+				open = false;
+			}
+		});
+	});
 
 	$: {
 		if (button) {
@@ -57,6 +65,7 @@
 					type="text"
 					class="text-white text-sm px-0 py-2.5 flex-1 m-0 bg-transparent border-0 focus:ring-0 rounded-lg placeholder:text-zinc-200"
 					placeholder={currSlogan}
+					autofocus
 				/>
 			</div>
 			<div class="search-items">
