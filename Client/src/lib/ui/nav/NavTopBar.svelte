@@ -121,7 +121,7 @@
 				isActive={currTab === GuideTabs.Activity && $guide.open}
 				on:click={() => toggleGuide(ActivityPanel, GuideTabs.Activity)}
 			>
-				{#if $activity.count > 0 || $activity.count === 0}
+				{#if $activity.count > 0}
 					<CountBadge value={$activity.count} />
 				{/if}
 				<Notification2Line class="button-icon no-text" size="26px" />
