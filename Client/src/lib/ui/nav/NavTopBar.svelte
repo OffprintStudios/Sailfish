@@ -4,7 +4,6 @@
 		ArrowLeftRightLine,
 		UserAddLine,
 		QuestionAnswerLine,
-		CloseLine,
 		Notification2Line,
 		HistoryLine
 	} from "svelte-remixicon";
@@ -19,6 +18,9 @@
 	import { MessagesPanel } from "$lib/ui/guide/messages";
 	import { ActivityPanel } from "$lib/ui/guide/activity";
 	import type { SvelteComponentTyped } from "svelte";
+	import { getReq, type ResponseError } from "$lib/http";
+	import { activity } from "$lib/state/activity.state";
+	import CountBadge from "$lib/ui/util/CountBadge.svelte";
 
 	$: {
 		if ($navigating !== null) {
@@ -51,6 +53,30 @@
 			closeGuide();
 			setTimeout(() => openGuide(panel), 250);
 			currTab = tab;
+		}
+	}
+
+	$: {
+		if ($account.account && $account.currProfile) {
+			fetchActivityCount();
+		}
+	}
+
+	setInterval(async () => {
+		if ($account.account && $account.currProfile) {
+			await fetchActivityCount();
+		}
+	}, 1000 * 15);
+
+	async function fetchActivityCount() {
+		const response = await getReq<{ count: number }>(
+			`/notifications/fetch-count?profileId=${$account.currProfile?.id}`
+		);
+		if ((response as ResponseError).error) {
+			const error = response as ResponseError;
+			console.error(`ERROR: ${error.message}`);
+		} else {
+			$activity.count = (response as { count: number }).count;
 		}
 	}
 </script>
@@ -95,6 +121,9 @@
 				isActive={currTab === GuideTabs.Activity && $guide.open}
 				on:click={() => toggleGuide(ActivityPanel, GuideTabs.Activity)}
 			>
+				{#if $activity.count > 0 || $activity.count === 0}
+					<CountBadge value={$activity.count} />
+				{/if}
 				<Notification2Line class="button-icon no-text" size="26px" />
 			</Button>
 			<div class="mx-1"><!--spacer--></div>

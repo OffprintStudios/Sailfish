@@ -1,53 +1,21 @@
 <script lang="ts">
-	import { page, navigating } from "$app/stores";
+	import { page } from "$app/stores";
 	import {
 		CompassDiscoverFill,
 		CompassDiscoverLine,
-		CloseLine,
-		LoginCircleFill,
 		BookmarkLine,
 		BookmarkFill,
 		NewspaperFill,
 		NewspaperLine,
 		Dashboard2Line,
-		Dashboard2Fill,
-		LoginCircleLine,
-		UserAddLine,
-		UserAddFill
+		Dashboard2Fill
 	} from "svelte-remixicon";
-	import { guide, openGuide, closeGuide } from "../guide";
+	import { guide } from "../guide";
 	import { account } from "$lib/state/account.state";
-	import { activity } from "$lib/state/activity.state";
 	import { hasRoles } from "$lib/util/functions";
 	import { Roles } from "$lib/models/accounts";
-	import { getReq, type ResponseError } from "$lib/http";
-	import { CountBadge } from "$lib/ui/util";
 
 	const iconSize = "24px";
-
-	$: {
-		if ($account.account && $account.currProfile) {
-			fetchActivityCount();
-		}
-	}
-
-	setInterval(async () => {
-		if ($account.account && $account.currProfile) {
-			await fetchActivityCount();
-		}
-	}, 1000 * 15);
-
-	async function fetchActivityCount() {
-		const response = await getReq<{ count: number }>(
-			`/notifications/fetch-count?profileId=${$account.currProfile?.id}`
-		);
-		if ((response as ResponseError).error) {
-			const error = response as ResponseError;
-			console.error(`ERROR: ${error.message}`);
-		} else {
-			$activity.count = (response as { count: number }).count;
-		}
-	}
 </script>
 
 <nav>

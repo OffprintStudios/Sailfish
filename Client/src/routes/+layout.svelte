@@ -11,8 +11,6 @@
 	import { getReq, patchReq, type ResponseError } from "$lib/http";
 	import Button from "$lib/ui/util/Button.svelte";
 	import type { Account } from "$lib/models/accounts";
-	import { QueryClientProvider } from "@tanstack/svelte-query";
-	import { queryClient } from "$lib/http";
 
 	export let data: { token: string | null } = { token: null };
 	let loadingTerms = false;
@@ -75,23 +73,6 @@
 	>
 		<Nav />
 		<Guide>
-			<div class="w-full overflow-y-auto lg:h-[calc(100vh-60px)]">
-				<slot />
-			</div>
-		</Guide>
-	</div>
-	<Toaster />
-</main>
-
-<!--<QueryClientProvider client={queryClient}>
-	<Popup />
-	<main
-		class="flex flex-col min-h-[100vh] h-full overflow-y-scroll lg:overflow-y-hidden lg:flex-row lg:h-screen {$app.theme}"
-		class:light={$app.darkMode === false}
-		class:dark={$app.darkMode === true}
-	>
-		<Nav />
-		<Guide>
 			{#if $account.account && !$account.account.termsAgree}
 				<div
 					class="xl:max-w-4xl w-full flex flex-col lg:flex-row items-center mx-auto p-4 xl:mt-6 xl:rounded-xl bg-red-600 bg-opacity-25 border-y xl:border-x border-red-600"
@@ -137,11 +118,13 @@
 					</Button>
 				</div>
 			{/if}
-			<slot />
+			<div class="w-full overflow-y-auto lg:h-[calc(100vh-60px)]">
+				<slot />
+			</div>
 		</Guide>
-		<Toaster />
-	</main>
-</QueryClientProvider>-->
+	</div>
+	<Toaster />
+</main>
 
 <style lang="scss">
 	:global(main) {
