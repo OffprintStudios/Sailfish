@@ -11,7 +11,8 @@
 		EyeLine,
 		Link,
 		LogoutCircleRLine,
-		QuillPenLine
+		QuillPenLine,
+		Settings5Line
 	} from "svelte-remixicon";
 	import { nextPage, closeGuide } from "$lib/ui/guide";
 	import { slugify, abbreviate } from "$lib/util/functions";
@@ -19,6 +20,7 @@
 	import LogOutAlert from "./LogOutAlert.svelte";
 	import toast from "svelte-french-toast";
 	import { activity } from "$lib/state/activity.state";
+	import { SettingsPanel } from "$lib/ui/guide/settings";
 
 	async function logOut() {
 		openPopup(LogOutAlert, {
@@ -154,6 +156,14 @@
 					<span>Create Blog</span>
 					<Link class="text-zinc-400" />
 				</a>
+			</div>
+
+			<div class="panel-section">
+				<button class="nav-button" on:click={() => nextPage(SettingsPanel)}>
+					<Settings5Line size="24px" />
+					<span>Settings</span>
+					<ArrowRightSLine class="text-size-400" />
+				</button>
 			</div>
 
 			<div class="panel-section">

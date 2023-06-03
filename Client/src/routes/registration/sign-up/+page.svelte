@@ -9,11 +9,11 @@
 	import { goto } from "$app/navigation";
 
 	const termsUrl =
-		"https://offprint.notion.site/Terms-of-Service-131ffadce0eb4e8a947144ddc70ef89b";
+		"https://docs.google.com/document/d/1qYEhhRVknvT9qw6cwZQ5JP72rKQgPpdM449hxP2PG3w/edit?usp=share_link";
 	const privacyUrl =
-		"https://offprint.notion.site/Privacy-Policy-f22e8ccb9e9043dca23a29a7089c72f4";
+		"https://docs.google.com/document/d/1CaO3WEW4HWaKF2p_KPZmtCONDWB04dvgBD3k-kCDklI/edit?usp=share_link";
 	const constitutionUrl =
-		"https://offprint.notion.site/The-Offprint-Constitution-ae58c23db7264280a319d1cdfa10bc41";
+		"https://docs.google.com/document/d/1i_YMayX0p61_nJGkUsT_BsHwHo-5NyV_QovcGKZr2e0/edit?usp=share_link";
 
 	const { form, data, errors, isSubmitting } = createForm({
 		onSubmit: async (values) => {
