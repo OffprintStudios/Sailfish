@@ -86,7 +86,7 @@
     "tailwindcss-opentype": "^1.1.0",
     "tslib": "^2.5.0",
     "typescript": "^5.0.4",
-    "vite": "^4.2.2"
+    "vite": "^4.2.3"
   },
   "type": "module"
 }
