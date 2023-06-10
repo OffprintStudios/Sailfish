@@ -1,92 +1,24 @@
 <script lang="ts">
-	import { page, navigating } from "$app/stores";
+	import { page } from "$app/stores";
 	import {
 		CompassDiscoverFill,
 		CompassDiscoverLine,
-		SearchEyeFill,
-		SearchEyeLine,
-		CloseLine,
 		BookmarkLine,
 		BookmarkFill,
 		NewspaperFill,
 		NewspaperLine,
 		Dashboard2Line,
-		Dashboard2Fill,
-		LoginCircleLine
+		Dashboard2Fill
 	} from "svelte-remixicon";
-	import { guide, openGuide, closeGuide } from "../guide";
+	import { guide } from "../guide";
 	import { account } from "$lib/state/account.state";
-	import { activity } from "$lib/state/activity.state";
 	import { hasRoles } from "$lib/util/functions";
 	import { Roles } from "$lib/models/accounts";
-	import { getReq, type ResponseError } from "$lib/http";
-	import { CountBadge } from "$lib/ui/util";
 
 	const iconSize = "24px";
-
-	$: {
-		if ($account.account && $account.currProfile) {
-			fetchActivityCount();
-		}
-	}
-
-	setInterval(async () => {
-		if ($account.account && $account.currProfile) {
-			await fetchActivityCount();
-		}
-	}, 1000 * 15);
-
-	async function fetchActivityCount() {
-		const response = await getReq<{ count: number }>(
-			`/notifications/fetch-count?profileId=${$account.currProfile?.id}`
-		);
-		if ((response as ResponseError).error) {
-			const error = response as ResponseError;
-			console.error(`ERROR: ${error.message}`);
-		} else {
-			$activity.count = (response as { count: number }).count;
-		}
-	}
-
-	$: {
-		if ($navigating !== null) {
-			closeGuide();
-		}
-	}
 </script>
 
 <nav>
-	{#if $guide.routing.length > 0}
-		<button class="link" class:active={$guide.routing.length > 0} on:click={closeGuide}>
-			<span class="link-icon"><CloseLine size={iconSize} /></span>
-			<span class="link-name">Close</span>
-		</button>
-	{:else}
-		<button class="link avatar relative" on:click={openGuide}>
-			{#if $activity.count > 0}
-				<CountBadge value={$activity.count} />
-			{/if}
-			{#if $account.account && $account.currProfile}
-				<span
-					class="rounded-full border-2 border-white w-[32px] h-[32px] lg:w-[40px] lg:h-[40px] bg-zinc-300 dark:bg-white overflow-hidden"
-				>
-					<img
-						src={$account.currProfile.avatar}
-						alt="Your avatar"
-						class="object-cover w-full h-full"
-					/>
-				</span>
-			{:else}
-				<span class="link-icon"><LoginCircleLine size={iconSize} /></span>
-				<span class="link-name">Log In</span>
-			{/if}
-		</button>
-	{/if}
-	<div
-		class="flex-1 lg:flex-initial lg:block lg:w-10/12 lg:mx-auto lg:border-b lg:border-white lg:my-2"
-	>
-		<!--separator-->
-	</div>
 	{#if $account.account && $account.currProfile && hasRoles( $account.account?.roles, [Roles.Admin, Roles.Moderator, Roles.WorkApprover] )}
 		<a
 			class="link"
@@ -120,61 +52,50 @@
 	</a>
 	<a
 		class="link"
-		class:active={$page.url.pathname.startsWith("/search") && $guide.open === false}
-		href="/search"
+		class:active={$page.url.pathname.includes("/library") && $guide.open === false}
+		href="/library"
 	>
 		<span class="link-icon">
-			{#if $page.url.pathname === "/search" && $guide.open === false}
-				<SearchEyeFill size={iconSize} />
+			{#if $page.url.pathname.includes("/library") && $guide.open === false}
+				<BookmarkFill size={iconSize} />
 			{:else}
-				<SearchEyeLine size={iconSize} />
+				<BookmarkLine size={iconSize} />
 			{/if}
 		</span>
-		<span class="link-name">Search</span>
+		<span class="link-name">Library</span>
 	</a>
-	{#if $account.account && $account.currProfile}
-		<a
-			class="link"
-			class:active={$page.url.pathname.includes("/library") && $guide.open === false}
-			href="/library"
-		>
-			<span class="link-icon">
-				{#if $page.url.pathname.includes("/library") && $guide.open === false}
-					<BookmarkFill size={iconSize} />
-				{:else}
-					<BookmarkLine size={iconSize} />
-				{/if}
-			</span>
-			<span class="link-name">Library</span>
-		</a>
-		<a
-			class="link"
-			class:active={$page.url.pathname === "/feed" && $guide.open === false}
-			href="/feed"
-		>
-			<span class="link-icon">
-				{#if $page.url.pathname === "/feed" && $guide.open === false}
-					<NewspaperFill size={iconSize} />
-				{:else}
-					<NewspaperLine size={iconSize} />
-				{/if}
-			</span>
-			<span class="link-name"> Feed </span>
-		</a>
-	{/if}
-	<div class="flex-1 hidden lg:block"><!--spacer--></div>
-	<div
-		class="hidden lg:block text-white font-bold tracking-widest border-2 border-white mb-2 pl-2 pr-1 py-1"
+	<a
+		class="link"
+		class:active={$page.url.pathname === "/feed" && $guide.open === false}
+		href="/feed"
 	>
-		BETA
-	</div>
+		<span class="link-icon">
+			{#if $page.url.pathname === "/feed" && $guide.open === false}
+				<NewspaperFill size={iconSize} />
+			{:else}
+				<NewspaperLine size={iconSize} />
+			{/if}
+		</span>
+		<span class="link-name"> Feed </span>
+	</a>
 </nav>
 
 <style lang="scss">
 	nav {
-		@apply flex lg:flex-col items-center w-full lg:w-[75px] z-50 relative lg:h-full px-2 lg:px-0 pt-1.5 pb-1 lg:py-2;
+		@apply hidden lg:flex flex-col items-center relative w-[55px] lg:w-[75px] z-50 h-[calc(100vh-50px)] lg:h-[calc(100vh-60px)] px-0 py-2 rounded-tr-[-50%];
 		background: var(--accent);
-		box-shadow: var(--dropshadow);
+
+		&::before {
+			content: "";
+			position: absolute;
+			background: transparent;
+			top: 0;
+			right: -50px;
+			height: 50px;
+			width: 50px;
+			border-top-left-radius: 25px;
+			box-shadow: -8px -8px 0 0 var(--accent);
+		}
 
 		a.link,
 		button.link {

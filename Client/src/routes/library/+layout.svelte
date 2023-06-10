@@ -102,10 +102,15 @@
 		</div>
 		<slot />
 	</div>
-{:else}
+{:else if $account.account}
 	<div class="empty">
 		<h3>No profile selected</h3>
 		<p>You must select a profile before you're able to view this page.</p>
+	</div>
+{:else}
+	<div class="empty">
+		<h3>You aren't logged in</h3>
+		<p>Gotta log in first before seeing your library, don't you think?</p>
 	</div>
 {/if}
 

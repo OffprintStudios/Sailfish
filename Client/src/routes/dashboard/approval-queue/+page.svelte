@@ -100,7 +100,7 @@
 			{#each data.items as item}
 				<div class="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-2">
 					<div class="flex items-center pb-2 mx-auto">
-						{#if item.claimedBy}
+						{#if item.claimedBy.id}
 							<Avatar src={item.claimedBy.avatar} size="32px" borderWidth="1px" />
 							<span
 								class="ml-2 text-zinc-400 relative top-0.5 text-lg"

@@ -21,8 +21,18 @@ public func configure(_ app: Application) async throws {
 
     // Setting up database connection
     app.logger.notice("Setting up database connection...")
-    let databaseUrl = Environment.get("DATABASE_URL") ?? "postgresql://postgres@localhost/sailfish"
-    try app.databases.use(.postgres(url: databaseUrl, connectionPoolTimeout: .seconds(30)), as: .psql)
+    if let databaseUrl = Environment.get("DATABASE_URL") {
+        var tlsConfig: TLSConfiguration = .makeClientConfiguration()
+        tlsConfig.certificateVerification = .none
+        let nioSSLContext = try NIOSSLContext(configuration: tlsConfig)
+        
+        var postgresConfig = try SQLPostgresConfiguration(url: databaseUrl)
+        postgresConfig.coreConfiguration.tls = .prefer(nioSSLContext)
+        
+        app.databases.use(.postgres(configuration: postgresConfig, connectionPoolTimeout: .seconds(30)), as: .psql)
+    } else {
+        try app.databases.use(.postgres(url: "postgresql://postgres@localhost/sailfish", connectionPoolTimeout: .seconds(30)), as: .psql)
+    }
 
     // Adding migrations
     app.logger.notice("Adding migrations...")
