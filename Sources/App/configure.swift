@@ -21,7 +21,6 @@ public func configure(_ app: Application) async throws {
 
     // Setting up database connection
     app.logger.notice("Setting up database connection...")
-    print(app.environment.name)
     if let databaseUrl = Environment.get("DATABASE_URL") {
         var tlsConfig: TLSConfiguration = .makeClientConfiguration()
         tlsConfig.certificateVerification = .none
