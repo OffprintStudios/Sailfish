@@ -12,17 +12,32 @@
 		NotificationBadgeLine,
 		GroupLine,
 		LinksLine,
+		ArrowLeftSLine
 	} from "svelte-remixicon";
-	import { nextPage } from "../guide.state";
+	import { nextPage, prevPage } from "../guide.state";
 	import { AboutPanel, FiltersPanel, LocalizationPanel, ThemesPanel } from "./general";
-	import { AccountInfoPanel, SecurityPrivacyPanel, SessionsPanel, ConnectionsPanel } from "./account";
+	import {
+		AccountInfoPanel,
+		SecurityPrivacyPanel,
+		SessionsPanel,
+		ConnectionsPanel
+	} from "./account";
 	import { ProfileInfoPanel, NotificationsPanel, SocialPanel } from "./profile";
 	import { account } from "$lib/state/account.state";
+	import { Button } from "$lib/ui/util";
 
 	const iconSize = "24px";
 </script>
 
 <div class="panel-container">
+	<div class="topbar">
+		<div class="left-button">
+			<Button on:click={prevPage}>
+				<ArrowLeftSLine class="button-icon" />
+				<span class="button-text">Account</span>
+			</Button>
+		</div>
+	</div>
 	<div class="content-container">
 		<!--General Settings-->
 		<div class="panel-section">
@@ -104,5 +119,5 @@
 </div>
 
 <style lang="scss">
-	@use '../Guide';
+	@use "../Guide";
 </style>

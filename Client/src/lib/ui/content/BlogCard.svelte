@@ -11,6 +11,7 @@
 	export let showAvatar = false;
 	export let hasDropdown = true;
 	export let bigPreview = false;
+	export let showPreview = true;
 </script>
 
 <div
@@ -49,13 +50,15 @@
 			</Dropdown>
 		{/if}
 	</div>
-	<div
-		class="blog-preview blog-body"
-		class:small-preview={!bigPreview}
-		class:big-preview={bigPreview}
-	>
-		{@html blog.body}
-	</div>
+	{#if showPreview}
+		<div
+			class="hidden blog-preview blog-body"
+			class:small-preview={!bigPreview}
+			class:big-preview={bigPreview}
+		>
+			{@html blog.body}
+		</div>
+	{/if}
 	<div class="blog-stats bg-zinc-300 dark:bg-zinc-600">
 		<div class="flex-1"><!--spacer--></div>
 		<span class="flex items-center relative z-[2]" title="Views">

@@ -48,7 +48,7 @@
 			<h3>Docs</h3>
 			<div>
 				<a
-					href="https://offprint.notion.site/Terms-of-Service-131ffadce0eb4e8a947144ddc70ef89b"
+					href="https://docs.google.com/document/d/1qYEhhRVknvT9qw6cwZQ5JP72rKQgPpdM449hxP2PG3w/edit?usp=share_link"
 					class="nav-button"
 					target="_blank"
 					rel="noreferrer"
@@ -58,7 +58,7 @@
 					<ExternalLinkLine class="text-zinc-400" />
 				</a>
 				<a
-					href="https://offprint.notion.site/Privacy-Policy-f22e8ccb9e9043dca23a29a7089c72f4"
+					href="https://docs.google.com/document/d/1CaO3WEW4HWaKF2p_KPZmtCONDWB04dvgBD3k-kCDklI/edit?usp=share_link"
 					class="nav-button"
 					target="_blank"
 					rel="noreferrer"
@@ -68,7 +68,7 @@
 					<ExternalLinkLine class="text-zinc-400" />
 				</a>
 				<a
-					href="https://offprint.notion.site/The-Offprint-Constitution-ae58c23db7264280a319d1cdfa10bc41"
+					href="https://docs.google.com/document/d/1i_YMayX0p61_nJGkUsT_BsHwHo-5NyV_QovcGKZr2e0/edit?usp=share_link"
 					class="nav-button"
 					target="_blank"
 					rel="noreferrer"
@@ -78,7 +78,7 @@
 					<ExternalLinkLine class="text-zinc-400" />
 				</a>
 				<a
-					href="https://offprint.notion.site/Offprint-Omnibus-23ef302b8f7f4dd0bda13ba6e2471007"
+					href="https://docs.google.com/document/d/17WFSgBsJ7GoNVYStY1Z5XUGSEXWaMUzCA4uAU4d1beA/edit?usp=share_link"
 					class="nav-button"
 					target="_blank"
 					rel="noreferrer"
@@ -88,7 +88,7 @@
 					<ExternalLinkLine class="text-zinc-400" />
 				</a>
 				<a
-					href="https://offprint.notion.site/What-is-Offprint-ac292f99beb1463c9cdaeb7f53557c74"
+					href="https://docs.google.com/document/d/1zEEmR-tppI2oLE7wP2S0n_Yogtc7GUw7fANCYzYMbsA/edit?usp=share_link"
 					class="nav-button"
 					target="_blank"
 					rel="noreferrer"

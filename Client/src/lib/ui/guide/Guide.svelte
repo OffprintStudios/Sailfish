@@ -1,25 +1,6 @@
 <script lang="ts">
 	import { fade, fly } from "svelte/transition";
-	import {
-		QuestionAnswerLine,
-		Group2Line,
-		HistoryLine,
-		LoginCircleLine,
-		Notification3Line,
-		Settings5Line
-	} from "svelte-remixicon";
-	import { closeGuide, guide, GuideTabs, switchTab } from "./guide.state";
-	import { account } from "$lib/state/account.state";
-	import { activity } from "$lib/state/activity.state";
-	import { AccountPanel } from "./account";
-	import { SettingsPanel } from "./settings";
-	import { Avatar } from "../util";
-	import { HistoryPanel } from "./history";
-	import { CountBadge } from "../util";
-	import { ActivityTabsPanel } from "./activity";
-	import { MessagesPanel } from "./messages";
-
-	const iconSize = "24px";
+	import { closeGuide, guide } from "./guide.state";
 
 	function close() {
 		if ($guide.canClose) {
@@ -30,7 +11,7 @@
 
 <div class="flex-1 relative">
 	{#if $guide.open}
-		<div class="absolute z-40 top-0 h-full w-full flex">
+		<div class="absolute z-40 top-0 h-full w-full flex flex-row-reverse">
 			<div
 				class="absolute z-30 bg-black w-full h-full bg-opacity-50"
 				transition:fade|local={{ delay: 0, duration: 100 }}
@@ -38,94 +19,10 @@
 			>
 				<!--backdrop-->
 			</div>
-			<div class="guide" transition:fly|local={{ delay: 0, duration: 200, x: -200 }}>
-				<div class="guide-nav">
-					<button
-						title="History"
-						class:active={$guide.currTab === GuideTabs.HistoryTab}
-						class:disabled={$account.account === null || $account.currProfile === null}
-						disabled={$account.account === null || $account.currProfile === null}
-						on:click={() => switchTab(HistoryPanel, GuideTabs.HistoryTab)}
-					>
-						<HistoryLine size={iconSize} />
-					</button>
-					<button
-						title="Activity"
-						class:active={$guide.currTab === GuideTabs.ActivityTab}
-						class:disabled={$account.account === null || $account.currProfile === null}
-						disabled={$account.account === null || $account.currProfile === null}
-						on:click={() => switchTab(ActivityTabsPanel, GuideTabs.ActivityTab)}
-					>
-						<span class="flex items-center relative">
-							{#if $activity.count > 0}
-								<span class="absolute -top-1 -right-1">
-									<CountBadge value={$activity.count} />
-								</span>
-							{/if}
-							<Notification3Line size={iconSize} />
-							<!--<span class="text-sm ml-0.5">0</span>-->
-						</span>
-					</button>
-					{#if $account.account === null && $account.currProfile === null}
-						<button
-							title="Log In or Sign Up"
-							on:click={() => switchTab(AccountPanel, GuideTabs.AccountTab)}
-							class:active={$guide.currTab === GuideTabs.AccountTab}
-						>
-							<LoginCircleLine size={iconSize} />
-						</button>
-					{:else if $account.account !== null && $account.currProfile !== null}
-						<button
-							title="Your Info"
-							on:click={() => switchTab(AccountPanel, GuideTabs.AccountTab)}
-							class:active={$guide.currTab === GuideTabs.AccountTab}
-						>
-							<Avatar
-								src={$account.currProfile.avatar}
-								borderWidth="1px"
-								size="42px"
-							/>
-						</button>
-					{:else}
-						<button
-							title="Select Profile"
-							on:click={() => switchTab(AccountPanel, GuideTabs.AccountTab)}
-							class:active={$guide.currTab === GuideTabs.AccountTab}
-						>
-							<Group2Line size={iconSize} />
-						</button>
-					{/if}
-					<button
-						title="Messages"
-						class:disabled={$account.account === null || $account.currProfile === null}
-						disabled={$account.account === null || $account.currProfile === null}
-						on:click={() => switchTab(MessagesPanel, GuideTabs.MessagesTab)}
-						class:active={$guide.currTab === GuideTabs.MessagesTab}
-					>
-						<span class="flex items-center">
-							<QuestionAnswerLine size={iconSize} />
-							<!--<span class="text-sm ml-0.5">0</span>-->
-						</span>
-					</button>
-					<button
-						title="Settings"
-						class:active={$guide.currTab === GuideTabs.SettingsTab}
-						on:click={() => switchTab(SettingsPanel, GuideTabs.SettingsTab)}
-					>
-						<Settings5Line size={iconSize} />
-					</button>
+			<div class="guide" transition:fly|local={{ delay: 0, duration: 200, x: 200 }}>
+				<div in:fade|local={{ delay: 0, duration: 200 }}>
+					<svelte:component this={$guide.routing[$guide.currPage]} />
 				</div>
-				{#if $guide.routing.length === 1}
-					{#key $guide.currTab}
-						<div in:fade|local={{ delay: 0, duration: 200 }}>
-							<svelte:component this={$guide.routing[$guide.currPage]} />
-						</div>
-					{/key}
-				{:else}
-					<div in:fade|local={{ delay: 0, duration: 200 }}>
-						<svelte:component this={$guide.routing[$guide.currPage]} />
-					</div>
-				{/if}
 			</div>
 		</div>
 	{/if}
@@ -137,7 +34,7 @@
 
 <style lang="scss">
 	div.guide {
-		@apply h-full lg:h-screen z-40 min-w-full max-w-full lg:min-w-[24rem] lg:max-w-[24rem];
+		@apply h-full lg:h-[calc(100vh-60px)] z-40 pt-3 min-w-full max-w-full lg:min-w-[24rem] lg:max-w-[24rem];
 		@apply lg:overflow-hidden lg:overflow-y-auto;
 		box-shadow: var(--dropshadow);
 		background: var(--background);

@@ -60,34 +60,6 @@
 </script>
 
 <div class="carousel-container bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
-	<div class="home-header">
-		<div class="hidden lg:block w-1/4">
-			<div class="deco-box flex-col">
-				<span class="relative top-2 left-[0.075rem] text-4xl"
-					>{today.toLocaleString("default", { month: "short" })}</span
-				>
-				<span class="relative bottom-1.5 left-[0.075rem] text-xl"
-					>{today.getFullYear()}</span
-				>
-			</div>
-		</div>
-		<div class="lg:w-2/4 flex flex-col items-center justify-center">
-			<img
-				src="/images/logo.png"
-				alt="offprint logo"
-				class="max-w-[12rem] lg:max-w-[18rem] mx-auto"
-			/>
-			<h2 class="block text-white font-light lg:text-lg">
-				{currSlogan}
-			</h2>
-		</div>
-		<div class="hidden w-1/4 lg:flex items-center justify-end">
-			<div class="deco-box flex-row">
-				<span class="relative text-5xl font-normal">25</span>
-				<span class="relative text-3xl bottom-0.5 ml-1">¢</span>
-			</div>
-		</div>
-	</div>
 	<div class="carousel-items">
 		{#if currPost}
 			<a
@@ -183,10 +155,6 @@
 <style lang="scss">
 	div.carousel-container {
 		@apply xl:rounded-xl overflow-hidden mb-6 xl:mt-6 w-full;
-		div.home-header {
-			@apply text-white text-center px-4 py-2 flex items-center justify-center;
-			background: var(--accent);
-		}
 		div.deco-box {
 			@apply h-20 w-20 rounded-full flex items-center justify-center text-white font-semibold all-small-caps;
 			font-family: var(--header-text), sans-serif;
