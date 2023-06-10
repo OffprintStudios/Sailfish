@@ -82,7 +82,7 @@
 
 <style lang="scss">
 	nav {
-		@apply flex lg:flex-col items-center relative w-full lg:w-[75px] z-50 lg:h-[calc(100vh-60px)] px-2 lg:px-0 pt-1.5 pb-1 lg:py-2 rounded-tr-[-50%];
+		@apply flex flex-col items-center relative w-[55px] lg:w-[75px] z-50 h-[calc(100vh-50px)] lg:h-[calc(100vh-60px)] px-0 py-2 rounded-tr-[-50%];
 		background: var(--accent);
 
 		&::before {
