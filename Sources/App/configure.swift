@@ -21,13 +21,14 @@ public func configure(_ app: Application) async throws {
 
     // Setting up database connection
     app.logger.notice("Setting up database connection...")
+    print(app.environment.name)
     if let databaseUrl = Environment.get("DATABASE_URL") {
         var tlsConfig: TLSConfiguration = .makeClientConfiguration()
         tlsConfig.certificateVerification = .none
         let nioSSLContext = try NIOSSLContext(configuration: tlsConfig)
         
         var postgresConfig = try SQLPostgresConfiguration(url: databaseUrl)
-        postgresConfig.coreConfiguration.tls = .require(nioSSLContext)
+        postgresConfig.coreConfiguration.tls = .prefer(nioSSLContext)
         
         app.databases.use(.postgres(configuration: postgresConfig, connectionPoolTimeout: .seconds(30)), as: .psql)
     } else {
