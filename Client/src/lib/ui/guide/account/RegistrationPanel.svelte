@@ -7,9 +7,6 @@
 		UserAddLine
 	} from "svelte-remixicon";
 	import { toast } from "svelte-french-toast";
-	import { nextPage } from "../guide.state";
-	import LoginPanel from "./LoginPanel.svelte";
-	import SignUpPanel from "./SignUpPanel.svelte";
 
 	const iconSize = "24px";
 </script>
@@ -28,16 +25,16 @@
 	</div>
 	<div class="content-container">
 		<div class="panel-section">
-			<button class="nav-button" on:click={() => nextPage(LoginPanel)}>
+			<a class="nav-button" href="/registration/log-in">
 				<LoginCircleLine size={iconSize} />
 				<span>Log in with Email</span>
 				<ArrowRightSLine class="text-zinc-400" />
-			</button>
-			<button class="nav-button" on:click={() => nextPage(SignUpPanel)}>
+			</a>
+			<a class="nav-button" href="/registration/sign-up">
 				<UserAddLine size={iconSize} />
 				<span>Sign up with Email</span>
 				<ArrowRightSLine class="text-zinc-400" />
-			</button>
+			</a>
 		</div>
 		<div class="mt-4 py-4 border-t border-zinc-300 dark:border-zinc-700">
 			<button

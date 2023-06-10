@@ -1,6 +1,6 @@
 <script lang="ts">
 	import "../app.scss";
-	import { Nav } from "$lib/ui/nav";
+	import { Nav, NavTopBar } from "$lib/ui/nav";
 	import { app } from "$lib/state/app.state";
 	import { Guide } from "$lib/ui/guide";
 	import toast, { Toaster } from "svelte-french-toast";
@@ -11,8 +11,6 @@
 	import { getReq, patchReq, type ResponseError } from "$lib/http";
 	import Button from "$lib/ui/util/Button.svelte";
 	import type { Account } from "$lib/models/accounts";
-	import { QueryClientProvider } from "@tanstack/svelte-query";
-	import { queryClient } from "$lib/http";
 
 	export let data: { token: string | null } = { token: null };
 	let loadingTerms = false;
@@ -62,12 +60,16 @@
 	}
 </script>
 
-<QueryClientProvider client={queryClient}>
-	<Popup />
-	<main
-		class="flex flex-col min-h-[100vh] h-full overflow-y-scroll lg:overflow-y-hidden lg:flex-row lg:h-screen {$app.theme}"
-		class:light={$app.darkMode === false}
-		class:dark={$app.darkMode === true}
+<Popup />
+<main
+	class="flex flex-col overflow-y-auto {$app.theme}"
+	class:light={$app.darkMode === false}
+	class:dark={$app.darkMode === true}
+>
+	<NavTopBar />
+	<div
+		class="flex overflow-y-hidden lg:h-[calc(100vh-60px)]"
+		style="background: var(--background);"
 	>
 		<Nav />
 		<Guide>
@@ -116,11 +118,13 @@
 					</Button>
 				</div>
 			{/if}
-			<slot />
+			<div class="w-full overflow-y-auto lg:h-[calc(100vh-60px)]">
+				<slot />
+			</div>
 		</Guide>
-		<Toaster />
-	</main>
-</QueryClientProvider>
+	</div>
+	<Toaster />
+</main>
 
 <style lang="scss">
 	:global(main) {

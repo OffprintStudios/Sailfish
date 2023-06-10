@@ -8,13 +8,13 @@ let package = Package(
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.76.0"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.77.0"),
         .package(url: "https://github.com/vapor/fluent.git", from: "4.8.0"),
-        .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.6.1"),
-        .package(url: "https://github.com/vapor/jwt.git", from: "4.2.0"),
+        .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.7.2"),
+        .package(url: "https://github.com/vapor/jwt.git", from: "4.2.2"),
         .package(url: "https://github.com/tmthecoder/Argon2Swift.git", branch: "main"),
         .package(url: "https://github.com/malcommac/UAParserSwift.git", from: "1.2.1"),
-        .package(url: "https://github.com/vapor/queues-redis-driver.git", from: "1.0.0"),
+        .package(url: "https://github.com/vapor/queues-redis-driver.git", from: "1.1.1"),
         .package(url: "https://github.com/OffprintStudios/NanoID.git", from: "1.0.0"),
         .package(url: "https://github.com/scinfu/SwiftSoup.git", from: "2.6.0"),
         .package(url: "https://github.com/soto-project/soto.git", from: "6.6.0"),
