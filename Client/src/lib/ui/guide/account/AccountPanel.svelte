@@ -9,8 +9,11 @@
 		BookLine,
 		CupLine,
 		EyeLine,
+		HistoryLine,
 		Link,
 		LogoutCircleRLine,
+		Notification2Line,
+		QuestionAnswerLine,
 		QuillPenLine,
 		Settings5Line
 	} from "svelte-remixicon";
@@ -158,11 +161,29 @@
 				</a>
 			</div>
 
+			<div class="panel-section lg:hidden">
+				<button class="nav-button">
+					<Notification2Line size="24px" />
+					<span>Notifications</span>
+					<ArrowRightSLine class="text-zinc-400" />
+				</button>
+				<button class="nav-button">
+					<QuestionAnswerLine size="24px" />
+					<span>Messages</span>
+					<ArrowRightSLine class="text-zinc-400" />
+				</button>
+				<button class="nav-button">
+					<HistoryLine size="24px" />
+					<span>Reading History</span>
+					<ArrowRightSLine class="text-zinc-400" />
+				</button>
+			</div>
+
 			<div class="panel-section">
 				<button class="nav-button" on:click={() => nextPage(SettingsPanel)}>
 					<Settings5Line size="24px" />
 					<span>Settings</span>
-					<ArrowRightSLine class="text-size-400" />
+					<ArrowRightSLine class="text-zinc-400" />
 				</button>
 			</div>
 

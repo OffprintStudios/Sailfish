@@ -22,6 +22,7 @@
 	import { getReq, type ResponseError } from "$lib/http";
 	import { activity } from "$lib/state/activity.state";
 	import CountBadge from "$lib/ui/util/CountBadge.svelte";
+	import NavDropdown from "$lib/ui/nav/NavDropdown.svelte";
 
 	$: {
 		if ($navigating !== null) {
@@ -83,10 +84,13 @@
 </script>
 
 <div
-	class="flex items-center text-white w-full px-4 h-[50px] lg:h-[60px] sticky z-[50]"
+	class="flex items-center text-white w-full pr-2 pl-1 lg:px-4 h-[50px] lg:h-[60px] sticky z-[50]"
 	style="background: var(--accent); box-shadow: var(--dropshadow);"
 >
 	<div class="lg:w-1/3 flex items-center flex-1 lg:flex-initial">
+		<div class="lg:hidden">
+			<NavDropdown />
+		</div>
 		<h3 class="text-white text-lg lg:text-2xl tracking-wide mr-2">Offprint</h3>
 		<div class="hidden lg:block text-white font-bold tracking-widest mb-1">
 			[ <span class="relative text-xs">BETA</span> ]
@@ -163,6 +167,9 @@
 				isActive={currTab === GuideTabs.Account && $guide.open}
 			>
 				{#if $account.currProfile}
+					{#if $activity.count > 0}
+						<CountBadge value={$activity.count} />
+					{/if}
 					<Avatar src={$account.currProfile.avatar} size="28px" borderWidth="1px" />
 				{:else}
 					<ArrowLeftRightLine class="button-icon no-text -rotate-45" size="28px" />
@@ -170,11 +177,11 @@
 			</Button>
 		{:else}
 			<Button kind="primary" asLink href="/registration/log-in" title="Log In">
-				<LoginCircleLine class="button-icon no-text" />
+				<LoginCircleLine class="button-icon no-text" size="24px" />
 			</Button>
 			<div class="mx-0.5"><!--spacer--></div>
 			<Button kind="primary" asLink href="/registration/sign-up" title="Sign Up">
-				<UserAddLine class="button-icon no-text" />
+				<UserAddLine class="button-icon no-text" size="24px" />
 			</Button>
 		{/if}
 	</div>
