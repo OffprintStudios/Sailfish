@@ -24,6 +24,9 @@
 	import toast from "svelte-french-toast";
 	import { activity } from "$lib/state/activity.state";
 	import { SettingsPanel } from "$lib/ui/guide/settings";
+	import { MessagesPanel } from "$lib/ui/guide/messages";
+	import { ActivityPanel } from "$lib/ui/guide/activity";
+	import { HistoryPanel } from "$lib/ui/guide/history";
 
 	async function logOut() {
 		openPopup(LogOutAlert, {
@@ -162,17 +165,17 @@
 			</div>
 
 			<div class="panel-section lg:hidden">
-				<button class="nav-button">
+				<button class="nav-button" on:click={() => nextPage(ActivityPanel)}>
 					<Notification2Line size="24px" />
 					<span>Notifications</span>
 					<ArrowRightSLine class="text-zinc-400" />
 				</button>
-				<button class="nav-button">
+				<button class="nav-button" on:click={() => nextPage(MessagesPanel)}>
 					<QuestionAnswerLine size="24px" />
 					<span>Messages</span>
 					<ArrowRightSLine class="text-zinc-400" />
 				</button>
-				<button class="nav-button">
+				<button class="nav-button" on:click={() => nextPage(HistoryPanel)}>
 					<HistoryLine size="24px" />
 					<span>Reading History</span>
 					<ArrowRightSLine class="text-zinc-400" />
