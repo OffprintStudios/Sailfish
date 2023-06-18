@@ -67,6 +67,7 @@ final class Account: Model, Content {
 
 extension Account {
     enum FieldKeys {
+        static let id: FieldKey = "id"
         static let email: FieldKey = "email"
         static let password: FieldKey = "password"
         static let roles: FieldKey = "roles"
