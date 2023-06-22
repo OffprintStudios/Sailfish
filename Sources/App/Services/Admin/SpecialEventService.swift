@@ -10,8 +10,8 @@ struct SpecialEventService {
     let request: Request
     
     func checkEvent() async throws {
-        let event = try await SpecialEvent.query(on: request.db)
-            .filter(\.$event)
+        /*let event = try await SpecialEvent.query(on: request.db)
+            .filter(\.$event)*/
     }
 }
 
