@@ -21,6 +21,9 @@ final class Tag: Model, Content {
     @OptionalParent(key: "parent")
     var parent: Tag?
     
+    @OptionalParent(key: "event_id")
+    var event: SpecialEvent?
+    
     @Children(for: \.$parent)
     var children: [Tag]
     

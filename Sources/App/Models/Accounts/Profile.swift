@@ -97,6 +97,7 @@ final class Profile: Model, Content {
 
 extension Profile {
     enum FieldKeys {
+        static let id: FieldKey = "id"
         static let accountId: FieldKey = "account_id"
         static let username: FieldKey = "username"
         static let avatar: FieldKey = "avatar"

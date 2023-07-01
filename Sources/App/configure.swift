@@ -77,9 +77,18 @@ public func configure(_ app: Application) async throws {
         CreatePasswordReset(),
         CreateWorkIPView(),
         CreateBlogIPView(),
+        SpecialEvent.Create(),
+        SpecialEventPrompt.Create(),
+        SpecialEventPromptVote.Create(),
+        AddTagEventId(),
     ])
 
     try await app.autoMigrate()
+    
+    // Adding database middleware
+    app.logger.notice("Adding database middleware")
+    app.databases.middleware.use(SpecialEvent.Middleware(), on: .psql)
+    app.databases.middleware.use(SpecialEventPrompt.Middleware(), on: .psql)
 
     // Setting up queues
     app.logger.notice("Setting up queues...")
