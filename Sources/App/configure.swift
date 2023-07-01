@@ -79,7 +79,8 @@ public func configure(_ app: Application) async throws {
         CreateBlogIPView(),
         SpecialEvent.Create(),
         SpecialEventPrompt.Create(),
-        SpecialEventPromptVote.Create()
+        SpecialEventPromptVote.Create(),
+        AddTagEventId(),
     ])
 
     try await app.autoMigrate()
