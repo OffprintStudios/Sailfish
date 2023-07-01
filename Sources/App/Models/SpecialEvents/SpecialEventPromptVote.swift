@@ -34,7 +34,7 @@ final class SpecialEventPromptVote: Model, Content {
 }
 
 extension SpecialEventPromptVote {
-    struct Migration: AsyncMigration {
+    struct Create: AsyncMigration {
         func prepare(on database: Database) async throws {
             return try await database.schema(SpecialEventPromptVote.schema)
                 .id()

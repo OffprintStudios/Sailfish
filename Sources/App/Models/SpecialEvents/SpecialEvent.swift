@@ -86,7 +86,7 @@ final class SpecialEvent: Model, Content {
 }
 
 extension SpecialEvent {
-    struct Migration: AsyncMigration {
+    struct Create: AsyncMigration {
         func prepare(on database: Database) async throws {
             return try await database.schema(SpecialEvent.schema)
                 .id()

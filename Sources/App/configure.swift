@@ -77,9 +77,9 @@ public func configure(_ app: Application) async throws {
         CreatePasswordReset(),
         CreateWorkIPView(),
         CreateBlogIPView(),
-        SpecialEvent.Migration(),
-        SpecialEventPrompt.Migration(),
-        SpecialEventPromptVote.Migration()
+        SpecialEvent.Create(),
+        SpecialEventPrompt.Create(),
+        SpecialEventPromptVote.Create()
     ])
 
     try await app.autoMigrate()

@@ -42,7 +42,7 @@ final class SpecialEventPrompt: Model, Content {
 }
 
 extension SpecialEventPrompt {
-    struct Migration: AsyncMigration {
+    struct Create: AsyncMigration {
         func prepare(on database: Database) async throws {
             return try await database.schema(SpecialEventPrompt.schema)
                 .id()
