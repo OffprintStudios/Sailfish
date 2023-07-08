@@ -78,6 +78,10 @@
 		</span>
 		<span class="link-name"> Feed </span>
 	</a>
+	<div class="flex-1"><!--spacer--></div>
+	<div class="hidden lg:block text-white font-bold tracking-widest mb-1">
+		[ <span class="relative">BETA</span> ]
+	</div>
 </nav>
 
 <style lang="scss">

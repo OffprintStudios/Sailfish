@@ -92,9 +92,6 @@
 			<NavDropdown />
 		</div>
 		<h3 class="text-white text-lg lg:text-2xl tracking-wide mr-2">Offprint</h3>
-		<div class="hidden lg:block text-white font-bold tracking-widest mb-1">
-			[ <span class="relative text-xs">BETA</span> ]
-		</div>
 	</div>
 	<div class="hidden lg:block w-1/3 relative">
 		<SearchDropdown />
