@@ -6,9 +6,19 @@
 	import { ThemePref } from "$lib/util/constants";
 
 	const themes = Object.entries(ThemePref).map(([key, value]) => ({ value: value, label: key }));
-	let currTheme = themes.filter((theme) =>{
+	let currTheme = themes.filter((theme) => {
 		return theme.value === $app.theme;
 	})[0];
+
+	function toggleBrightness(value: string | null) {
+		if (value === "dark") {
+			$app.brightness = "dark";
+			document.documentElement.classList.add("dark");
+		} else {
+			$app.brightness = null;
+			document.documentElement.classList.remove("dark");
+		}
+	}
 </script>
 
 <div class="panel-container">
@@ -42,16 +52,24 @@
 			<h3>Dark Mode</h3>
 			<div class="panel-box">
 				<div class="flex items-center">
-					<button class="mode-toggle" class:active={$app.darkMode === false} on:click={() => $app.darkMode = false}>
-						{#if $app.darkMode === false}
+					<button
+						class="mode-toggle"
+						class:active={$app.brightness === null}
+						on:click={() => toggleBrightness(null)}
+					>
+						{#if $app.brightness === null}
 							<SunFill size="24px" />
 						{:else}
 							<SunLine size="24px" />
 						{/if}
 						<span>Lights On</span>
 					</button>
-					<button class="mode-toggle" class:active={$app.darkMode === true} on:click={() => $app.darkMode = true}>
-						{#if $app.darkMode === true}
+					<button
+						class="mode-toggle"
+						class:active={$app.brightness === "dark"}
+						on:click={() => toggleBrightness("dark")}
+					>
+						{#if $app.brightness === "dark"}
 							<MoonFill size="24px" />
 						{:else}
 							<MoonLine size="24px" />
@@ -65,7 +83,7 @@
 </div>
 
 <style lang="scss">
-	@use '../../Guide';
+	@use "../../Guide";
 
 	button.mode-toggle {
 		@apply flex flex-col items-center justify-center pt-0.5 border-2 border-zinc-400 dark:border-white rounded-lg mx-2 w-[80px] h-[68px];

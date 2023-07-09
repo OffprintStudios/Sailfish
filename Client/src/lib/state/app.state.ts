@@ -7,7 +7,7 @@ interface AppState {
 	isOfAge: boolean;
 	filter: ContentFilter;
 	theme: ThemePref;
-	darkMode: boolean;
+	brightness: string | null;
 	cardSize: CardSize;
 	sectionFont: SectionFont;
 }
@@ -16,55 +16,55 @@ const defaultAppState: AppState = {
 	isOfAge: false,
 	filter: ContentFilter.restricted,
 	theme: ThemePref.Crimson,
-	darkMode: false,
+	brightness: null,
 	cardSize: CardSize.Medium,
-	sectionFont: SectionFont.inter,
+	sectionFont: SectionFont.inter
 };
 
 const initialAppState: AppState = browser
-	? JSON.parse(window.localStorage.getItem('app') ?? 'null') ?? defaultAppState
+	? JSON.parse(window.localStorage.getItem("app") ?? "null") ?? defaultAppState
 	: defaultAppState;
 
 export const app = writable<AppState>(initialAppState);
 
-app.subscribe(value => {
+app.subscribe((value) => {
 	if (browser) {
-		window.localStorage.setItem('app', JSON.stringify(value));
+		window.localStorage.setItem("app", JSON.stringify(value));
 	}
 });
 
 export function setTheme(theme: ThemePref): void {
 	app.update((state) => ({
 		...state,
-		theme,
+		theme
 	}));
 }
 
 export function setCardSize(size: CardSize): void {
 	app.update((state) => ({
 		...state,
-		cardSize: size,
+		cardSize: size
 	}));
 }
 
 export function setDarkMode(isDark: boolean): void {
 	app.update((state) => ({
 		...state,
-		darkMode: isDark,
+		darkMode: isDark
 	}));
 }
 
 export function setOfAge(): void {
 	app.update((state) => ({
 		...state,
-		isOfAge: !state.isOfAge,
+		isOfAge: !state.isOfAge
 	}));
 }
 
 export function setFilter(enableMature: boolean, enableExplicit: boolean): void {
 	app.update((state) => ({
 		...state,
-		filter: determineContentFilter(enableMature, enableExplicit),
+		filter: determineContentFilter(enableMature, enableExplicit)
 	}));
 }
 

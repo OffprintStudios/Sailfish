@@ -1,5 +1,6 @@
 <script lang="ts">
 	import "../app.scss";
+	import { onMount } from "svelte";
 	import { Nav, NavTopBar } from "$lib/ui/nav";
 	import { app } from "$lib/state/app.state";
 	import { Guide } from "$lib/ui/guide";
@@ -15,6 +16,18 @@
 	export let data: { token: string | null } = { token: null };
 	let loadingTerms = false;
 	let loadingConfirm = false;
+
+	onMount(() => {
+		if (
+			$app.brightness === "dark" ||
+			(!($app.brightness === "dark") &&
+				window.matchMedia("(prefers-color-scheme: dark)").matches)
+		) {
+			document.documentElement.classList.add("dark");
+		} else {
+			document.documentElement.classList.remove("dark");
+		}
+	});
 
 	if (data.token) {
 		$account.token = data.token;
@@ -61,11 +74,7 @@
 </script>
 
 <Popup />
-<main
-	class="flex flex-col overflow-y-auto {$app.theme}"
-	class:light={$app.darkMode === false}
-	class:dark={$app.darkMode === true}
->
+<main class="flex flex-col overflow-y-auto {$app.theme}">
 	<NavTopBar />
 	<div
 		class="flex overflow-y-hidden lg:h-[calc(100vh-60px)]"
