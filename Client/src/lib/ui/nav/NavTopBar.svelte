@@ -84,7 +84,7 @@
 </script>
 
 <div
-	class="flex items-center text-white w-full pr-2 pl-1 lg:px-4 h-[50px] lg:h-[60px] sticky z-[50]"
+	class="flex items-center text-white w-full pr-2 pl-1 lg:px-4 h-[50px] lg:h-[60px] relative sticky top-0 z-[50]"
 	style="background: var(--accent); box-shadow: var(--dropshadow);"
 >
 	<div class="lg:w-1/3 flex items-center flex-1 lg:flex-initial">

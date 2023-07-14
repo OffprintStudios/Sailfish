@@ -1,7 +1,7 @@
 <script lang="ts">
 	import "../app.scss";
 	import { onMount } from "svelte";
-	import { Nav, NavTopBar } from "$lib/ui/nav";
+	import { NavSideBar, NavTopBar } from "$lib/ui/nav";
 	import { app } from "$lib/state/app.state";
 	import { Guide } from "$lib/ui/guide";
 	import toast, { Toaster } from "svelte-french-toast";
@@ -76,6 +76,15 @@
 </script>
 
 <Popup />
+<NavTopBar />
+<NavSideBar />
+<main class="relative lg:ml-[75px] lg:h-[calc(100%-60px)] lg:pb-8 h-full lg:overflow-y-scroll">
+	<slot />
+	<div class="h-4 lg:hidden"><!--spacer--></div>
+</main>
+<Toaster />
+
+<!--<Popup />
 <main class="flex flex-col overflow-y-auto">
 	<NavTopBar />
 	<div
@@ -135,13 +144,4 @@
 		</Guide>
 	</div>
 	<Toaster />
-</main>
-
-<style lang="scss">
-	:global(main) {
-		color: var(--text-color);
-		font-family: var(--body-text);
-		background: var(--background);
-		@apply transition transform relative;
-	}
-</style>
+</main>-->

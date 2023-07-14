@@ -29,7 +29,7 @@
 	<meta property="twitter:image" content="/images/offprint_icon.png" />
 </svelte:head>
 
-<div class="xl:w-11/12 mx-auto max-w-7xl mb-6">
+<div>
 	<NewsCarousel />
 	<ExploreSummary />
 </div>

@@ -86,7 +86,7 @@
 
 <style lang="scss">
 	nav {
-		@apply hidden lg:flex flex-col items-center relative w-[55px] lg:w-[75px] z-50 h-[calc(100vh-50px)] lg:h-[calc(100vh-60px)] px-0 py-2 rounded-tr-[-50%];
+		@apply hidden lg:flex flex-col items-center fixed left-0 top-0 lg:mt-[60px] w-[55px] lg:w-[75px] z-50 h-[calc(100vh-50px)] lg:h-[calc(100vh-60px)] px-0 py-2 rounded-tr-[-50%];
 		background: var(--accent);
 
 		&::before {

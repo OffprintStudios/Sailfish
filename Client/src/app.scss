@@ -46,7 +46,7 @@
 
 html,
 body {
-  @apply relative lg:w-full h-full lg:overflow-x-hidden lg:overflow-y-hidden;
+  @apply lg:w-full h-full;
 }
 html {
   /* Light Mode */
@@ -78,6 +78,7 @@ body {
   font-size: 14px;
   font-family: var(--body-text);
   background: var(--background);
+  @apply lg:overflow-y-hidden;
 }
 h1,
 h2,
