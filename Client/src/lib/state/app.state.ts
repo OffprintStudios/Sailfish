@@ -34,10 +34,12 @@ app.subscribe((value) => {
 });
 
 export function setTheme(theme: ThemePref): void {
-	app.update((state) => ({
-		...state,
-		theme
-	}));
+	app.update((state) => {
+		const oldTheme = state.theme;
+		state.theme = theme;
+		document.documentElement.classList.replace(oldTheme, state.theme);
+		return state;
+	});
 }
 
 export function setCardSize(size: CardSize): void {

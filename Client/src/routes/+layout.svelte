@@ -12,6 +12,7 @@
 	import { getReq, patchReq, type ResponseError } from "$lib/http";
 	import Button from "$lib/ui/util/Button.svelte";
 	import type { Account } from "$lib/models/accounts";
+	import { ThemePref } from "$lib/util/constants";
 
 	export let data: { token: string | null } = { token: null };
 	let loadingTerms = false;
@@ -27,6 +28,7 @@
 		} else {
 			document.documentElement.classList.remove("dark");
 		}
+		document.documentElement.classList.replace(ThemePref.Crimson, $app.theme);
 	});
 
 	if (data.token) {
@@ -74,7 +76,7 @@
 </script>
 
 <Popup />
-<main class="flex flex-col overflow-y-auto {$app.theme}">
+<main class="flex flex-col overflow-y-auto">
 	<NavTopBar />
 	<div
 		class="flex overflow-y-hidden lg:h-[calc(100vh-60px)]"
