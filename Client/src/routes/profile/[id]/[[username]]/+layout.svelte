@@ -330,7 +330,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="lg:mx-6 my-6">
+	<div class="w-full lg:mx-6 my-6">
 		<slot />
 	</div>
 </div>
