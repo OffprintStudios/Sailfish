@@ -78,7 +78,9 @@
 <Popup />
 <NavTopBar />
 <NavSideBar />
-<main class="relative lg:ml-[75px] lg:h-[calc(100%-60px)] lg:pb-8 h-full lg:overflow-y-scroll">
+<main
+	class="relative mt-[50px] lg:mt-[60px] lg:ml-[75px] h-[calc(100%-50px)] lg:h-[calc(100%-60px)] lg:overflow-y-scroll lg:scroll-smooth"
+>
 	<slot />
 	<div class="h-4 lg:hidden"><!--spacer--></div>
 </main>

@@ -151,7 +151,7 @@
 
 <style lang="scss">
 	div.carousel-container {
-		@apply overflow-hidden mb-6 w-full;
+		@apply overflow-hidden w-full;
 		div.deco-box {
 			@apply h-20 w-20 rounded-full flex items-center justify-center text-white font-semibold all-small-caps;
 			font-family: var(--header-text), sans-serif;
