@@ -98,12 +98,12 @@
 
 <style lang="scss">
 	div.explore-nav {
-		@apply w-full lg:w-72 py-1.5 px-2 flex lg:flex-col sticky top-[50px] z-10 lg:top-0 lg:h-[calc(100vh-60px)] overflow-x-scroll lg:pt-[calc(1em+1px)] transition duration-500;
+		@apply w-full lg:w-72 p-2 flex lg:flex-col sticky top-[50px] z-10 lg:top-0 lg:h-[calc(100vh-60px)] overflow-x-scroll transition duration-500;
 		&.isStuck {
 			@apply bg-zinc-200 dark:bg-zinc-700;
 		}
 		button.explore-nav-button {
-			@apply p-2 rounded-xl lg:w-full mx-0.5 first:ml-0 last:mr-0 lg:mx-0 whitespace-nowrap flex items-center lg:my-0.5 lg:first:mt-0 lg:last:mb-0 transition text-lg;
+			@apply p-2 rounded-2xl lg:w-full mx-0.5 first:ml-0 last:mr-0 lg:mx-0 whitespace-nowrap flex items-center lg:my-0.5 lg:first:mt-0 lg:last:mb-0 transition text-lg;
 			font-family: var(--header-text);
 			span {
 				@apply relative top-[0.1675rem];
