@@ -340,7 +340,7 @@
 		@apply w-full lg:min-w-[350px] lg:max-w-[350px] lg:h-[calc(100vh-60px)] lg:sticky top-0;
 
 		div.profile-header {
-			@apply grid relative w-full mb-6 overflow-hidden;
+			@apply grid relative w-full overflow-hidden;
 			grid-template-areas:
 				"banner banner"
 				"avatar user"
