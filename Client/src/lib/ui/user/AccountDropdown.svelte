@@ -232,7 +232,7 @@
 
 <style lang="scss">
 	div.account-dropdown {
-		@apply absolute rounded-2xl z-50 p-2 flex flex-col lg:w-[400px] overflow-hidden;
+		@apply absolute rounded-2xl z-50 p-2 flex flex-col lg:w-[375px] overflow-hidden;
 		box-shadow: var(--dropshadow);
 		font-family: var(--header-text);
 		div.account-dropdown-section {
