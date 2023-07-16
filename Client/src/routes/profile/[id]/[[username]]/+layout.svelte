@@ -9,10 +9,7 @@
 		UserFollowLine,
 		UserUnfollowLine,
 		More2Fill,
-		Cake2Line,
-		InformationLine,
-		LinksFill,
-		Link
+		ArrowRightSLine
 	} from "svelte-remixicon";
 	import { page } from "$app/stores";
 	import { RoleBadge } from "$lib/ui/util";
@@ -190,18 +187,18 @@
 									on:click={unfollowUser}
 									loading={loadingFollow}
 									loadingText="Saving..."
+									title="Unfollow"
 								>
-									<UserUnfollowLine class="button-icon variable-text" />
-									<span class="button-text hidden lg:block">Unfollow</span>
+									<UserUnfollowLine class="button-icon no-text" />
 								</Button>
 							{:else}
 								<Button
 									on:click={followUser}
 									loading={loadingFollow}
 									loadingText="Saving..."
+									title="Follow"
 								>
-									<UserFollowLine class="button-icon variable-text" />
-									<span class="button-text hidden lg:block">Follow</span>
+									<UserFollowLine class="button-icon no-text" />
 								</Button>
 							{/if}
 							<div class="mx-0.5" />
@@ -220,12 +217,11 @@
 							</svelte:fragment>
 						</Dropdown>
 					{:else}
-						<Button disabled>
-							<UserFollowLine class="button-icon variable-text" />
-							<span class="button-text hidden lg:block">Follow</span>
+						<Button disabled title="Follow">
+							<UserFollowLine class="button-icon no-text" />
 						</Button>
 						<div class="mx-0.5" />
-						<Button disabled>
+						<Button disabled title="More">
 							<More2Fill class="button-icon no-text" size="20px" />
 						</Button>
 					{/if}
@@ -258,28 +254,14 @@
 						Joined <Time timestamp={data.createdAt} />
 					</span>
 				</div>
-				<div class="flex flex-col px-3 py-2 my-4 bg-zinc-300 dark:bg-zinc-600 rounded-xl">
+				<div class="flex flex-col my-4 rounded-xl">
 					<div class="mb-2.5">
-						<div class="flex items-center">
-							<InformationLine size="20px" class="mr-1" />
-							<span
-								class="all-small-caps font-bold tracking-wider relative -top-0.5 text-lg"
-							>
-								About Me
-							</span>
-						</div>
 						<div class="markdown-text">
 							<SvelteMarkdown source={data.info.bio} />
 						</div>
 					</div>
 					{#if Object.keys(data.links).length !== 0}
 						<div class="border-zinc-400 dark:border-zinc-500">
-							<div class="flex items-center">
-								<LinksFill size="20px" class="mr-1" />
-								<span class="all-small-caps font-bold tracking-wider text-lg">
-									Links
-								</span>
-							</div>
 							<div class="flex items-center flex-wrap">
 								{#each Object.keys(data.links) as key}
 									<LinkTag kind={key} href={data.links[key]} />
@@ -290,7 +272,7 @@
 				</div>
 				<div class="flex-1" />
 				<div
-					class="flex items-center justify-center w-full self-end bg-zinc-300 dark:bg-zinc-600 rounded-xl overflow-hidden"
+					class="flex lg:flex-col lg:items-start lg:justify-start items-center justify-center w-full self-end bg-zinc-300 dark:bg-zinc-600 rounded-xl overflow-hidden"
 				>
 					<a
 						class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500"
@@ -298,10 +280,20 @@
 						class:active={$page.url.pathname.includes("/works")}
 					>
 						<div class="stat">
-							<QuillPenLine size="18.4px" class="mr-1" />
-							<span class="select-none">{abbreviate(data.stats.works)}</span>
+							<QuillPenLine
+								class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[26px] lg:h-[26px]"
+							/>
+							<span class="select-none lg:hidden">
+								{abbreviate(data.stats.works)}
+							</span>
 						</div>
-						<div class="stat-label">Work{pluralize(data.stats.works)}</div>
+						<div class="stat-label">
+							<span class="select-none mr-1.5 hidden lg:block">
+								{abbreviate(data.stats.works)}
+							</span>
+							Work{pluralize(data.stats.works)}
+						</div>
+						<div class="stat-caret"><ArrowRightSLine size="22px" /></div>
 					</a>
 					<a
 						class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500"
@@ -309,21 +301,36 @@
 						class:active={$page.url.pathname.includes("/blogs")}
 					>
 						<div class="stat">
-							<CupLine size="18.4px" class="mr-1" />
-							<span class="select-none">{abbreviate(data.stats.blogs)}</span>
+							<CupLine
+								class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[26px] lg:h-[26px]"
+							/>
+							<span class="select-none lg:hidden">
+								{abbreviate(data.stats.blogs)}
+							</span>
 						</div>
-						<div class="stat-label">Blog{pluralize(data.stats.blogs)}</div>
+						<div class="stat-label">
+							<span class="select-none mr-1.5 hidden lg:block">
+								{abbreviate(data.stats.blogs)}
+							</span>
+							Blog{pluralize(data.stats.blogs)}
+						</div>
+						<div class="stat-caret"><ArrowRightSLine size="22px" /></div>
 					</a>
 					<a
 						class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500"
 						href="/profile/{data.id}/{slugify(data.username)}/shelves"
 						class:active={$page.url.pathname.includes("/shelves")}
 					>
-						<div class="relative top-0.5 flex flex-col items-center">
+						<div
+							class="relative top-0.5 lg:top-0 lg:w-full flex flex-col lg:flex-row items-center"
+						>
 							<div class="stat">
-								<BarChart2Line size="18.4px" />
+								<BarChart2Line
+									class="w-[18.4px] h-[18.4px] lg:w-[26px] lg:h-[26px]"
+								/>
 							</div>
 							<div class="stat-label">Shelves</div>
+							<div class="stat-caret"><ArrowRightSLine size="22px" /></div>
 						</div>
 					</a>
 				</div>
@@ -373,13 +380,18 @@
 				grid-area: action;
 				@apply flex flex-col px-4 pb-4 pt-2 flex-wrap;
 				a.stat-box {
-					@apply block cursor-pointer flex flex-col items-center select-none no-underline p-4 w-1/3 h-[65px] transition;
+					@apply cursor-pointer flex flex-col lg:flex-row items-center select-none no-underline p-4 w-1/3 lg:w-full h-[65px] lg:h-fit transition;
 					color: var(--text-color);
 					div.stat {
-						@apply flex items-center relative -top-0.5;
+						@apply flex items-center relative -top-0.5 lg:top-0 lg:mr-2;
+						font-family: var(--header-text);
 					}
 					div.stat-label {
-						@apply text-xs uppercase font-bold tracking-wider relative -top-0.5;
+						@apply text-xs uppercase font-bold tracking-wider relative flex items-center lg:top-[0.175rem] lg:text-lg lg:normal-case lg:font-normal lg:tracking-normal lg:flex-1;
+						font-family: var(--header-text);
+					}
+					div.stat-caret {
+						@apply hidden lg:block;
 					}
 					&.active {
 						@apply text-white;
