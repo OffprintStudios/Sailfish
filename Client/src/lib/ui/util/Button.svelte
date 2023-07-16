@@ -52,7 +52,7 @@
 		class={classes}
 		disabled={isDisabled}
 		tabindex="0"
-		on:click
+		on:click|stopPropagation
 		bind:this={thisButton}
 	>
 		{#if loading}

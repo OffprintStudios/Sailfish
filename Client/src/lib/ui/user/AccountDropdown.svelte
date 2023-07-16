@@ -14,8 +14,8 @@
 		EyeLine,
 		QuillPenLine
 	} from "svelte-remixicon";
-	import { slide } from "svelte/transition";
-	import { abbreviate, clickOutside, slugify } from "$lib/util/functions";
+	import { fly } from "svelte/transition";
+	import { abbreviate, clickOutside, slugify, throttle } from "$lib/util/functions";
 	import { account } from "$lib/state/account.state";
 	import { Avatar, RoleBadge } from "$lib/ui/util";
 
@@ -28,6 +28,8 @@
 	function switchState() {
 		open = !open;
 	}
+
+	let throttled = throttle(switchState, 150);
 
 	$: {
 		if (button) {
@@ -53,7 +55,7 @@
 </script>
 
 <div class="relative z-[2]">
-	<Button on:click={switchState} bind:thisButton={button} isActive={open} kind="primary">
+	<Button on:click={throttled} bind:thisButton={button} isActive={open} kind="primary">
 		{#if $account.account && $account.currProfile}
 			<Avatar src={$account.currProfile.avatar} size="36px" borderWidth="1px" />
 		{:else if $account.account}
@@ -63,10 +65,10 @@
 	{#if open}
 		<div
 			class="account-dropdown bg-zinc-200 dark:bg-zinc-700"
-			transition:slide={{ delay: 0, duration: 150 }}
+			transition:fly={{ delay: 0, duration: 150, x: 200 }}
 			bind:this={dropdown}
 			use:clickOutside
-			on:outclick={switchState}
+			on:outclick={throttled}
 		>
 			{#if $account.account && $account.currProfile}
 				<div class="account-dropdown-section bg-zinc-300 dark:bg-zinc-600">
