@@ -3,10 +3,8 @@
 		LoginCircleLine,
 		ArrowLeftRightLine,
 		UserAddLine,
-		QuestionAnswerLine,
-		Notification2Line,
-		HistoryLine,
-		SearchEyeLine
+		SearchEyeLine,
+		Notification2Line
 	} from "svelte-remixicon";
 	import SearchDropdown from "$lib/ui/nav/SearchDropdown.svelte";
 	import { navigating } from "$app/stores";
@@ -15,14 +13,12 @@
 	import { AccountPanel } from "$lib/ui/guide/account";
 	import { account } from "$lib/state/account.state";
 	import Avatar from "$lib/ui/util/Avatar.svelte";
-	import { HistoryPanel } from "$lib/ui/guide/history";
-	import { MessagesPanel } from "$lib/ui/guide/messages";
-	import { ActivityPanel } from "$lib/ui/guide/activity";
 	import type { SvelteComponentTyped } from "svelte";
 	import { getReq, type ResponseError } from "$lib/http";
 	import { activity } from "$lib/state/activity.state";
 	import CountBadge from "$lib/ui/util/CountBadge.svelte";
 	import NavDropdown from "$lib/ui/nav/NavDropdown.svelte";
+	import { AccountDropdown } from "$lib/ui/user";
 
 	$: {
 		if ($navigating !== null) {
@@ -99,7 +95,7 @@
 	<div class="hidden lg:w-1/3 lg:flex items-center">
 		<div class="flex-1"><!--spacer--></div>
 		{#if $account.account}
-			<Button
+			<!--<Button
 				kind="primary"
 				disabled={!$account.currProfile}
 				isActive={currTab === GuideTabs.History && $guide.open}
@@ -107,7 +103,7 @@
 			>
 				<HistoryLine class="button-icon no-text" size="26px" />
 			</Button>
-			<div class="mx-1"><!--spacer--></div>
+			<div class="mx-1"></div>
 			<Button
 				kind="primary"
 				disabled={!$account.currProfile}
@@ -116,7 +112,7 @@
 			>
 				<QuestionAnswerLine class="button-icon no-text" size="26px" />
 			</Button>
-			<div class="mx-1"><!--spacer--></div>
+			<div class="mx-1"></div>
 			<Button
 				kind="primary"
 				disabled={!$account.currProfile}
@@ -128,7 +124,7 @@
 				{/if}
 				<Notification2Line class="button-icon no-text" size="26px" />
 			</Button>
-			<div class="mx-1"><!--spacer--></div>
+			<div class="mx-1"></div>
 			<Button
 				kind="primary"
 				on:click={() => toggleGuide(AccountPanel, GuideTabs.Account)}
@@ -139,7 +135,15 @@
 				{:else}
 					<ArrowLeftRightLine class="button-icon no-text -rotate-45" size="36px" />
 				{/if}
+			</Button>-->
+			<Button kind="primary" disabled={!$account.currProfile}>
+				{#if $activity.count > 0}
+					<CountBadge value={$activity.count} />
+				{/if}
+				<Notification2Line class="button-icon no-text" size="22px" />
 			</Button>
+			<div class="mx-1" />
+			<AccountDropdown />
 		{:else}
 			<Button kind="primary" asLink href="/registration/log-in" title="Log In">
 				<LoginCircleLine class="button-icon" />

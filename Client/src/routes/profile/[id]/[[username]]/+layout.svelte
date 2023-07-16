@@ -380,7 +380,7 @@
 				grid-area: action;
 				@apply flex flex-col px-4 pb-4 pt-2 flex-wrap;
 				a.stat-box {
-					@apply cursor-pointer flex flex-col lg:flex-row items-center select-none no-underline p-4 w-1/3 lg:w-full h-[65px] lg:h-fit transition;
+					@apply cursor-pointer flex flex-col lg:flex-row items-center select-none no-underline p-4 w-1/3 lg:w-full h-[65px] lg:h-fit transition lg:border-b lg:border-zinc-500 lg:last:border-0;
 					color: var(--text-color);
 					div.stat {
 						@apply flex items-center relative -top-0.5 lg:top-0 lg:mr-2;

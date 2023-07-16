@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { computePosition, flip, offset, shift } from "@floating-ui/dom";
+	import { computePosition, flip, offset, shift, type ShiftOptions } from "@floating-ui/dom";
 	import {
 		BookmarkFill,
 		BookmarkLine,
@@ -34,7 +34,11 @@
 		if (button) {
 			computePosition(button, dropdown, {
 				placement: "bottom",
-				middleware: [offset({ mainAxis: -40 }), flip(), shift({ padding: 5 })]
+				middleware: [
+					offset({ mainAxis: 16 }),
+					flip(),
+					shift({ padding: 5 } as ShiftOptions)
+				]
 			})
 				.then(({ x, y }) => {
 					Object.assign(dropdown.style, {
@@ -54,7 +58,7 @@
 </script>
 
 <div class="relative z-[2]">
-	<Button on:click={determineState} bind:this={button} isActive={open} kind="primary">
+	<Button on:click={determineState} bind:thisButton={button} isActive={open} kind="primary">
 		<MenuLine class="button-icon no-text" size="24px" />
 	</Button>
 	{#if open}
