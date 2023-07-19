@@ -65,16 +65,16 @@
 	let enableMature = false;
 	let enableExplicit = false;
 
-	if ($app.filter === ContentFilter.Default) {
+	if ($app.filter === ContentFilter.restricted) {
 		enableMature = false;
 		enableExplicit = false;
-	} else if ($app.filter === ContentFilter.MatureEnabled) {
+	} else if ($app.filter === ContentFilter.mature) {
 		enableMature = true;
 		enableExplicit = false;
-	} else if ($app.filter === ContentFilter.ExplicitEnabled) {
+	} else if ($app.filter === ContentFilter.explicit) {
 		enableMature = false;
 		enableExplicit = true;
-	} else if ($app.filter === ContentFilter.Everything) {
+	} else if ($app.filter === ContentFilter.everything) {
 		enableMature = true;
 		enableExplicit = true;
 	}
