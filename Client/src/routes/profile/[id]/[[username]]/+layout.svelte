@@ -12,7 +12,10 @@
 		ArrowRightSLine,
 		HistoryLine,
 		QuestionAnswerLine,
-		BookmarkLine
+		BookmarkLine,
+		SendPlaneLine,
+		EditCircleLine,
+		UserSettingsLine
 	} from "svelte-remixicon";
 	import { page } from "$app/stores";
 	import { RoleBadge } from "$lib/ui/util";
@@ -21,7 +24,7 @@
 	import { account } from "$lib/state/account.state";
 	import type { Profile } from "$lib/models/accounts";
 	import { openPopup } from "$lib/ui/popup";
-	import { UploadProfileCover } from "$lib/ui/upload";
+	import { UploadAvatar, UploadProfileCover } from "$lib/ui/upload";
 	import { onMount } from "svelte";
 	import { delReq, getReq, postReq, type ResponseError } from "$lib/http";
 	import toast from "svelte-french-toast";
@@ -58,6 +61,18 @@
 			},
 			{ profileId: data.id }
 		);
+	}
+
+	function updateAvatar() {
+		openPopup(UploadAvatar, {
+			onConfirm(value: Profile) {
+				$account.currProfile = value;
+				$account.profiles = $account.profiles.map((item) => {
+					return item.id === value.id ? value : item;
+				});
+				data = value;
+			}
+		});
 	}
 
 	async function checkFollow() {
@@ -167,16 +182,6 @@
 						<div>
 							<RoleBadge roles={data.account.roles} size="large" />
 						</div>
-						{#if $account.account && $account.currProfile && $account.currProfile.id === data.id}
-							<div class="mx-2 text-white text-lg relative">|</div>
-							<Button on:click={updateBanner} kind="primary">
-								{#if data.bannerArt}
-									<ImageEditLine class="button-icon no-text" size="18px" />
-								{:else}
-									<ImageAddLine class="button-icon no-text" size="18px" />
-								{/if}
-							</Button>
-						{/if}
 					</div>
 				</div>
 			</div>
@@ -212,9 +217,27 @@
 							</svelte:fragment>
 							<svelte:fragment slot="items">
 								{#if $account.currProfile.id !== data.id}
+									<button>
+										<SendPlaneLine class="mr-2" size="18px" />
+										<span>Send Message</span>
+									</button>
 									<button on:click={reportUser}>
 										<AlarmWarningLine class="mr-2" size="18px" />
 										<span>Report</span>
+									</button>
+								{:else}
+									<button on:click={updateAvatar}>
+										<EditCircleLine class="mr-2" size="18px" />
+										<span>Edit Avatar</span>
+									</button>
+									<button on:click={updateBanner}>
+										{#if data.bannerArt}
+											<ImageEditLine class="mr-2" size="18px" />
+											<span>Edit Banner Art</span>
+										{:else}
+											<ImageAddLine class="mr-2" size="18px" />
+											<span>Add Banner Art</span>
+										{/if}
 									</button>
 								{/if}
 							</svelte:fragment>
@@ -349,61 +372,84 @@
 						</div>
 					</a>
 				</div>
-				<div
-					class="hidden lg:flex flex-col w-full bg-zinc-300 dark:bg-zinc-600 rounded-xl mt-4 overflow-hidden"
-				>
-					<a
-						class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500 group"
-						href="/profile/{data.id}/{slugify(data.username)}/library"
-						class:active={$page.url.pathname.includes("/library")}
+				{#if $account.currProfile && $account.currProfile.id === data.id}
+					<div
+						class="hidden lg:flex flex-col w-full bg-zinc-300 dark:bg-zinc-600 rounded-xl mt-4 overflow-hidden"
 					>
-						<div class="stat">
-							<BookmarkLine
-								class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[22px] lg:h-[22px]"
-							/>
-						</div>
-						<div class="stat-label">Library</div>
-						<div
-							class="stat-caret text-zinc-400 dark:text-zinc-500 group-hover:text-white"
+						<a
+							class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500 group"
+							href="/profile/{data.id}/{slugify(data.username)}/library"
+							class:active={$page.url.pathname.includes("/library")}
 						>
-							<ArrowRightSLine size="22px" />
-						</div>
-					</a>
-					<a
-						class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500 group"
-						href="/profile/{data.id}/{slugify(data.username)}/messages"
-						class:active={$page.url.pathname.includes("/messages")}
+							<div class="stat">
+								<BookmarkLine
+									class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[22px] lg:h-[22px]"
+								/>
+							</div>
+							<div class="stat-label">Library</div>
+							<div
+								class="stat-caret text-zinc-400 dark:text-zinc-500 group-hover:text-white"
+							>
+								<ArrowRightSLine size="22px" />
+							</div>
+						</a>
+						<a
+							class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500 group"
+							href="/profile/{data.id}/{slugify(data.username)}/messages"
+							class:active={$page.url.pathname.includes("/messages")}
+						>
+							<div class="stat">
+								<QuestionAnswerLine
+									class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[22px] lg:h-[22px]"
+								/>
+							</div>
+							<div class="stat-label">Messages</div>
+							<div
+								class="stat-caret text-zinc-400 dark:text-zinc-500 group-hover:text-white"
+							>
+								<ArrowRightSLine size="22px" />
+							</div>
+						</a>
+						<a
+							class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500 group"
+							href="/profile/{data.id}/{slugify(data.username)}/reading-history"
+							class:active={$page.url.pathname.includes("/reading-history")}
+						>
+							<div class="stat">
+								<HistoryLine
+									class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[22px] lg:h-[22px]"
+								/>
+							</div>
+							<div class="stat-label">Reading History</div>
+							<div
+								class="stat-caret text-zinc-400 dark:text-zinc-500 group-hover:text-white"
+							>
+								<ArrowRightSLine size="22px" />
+							</div>
+						</a>
+					</div>
+					<div
+						class="hidden lg:flex flex-col w-full bg-zinc-300 dark:bg-zinc-600 rounded-xl mt-4 overflow-hidden"
 					>
-						<div class="stat">
-							<QuestionAnswerLine
-								class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[22px] lg:h-[22px]"
-							/>
-						</div>
-						<div class="stat-label">Messages</div>
-						<div
-							class="stat-caret text-zinc-400 dark:text-zinc-500 group-hover:text-white"
+						<a
+							class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500 group"
+							href="/profile/{data.id}/{slugify(data.username)}/settings"
+							class:active={$page.url.pathname.includes("/settings")}
 						>
-							<ArrowRightSLine size="22px" />
-						</div>
-					</a>
-					<a
-						class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500 group"
-						href="/profile/{data.id}/{slugify(data.username)}/reading-history"
-						class:active={$page.url.pathname.includes("/reading-history")}
-					>
-						<div class="stat">
-							<HistoryLine
-								class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[22px] lg:h-[22px]"
-							/>
-						</div>
-						<div class="stat-label">Reading History</div>
-						<div
-							class="stat-caret text-zinc-400 dark:text-zinc-500 group-hover:text-white"
-						>
-							<ArrowRightSLine size="22px" />
-						</div>
-					</a>
-				</div>
+							<div class="stat">
+								<UserSettingsLine
+									class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[22px] lg:h-[22px]"
+								/>
+							</div>
+							<div class="stat-label">Settings</div>
+							<div
+								class="stat-caret text-zinc-400 dark:text-zinc-500 group-hover:text-white"
+							>
+								<ArrowRightSLine size="22px" />
+							</div>
+						</a>
+					</div>
+				{/if}
 			</div>
 		</div>
 	</div>
