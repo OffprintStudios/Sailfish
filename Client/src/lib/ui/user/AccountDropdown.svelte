@@ -98,7 +98,7 @@
 	$: {
 		if (button) {
 			computePosition(button, dropdown, {
-				placement: "bottom-start",
+				placement: "bottom-end",
 				middleware: [offset({ mainAxis: 16 }), flip(), shift()]
 			})
 				.then(({ x, y }) => {
@@ -516,7 +516,7 @@
 
 <style lang="scss">
 	div.account-dropdown {
-		@apply absolute rounded-2xl z-50 max-h-[calc(100vh-80px)] p-2 lg:w-[375px] overflow-hidden overflow-y-scroll;
+		@apply absolute rounded-2xl z-50 max-h-[calc(100vh-80px)] p-2 w-[calc(100vw-50px)] lg:w-[375px] overflow-hidden overflow-y-scroll;
 		box-shadow: var(--dropshadow);
 		font-family: var(--header-text);
 		div.account-dropdown-section {

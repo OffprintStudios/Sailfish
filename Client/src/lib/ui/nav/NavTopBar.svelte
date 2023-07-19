@@ -162,20 +162,7 @@
 		</Button>
 		<div class="mx-0.5"><!--spacer--></div>
 		{#if $account.account}
-			<Button
-				kind="primary"
-				on:click={() => toggleGuide(AccountPanel, GuideTabs.Account)}
-				isActive={currTab === GuideTabs.Account && $guide.open}
-			>
-				{#if $account.currProfile}
-					{#if $activity.count > 0}
-						<CountBadge value={$activity.count} />
-					{/if}
-					<Avatar src={$account.currProfile.avatar} size="28px" borderWidth="1px" />
-				{:else}
-					<ArrowLeftRightLine class="button-icon no-text -rotate-45" size="28px" />
-				{/if}
-			</Button>
+			<AccountDropdown />
 		{:else}
 			<Button kind="primary" asLink href="/registration/log-in" title="Log In">
 				<LoginCircleLine class="button-icon no-text" size="24px" />
