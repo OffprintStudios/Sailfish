@@ -9,7 +9,10 @@
 		UserFollowLine,
 		UserUnfollowLine,
 		More2Fill,
-		ArrowRightSLine
+		ArrowRightSLine,
+		HistoryLine,
+		QuestionAnswerLine,
+		BookmarkLine
 	} from "svelte-remixicon";
 	import { page } from "$app/stores";
 	import { RoleBadge } from "$lib/ui/util";
@@ -275,13 +278,13 @@
 					class="flex lg:flex-col lg:items-start lg:justify-start items-center justify-center w-full self-end bg-zinc-300 dark:bg-zinc-600 rounded-xl overflow-hidden"
 				>
 					<a
-						class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500"
+						class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500 group"
 						href="/profile/{data.id}/{slugify(data.username)}/works"
 						class:active={$page.url.pathname.includes("/works")}
 					>
 						<div class="stat">
 							<QuillPenLine
-								class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[26px] lg:h-[26px]"
+								class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[22px] lg:h-[22px]"
 							/>
 							<span class="select-none lg:hidden">
 								{abbreviate(data.stats.works)}
@@ -293,16 +296,20 @@
 							</span>
 							Work{pluralize(data.stats.works)}
 						</div>
-						<div class="stat-caret"><ArrowRightSLine size="22px" /></div>
+						<div
+							class="stat-caret text-zinc-400 dark:text-zinc-500 group-hover:text-white"
+						>
+							<ArrowRightSLine size="22px" />
+						</div>
 					</a>
 					<a
-						class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500"
+						class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500 group"
 						href="/profile/{data.id}/{slugify(data.username)}/blogs"
 						class:active={$page.url.pathname.includes("/blogs")}
 					>
 						<div class="stat">
 							<CupLine
-								class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[26px] lg:h-[26px]"
+								class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[22px] lg:h-[22px]"
 							/>
 							<span class="select-none lg:hidden">
 								{abbreviate(data.stats.blogs)}
@@ -314,10 +321,14 @@
 							</span>
 							Blog{pluralize(data.stats.blogs)}
 						</div>
-						<div class="stat-caret"><ArrowRightSLine size="22px" /></div>
+						<div
+							class="stat-caret text-zinc-400 dark:text-zinc-500 group-hover:text-white"
+						>
+							<ArrowRightSLine size="22px" />
+						</div>
 					</a>
 					<a
-						class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500"
+						class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500 group"
 						href="/profile/{data.id}/{slugify(data.username)}/shelves"
 						class:active={$page.url.pathname.includes("/shelves")}
 					>
@@ -326,11 +337,70 @@
 						>
 							<div class="stat">
 								<BarChart2Line
-									class="w-[18.4px] h-[18.4px] lg:w-[26px] lg:h-[26px]"
+									class="w-[18.4px] h-[18.4px] lg:w-[22px] lg:h-[22px]"
 								/>
 							</div>
 							<div class="stat-label">Shelves</div>
-							<div class="stat-caret"><ArrowRightSLine size="22px" /></div>
+							<div
+								class="stat-caret text-zinc-400 dark:text-zinc-500 group-hover:text-white"
+							>
+								<ArrowRightSLine size="22px" />
+							</div>
+						</div>
+					</a>
+				</div>
+				<div
+					class="hidden lg:flex flex-col w-full bg-zinc-300 dark:bg-zinc-600 rounded-xl mt-4 overflow-hidden"
+				>
+					<a
+						class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500 group"
+						href="/profile/{data.id}/{slugify(data.username)}/library"
+						class:active={$page.url.pathname.includes("/library")}
+					>
+						<div class="stat">
+							<BookmarkLine
+								class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[22px] lg:h-[22px]"
+							/>
+						</div>
+						<div class="stat-label">Library</div>
+						<div
+							class="stat-caret text-zinc-400 dark:text-zinc-500 group-hover:text-white"
+						>
+							<ArrowRightSLine size="22px" />
+						</div>
+					</a>
+					<a
+						class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500 group"
+						href="/profile/{data.id}/{slugify(data.username)}/messages"
+						class:active={$page.url.pathname.includes("/messages")}
+					>
+						<div class="stat">
+							<QuestionAnswerLine
+								class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[22px] lg:h-[22px]"
+							/>
+						</div>
+						<div class="stat-label">Messages</div>
+						<div
+							class="stat-caret text-zinc-400 dark:text-zinc-500 group-hover:text-white"
+						>
+							<ArrowRightSLine size="22px" />
+						</div>
+					</a>
+					<a
+						class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500 group"
+						href="/profile/{data.id}/{slugify(data.username)}/reading-history"
+						class:active={$page.url.pathname.includes("/reading-history")}
+					>
+						<div class="stat">
+							<HistoryLine
+								class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[22px] lg:h-[22px]"
+							/>
+						</div>
+						<div class="stat-label">Reading History</div>
+						<div
+							class="stat-caret text-zinc-400 dark:text-zinc-500 group-hover:text-white"
+						>
+							<ArrowRightSLine size="22px" />
 						</div>
 					</a>
 				</div>
@@ -344,7 +414,7 @@
 
 <style lang="scss">
 	div.profile-details {
-		@apply w-full lg:min-w-[350px] lg:max-w-[350px] lg:h-[calc(100vh-60px)] lg:sticky top-0;
+		@apply w-full lg:min-w-[350px] lg:max-w-[350px] lg:h-[calc(100vh-60px)] lg:sticky top-0 lg:overflow-hidden lg:overflow-y-scroll;
 
 		div.profile-header {
 			@apply grid relative w-full overflow-hidden;
@@ -380,14 +450,14 @@
 				grid-area: action;
 				@apply flex flex-col px-4 pb-4 pt-2 flex-wrap;
 				a.stat-box {
-					@apply cursor-pointer flex flex-col lg:flex-row items-center select-none no-underline p-4 w-1/3 lg:w-full h-[65px] lg:h-fit transition lg:border-b lg:border-zinc-500 lg:last:border-0;
+					@apply cursor-pointer flex flex-col lg:flex-row items-center select-none no-underline p-4 w-1/3 lg:w-full h-[65px] lg:h-[50px] transition lg:border-b lg:border-zinc-500 lg:last:border-0;
 					color: var(--text-color);
 					div.stat {
 						@apply flex items-center relative -top-0.5 lg:top-0 lg:mr-2;
 						font-family: var(--header-text);
 					}
 					div.stat-label {
-						@apply text-xs uppercase font-bold tracking-wider relative flex items-center lg:top-[0.175rem] lg:text-lg lg:normal-case lg:font-normal lg:tracking-normal lg:flex-1;
+						@apply text-xs uppercase font-bold tracking-wider relative flex items-center lg:top-0.5 lg:text-base lg:normal-case lg:font-normal lg:tracking-normal lg:flex-1;
 						font-family: var(--header-text);
 					}
 					div.stat-caret {
@@ -396,6 +466,9 @@
 					&.active {
 						@apply text-white;
 						background: var(--accent);
+						div.stat-caret {
+							@apply text-white;
+						}
 					}
 				}
 				:global(div.markdown-text) {

@@ -1,1 +1,1 @@
-export { default as AccountDropdown } from "./AccountDropdown.svelte";
+export { default as AccountDropdown } from "./account-dropdown/AccountDropdown.svelte";

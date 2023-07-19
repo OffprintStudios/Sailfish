@@ -73,6 +73,7 @@
 		font-weight: 700;
 		letter-spacing: 1px;
 		color: var(--text-color);
+		font-family: var(--body-text);
 
 		&.primary,
 		&.active {
