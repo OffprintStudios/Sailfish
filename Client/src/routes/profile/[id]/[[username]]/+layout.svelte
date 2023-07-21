@@ -378,23 +378,6 @@
 					>
 						<a
 							class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500 group"
-							href="/profile/{data.id}/{slugify(data.username)}/library"
-							class:active={$page.url.pathname.includes("/library")}
-						>
-							<div class="stat">
-								<BookmarkLine
-									class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[22px] lg:h-[22px]"
-								/>
-							</div>
-							<div class="stat-label">Library</div>
-							<div
-								class="stat-caret text-zinc-400 dark:text-zinc-500 group-hover:text-white"
-							>
-								<ArrowRightSLine size="22px" />
-							</div>
-						</a>
-						<a
-							class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500 group"
 							href="/profile/{data.id}/{slugify(data.username)}/messages"
 							class:active={$page.url.pathname.includes("/messages")}
 						>
