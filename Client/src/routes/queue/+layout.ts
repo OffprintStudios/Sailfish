@@ -1,15 +1,14 @@
-import type { PageLoad } from "./$types";
-import { getReq, postReq } from "$lib/http";
-import type { ResponseError } from "$lib/http";
+import type { LayoutLoad } from "./$types";
+import { error } from "@sveltejs/kit";
+import { getReq, postReq, type ResponseError } from "$lib/http";
+import { Roles } from "$lib/models/accounts";
 import type { Paginate } from "$lib/util/types";
 import type { ApprovalQueue } from "$lib/models/admin/approval-queue";
-import { error } from "@sveltejs/kit";
-import { Roles } from "$lib/models/accounts";
 
-export const load: PageLoad = async (): Promise<Paginate<ApprovalQueue>> => {
+export const load: LayoutLoad = async (): Promise<Paginate<ApprovalQueue>> => {
 	const roleCheck = { needs: [Roles.Admin, Roles.Moderator, Roles.WorkApprover] };
-	const roleResponse = await postReq<{ goodToGo: boolean }>(`/auth/check-roles`, roleCheck);
-	if ((roleResponse as { goodToGo: boolean }).goodToGo === true) {
+	const response = await postReq<{ goodToGo: boolean }>(`/auth/check-roles`, roleCheck);
+	if ((response as { goodToGo: boolean }).goodToGo === true) {
 		const response = await getReq<Paginate<ApprovalQueue>>(
 			`/approval-queue/fetch-all?page=1&per=24`
 		);

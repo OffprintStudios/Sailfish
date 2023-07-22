@@ -5,12 +5,14 @@
 		CompassDiscoverLine,
 		BookmarkLine,
 		BookmarkFill,
-		NewspaperFill,
-		NewspaperLine,
+		TeamLine,
+		TeamFill,
 		Dashboard2Line,
-		Dashboard2Fill
+		Dashboard2Fill,
+		Inbox2Line,
+		Inbox2Fill,
+		ListCheck2
 	} from "svelte-remixicon";
-	import { guide } from "../guide";
 	import { account } from "$lib/state/account.state";
 	import { hasRoles } from "$lib/util/functions";
 	import { Roles } from "$lib/models/accounts";
@@ -20,29 +22,43 @@
 
 <nav>
 	{#if $account.account && $account.currProfile && hasRoles( $account.account?.roles, [Roles.Admin, Roles.Moderator, Roles.WorkApprover] )}
-		<a
-			class="link"
-			class:active={$page.url.pathname.startsWith("/dashboard") && $guide.open === false}
-			href="/dashboard"
-		>
-			<span class="link-icon">
-				{#if $page.url.pathname.startsWith("/dashboard") && $guide.open === false}
-					<Dashboard2Fill size={iconSize} />
-				{:else}
-					<Dashboard2Line size={iconSize} />
-				{/if}
-			</span>
-			<span class="link-name">Dash</span>
-		</a>
+		{#if hasRoles($account.account?.roles, [Roles.Admin, Roles.Moderator])}
+			<a
+				class="link"
+				class:active={$page.url.pathname.startsWith("/dashboard")}
+				href="/dashboard"
+			>
+				<span class="link-icon">
+					{#if $page.url.pathname.startsWith("/dashboard")}
+						<Dashboard2Fill size={iconSize} />
+					{:else}
+						<Dashboard2Line size={iconSize} />
+					{/if}
+				</span>
+				<span class="link-name">Dash</span>
+			</a>
+		{/if}
+		{#if hasRoles($account.account?.roles, [Roles.Admin, Roles.Moderator, Roles.WorkApprover])}
+			<a class="link" class:active={$page.url.pathname.startsWith("/queue")} href="/queue">
+				<span class="link-icon">
+					{#if $page.url.pathname.startsWith("/queue")}
+						<ListCheck2 size={iconSize} />
+					{:else}
+						<ListCheck2 size={iconSize} />
+					{/if}
+				</span>
+				<span class="link-name">Queue</span>
+			</a>
+		{/if}
+		<div class="border-b border-white w-9/12 mx-auto mt-1 mb-2"><!--spacer--></div>
 	{/if}
 	<a
 		class="link"
-		class:active={($page.url.pathname === "/" || $page.url.pathname.includes("/explore")) &&
-			$guide.open === false}
+		class:active={$page.url.pathname === "/" || $page.url.pathname.includes("/explore")}
 		href="/"
 	>
 		<span class="link-icon">
-			{#if ($page.url.pathname === "/" || $page.url.pathname.includes("/explore")) && $guide.open === false}
+			{#if $page.url.pathname === "/" || $page.url.pathname.includes("/explore")}
 				<CompassDiscoverFill size={iconSize} />
 			{:else}
 				<CompassDiscoverLine size={iconSize} />
@@ -50,13 +66,9 @@
 		</span>
 		<span class="link-name">Explore</span>
 	</a>
-	<a
-		class="link"
-		class:active={$page.url.pathname.includes("/library") && $guide.open === false}
-		href="/library"
-	>
+	<a class="link" class:active={$page.url.pathname.includes("/library")} href="/library">
 		<span class="link-icon">
-			{#if $page.url.pathname.includes("/library") && $guide.open === false}
+			{#if $page.url.pathname.includes("/library")}
 				<BookmarkFill size={iconSize} />
 			{:else}
 				<BookmarkLine size={iconSize} />
@@ -64,19 +76,25 @@
 		</span>
 		<span class="link-name">Library</span>
 	</a>
-	<a
-		class="link"
-		class:active={$page.url.pathname === "/feed" && $guide.open === false}
-		href="/feed"
-	>
+	<a class="link" class:active={$page.url.pathname.includes("/messages")} href="/messages">
 		<span class="link-icon">
-			{#if $page.url.pathname === "/feed" && $guide.open === false}
-				<NewspaperFill size={iconSize} />
+			{#if $page.url.pathname.includes("/messages")}
+				<Inbox2Fill size={iconSize} />
 			{:else}
-				<NewspaperLine size={iconSize} />
+				<Inbox2Line size={iconSize} />
 			{/if}
 		</span>
-		<span class="link-name"> Feed </span>
+		<span class="link-name">Inbox</span>
+	</a>
+	<a class="link" class:active={$page.url.pathname === "/feed"} href="/feed">
+		<span class="link-icon">
+			{#if $page.url.pathname === "/feed"}
+				<TeamFill size={iconSize} />
+			{:else}
+				<TeamLine size={iconSize} />
+			{/if}
+		</span>
+		<span class="link-name"> Social </span>
 	</a>
 	<div class="flex-1"><!--spacer--></div>
 	<div class="hidden lg:block text-white font-bold tracking-widest mb-1">

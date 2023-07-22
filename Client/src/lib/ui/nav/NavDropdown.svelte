@@ -12,7 +12,7 @@
 		NewspaperLine
 	} from "svelte-remixicon";
 	import { slide } from "svelte/transition";
-	import { clickOutside, hasRoles } from "$lib/util/functions";
+	import { clickOutside, hasRoles, throttle } from "$lib/util/functions";
 	import Button from "$lib/ui/util/Button.svelte";
 	import { account } from "$lib/state/account.state";
 	import { Roles } from "$lib/models/accounts";
@@ -29,6 +29,8 @@
 	function determineState() {
 		open = !open;
 	}
+
+	const throttled = throttle(determineState, 150);
 
 	$: {
 		if (button) {
@@ -58,7 +60,7 @@
 </script>
 
 <div class="relative z-[2]">
-	<Button on:click={determineState} bind:thisButton={button} isActive={open} kind="primary">
+	<Button on:click={throttled} bind:thisButton={button} isActive={open} kind="primary">
 		<MenuLine class="button-icon no-text" size="24px" />
 	</Button>
 	{#if open}
@@ -66,8 +68,9 @@
 			class="nav-dropdown-items bg-zinc-200 dark:bg-zinc-700"
 			transition:slide|local={{ delay: 0, duration: 150 }}
 			bind:this={dropdown}
+			on:click={throttled}
 			use:clickOutside
-			on:outclick={determineState}
+			on:outclick={throttled}
 		>
 			{#if $account.account && $account.currProfile && hasRoles( $account.account?.roles, [Roles.Admin, Roles.Moderator, Roles.WorkApprover] )}
 				<a

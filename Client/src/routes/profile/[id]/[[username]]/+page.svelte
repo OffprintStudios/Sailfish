@@ -98,13 +98,9 @@
 					<p>Well this is rather empty, isn't it?</p>
 				</div>
 			{:else}
-				<div
-					class="col-span-1 grid grid-cols-1 xl:grid-cols-3 2xl:grid-cols-1 lg:gap-2 2xl:gap-0"
-				>
+				<div class="col-span-1 grid grid-cols-1 xl:grid-cols-3 2xl:grid-cols-1 lg:gap-2">
 					{#each works.items as work}
-						<div class="my-2 2xl:first:mt-0 2xl:last:mb-0">
-							<WorkCard {work} withDropdown={false} />
-						</div>
+						<WorkCard {work} withDropdown={false} />
 					{/each}
 				</div>
 			{/if}

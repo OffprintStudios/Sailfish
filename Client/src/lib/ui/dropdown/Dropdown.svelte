@@ -55,6 +55,7 @@
 			class="dropdown-items"
 			transition:slide|local={{ delay: 0, duration: 150 }}
 			bind:this={dropdown}
+			on:click={throttled}
 			use:clickOutside
 			on:outclick={throttled}
 		>

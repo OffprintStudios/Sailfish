@@ -4,7 +4,7 @@ import { postReq } from "$lib/http";
 import { Roles } from "$lib/models/accounts";
 
 export const load: LayoutLoad = async (): Promise<void> => {
-	const roleCheck = { needs: [Roles.Admin, Roles.Moderator, Roles.WorkApprover] };
+	const roleCheck = { needs: [Roles.Admin, Roles.Moderator] };
 	const response = await postReq<{ goodToGo: boolean }>(`/auth/check-roles`, roleCheck);
 	if ((response as { goodToGo: boolean }).goodToGo === true) {
 		return;

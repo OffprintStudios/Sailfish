@@ -1,30 +1,19 @@
 <script lang="ts">
 	import {
 		LoginCircleLine,
-		ArrowLeftRightLine,
 		UserAddLine,
 		SearchEyeLine,
-		Notification2Line
+		Notification2Line,
+		RefreshLine
 	} from "svelte-remixicon";
 	import SearchDropdown from "$lib/ui/nav/SearchDropdown.svelte";
-	import { navigating } from "$app/stores";
-	import { closeGuide, openGuide, guide } from "$lib/ui/guide";
 	import Button from "$lib/ui/util/Button.svelte";
-	import { AccountPanel } from "$lib/ui/guide/account";
 	import { account } from "$lib/state/account.state";
-	import Avatar from "$lib/ui/util/Avatar.svelte";
-	import type { SvelteComponentTyped } from "svelte";
 	import { getReq, type ResponseError } from "$lib/http";
 	import { activity } from "$lib/state/activity.state";
 	import CountBadge from "$lib/ui/util/CountBadge.svelte";
 	import NavDropdown from "$lib/ui/nav/NavDropdown.svelte";
 	import { AccountDropdown } from "$lib/ui/user";
-
-	$: {
-		if ($navigating !== null) {
-			closeGuide();
-		}
-	}
 
 	enum GuideTabs {
 		Closed,
@@ -35,24 +24,6 @@
 	}
 
 	let currTab = GuideTabs.Closed;
-
-	function toggleGuide(panel: SvelteComponentTyped, tab: GuideTabs) {
-		if (!$guide.open) {
-			openGuide(panel);
-			currTab = tab;
-			return;
-		}
-
-		// assumes guide is open
-		if (currTab === tab) {
-			currTab = GuideTabs.Closed;
-			closeGuide();
-		} else {
-			closeGuide();
-			setTimeout(() => openGuide(panel), 250);
-			currTab = tab;
-		}
-	}
 
 	$: {
 		if ($account.account && $account.currProfile) {
@@ -88,6 +59,10 @@
 			<NavDropdown />
 		</div>
 		<h3 class="text-white text-lg lg:text-2xl tracking-wide mr-2">Offprint</h3>
+		<button class="update-pill">
+			<RefreshLine class="lg:mr-1" />
+			<span>New Update</span>
+		</button>
 	</div>
 	<div class="hidden lg:block w-1/3 relative">
 		<SearchDropdown />
@@ -95,47 +70,6 @@
 	<div class="hidden lg:w-1/3 lg:flex items-center">
 		<div class="flex-1"><!--spacer--></div>
 		{#if $account.account}
-			<!--<Button
-				kind="primary"
-				disabled={!$account.currProfile}
-				isActive={currTab === GuideTabs.History && $guide.open}
-				on:click={() => toggleGuide(HistoryPanel, GuideTabs.History)}
-			>
-				<HistoryLine class="button-icon no-text" size="26px" />
-			</Button>
-			<div class="mx-1"></div>
-			<Button
-				kind="primary"
-				disabled={!$account.currProfile}
-				isActive={currTab === GuideTabs.Messages && $guide.open}
-				on:click={() => toggleGuide(MessagesPanel, GuideTabs.Messages)}
-			>
-				<QuestionAnswerLine class="button-icon no-text" size="26px" />
-			</Button>
-			<div class="mx-1"></div>
-			<Button
-				kind="primary"
-				disabled={!$account.currProfile}
-				isActive={currTab === GuideTabs.Activity && $guide.open}
-				on:click={() => toggleGuide(ActivityPanel, GuideTabs.Activity)}
-			>
-				{#if $activity.count > 0}
-					<CountBadge value={$activity.count} />
-				{/if}
-				<Notification2Line class="button-icon no-text" size="26px" />
-			</Button>
-			<div class="mx-1"></div>
-			<Button
-				kind="primary"
-				on:click={() => toggleGuide(AccountPanel, GuideTabs.Account)}
-				isActive={currTab === GuideTabs.Account && $guide.open}
-			>
-				{#if $account.currProfile}
-					<Avatar src={$account.currProfile.avatar} size="36px" borderWidth="1px" />
-				{:else}
-					<ArrowLeftRightLine class="button-icon no-text -rotate-45" size="36px" />
-				{/if}
-			</Button>-->
 			<Button kind="primary" disabled={!$account.currProfile}>
 				{#if $activity.count > 0}
 					<CountBadge value={$activity.count} />
@@ -176,6 +110,16 @@
 </div>
 
 <style lang="scss">
+	button.update-pill {
+		@apply flex items-center rounded-full p-1 lg:py-[0.075rem] lg:px-2 text-white all-small-caps font-bold tracking-wider;
+		background: var(--accent-light);
+		&:hover {
+			background: var(--accent-dark);
+		}
+		span {
+			@apply relative -top-[0.075rem] hidden lg:block;
+		}
+	}
 	button.search-button {
 		@apply w-9/12 mx-auto flex items-center justify-center py-2 border-b-2 border-white text-sm rounded-md z-10 transition transform;
 		background: var(--accent-light);
