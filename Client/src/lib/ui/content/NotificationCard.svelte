@@ -34,7 +34,7 @@
 </script>
 
 <div
-	class="flex flex-col relative rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed hover:bg-zinc-300 dark:hover:bg-zinc-600 transition"
+	class="flex flex-col relative rounded-xl overflow-hidden bg-zinc-300 dark:bg-zinc-600 hover:bg-zinc-300 dark:hover:bg-zinc-600 transition"
 >
 	{#if notification.from.id !== null}
 		{#if notification.eventType === EventType.follow}

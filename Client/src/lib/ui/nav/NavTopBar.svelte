@@ -1,19 +1,12 @@
 <script lang="ts">
-	import {
-		LoginCircleLine,
-		UserAddLine,
-		SearchEyeLine,
-		Notification2Line,
-		RefreshLine
-	} from "svelte-remixicon";
+	import { LoginCircleLine, UserAddLine, SearchEyeLine, RefreshLine } from "svelte-remixicon";
 	import SearchDropdown from "$lib/ui/nav/SearchDropdown.svelte";
 	import Button from "$lib/ui/util/Button.svelte";
 	import { account } from "$lib/state/account.state";
 	import { getReq, type ResponseError } from "$lib/http";
 	import { activity } from "$lib/state/activity.state";
-	import CountBadge from "$lib/ui/util/CountBadge.svelte";
 	import NavDropdown from "$lib/ui/nav/NavDropdown.svelte";
-	import { AccountDropdown } from "$lib/ui/user";
+	import { AccountDropdown, ActivityDropdown } from "$lib/ui/user";
 
 	enum GuideTabs {
 		Closed,
@@ -70,13 +63,8 @@
 	<div class="hidden lg:w-1/3 lg:flex items-center">
 		<div class="flex-1"><!--spacer--></div>
 		{#if $account.account}
-			<Button kind="primary" disabled={!$account.currProfile}>
-				{#if $activity.count > 0}
-					<CountBadge value={$activity.count} />
-				{/if}
-				<Notification2Line class="button-icon no-text" size="22px" />
-			</Button>
-			<div class="mx-1" />
+			<ActivityDropdown />
+			<div class="mx-1"><!--spacer--></div>
 			<AccountDropdown />
 		{:else}
 			<Button kind="primary" asLink href="/registration/log-in" title="Log In">
@@ -96,6 +84,8 @@
 		</Button>
 		<div class="mx-0.5"><!--spacer--></div>
 		{#if $account.account}
+			<ActivityDropdown />
+			<div class="mx-1"><!--spacer--></div>
 			<AccountDropdown />
 		{:else}
 			<Button kind="primary" asLink href="/registration/log-in" title="Log In">

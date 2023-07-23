@@ -17,8 +17,6 @@
 		ArrowLeftSLine,
 		CheckLine,
 		CloseLine,
-		HistoryLine,
-		BookmarkLine,
 		SunLine,
 		SunFill,
 		MoonLine,
@@ -142,13 +140,13 @@
 		{#if $account.account && $account.currProfile}
 			<Avatar src={$account.currProfile.avatar} size="36px" borderWidth="1px" />
 		{:else if $account.account}
-			<ArrowLeftRightLine class="button-icon no-text -rotate-45" size="24px" />
+			<ArrowLeftRightLine class="button-icon no-text -rotate-45" size="22px" />
 		{/if}
 	</Button>
 	{#if open}
 		<div
 			class="account-dropdown bg-zinc-200 dark:bg-zinc-700"
-			transition:fly={{ delay: 0, duration: 150, x: 200 }}
+			transition:slide={{ delay: 0, duration: 150, x: 200 }}
 			bind:this={dropdown}
 			use:clickOutside
 			on:outclick={throttled}
