@@ -87,6 +87,7 @@
 	function switchState() {
 		open = !open;
 		currPanel = Panels.Home;
+		profileSwitcherOpen = false;
 	}
 
 	let throttled = throttle(switchState, 150);
@@ -261,34 +262,6 @@
 							>
 								<CupLine size="24px" class="mr-2" />
 								<span>Create New Blog</span>
-								<Link
-									size="18px"
-									class="text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-400"
-								/>
-							</a>
-						</div>
-						<div class="account-dropdown-section bg-zinc-300 dark:bg-zinc-600">
-							<a
-								class="account-dropdown-button group"
-								href="/profile/{$account.currProfile.id}/{slugify(
-									$account.currProfile.username
-								)}/library"
-							>
-								<BookmarkLine size="24px" class="mr-2" />
-								<span>Library</span>
-								<Link
-									size="18px"
-									class="text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-400"
-								/>
-							</a>
-							<a
-								class="account-dropdown-button group"
-								href="/profile/{$account.currProfile.id}/{slugify(
-									$account.currProfile.username
-								)}/reading-history"
-							>
-								<HistoryLine size="24px" class="mr-2" />
-								<span>Reading History</span>
 								<Link
 									size="18px"
 									class="text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-400"

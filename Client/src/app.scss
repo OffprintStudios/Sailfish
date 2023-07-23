@@ -119,6 +119,105 @@ div.empty {
   }
 }
 
+/* Panels */
+div.panel-container {
+  @apply w-full lg:min-w-[300px] lg:max-w-[300px] lg:h-[calc(100vh-60px)] lg:sticky top-0 lg:overflow-hidden lg:overflow-y-scroll;
+  div.title-block {
+    @apply flex flex-col items-center justify-center;
+    h1 {
+      @apply text-3xl px-4 py-2;
+    }
+  }
+
+  h1.title {
+    @apply text-4xl mt-12 mb-6;
+  }
+
+  div.top-block {
+    @apply px-2.5 py-8 mb-2 flex items-center text-white;
+    background: var(--accent-dark);
+    h1 {
+      @apply text-white text-4xl relative top-1;
+    }
+    div.left-button {
+      @apply mr-4;
+    }
+  }
+
+  div.content-container {
+    @apply px-3 my-4;
+  }
+  div.panel-section {
+    @apply mb-4 last:mb-0 rounded-xl overflow-hidden;
+    h3 {
+      @apply text-xl mb-1 ml-2 all-small-caps font-semibold;
+      color: var(--text-color);
+    }
+
+    div.panel-box {
+      @apply bg-zinc-200 rounded-lg p-4 flex flex-col items-center relative;
+    }
+  }
+  button.panel-button, a.panel-button, div.panel-button {
+    @apply flex items-center block no-underline p-3 text-lg border-b border-zinc-400 w-full last:border-0 bg-zinc-300;
+    color: var(--text-color);
+    font-family: var(--header-text);
+    .caret {
+      @apply text-zinc-400;
+    }
+
+    &:hover {
+      @apply bg-zinc-400;
+      .caret {
+        @apply text-zinc-500;
+      }
+    }
+
+    &.active {
+      @apply text-white;
+      background-color: var(--accent);
+      .caret {
+        @apply text-white;
+      }
+      &:hover {
+        background-color: var(--accent-light);
+      }
+    }
+
+    span {
+      @apply ml-2 flex-1 text-left relative top-[0.1625rem];
+    }
+  }
+}
+
+.dark div.panel-container {
+  button.panel-button, a.panel-button {
+    @apply border-zinc-500 bg-zinc-600;
+    &:hover {
+      @apply bg-zinc-500;
+      .caret {
+        @apply text-zinc-400;
+      }
+    }
+    &.active {
+      @apply text-white;
+      background-color: var(--accent);
+      .caret {
+        @apply text-white;
+      }
+      &:hover {
+        background-color: var(--accent-light);
+      }
+    }
+  }
+
+  div.panel-section {
+    div.panel-box {
+      @apply bg-zinc-600;
+    }
+  }
+}
+
 /* Editor */
 
 .dark div.ProseMirror {

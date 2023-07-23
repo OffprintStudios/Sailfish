@@ -111,7 +111,7 @@
 
 <style lang="scss">
 	button.update-pill {
-		@apply flex items-center rounded-full p-1 lg:py-[0.075rem] lg:px-2 text-white all-small-caps font-bold tracking-wider;
+		@apply flex items-center rounded-full p-1 lg:py-[0.075rem] lg:px-2 text-white all-small-caps font-bold tracking-wider transition;
 		background: var(--accent-light);
 		&:hover {
 			background: var(--accent-dark);

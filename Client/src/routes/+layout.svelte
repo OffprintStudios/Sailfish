@@ -3,7 +3,6 @@
 	import { onMount } from "svelte";
 	import { NavSideBar, NavTopBar } from "$lib/ui/nav";
 	import { app } from "$lib/state/app.state";
-	import { Guide } from "$lib/ui/guide";
 	import toast, { Toaster } from "svelte-french-toast";
 	import { account } from "$lib/state/account.state";
 	import { Popup } from "$lib/ui/popup";
@@ -13,8 +12,10 @@
 	import Button from "$lib/ui/util/Button.svelte";
 	import type { Account } from "$lib/models/accounts";
 	import { ThemePref } from "$lib/util/constants";
+	import { fly } from "svelte/transition";
+	import { cubicIn, cubicOut } from "svelte/easing";
 
-	export let data: { token: string | null } = { token: null };
+	export let data: { token: string | null; pathname: string } = { token: null, pathname: "" };
 	let loadingTerms = false;
 	let loadingConfirm = false;
 
@@ -41,6 +42,8 @@
 		$activity.count = 0;
 		$activity.markAsRead = [];
 	}
+
+	$: basePathname = data.pathname.split("/")[1];
 
 	async function agreeToTerms() {
 		if ($account.account) {
@@ -78,10 +81,14 @@
 <Popup />
 <NavTopBar />
 <NavSideBar />
-<main
-	class="relative mt-[50px] lg:mt-[60px] lg:ml-[75px] h-[calc(100%-50px)] lg:h-[calc(100%-60px)] lg:overflow-y-scroll lg:scroll-smooth"
->
-	<slot />
-	<div class="h-4 lg:hidden"><!--spacer--></div>
-</main>
+{#key basePathname}
+	<main
+		class="relative mt-[50px] lg:mt-[60px] lg:ml-[75px] h-[calc(100%-50px)] lg:h-[calc(100%-60px)] lg:overflow-y-scroll lg:scroll-smooth"
+		in:fly={{ easing: cubicOut, y: 10, delay: 400, duration: 300 }}
+		out:fly={{ easing: cubicIn, y: -10, duration: 300 }}
+	>
+		<slot />
+		<div class="h-4 lg:hidden"><!--spacer--></div>
+	</main>
+{/key}
 <Toaster />

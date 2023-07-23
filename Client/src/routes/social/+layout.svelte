@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { account } from "$lib/state/account.state";
-	import { Apps2Line, Loader2Line, NewspaperLine } from "svelte-remixicon";
+	import {
+		BlazeLine,
+		TeamLine,
+		UserHeartLine,
+		Group2Line,
+		SunLine,
+		RoadMapLine
+	} from "svelte-remixicon";
 	import { page } from "$app/stores";
 	import { getReq, type ResponseError } from "$lib/http";
 	import type { Paginate } from "$lib/util/types";
@@ -21,9 +28,9 @@
 	};
 
 	onMount(async () => {
-		if ($account.account && $account.currProfile) {
+		/*if ($account.account && $account.currProfile) {
 			await fetchFollows();
-		}
+		}*/
 	});
 
 	async function fetchFollows() {
@@ -68,74 +75,60 @@
 	<meta property="twitter:image" content="/images/offprint_icon.png" />
 </svelte:head>
 
-{#if $account.account && $account.currProfile}
-	<div class="mx-auto max-w-7xl">
-		<div
-			class="lg:flex lg:flex-col lg:items-center lg:justify-center mb-6 lg:mt-6 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed lg:rounded-xl overflow-hidden"
+<div
+	class="lg:flex lg:flex-col lg:items-center lg:justify-center mb-6 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed overflow-hidden"
+>
+	<div
+		class="flex items-center justify-center px-4 py-4 lg:py-6 w-full"
+		style="background: var(--accent-dark)"
+	>
+		<TeamLine class="mr-2 text-white w-[36px] h-[36px]" />
+		<h1 class="text-white text-3xl lg:text-4xl relative top-1">Social</h1>
+	</div>
+	<div class="flex items-center relative lg:justify-center overflow-x-auto whitespace-nowrap p-2">
+		<a
+			class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
+			class:active={$page.url.pathname === "/social"}
+			href="/social"
 		>
-			<div
-				class="flex items-center justify-center p-4 w-full"
-				style="background: var(--accent)"
-			>
-				<NewspaperLine class="mr-2 text-white w-[36px] h-[36px] lg:w-[48px] lg:h-[48px]" />
-				<h1 class="text-white text-3xl lg:text-4xl relative top-1">Feed</h1>
-			</div>
-			<div
-				class="flex items-center relative lg:justify-center overflow-x-auto whitespace-nowrap p-2"
-			>
-				<div class="sticky left-0 flex items-center mr-1">
-					<a
-						class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
-						class:active={$page.url.pathname === "/feed"}
-						href="/feed"
-					>
-						<Apps2Line class="mr-1" size={iconSize} />
-						<span>All Follows</span>
-					</a>
-					<div
-						class="border-r-2 border-zinc-300 dark:border-zinc-600 ml-0.5 h-full h-[48px]"
-					>
-						<!--spacer-->
-					</div>
-				</div>
-				{#if loading}
-					<Loader2Line
-						size="28px"
-						class="animate-[spin_2s_linear_infinite] text-zinc-400"
-					/>
-				{:else}
-					{#each recentUpdates.items as follow}
-						<a
-							class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
-							class:active={$page.url.pathname === `/feed/${follow.id}`}
-							href="/feed/{follow.id}"
-						>
-							<Avatar src={follow.avatar} size="28px" borderWidth="1px" />
-							<span class="ml-1">{follow.username}</span>
-						</a>
-					{:else}
-						<span
-							class="text-lg p-3 relative top-0.5"
-							style="font-family: var(--header-text); color: var(--text-color);"
-							>No follows yet</span
-						>
-					{/each}
-				{/if}
-			</div>
-		</div>
-		<slot />
+			<RoadMapLine class="mr-1" size={iconSize} />
+			<span>Discover</span>
+		</a>
+		<!--<a
+			class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
+			class:active={$page.url.pathname.includes("/trending-blogs")}
+			href="/social/trending-blogs"
+		>
+			<BlazeLine class="mr-1" size={iconSize} />
+			<span>Trending Blogs</span>
+		</a>-->
+		<a
+			class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
+			class:active={$page.url.pathname.includes("/following")}
+			href="/social/following"
+		>
+			<UserHeartLine class="mr-1" size={iconSize} />
+			<span>Following</span>
+		</a>
+		<!--<a
+			class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
+			class:active={$page.url.pathname.includes("/groups")}
+			href="/social/groups"
+		>
+			<Group2Line class="mr-1" size={iconSize} />
+			<span>Groups</span>
+		</a>
+		<a
+			class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
+			class:active={$page.url.pathname.includes("/special-events")}
+			href="/social/special-events"
+		>
+			<SunLine class="mr-1" size={iconSize} />
+			<span>Special Events</span>
+		</a>-->
 	</div>
-{:else if $account.account}
-	<div class="empty">
-		<h3>No profile selected</h3>
-		<p>You must select a profile before you're able to view this page.</p>
-	</div>
-{:else}
-	<div class="empty">
-		<h3>You aren't logged in</h3>
-		<p>Gotta log in first before seeing who you're following, don't you think?</p>
-	</div>
-{/if}
+</div>
+<slot />
 
 <style lang="scss">
 	a.feature-link {

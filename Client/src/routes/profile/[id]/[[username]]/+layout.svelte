@@ -10,9 +10,6 @@
 		UserUnfollowLine,
 		More2Fill,
 		ArrowRightSLine,
-		HistoryLine,
-		QuestionAnswerLine,
-		BookmarkLine,
 		SendPlaneLine,
 		EditCircleLine,
 		UserSettingsLine
@@ -35,8 +32,10 @@
 	import LinkTag from "$lib/ui/content/LinkTag.svelte";
 	import { ReportForm } from "$lib/ui/admin";
 	import { ReportKind } from "$lib/models/admin/users/reports";
+	import { cubicIn, cubicOut } from "svelte/easing";
+	import { fly } from "svelte/transition";
 
-	export let data: Profile;
+	export let data;
 
 	let hasFollowed = { isFollowing: false };
 	let loadingFollow = false;
@@ -46,6 +45,8 @@
 			await checkFollow();
 		}
 	});
+
+	$: basePathname = data.pathname;
 
 	function updateBanner() {
 		openPopup(
@@ -409,9 +410,15 @@
 			</div>
 		</div>
 	</div>
-	<div class="w-full lg:mx-6 my-6">
-		<slot />
-	</div>
+	{#key basePathname}
+		<div
+			class="lg:mx-6 my-6 flex-1"
+			in:fly={{ easing: cubicOut, y: 10, delay: 400, duration: 300 }}
+			out:fly={{ easing: cubicIn, y: -10, duration: 300 }}
+		>
+			<slot />
+		</div>
+	{/key}
 </div>
 
 <style lang="scss">
@@ -433,7 +440,7 @@
 				@apply p-4 pb-0 relative z-[2] items-end justify-self-start;
 			}
 			div.banner {
-				background: var(--accent);
+				background: var(--accent-dark);
 				grid-area: banner;
 				image-rendering: crisp-edges;
 				@apply relative;
