@@ -15,6 +15,10 @@
 	import { Avatar } from "$lib/ui/util";
 	import toast from "svelte-french-toast";
 	import { onMount } from "svelte";
+	import { cubicIn, cubicOut } from "svelte/easing";
+	import { fly } from "svelte/transition";
+
+	export let data;
 
 	const iconSize = "24px";
 	let loading = false;
@@ -26,6 +30,8 @@
 			total: 0
 		}
 	};
+
+	$: basePathname = data.pathname;
 
 	onMount(async () => {
 		/*if ($account.account && $account.currProfile) {
@@ -128,7 +134,14 @@
 		</a>-->
 	</div>
 </div>
-<slot />
+{#key basePathname}
+	<div
+		in:fly={{ easing: cubicOut, x: 10, delay: 400, duration: 300 }}
+		out:fly={{ easing: cubicIn, x: -10, duration: 300 }}
+	>
+		<slot />
+	</div>
+{/key}
 
 <style lang="scss">
 	a.feature-link {

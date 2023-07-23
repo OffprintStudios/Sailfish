@@ -9,7 +9,8 @@
 		Dashboard2Line,
 		MenuLine,
 		NewspaperFill,
-		NewspaperLine
+		NewspaperLine,
+		ListCheck2
 	} from "svelte-remixicon";
 	import { slide } from "svelte/transition";
 	import { clickOutside, hasRoles, throttle } from "$lib/util/functions";
@@ -73,21 +74,38 @@
 			on:outclick={throttled}
 		>
 			{#if $account.account && $account.currProfile && hasRoles( $account.account?.roles, [Roles.Admin, Roles.Moderator, Roles.WorkApprover] )}
-				<a
-					class="dropdown-link"
-					class:active={$page.url.pathname.startsWith("/dashboard") &&
-						$guide.open === false}
-					href="/dashboard"
-				>
-					<span class="link-icon">
-						{#if $page.url.pathname.startsWith("/dashboard") && $guide.open === false}
-							<Dashboard2Fill size={iconSize} />
-						{:else}
-							<Dashboard2Line size={iconSize} />
-						{/if}
-					</span>
-					<span class="link-name">Dash</span>
-				</a>
+				{#if hasRoles($account.account?.roles, [Roles.Admin, Roles.Moderator])}
+					<a
+						class="dropdown-link"
+						class:active={$page.url.pathname.startsWith("/dashboard")}
+						href="/dashboard"
+					>
+						<span class="link-icon">
+							{#if $page.url.pathname.startsWith("/dashboard")}
+								<Dashboard2Fill size={iconSize} />
+							{:else}
+								<Dashboard2Line size={iconSize} />
+							{/if}
+						</span>
+						<span class="link-name">Dash</span>
+					</a>
+				{/if}
+				{#if hasRoles( $account.account?.roles, [Roles.Admin, Roles.Moderator, Roles.WorkApprover] )}
+					<a
+						class="dropdown-link"
+						class:active={$page.url.pathname.startsWith("/queue")}
+						href="/queue"
+					>
+						<span class="link-icon">
+							{#if $page.url.pathname.startsWith("/queue")}
+								<ListCheck2 size={iconSize} />
+							{:else}
+								<ListCheck2 size={iconSize} />
+							{/if}
+						</span>
+						<span class="link-name">Queue</span>
+					</a>
+				{/if}
 			{/if}
 			<a
 				class="dropdown-link"
