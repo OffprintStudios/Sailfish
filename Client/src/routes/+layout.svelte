@@ -29,7 +29,15 @@
 		} else {
 			document.documentElement.classList.remove("dark");
 		}
-		document.documentElement.classList.replace(ThemePref.Crimson, $app.theme);
+		let theme = document.documentElement.classList.replace(ThemePref.Crimson, $app.theme);
+		if (theme) {
+			let themeColor = document.querySelector("meta[name='theme-color']");
+			let accentColor = getComputedStyle(document.documentElement).getPropertyValue(
+				"--accent"
+			);
+			console.log(accentColor);
+			themeColor.setAttribute("content", accentColor);
+		}
 	});
 
 	if (data.token) {

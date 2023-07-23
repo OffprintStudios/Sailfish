@@ -160,7 +160,7 @@
 	<meta property="twitter:image" content={data.avatar} />
 </svelte:head>
 
-<div class="flex flex-col lg:flex-row">
+<div class="grid grid-cols-1 lg:grid-cols-4">
 	<div class="profile-details bg-zinc-200 dark:bg-zinc-700">
 		<div class="profile-header">
 			<div class="avatar">
@@ -412,9 +412,16 @@
 	</div>
 	{#key basePathname}
 		<div
-			class="lg:mx-6 my-6 flex-1"
+			class="mx-6 my-6 col-span-3 hidden lg:block"
 			in:fly={{ easing: cubicOut, y: 10, delay: 400, duration: 300 }}
 			out:fly={{ easing: cubicIn, y: -10, duration: 300 }}
+		>
+			<slot />
+		</div>
+		<div
+			class="my-6 col-span-3 lg:hidden"
+			in:fly={{ easing: cubicOut, x: 10, delay: 400, duration: 300 }}
+			out:fly={{ easing: cubicIn, x: -10, duration: 300 }}
 		>
 			<slot />
 		</div>
@@ -423,7 +430,7 @@
 
 <style lang="scss">
 	div.profile-details {
-		@apply w-full lg:min-w-[350px] lg:max-w-[350px] lg:h-[calc(100vh-60px)] lg:sticky top-0 lg:overflow-hidden lg:overflow-y-scroll;
+		@apply col-span-1 w-full lg:h-[calc(100vh-60px)] lg:sticky top-0 lg:overflow-hidden lg:overflow-y-scroll;
 
 		div.profile-header {
 			@apply grid relative w-full overflow-hidden;

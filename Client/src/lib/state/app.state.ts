@@ -37,7 +37,14 @@ export function setTheme(theme: ThemePref): void {
 	app.update((state) => {
 		const oldTheme = state.theme;
 		state.theme = theme;
-		document.documentElement.classList.replace(oldTheme, state.theme);
+		const hasNewTheme = document.documentElement.classList.replace(oldTheme, state.theme);
+		if (hasNewTheme) {
+			const themeColor = document.querySelector("meta[name='theme-color']");
+			const accentColor = getComputedStyle(document.documentElement).getPropertyValue(
+				"--accent"
+			);
+			themeColor?.setAttribute("content", accentColor);
+		}
 		return state;
 	});
 }

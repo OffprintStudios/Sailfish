@@ -7,9 +7,14 @@
 		StarLine,
 		HistoryLine,
 		CheckDoubleLine,
-		BarChart2Line,
-		ArrowRightSLine
+		BarChart2Line
 	} from "svelte-remixicon";
+	import { cubicIn, cubicOut } from "svelte/easing";
+	import { fly } from "svelte/transition";
+
+	export let data;
+
+	$: basePathname = data.pathname;
 
 	const iconSize = "24px";
 </script>
@@ -95,7 +100,14 @@
 			</a>
 		</div>
 	</div>
-	<slot />
+	{#key basePathname}
+		<div
+			in:fly={{ easing: cubicOut, x: 10, delay: 400, duration: 300 }}
+			out:fly={{ easing: cubicIn, x: -10, duration: 300 }}
+		>
+			<slot />
+		</div>
+	{/key}
 {:else if $account.account}
 	<div class="empty">
 		<h3>No profile selected</h3>
