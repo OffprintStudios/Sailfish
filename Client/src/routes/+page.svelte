@@ -1,34 +1,5 @@
 <script lang="ts">
 	import { NewsCarousel, ExploreSummary } from "$lib/ui/content";
-	import {
-		Loader2Line,
-		SignalTowerFill,
-		BlazeLine,
-		NewspaperLine,
-		SparklingLine
-	} from "svelte-remixicon";
-	import { onMount } from "svelte";
-
-	enum ExploreTabs {
-		New,
-		Updated
-	}
-
-	let currTab = ExploreTabs.New;
-	let exploreNavStuck = false;
-
-	onMount(() => {
-		const stickyNav = document.querySelector("#explore-nav");
-		const observer = new IntersectionObserver(
-			([e]) => {
-				exploreNavStuck = e.target.classList.toggle("isStuck", e.intersectionRatio === 1);
-			},
-			{
-				threshold: [1]
-			}
-		);
-		observer.observe(stickyNav);
-	});
 </script>
 
 <svelte:head>
@@ -61,7 +32,8 @@
 <div>
 	<NewsCarousel />
 	<div class="my-6 hidden lg:block"><!--spacer--></div>
-	<div class="flex flex-col h-full lg:flex-row">
+	<ExploreSummary />
+	<!--<div class="flex flex-col h-full lg:flex-row">
 		<div id="explore-nav" class="explore-nav" class:isStuck={exploreNavStuck}>
 			<button class="explore-nav-button">
 				<SparklingLine size="24px" class="mr-2" />
@@ -88,12 +60,12 @@
 				<span class="hidden lg:block">News & Announcements</span>
 				<span class="lg:hidden">News</span>
 			</button>
-			<div class="my-2 border-b-2 border-zinc-300 dark:border-zinc-600"><!--spacer--></div>
+			<div class="my-2 border-b-2 border-zinc-300 dark:border-zinc-600"></div>
 		</div>
 		<div class="lg:mx-6 my-6 lg:h-full">
-			<ExploreSummary />
+
 		</div>
-	</div>
+	</div>-->
 </div>
 
 <style lang="scss">
