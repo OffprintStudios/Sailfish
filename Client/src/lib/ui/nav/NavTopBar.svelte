@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { LoginCircleLine, UserAddLine, SearchEyeLine } from "svelte-remixicon";
-	import SearchDropdown from "$lib/ui/nav/SearchDropdown.svelte";
-	import Button from "$lib/ui/util/Button.svelte";
 	import { account } from "$lib/state/account.state";
 	import { getReq, type ResponseError } from "$lib/http";
 	import { activity } from "$lib/state/activity.state";
-	import NavDropdown from "$lib/ui/nav/NavDropdown.svelte";
-	import { ActivityDropdown } from "$lib/ui/user";
+	import { NavDropdown, SearchDropdown } from "$lib/ui/nav";
+	import { ActivityDropdown, AccountDropdown } from "$lib/ui/user";
 	import { Guide } from "$lib/ui/user/guide";
+	import { Button } from "$lib/ui/util";
 
 	enum GuideTabs {
 		Closed,
@@ -87,7 +86,7 @@
 		{#if $account.account}
 			<ActivityDropdown />
 			<div class="mx-1"><!--spacer--></div>
-			<Guide />
+			<AccountDropdown />
 		{:else}
 			<Button kind="primary" asLink href="/registration/log-in" title="Log In">
 				<LoginCircleLine class="button-icon no-text" size="24px" />

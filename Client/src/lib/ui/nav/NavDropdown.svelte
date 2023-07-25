@@ -8,8 +8,8 @@
 		Dashboard2Fill,
 		Dashboard2Line,
 		MenuLine,
-		NewspaperFill,
-		NewspaperLine,
+		TeamFill,
+		TeamLine,
 		ListCheck2
 	} from "svelte-remixicon";
 	import { slide } from "svelte/transition";
@@ -125,6 +125,20 @@
 			</a>
 			<a
 				class="dropdown-link"
+				class:active={$page.url.pathname === "/social" && $guide.open === false}
+				href="/social"
+			>
+				<span class="link-icon">
+					{#if $page.url.pathname === "/feed" && $guide.open === false}
+						<TeamFill size={iconSize} />
+					{:else}
+						<TeamLine size={iconSize} />
+					{/if}
+				</span>
+				<span class="link-name"> Social </span>
+			</a>
+			<a
+				class="dropdown-link"
 				class:active={$page.url.pathname.includes("/library") && $guide.open === false}
 				href="/library"
 			>
@@ -136,20 +150,6 @@
 					{/if}
 				</span>
 				<span class="link-name">Library</span>
-			</a>
-			<a
-				class="dropdown-link"
-				class:active={$page.url.pathname === "/feed" && $guide.open === false}
-				href="/feed"
-			>
-				<span class="link-icon">
-					{#if $page.url.pathname === "/feed" && $guide.open === false}
-						<NewspaperFill size={iconSize} />
-					{:else}
-						<NewspaperLine size={iconSize} />
-					{/if}
-				</span>
-				<span class="link-name"> Feed </span>
 			</a>
 		</div>
 	{/if}

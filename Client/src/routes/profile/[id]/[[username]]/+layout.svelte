@@ -378,16 +378,20 @@
 							href="/profile/{data.id}/{slugify(data.username)}/messages"
 							class:active={$page.url.pathname.includes("/messages")}
 						>
-							<div class="stat">
-								<QuestionAnswerLine
-									class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[22px] lg:h-[22px]"
-								/>
-							</div>
-							<div class="stat-label">Messages</div>
 							<div
-								class="stat-caret text-zinc-400 dark:text-zinc-500 group-hover:text-white"
+								class="relative top-0.5 lg:top-0 lg:w-full flex flex-col lg:flex-row items-center"
 							>
-								<ArrowRightSLine size="22px" />
+								<div class="stat">
+									<QuestionAnswerLine
+										class="w-[18.4px] h-[18.4px] lg:w-[22px] lg:h-[22px]"
+									/>
+								</div>
+								<div class="stat-label">Messages</div>
+								<div
+									class="stat-caret text-zinc-400 dark:text-zinc-500 group-hover:text-white"
+								>
+									<ArrowRightSLine size="22px" />
+								</div>
 							</div>
 						</a>
 					{/if}

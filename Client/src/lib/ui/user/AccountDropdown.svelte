@@ -98,7 +98,7 @@
 		if (button) {
 			computePosition(button, dropdown, {
 				placement: "bottom-end",
-				middleware: [offset({ mainAxis: 16 }), flip(), shift()]
+				middleware: [offset({ mainAxis: 1 }), flip(), shift()]
 			})
 				.then(({ x, y }) => {
 					Object.assign(dropdown.style, {
@@ -146,7 +146,7 @@
 	{#if open}
 		<div
 			class="account-dropdown bg-zinc-200 dark:bg-zinc-700"
-			transition:slide={{ delay: 0, duration: 150, x: 200 }}
+			transition:fly={{ delay: 0, duration: 150, y: -10 }}
 			bind:this={dropdown}
 			use:clickOutside
 			on:outclick={throttled}
@@ -444,18 +444,6 @@
 							</Button>
 						{/if}
 					</div>
-					<div class="mt-2 mb-4 border-b border-zinc-300 dark:border-zinc-600">
-						<!--spacer-->
-					</div>
-					<Button
-						classes="w-full justify-center"
-						kind="primary"
-						asLink={true}
-						href="/settings"
-					>
-						<Settings5Line class="button-icon" />
-						<span class="button-text">Show All</span>
-					</Button>
 				</div>
 			{:else if currPanel === Panels.LogOut}
 				<div in:fade={{ delay: 0, duration: 150 }}>
@@ -487,7 +475,7 @@
 
 <style lang="scss">
 	div.account-dropdown {
-		@apply absolute rounded-2xl z-50 max-h-[calc(100vh-80px)] p-2 w-[calc(100vw-50px)] lg:w-[375px] overflow-hidden overflow-y-scroll;
+		@apply absolute rounded-b-xl z-50 max-h-[calc(100vh-80px)] p-2 w-[100vw] lg:w-[375px] overflow-hidden overflow-y-scroll;
 		box-shadow: var(--dropshadow);
 		font-family: var(--header-text);
 		div.account-dropdown-section {
