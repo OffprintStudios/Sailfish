@@ -402,11 +402,6 @@
     estree-walker "^2.0.2"
     picomatch "^2.3.1"
 
-"@svelte-put/clickoutside@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@svelte-put/clickoutside/-/clickoutside-3.0.0.tgz#c02240a1657b1cbe4b80f1b52664787812253d4e"
-  integrity sha512-a2aA0+uMo2LGK4bwQE+etra57cJuqQsXRkI0IM+cPzjIowqUg5CMSSeQ6YsXBJUdtzm/s6WQKcmoswK/875wtA==
-
 "@sveltejs/adapter-auto@^2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@sveltejs/adapter-auto/-/adapter-auto-2.1.0.tgz#cb36fd7081e3c4b1c9a9192b1a23c8c82dce8a1b"
