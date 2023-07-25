@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { afterNavigate } from "$app/navigation";
 	import type { Work, Section } from "$lib/models/content/works";
 	import SectionContainer from "./SectionContainer.svelte";
 	import EditSection from "./EditSection.svelte";
@@ -21,7 +20,6 @@
 		allSections: Section[];
 	};
 
-	let containerTop;
 	let editMode = false;
 	let history: ReadingHistory;
 	let pageNum = +($page.url.searchParams.get("page") ?? "1");
@@ -35,10 +33,6 @@
 		) {
 			await fetchHistory();
 		}
-	});
-
-	afterNavigate(() => {
-		containerTop.scrollIntoView({ behavior: "smooth" });
 	});
 
 	function toggleEditMode() {
@@ -91,7 +85,6 @@
 	<meta property="twitter:image" content={data.work.coverArt ?? data.work.author.avatar} />
 </svelte:head>
 
-<div bind:this={containerTop}><!--intentionally left blank--></div>
 <div class="max-w-4xl mx-auto mb-6 lg:mt-6">
 	{#if editMode}
 		<EditSection
