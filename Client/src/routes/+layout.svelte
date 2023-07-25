@@ -1,8 +1,8 @@
 <script lang="ts">
 	import "../app.scss";
-	import { Nav, NavTopBar } from "$lib/ui/nav";
+	import { onMount } from "svelte";
+	import { NavSideBar, NavTopBar } from "$lib/ui/nav";
 	import { app } from "$lib/state/app.state";
-	import { Guide } from "$lib/ui/guide";
 	import toast, { Toaster } from "svelte-french-toast";
 	import { account } from "$lib/state/account.state";
 	import { Popup } from "$lib/ui/popup";
@@ -11,10 +11,33 @@
 	import { getReq, patchReq, type ResponseError } from "$lib/http";
 	import Button from "$lib/ui/util/Button.svelte";
 	import type { Account } from "$lib/models/accounts";
+	import { ThemePref } from "$lib/util/constants";
+	import { fly } from "svelte/transition";
+	import { cubicIn, cubicOut } from "svelte/easing";
 
-	export let data: { token: string | null } = { token: null };
+	export let data: { token: string | null; pathname: string } = { token: null, pathname: "" };
 	let loadingTerms = false;
 	let loadingConfirm = false;
+
+	onMount(() => {
+		if (
+			$app.brightness === "dark" ||
+			(!($app.brightness === "dark") &&
+				window.matchMedia("(prefers-color-scheme: dark)").matches)
+		) {
+			document.documentElement.classList.add("dark");
+		} else {
+			document.documentElement.classList.remove("dark");
+		}
+		let theme = document.documentElement.classList.replace(ThemePref.Crimson, $app.theme);
+		if (theme) {
+			let themeColor = document.querySelector("meta[name='theme-color']");
+			let accentColor = getComputedStyle(document.documentElement).getPropertyValue(
+				"--accent"
+			);
+			themeColor.setAttribute("content", accentColor);
+		}
+	});
 
 	if (data.token) {
 		$account.token = data.token;
@@ -26,6 +49,8 @@
 		$activity.count = 0;
 		$activity.markAsRead = [];
 	}
+
+	$: basePathname = data.pathname.split("/")[1];
 
 	async function agreeToTerms() {
 		if ($account.account) {
@@ -61,18 +86,15 @@
 </script>
 
 <Popup />
-<main
-	class="flex flex-col overflow-y-auto {$app.theme}"
-	class:light={$app.darkMode === false}
-	class:dark={$app.darkMode === true}
->
-	<NavTopBar />
-	<div
-		class="flex overflow-y-hidden lg:h-[calc(100vh-60px)]"
-		style="background: var(--background);"
+<NavTopBar />
+<NavSideBar />
+{#key basePathname}
+	<main
+		class="relative mt-[50px] lg:mt-[60px] lg:ml-[75px] h-[calc(100%-50px)] lg:h-[calc(100%-60px)] lg:overflow-y-scroll lg:scroll-smooth"
+		in:fly={{ easing: cubicOut, y: 10, delay: 400, duration: 300 }}
+		out:fly={{ easing: cubicIn, y: -10, duration: 300 }}
 	>
-		<Nav />
-		<Guide>
+		<div>
 			{#if $account.account && !$account.account.termsAgree}
 				<div
 					class="xl:max-w-4xl w-full flex flex-col lg:flex-row items-center mx-auto p-4 xl:mt-6 xl:rounded-xl bg-red-600 bg-opacity-25 border-y xl:border-x border-red-600"
@@ -118,19 +140,20 @@
 					</Button>
 				</div>
 			{/if}
-			<div class="w-full overflow-y-auto lg:h-[calc(100vh-60px)]">
-				<slot />
-			</div>
-		</Guide>
-	</div>
-	<Toaster />
-</main>
+			<slot />
+			<div class="h-4 lg:hidden"><!--spacer--></div>
+		</div>
+	</main>
+{/key}
+<Toaster />
 
 <style lang="scss">
-	:global(main) {
-		color: var(--text-color);
-		font-family: var(--body-text);
-		background: var(--background);
-		@apply transition transform relative;
+	main {
+		display: grid;
+		grid-template: 1fr / 1fr;
+	}
+
+	main > * {
+		grid-area: 1 / 1;
 	}
 </style>

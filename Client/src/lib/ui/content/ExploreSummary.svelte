@@ -207,7 +207,7 @@
 </div>-->
 <style lang="scss">
 	div.section {
-		@apply max-w-6xl w-11/12 xl:w-full mx-auto my-6 first:mt-0;
+		@apply max-w-6xl w-11/12 xl:w-full mx-auto my-6 first:mt-0 last:mb-0;
 		div.section-header {
 			@apply flex items-center border-b pb-2 mb-4;
 			font-family: var(--header-text);

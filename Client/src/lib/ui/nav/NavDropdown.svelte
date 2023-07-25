@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { computePosition, flip, offset, shift } from "@floating-ui/dom";
+	import { computePosition, flip, offset, shift, type ShiftOptions } from "@floating-ui/dom";
 	import {
 		BookmarkFill,
 		BookmarkLine,
@@ -8,11 +8,12 @@
 		Dashboard2Fill,
 		Dashboard2Line,
 		MenuLine,
-		NewspaperFill,
-		NewspaperLine
+		TeamFill,
+		TeamLine,
+		ListCheck2
 	} from "svelte-remixicon";
 	import { slide } from "svelte/transition";
-	import { clickOutside, hasRoles } from "$lib/util/functions";
+	import { clickOutside, hasRoles, throttle } from "$lib/util/functions";
 	import Button from "$lib/ui/util/Button.svelte";
 	import { account } from "$lib/state/account.state";
 	import { Roles } from "$lib/models/accounts";
@@ -30,11 +31,17 @@
 		open = !open;
 	}
 
+	const throttled = throttle(determineState, 150);
+
 	$: {
 		if (button) {
 			computePosition(button, dropdown, {
 				placement: "bottom",
-				middleware: [offset({ mainAxis: -40 }), flip(), shift({ padding: 5 })]
+				middleware: [
+					offset({ mainAxis: 16 }),
+					flip(),
+					shift({ padding: 5 } as ShiftOptions)
+				]
 			})
 				.then(({ x, y }) => {
 					Object.assign(dropdown.style, {
@@ -54,7 +61,7 @@
 </script>
 
 <div class="relative z-[2]">
-	<Button on:click={determineState} bind:this={button} isActive={open} kind="primary">
+	<Button on:click={throttled} bind:thisButton={button} isActive={open} kind="primary">
 		<MenuLine class="button-icon no-text" size="24px" />
 	</Button>
 	{#if open}
@@ -62,25 +69,43 @@
 			class="nav-dropdown-items bg-zinc-200 dark:bg-zinc-700"
 			transition:slide|local={{ delay: 0, duration: 150 }}
 			bind:this={dropdown}
+			on:click={throttled}
 			use:clickOutside
-			on:outclick={determineState}
+			on:outclick={throttled}
 		>
 			{#if $account.account && $account.currProfile && hasRoles( $account.account?.roles, [Roles.Admin, Roles.Moderator, Roles.WorkApprover] )}
-				<a
-					class="dropdown-link"
-					class:active={$page.url.pathname.startsWith("/dashboard") &&
-						$guide.open === false}
-					href="/dashboard"
-				>
-					<span class="link-icon">
-						{#if $page.url.pathname.startsWith("/dashboard") && $guide.open === false}
-							<Dashboard2Fill size={iconSize} />
-						{:else}
-							<Dashboard2Line size={iconSize} />
-						{/if}
-					</span>
-					<span class="link-name">Dash</span>
-				</a>
+				{#if hasRoles($account.account?.roles, [Roles.Admin, Roles.Moderator])}
+					<a
+						class="dropdown-link"
+						class:active={$page.url.pathname.startsWith("/dashboard")}
+						href="/dashboard"
+					>
+						<span class="link-icon">
+							{#if $page.url.pathname.startsWith("/dashboard")}
+								<Dashboard2Fill size={iconSize} />
+							{:else}
+								<Dashboard2Line size={iconSize} />
+							{/if}
+						</span>
+						<span class="link-name">Dash</span>
+					</a>
+				{/if}
+				{#if hasRoles( $account.account?.roles, [Roles.Admin, Roles.Moderator, Roles.WorkApprover] )}
+					<a
+						class="dropdown-link"
+						class:active={$page.url.pathname.startsWith("/queue")}
+						href="/queue"
+					>
+						<span class="link-icon">
+							{#if $page.url.pathname.startsWith("/queue")}
+								<ListCheck2 size={iconSize} />
+							{:else}
+								<ListCheck2 size={iconSize} />
+							{/if}
+						</span>
+						<span class="link-name">Queue</span>
+					</a>
+				{/if}
 			{/if}
 			<a
 				class="dropdown-link"
@@ -100,6 +125,20 @@
 			</a>
 			<a
 				class="dropdown-link"
+				class:active={$page.url.pathname === "/social" && $guide.open === false}
+				href="/social"
+			>
+				<span class="link-icon">
+					{#if $page.url.pathname === "/feed" && $guide.open === false}
+						<TeamFill size={iconSize} />
+					{:else}
+						<TeamLine size={iconSize} />
+					{/if}
+				</span>
+				<span class="link-name"> Social </span>
+			</a>
+			<a
+				class="dropdown-link"
 				class:active={$page.url.pathname.includes("/library") && $guide.open === false}
 				href="/library"
 			>
@@ -111,20 +150,6 @@
 					{/if}
 				</span>
 				<span class="link-name">Library</span>
-			</a>
-			<a
-				class="dropdown-link"
-				class:active={$page.url.pathname === "/feed" && $guide.open === false}
-				href="/feed"
-			>
-				<span class="link-icon">
-					{#if $page.url.pathname === "/feed" && $guide.open === false}
-						<NewspaperFill size={iconSize} />
-					{:else}
-						<NewspaperLine size={iconSize} />
-					{/if}
-				</span>
-				<span class="link-name"> Feed </span>
 			</a>
 		</div>
 	{/if}

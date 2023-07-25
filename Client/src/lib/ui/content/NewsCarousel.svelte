@@ -12,14 +12,11 @@
 		CalendarLine,
 		LineChartLine
 	} from "svelte-remixicon";
-	import { DEFAULT_SLOGANS } from "$lib/util/constants";
 	import { Time } from "$lib/ui/util";
 	import toast from "svelte-french-toast";
 	import { abbreviate, slugify } from "$lib/util/functions";
 
 	let loading = false;
-	let currSlogan = DEFAULT_SLOGANS[Math.floor(Math.random() * DEFAULT_SLOGANS.length)];
-	const today = new Date();
 	let posts: Paginate<Blog> = {
 		items: [],
 		metadata: {
@@ -154,7 +151,7 @@
 
 <style lang="scss">
 	div.carousel-container {
-		@apply xl:rounded-xl overflow-hidden mb-6 xl:mt-6 w-full;
+		@apply overflow-hidden w-full;
 		div.deco-box {
 			@apply h-20 w-20 rounded-full flex items-center justify-center text-white font-semibold all-small-caps;
 			font-family: var(--header-text), sans-serif;

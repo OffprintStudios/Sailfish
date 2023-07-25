@@ -1,34 +1,12 @@
 <script lang="ts">
-	import {
-		LoginCircleLine,
-		ArrowLeftRightLine,
-		UserAddLine,
-		QuestionAnswerLine,
-		Notification2Line,
-		HistoryLine,
-		SearchEyeLine
-	} from "svelte-remixicon";
-	import SearchDropdown from "$lib/ui/nav/SearchDropdown.svelte";
-	import { navigating } from "$app/stores";
-	import { closeGuide, openGuide, guide } from "$lib/ui/guide";
-	import Button from "$lib/ui/util/Button.svelte";
-	import { AccountPanel } from "$lib/ui/guide/account";
+	import { LoginCircleLine, UserAddLine, SearchEyeLine } from "svelte-remixicon";
 	import { account } from "$lib/state/account.state";
-	import Avatar from "$lib/ui/util/Avatar.svelte";
-	import { HistoryPanel } from "$lib/ui/guide/history";
-	import { MessagesPanel } from "$lib/ui/guide/messages";
-	import { ActivityPanel } from "$lib/ui/guide/activity";
-	import type { SvelteComponentTyped } from "svelte";
 	import { getReq, type ResponseError } from "$lib/http";
 	import { activity } from "$lib/state/activity.state";
-	import CountBadge from "$lib/ui/util/CountBadge.svelte";
-	import NavDropdown from "$lib/ui/nav/NavDropdown.svelte";
-
-	$: {
-		if ($navigating !== null) {
-			closeGuide();
-		}
-	}
+	import { NavDropdown, SearchDropdown } from "$lib/ui/nav";
+	import { ActivityDropdown, AccountDropdown } from "$lib/ui/user";
+	import { Guide } from "$lib/ui/user/guide";
+	import { Button } from "$lib/ui/util";
 
 	enum GuideTabs {
 		Closed,
@@ -39,24 +17,6 @@
 	}
 
 	let currTab = GuideTabs.Closed;
-
-	function toggleGuide(panel: SvelteComponentTyped, tab: GuideTabs) {
-		if (!$guide.open) {
-			openGuide(panel);
-			currTab = tab;
-			return;
-		}
-
-		// assumes guide is open
-		if (currTab === tab) {
-			currTab = GuideTabs.Closed;
-			closeGuide();
-		} else {
-			closeGuide();
-			setTimeout(() => openGuide(panel), 250);
-			currTab = tab;
-		}
-	}
 
 	$: {
 		if ($account.account && $account.currProfile) {
@@ -84,7 +44,7 @@
 </script>
 
 <div
-	class="flex items-center text-white w-full pr-2 pl-1 lg:px-4 h-[50px] lg:h-[60px] sticky z-[50]"
+	class="flex items-center text-white w-full pr-2 pl-1 lg:px-4 h-[50px] lg:h-[60px] fixed top-0 z-[50]"
 	style="background: var(--accent); box-shadow: var(--dropshadow);"
 >
 	<div class="lg:w-1/3 flex items-center flex-1 lg:flex-initial">
@@ -92,9 +52,10 @@
 			<NavDropdown />
 		</div>
 		<h3 class="text-white text-lg lg:text-2xl tracking-wide mr-2">Offprint</h3>
-		<div class="hidden lg:block text-white font-bold tracking-widest mb-1">
-			[ <span class="relative text-xs">BETA</span> ]
-		</div>
+		<!--<button class="update-pill">
+			<RefreshLine class="lg:mr-1" />
+			<span>New Update</span>
+		</button>-->
 	</div>
 	<div class="hidden lg:block w-1/3 relative">
 		<SearchDropdown />
@@ -102,47 +63,9 @@
 	<div class="hidden lg:w-1/3 lg:flex items-center">
 		<div class="flex-1"><!--spacer--></div>
 		{#if $account.account}
-			<Button
-				kind="primary"
-				disabled={!$account.currProfile}
-				isActive={currTab === GuideTabs.History && $guide.open}
-				on:click={() => toggleGuide(HistoryPanel, GuideTabs.History)}
-			>
-				<HistoryLine class="button-icon no-text" size="26px" />
-			</Button>
+			<ActivityDropdown />
 			<div class="mx-1"><!--spacer--></div>
-			<Button
-				kind="primary"
-				disabled={!$account.currProfile}
-				isActive={currTab === GuideTabs.Messages && $guide.open}
-				on:click={() => toggleGuide(MessagesPanel, GuideTabs.Messages)}
-			>
-				<QuestionAnswerLine class="button-icon no-text" size="26px" />
-			</Button>
-			<div class="mx-1"><!--spacer--></div>
-			<Button
-				kind="primary"
-				disabled={!$account.currProfile}
-				isActive={currTab === GuideTabs.Activity && $guide.open}
-				on:click={() => toggleGuide(ActivityPanel, GuideTabs.Activity)}
-			>
-				{#if $activity.count > 0}
-					<CountBadge value={$activity.count} />
-				{/if}
-				<Notification2Line class="button-icon no-text" size="26px" />
-			</Button>
-			<div class="mx-1"><!--spacer--></div>
-			<Button
-				kind="primary"
-				on:click={() => toggleGuide(AccountPanel, GuideTabs.Account)}
-				isActive={currTab === GuideTabs.Account && $guide.open}
-			>
-				{#if $account.currProfile}
-					<Avatar src={$account.currProfile.avatar} size="36px" borderWidth="1px" />
-				{:else}
-					<ArrowLeftRightLine class="button-icon no-text -rotate-45" size="36px" />
-				{/if}
-			</Button>
+			<Guide />
 		{:else}
 			<Button kind="primary" asLink href="/registration/log-in" title="Log In">
 				<LoginCircleLine class="button-icon" />
@@ -161,20 +84,9 @@
 		</Button>
 		<div class="mx-0.5"><!--spacer--></div>
 		{#if $account.account}
-			<Button
-				kind="primary"
-				on:click={() => toggleGuide(AccountPanel, GuideTabs.Account)}
-				isActive={currTab === GuideTabs.Account && $guide.open}
-			>
-				{#if $account.currProfile}
-					{#if $activity.count > 0}
-						<CountBadge value={$activity.count} />
-					{/if}
-					<Avatar src={$account.currProfile.avatar} size="28px" borderWidth="1px" />
-				{:else}
-					<ArrowLeftRightLine class="button-icon no-text -rotate-45" size="28px" />
-				{/if}
-			</Button>
+			<ActivityDropdown />
+			<div class="mx-1"><!--spacer--></div>
+			<AccountDropdown />
 		{:else}
 			<Button kind="primary" asLink href="/registration/log-in" title="Log In">
 				<LoginCircleLine class="button-icon no-text" size="24px" />
@@ -188,6 +100,16 @@
 </div>
 
 <style lang="scss">
+	button.update-pill {
+		@apply flex items-center rounded-full p-1 lg:py-[0.075rem] lg:px-2 text-white all-small-caps font-bold tracking-wider transition;
+		background: var(--accent-light);
+		&:hover {
+			background: var(--accent-dark);
+		}
+		span {
+			@apply relative -top-[0.075rem] hidden lg:block;
+		}
+	}
 	button.search-button {
 		@apply w-9/12 mx-auto flex items-center justify-center py-2 border-b-2 border-white text-sm rounded-md z-10 transition transform;
 		background: var(--accent-light);

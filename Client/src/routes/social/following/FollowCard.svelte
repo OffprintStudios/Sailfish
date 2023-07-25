@@ -7,7 +7,9 @@
 </script>
 
 <div class="card">
-	<a class="absolute h-full w-full" href="/feed/{profile.id}"><!--empty on purpose--></a>
+	<a class="absolute h-full w-full" href="/social/following/{profile.id}"
+		><!--empty on purpose--></a
+	>
 	<Avatar src={profile.avatar} size="100px" borderWidth="1px" />
 	<h3 class="text-2xl select-none">{profile.username}</h3>
 	<div class="flex items-center text-zinc-400" style="font-family: var(--header-text)">

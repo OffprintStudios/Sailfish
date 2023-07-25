@@ -39,7 +39,6 @@
 	<meta property="twitter:image" content="/images/offprint_icon.png" />
 </svelte:head>
 
-<div bind:this={containerTop}><!--intentionally left blank--></div>
 {#if $account.account && $account.currProfile}
 	<div class="mx-auto max-w-7xl">
 		<div
@@ -60,15 +59,6 @@
 				>
 					<MistLine class="mr-1" size={iconSize} />
 					<span>Overview</span>
-				</a>
-				<a
-					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
-					class:active={$page.url.pathname.includes("/approval-queue")}
-					href="/dashboard/approval-queue"
-					data-sveltekit-preload-data
-				>
-					<ListUnordered class="mr-1" size={iconSize} />
-					<span>Approval Queue</span>
 				</a>
 				<a
 					class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
