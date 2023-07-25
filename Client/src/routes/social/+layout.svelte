@@ -81,9 +81,7 @@
 	<meta property="twitter:image" content="/images/offprint_icon.png" />
 </svelte:head>
 
-<div
-	class="lg:flex lg:flex-col lg:items-center lg:justify-center mb-6 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed overflow-hidden"
->
+<div class="mb-6 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed overflow-hidden">
 	<div
 		class="flex items-center justify-center px-4 py-4 lg:py-6 w-full"
 		style="background: var(--accent-dark)"

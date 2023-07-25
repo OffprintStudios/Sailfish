@@ -47,9 +47,7 @@
 </svelte:head>
 
 {#if $account.account && $account.currProfile}
-	<div
-		class="lg:flex lg:flex-col lg:items-center mb-6 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed overflow-hidden"
-	>
+	<div class="mb-6 bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed overflow-hidden">
 		<div
 			class="flex items-center justify-center px-4 py-4 lg:py-6 w-full"
 			style="background: var(--accent-dark)"
@@ -57,7 +55,7 @@
 			<BookmarkLine class="mr-2 text-white w-[36px] h-[36px]" />
 			<h1 class="text-white text-3xl lg:text-4xl relative top-1">Library</h1>
 		</div>
-		<div class="flex items-center overflow-x-auto whitespace-nowrap p-2">
+		<div class="flex items-center lg:justify-center overflow-x-auto whitespace-nowrap p-2">
 			<a
 				class="feature-link hover:bg-zinc-300 hover:dark:bg-zinc-600"
 				class:active={$page.url.pathname === "/library"}
