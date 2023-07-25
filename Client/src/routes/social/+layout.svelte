@@ -55,7 +55,7 @@
 </script>
 
 <svelte:head>
-	<title>Feed &mdash; Offprint</title>
+	<title>Social &mdash; Offprint</title>
 	<!-- Primary Meta Tags -->
 	<meta name="title" content="Offprint" />
 	<meta name="description" content="A next-generation publishing and community platform." />

@@ -7,6 +7,7 @@
 	import { activity } from "$lib/state/activity.state";
 	import NavDropdown from "$lib/ui/nav/NavDropdown.svelte";
 	import { AccountDropdown, ActivityDropdown } from "$lib/ui/user";
+	import { Guide } from "$lib/ui/user/guide";
 
 	enum GuideTabs {
 		Closed,
@@ -52,10 +53,10 @@
 			<NavDropdown />
 		</div>
 		<h3 class="text-white text-lg lg:text-2xl tracking-wide mr-2">Offprint</h3>
-		<button class="update-pill">
+		<!--<button class="update-pill">
 			<RefreshLine class="lg:mr-1" />
 			<span>New Update</span>
-		</button>
+		</button>-->
 	</div>
 	<div class="hidden lg:block w-1/3 relative">
 		<SearchDropdown />
@@ -65,7 +66,7 @@
 		{#if $account.account}
 			<ActivityDropdown />
 			<div class="mx-1"><!--spacer--></div>
-			<AccountDropdown />
+			<Guide />
 		{:else}
 			<Button kind="primary" asLink href="/registration/log-in" title="Log In">
 				<LoginCircleLine class="button-icon" />
@@ -86,7 +87,7 @@
 		{#if $account.account}
 			<ActivityDropdown />
 			<div class="mx-1"><!--spacer--></div>
-			<AccountDropdown />
+			<Guide />
 		{:else}
 			<Button kind="primary" asLink href="/registration/log-in" title="Log In">
 				<LoginCircleLine class="button-icon no-text" size="24px" />

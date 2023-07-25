@@ -451,7 +451,7 @@
 						classes="w-full justify-center"
 						kind="primary"
 						asLink={true}
-						href="/account/settings"
+						href="/settings"
 					>
 						<Settings5Line class="button-icon" />
 						<span class="button-text">Show All</span>

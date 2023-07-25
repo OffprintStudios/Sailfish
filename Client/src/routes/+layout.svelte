@@ -35,7 +35,6 @@
 			let accentColor = getComputedStyle(document.documentElement).getPropertyValue(
 				"--accent"
 			);
-			console.log(accentColor);
 			themeColor.setAttribute("content", accentColor);
 		}
 	});

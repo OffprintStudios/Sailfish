@@ -1,7 +1,3 @@
-<svelte:head>
-	<title>Messages &mdash; Offprint</title>
-</svelte:head>
-
 <div class="empty">
 	<h3>Pardon the dust—</h3>
 	<p>
