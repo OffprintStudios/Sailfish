@@ -259,7 +259,7 @@
 
 <style lang="scss">
 	button.search-button {
-		@apply w-9/12 mx-auto flex items-center justify-center py-2 border-b-2 border-white text-sm rounded-md z-10 transition transform;
+		@apply w-10/12 ml-auto mr-1.5 flex items-center justify-center py-2 border-b-2 border-white text-sm rounded-md z-10 transition transform;
 		background: var(--accent-light);
 		box-shadow: var(--dropshadow);
 		&:hover {

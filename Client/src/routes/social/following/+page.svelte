@@ -21,7 +21,9 @@
 	};
 
 	onMount(async () => {
-		await fetchFollows(currPage);
+		if ($account.account && $account.currProfile) {
+			await fetchFollows(currPage);
+		}
 	});
 
 	async function fetchFollows(newPage: number) {
@@ -40,19 +42,31 @@
 	}
 </script>
 
-{#if loading}
+{#if $account.account && $account.currProfile}
+	{#if loading}
+		<div class="empty">
+			<h3>Loading...</h3>
+		</div>
+	{:else if recentUpdates.metadata.total === 0}
+		<div class="empty">
+			<h3>You haven't followed anyone yet</h3>
+			<p>Check out the community to find people you'd want to see more of!</p>
+		</div>
+	{:else}
+		<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-8 gap-4">
+			{#each recentUpdates.items as follow}
+				<FollowCard profile={follow} />
+			{/each}
+		</div>
+	{/if}
+{:else if $account.account}
 	<div class="empty">
-		<h3>Loading...</h3>
-	</div>
-{:else if recentUpdates.metadata.total === 0}
-	<div class="empty">
-		<h3>You haven't followed anyone yet</h3>
-		<p>Check out the community to find people you'd want to see more of!</p>
+		<h3>No Profile Selected</h3>
+		<p>Open up the Guide and select a profile to view this page.</p>
 	</div>
 {:else}
-	<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-8 gap-4">
-		{#each recentUpdates.items as follow}
-			<FollowCard profile={follow} />
-		{/each}
+	<div class="empty">
+		<h3>Not Logged In</h3>
+		<p>You must be logged in to use this feature.</p>
 	</div>
 {/if}

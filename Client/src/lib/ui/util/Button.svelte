@@ -52,7 +52,7 @@
 		class={classes}
 		disabled={isDisabled}
 		tabindex="0"
-		on:click
+		on:click|stopPropagation
 		bind:this={thisButton}
 	>
 		{#if loading}
@@ -73,6 +73,7 @@
 		font-weight: 700;
 		letter-spacing: 1px;
 		color: var(--text-color);
+		font-family: var(--body-text);
 
 		&.primary,
 		&.active {

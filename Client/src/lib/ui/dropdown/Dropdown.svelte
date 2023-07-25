@@ -4,6 +4,7 @@
 	import { slide } from "svelte/transition";
 	import { Button } from "$lib/ui/util";
 	import { clickOutside } from "$lib/util/functions";
+	import { throttle } from "$lib/util/functions";
 
 	export let kind: "primary" | "normal" = "normal";
 	export let open = false;
@@ -14,9 +15,10 @@
 	function determineOpenState() {
 		open = !open;
 	}
+	const throttled = throttle(determineOpenState, 150);
 
-	let button: HTMLButtonElement = null;
-	let dropdown: HTMLDivElement = null;
+	let button: HTMLButtonElement;
+	let dropdown: HTMLDivElement;
 
 	$: {
 		if (button) {
@@ -43,7 +45,7 @@
 		isActive={open}
 		{inline}
 		{noAxis}
-		on:click={determineOpenState}
+		on:click={throttled}
 		bind:thisButton={button}
 	>
 		<slot name="button" />
@@ -53,8 +55,9 @@
 			class="dropdown-items"
 			transition:slide|local={{ delay: 0, duration: 150 }}
 			bind:this={dropdown}
+			on:click={throttled}
 			use:clickOutside
-			on:outclick={determineOpenState}
+			on:outclick={throttled}
 		>
 			<slot name="items" />
 		</div>

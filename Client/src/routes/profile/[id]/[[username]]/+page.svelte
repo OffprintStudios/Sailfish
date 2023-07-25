@@ -75,7 +75,7 @@
 	}
 </script>
 
-<div class="w-11/12 lg:w-full mx-auto">
+<div class="w-11/12 lg:max-w-7xl lg:w-full mx-auto">
 	{#if loadingBlogs || loadingWorks}
 		<div class="empty">
 			<h3>Loading...</h3>
@@ -86,7 +86,7 @@
 			<p>Well this is rather empty, isn't it?</p>
 		</div>
 	{:else}
-		<div class="w-full lg:w-11/12 xl:w-full mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4">
+		<div class="w-full lg:w-11/12 xl:w-full mx-auto grid grid-cols-1 2xl:grid-cols-3 gap-4">
 			{#if blogs.items[0]}
 				<div class="lg:col-span-2">
 					<BlogCard blog={blogs.items[0]} hasDropdown={false} bigPreview={true} />
@@ -98,11 +98,9 @@
 					<p>Well this is rather empty, isn't it?</p>
 				</div>
 			{:else}
-				<div class="col-span-1">
+				<div class="col-span-1 grid grid-cols-1 xl:grid-cols-3 2xl:grid-cols-1 lg:gap-2">
 					{#each works.items as work}
-						<div class="my-2 first:mt-0 last:mb-0">
-							<WorkCard {work} withDropdown={false} />
-						</div>
+						<WorkCard {work} withDropdown={false} />
 					{/each}
 				</div>
 			{/if}
