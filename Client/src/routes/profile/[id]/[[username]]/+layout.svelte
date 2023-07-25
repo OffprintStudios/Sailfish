@@ -12,7 +12,7 @@
 		ArrowRightSLine,
 		SendPlaneLine,
 		EditCircleLine,
-		UserSettingsLine
+		QuestionAnswerLine
 	} from "svelte-remixicon";
 	import { page } from "$app/stores";
 	import { RoleBadge } from "$lib/ui/util";
@@ -240,17 +240,6 @@
 											<span>Add Banner Art</span>
 										{/if}
 									</button>
-									<div class="lg:hidden">
-										<div class="divider"><!--spacer--></div>
-										<a
-											href="/profile/{data.id}/{slugify(
-												data.username
-											)}/settings"
-										>
-											<UserSettingsLine class="mr-2" size="18px" />
-											<span>Settings</span>
-										</a>
-									</div>
 								{/if}
 							</svelte:fragment>
 						</Dropdown>
@@ -383,30 +372,26 @@
 							</div>
 						</div>
 					</a>
-				</div>
-				{#if $account.currProfile && $account.currProfile.id === data.id}
-					<div
-						class="hidden lg:flex flex-col w-full bg-zinc-300 dark:bg-zinc-600 rounded-xl mt-4 overflow-hidden"
-					>
+					{#if $account.currProfile && $account.currProfile.id === data.id}
 						<a
 							class="stat-box hover:bg-zinc-400 dark:hover:bg-zinc-500 group"
-							href="/profile/{data.id}/{slugify(data.username)}/settings"
-							class:active={$page.url.pathname.includes("/settings")}
+							href="/profile/{data.id}/{slugify(data.username)}/messages"
+							class:active={$page.url.pathname.includes("/messages")}
 						>
 							<div class="stat">
-								<UserSettingsLine
+								<QuestionAnswerLine
 									class="mr-1 lg:mr-0 w-[18.4px] h-[18.4px] lg:w-[22px] lg:h-[22px]"
 								/>
 							</div>
-							<div class="stat-label">Settings</div>
+							<div class="stat-label">Messages</div>
 							<div
 								class="stat-caret text-zinc-400 dark:text-zinc-500 group-hover:text-white"
 							>
 								<ArrowRightSLine size="22px" />
 							</div>
 						</a>
-					</div>
-				{/if}
+					{/if}
+				</div>
 			</div>
 		</div>
 	</div>

@@ -1,9 +1,0 @@
-div.settings-container {
-  @apply grid grid-cols-1 lg:grid-cols-4 w-11/12 mx-auto;
-  div.settings-nav {
-    @apply col-span-1;
-  }
-  div.settings-content {
-    @apply col-span-3;
-  }
-}

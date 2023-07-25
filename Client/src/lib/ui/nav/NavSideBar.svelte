@@ -86,16 +86,6 @@
 		</span>
 		<span class="link-name">Library</span>
 	</a>
-	<a class="link" class:active={$page.url.pathname.includes("/messages")} href="/messages">
-		<span class="link-icon">
-			{#if $page.url.pathname.includes("/messages")}
-				<QuestionAnswerFill size={iconSize} />
-			{:else}
-				<QuestionAnswerLine size={iconSize} />
-			{/if}
-		</span>
-		<span class="link-name">Messages</span>
-	</a>
 	<div class="flex-1"><!--spacer--></div>
 	<div class="hidden lg:block text-white font-bold tracking-widest mb-1">
 		[ <span class="relative">BETA</span> ]

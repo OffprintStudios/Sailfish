@@ -18,8 +18,7 @@
 	import { slide } from "svelte/transition";
 	import type { Profile } from "$lib/models/accounts";
 	import { pushPanel } from "$lib/ui/user/guide/guide.state";
-	import SettingsPanel from "./settings/SettingsPanel.svelte";
-	import LogOutPanel from "./LogOutPanel.svelte";
+	import { SettingsPanel, LogOutPanel } from "./settings";
 
 	let profileSwitcherOpen = false;
 

@@ -4,10 +4,10 @@
 	import { ArrowLeftRightLine } from "svelte-remixicon";
 	import { guide, toggle } from "./guide.state";
 	import { computePosition, flip, offset, shift } from "@floating-ui/dom";
-	import { clickOutside } from "$lib/util/functions";
 	import { fly, fade, crossfade } from "svelte/transition";
 	import { flip as flipAnim } from "svelte/animate";
 	import { navigating } from "$app/stores";
+	import { clickOutside } from "$lib/util/functions";
 
 	const [send, receive] = crossfade({});
 	let button: HTMLButtonElement;

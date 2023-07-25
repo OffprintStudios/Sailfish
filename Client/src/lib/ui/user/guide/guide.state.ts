@@ -26,7 +26,9 @@ export const toggle = throttle(switchState, 150);
 
 export function pushPanel(component: typeof SvelteComponent) {
 	guide.update((state) => {
-		state.routing = [...state.routing, component];
+		if (state.open) {
+			state.routing = [...state.routing, component];
+		}
 		return state;
 	});
 }

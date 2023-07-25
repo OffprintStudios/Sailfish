@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { LoginCircleLine, UserAddLine, SearchEyeLine, RefreshLine } from "svelte-remixicon";
+	import { LoginCircleLine, UserAddLine, SearchEyeLine } from "svelte-remixicon";
 	import SearchDropdown from "$lib/ui/nav/SearchDropdown.svelte";
 	import Button from "$lib/ui/util/Button.svelte";
 	import { account } from "$lib/state/account.state";
 	import { getReq, type ResponseError } from "$lib/http";
 	import { activity } from "$lib/state/activity.state";
 	import NavDropdown from "$lib/ui/nav/NavDropdown.svelte";
-	import { AccountDropdown, ActivityDropdown } from "$lib/ui/user";
+	import { ActivityDropdown } from "$lib/ui/user";
 	import { Guide } from "$lib/ui/user/guide";
 
 	enum GuideTabs {
