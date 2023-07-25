@@ -247,9 +247,9 @@ div.guide-dropdown {
     }
   }
   button.profile-button {
-    @apply flex flex-col items-center justify-center p-2 rounded-xl transition mx-0.5 first:ml-0 last:mr-0;
+    @apply flex flex-col items-center justify-center p-2 rounded-xl transition mx-0.5 first:ml-0 last:mr-0 max-w-[88px] max-h-[117px];
     span {
-      @apply mt-1;
+      @apply mt-1 w-full truncate;
     }
   }
   a.stat-box {

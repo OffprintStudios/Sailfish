@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { account } from "$lib/state/account.state";
 	import { abbreviate, slugify } from "$lib/util/functions";
-	import { Avatar, RoleBadge } from "$lib/ui/util";
+	import { Avatar, Button, RoleBadge } from "$lib/ui/util";
 	import {
 		ArrowDownSLine,
 		ArrowLeftRightLine,
 		ArrowRightSLine,
 		ArrowUpSLine,
 		BookLine,
+		CheckLine,
+		CloseLine,
 		CupLine,
 		EyeLine,
 		Link,
@@ -19,13 +21,61 @@
 	import type { Profile } from "$lib/models/accounts";
 	import { pushPanel } from "$lib/ui/user/guide/guide.state";
 	import { SettingsPanel, LogOutPanel } from "./settings";
+	import { createForm } from "felte";
+	import { Presence, type ProfileForm } from "$lib/models/accounts";
+	import { postReq, type ResponseError } from "$lib/http";
+	import toast from "svelte-french-toast";
+	import { TextArea, TextField } from "$lib/ui/forms";
 
 	let profileSwitcherOpen = false;
+	let showAddForm = false;
 
 	function selectProfile(profile: Profile) {
 		$account.currProfile = profile;
 		profileSwitcherOpen = false;
 	}
+
+	const { form, errors, isSubmitting } = createForm({
+		onSubmit: async (values, context) => {
+			const formInfo: ProfileForm = {
+				username: values.username,
+				presence: Presence.Offline,
+				bio: values.bio
+			};
+			const response = await postReq<Profile>(`/accounts/create-profile`, formInfo);
+			if ((response as Profile).id) {
+				$account.profiles = [...$account.profiles, response as Profile];
+				toast.success(`Profile added!`);
+				context.reset();
+				showAddForm = false;
+			} else {
+				const error = response as ResponseError;
+				toast.error(error.message);
+			}
+		},
+		validate: (values) => {
+			const errors = {
+				username: "",
+				bio: ""
+			};
+
+			if (!values.username || values.username.length < 3 || values.username.length > 36) {
+				errors.username = "Usernames must be between 3 and 36 characters in length";
+			}
+
+			if (values.bio && (values.bio.length < 3 || values.username.length > 120)) {
+				errors.bio = "Profile bios must be between 3 and 120 characters in length";
+			}
+
+			return errors;
+		},
+		initialValues: {
+			username: null,
+			presence: Presence.Offline,
+			bio: null,
+			tagline: null
+		}
+	});
 </script>
 
 {#if $account.account && $account.currProfile}
@@ -143,48 +193,111 @@
 		</button>
 		{#if profileSwitcherOpen}
 			<div transition:slide={{ delay: 0, duration: 150 }}>
-				<div class="flex items-center justify-center my-2">
-					{#each $account.profiles as profile}
-						<button class="profile-button" on:click={() => selectProfile(profile)}>
-							<Avatar src={profile.avatar} size="72px" borderWidth="1px" />
-							<span>{profile.username}</span>
-						</button>
-					{/each}
-					{#if $account.profiles.length < 3}
-						<button class="profile-button">
-							<span
-								class="w-[72px] h-[72px] text-6xl font-extralight rounded-full border-2 border-dashed"
+				{#if showAddForm}
+					<form class="px-2 pb-2" use:form>
+						<TextField
+							name="username"
+							type="text"
+							title="Username"
+							placeholder="A New Face"
+							errorMessage={$errors.username}
+						/>
+						<TextArea
+							name="bio"
+							title="Bio (Optional)"
+							placeholder="Just another somebody"
+							errorMessage={$errors.bio}
+						/>
+						<div class="flex items-center justify-center">
+							<Button type="submit" loading={$isSubmitting} loadingText="Saving...">
+								<CheckLine class="button-icon" />
+								<span class="button-text">Submit</span>
+							</Button>
+							<div class="mx-0.5" />
+							<Button type="button" on:click={() => (showAddForm = false)}>
+								<CloseLine class="button-icon" />
+								<span class="button-text">Cancel</span>
+							</Button>
+						</div>
+					</form>
+				{:else}
+					<div class="flex items-center justify-center my-2">
+						{#each $account.profiles as profile}
+							<button class="profile-button" on:click={() => selectProfile(profile)}>
+								<Avatar src={profile.avatar} size="72px" borderWidth="1px" />
+								<span>Alyx, Of Many Figments</span>
+							</button>
+						{/each}
+						{#if $account.profiles.length < 3}
+							<button
+								class="profile-button"
+								on:click={() => (showAddForm = !showAddForm)}
 							>
-								<span class="relative top-1"> + </span>
-							</span>
-							<span>Add Profile</span>
-						</button>
-					{/if}
-				</div>
+								<span
+									class="w-[72px] h-[72px] text-6xl font-extralight rounded-full border-2 border-dashed"
+								>
+									<span class="relative top-1"> + </span>
+								</span>
+								<span>Add Profile</span>
+							</button>
+						{/if}
+					</div>
+				{/if}
 			</div>
 		{/if}
 	</div>
 {:else if $account.account}
 	<div class="px-4 mb-2">
 		<h5 class="text-xl justify-self-start">Select Profile</h5>
-		<div class="flex items-center justify-center">
-			{#each $account.profiles as profile}
-				<button class="profile-button" on:click={() => selectProfile(profile)}>
-					<Avatar src={profile.avatar} size="72px" borderWidth="1px" />
-					<span>{profile.username}</span>
-				</button>
-			{/each}
-			{#if $account.profiles.length < 3}
-				<button class="profile-button">
-					<span
-						class="w-[72px] h-[72px] text-6xl font-extralight rounded-full border-2 border-dashed"
-					>
-						<span class="relative top-1"> + </span>
-					</span>
-					<span>Add Profile</span>
-				</button>
-			{/if}
-		</div>
+		{#if showAddForm}
+			<form class="px-2 pb-2" use:form>
+				<TextField
+					name="username"
+					type="text"
+					title="Username"
+					placeholder="A New Face"
+					kind="primary"
+					errorMessage={$errors.username}
+				/>
+				<TextArea
+					name="bio"
+					title="Bio (Optional)"
+					placeholder="Just another somebody"
+					kind="primary"
+					errorMessage={$errors.bio}
+				/>
+				<div class="flex items-center justify-center">
+					<Button type="submit" loading={$isSubmitting} loadingText="Saving...">
+						<CheckLine class="button-icon" />
+						<span class="button-text">Submit</span>
+					</Button>
+					<div class="mx-0.5" />
+					<Button type="button" on:click={() => (showAddForm = false)}>
+						<CloseLine class="button-icon" />
+						<span class="button-text">Cancel</span>
+					</Button>
+				</div>
+			</form>
+		{:else}
+			<div class="flex items-center justify-center">
+				{#each $account.profiles as profile}
+					<button class="profile-button" on:click={() => selectProfile(profile)}>
+						<Avatar src={profile.avatar} size="72px" borderWidth="1px" />
+						<span>{profile.username}</span>
+					</button>
+				{/each}
+				{#if $account.profiles.length < 3}
+					<button class="profile-button" on:click={() => (showAddForm = !showAddForm)}>
+						<span
+							class="w-[72px] h-[72px] text-6xl font-extralight rounded-full border-2 border-dashed"
+						>
+							<span class="relative top-1"> + </span>
+						</span>
+						<span>Add Profile</span>
+					</button>
+				{/if}
+			</div>
+		{/if}
 	</div>
 {/if}
 <div class="guide-section bg-zinc-300 dark:bg-zinc-600">

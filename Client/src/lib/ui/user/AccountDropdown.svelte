@@ -31,7 +31,10 @@
 	import { activity } from "$lib/state/activity.state";
 	import { ContentFilter, ThemePref } from "$lib/util/constants";
 	import { app, setFilter, setOfAge, setTheme } from "$lib/state/app.state";
-	import { Toggle } from "$lib/ui/forms";
+	import { TextArea, TextField, Toggle } from "$lib/ui/forms";
+	import { createForm } from "felte";
+	import { Presence, type ProfileForm } from "$lib/models/accounts";
+	import { postReq, type ResponseError } from "$lib/http";
 
 	enum Panels {
 		Home,
@@ -45,6 +48,7 @@
 	let dropdown: HTMLDivElement;
 	let currPanel = Panels.Home;
 	let profileSwitcherOpen = false;
+	let showAddForm = false;
 	const themes = Object.entries(ThemePref).map(([key, value]) => ({ value: value, label: key }));
 	let currTheme = themes.filter((theme) => {
 		return theme.value === $app.theme;
@@ -133,6 +137,48 @@
 			toast.error(`Something went wrong! Try again in a little bit.`);
 		}
 	}
+
+	const { form, errors, isSubmitting } = createForm({
+		onSubmit: async (values, context) => {
+			const formInfo: ProfileForm = {
+				username: values.username,
+				presence: Presence.Offline,
+				bio: values.bio
+			};
+			const response = await postReq<Profile>(`/accounts/create-profile`, formInfo);
+			if ((response as Profile).id) {
+				$account.profiles = [...$account.profiles, response as Profile];
+				toast.success(`Profile added!`);
+				context.reset();
+				showAddForm = false;
+			} else {
+				const error = response as ResponseError;
+				toast.error(error.message);
+			}
+		},
+		validate: (values) => {
+			const errors = {
+				username: "",
+				bio: ""
+			};
+
+			if (!values.username || values.username.length < 3 || values.username.length > 36) {
+				errors.username = "Usernames must be between 3 and 36 characters in length";
+			}
+
+			if (values.bio && (values.bio.length < 3 || values.username.length > 120)) {
+				errors.bio = "Profile bios must be between 3 and 120 characters in length";
+			}
+
+			return errors;
+		},
+		initialValues: {
+			username: null,
+			presence: Presence.Offline,
+			bio: null,
+			tagline: null
+		}
+	});
 </script>
 
 <div class="relative z-[2]">
@@ -287,31 +333,70 @@
 							</button>
 							{#if profileSwitcherOpen}
 								<div transition:slide={{ delay: 0, duration: 150 }}>
-									<div class="flex items-center justify-center my-2">
-										{#each $account.profiles as profile}
-											<button
-												class="profile-button"
-												on:click={() => selectProfile(profile)}
-											>
-												<Avatar
-													src={profile.avatar}
-													size="72px"
-													borderWidth="1px"
-												/>
-												<span>{profile.username}</span>
-											</button>
-										{/each}
-										{#if $account.profiles.length < 3}
-											<button class="profile-button">
-												<span
-													class="w-[72px] h-[72px] text-6xl font-extralight rounded-full border-2 border-dashed"
+									{#if showAddForm}
+										<form class="px-2 pb-2" use:form>
+											<TextField
+												name="username"
+												type="text"
+												title="Username"
+												placeholder="A New Face"
+												errorMessage={$errors.username}
+											/>
+											<TextArea
+												name="bio"
+												title="Bio (Optional)"
+												placeholder="Just another somebody"
+												errorMessage={$errors.bio}
+											/>
+											<div class="flex items-center justify-center">
+												<Button
+													type="submit"
+													loading={$isSubmitting}
+													loadingText="Saving..."
 												>
-													<span class="relative top-1"> + </span>
-												</span>
-												<span>Add Profile</span>
-											</button>
-										{/if}
-									</div>
+													<CheckLine class="button-icon" />
+													<span class="button-text">Submit</span>
+												</Button>
+												<div class="mx-0.5" />
+												<Button
+													type="button"
+													on:click={() => (showAddForm = false)}
+												>
+													<CloseLine class="button-icon" />
+													<span class="button-text">Cancel</span>
+												</Button>
+											</div>
+										</form>
+									{:else}
+										<div class="flex items-center justify-center my-2">
+											{#each $account.profiles as profile}
+												<button
+													class="profile-button"
+													on:click={() => selectProfile(profile)}
+												>
+													<Avatar
+														src={profile.avatar}
+														size="72px"
+														borderWidth="1px"
+													/>
+													<span>{profile.username}</span>
+												</button>
+											{/each}
+											{#if $account.profiles.length < 3}
+												<button
+													class="profile-button"
+													on:click={() => (showAddForm = !showAddForm)}
+												>
+													<span
+														class="w-[72px] h-[72px] text-6xl font-extralight rounded-full border-2 border-dashed"
+													>
+														<span class="relative top-1"> + </span>
+													</span>
+													<span>Add Profile</span>
+												</button>
+											{/if}
+										</div>
+									{/if}
 								</div>
 							{/if}
 						</div>
@@ -319,27 +404,69 @@
 				{:else if $account.account}
 					<div class="px-4 mb-2">
 						<h5 class="text-xl justify-self-start">Select Profile</h5>
-						<div class="flex items-center justify-center">
-							{#each $account.profiles as profile}
-								<button
-									class="profile-button"
-									on:click={() => selectProfile(profile)}
-								>
-									<Avatar src={profile.avatar} size="72px" borderWidth="1px" />
-									<span>{profile.username}</span>
-								</button>
-							{/each}
-							{#if $account.profiles.length < 3}
-								<button class="profile-button">
-									<span
-										class="w-[72px] h-[72px] text-6xl font-extralight rounded-full border-2 border-dashed"
+						{#if showAddForm}
+							<form class="px-2 pb-2" use:form>
+								<TextField
+									name="username"
+									type="text"
+									title="Username"
+									placeholder="A New Face"
+									kind="primary"
+									errorMessage={$errors.username}
+								/>
+								<TextArea
+									name="bio"
+									title="Bio (Optional)"
+									placeholder="Just another somebody"
+									kind="primary"
+									errorMessage={$errors.bio}
+								/>
+								<div class="flex items-center justify-center">
+									<Button
+										type="submit"
+										loading={$isSubmitting}
+										loadingText="Saving..."
 									>
-										<span class="relative top-1"> + </span>
-									</span>
-									<span>Add Profile</span>
-								</button>
-							{/if}
-						</div>
+										<CheckLine class="button-icon" />
+										<span class="button-text">Submit</span>
+									</Button>
+									<div class="mx-0.5" />
+									<Button type="button" on:click={() => (showAddForm = false)}>
+										<CloseLine class="button-icon" />
+										<span class="button-text">Cancel</span>
+									</Button>
+								</div>
+							</form>
+						{:else}
+							<div class="flex items-center justify-center">
+								{#each $account.profiles as profile}
+									<button
+										class="profile-button"
+										on:click={() => selectProfile(profile)}
+									>
+										<Avatar
+											src={profile.avatar}
+											size="72px"
+											borderWidth="1px"
+										/>
+										<span>{profile.username}</span>
+									</button>
+								{/each}
+								{#if $account.profiles.length < 3}
+									<button
+										class="profile-button"
+										on:click={() => (showAddForm = !showAddForm)}
+									>
+										<span
+											class="w-[72px] h-[72px] text-6xl font-extralight rounded-full border-2 border-dashed"
+										>
+											<span class="relative top-1"> + </span>
+										</span>
+										<span>Add Profile</span>
+									</button>
+								{/if}
+							</div>
+						{/if}
 					</div>
 				{/if}
 				<div class="account-dropdown-section bg-zinc-300 dark:bg-zinc-600">
