@@ -35,6 +35,7 @@
 	import { createForm } from "felte";
 	import { Presence, type ProfileForm } from "$lib/models/accounts";
 	import { postReq, type ResponseError } from "$lib/http";
+	import { guide, toggle } from "$lib/ui/user/guide/guide.state";
 
 	enum Panels {
 		Home,
@@ -43,6 +44,7 @@
 	}
 
 	export let open = false;
+	export let mode: "normal" | "section" = "normal";
 
 	let button: HTMLButtonElement;
 	let dropdown: HTMLDivElement;
@@ -182,13 +184,29 @@
 </script>
 
 <div class="relative z-[2]">
-	<Button on:click={throttled} bind:thisButton={button} isActive={open} kind="primary">
-		{#if $account.account && $account.currProfile}
-			<Avatar src={$account.currProfile.avatar} size="36px" borderWidth="1px" />
-		{:else if $account.account}
-			<ArrowLeftRightLine class="button-icon no-text -rotate-45" size="22px" />
-		{/if}
-	</Button>
+	{#if mode === "normal"}
+		<Button on:click={toggle} bind:thisButton={button} isActive={$guide.open} kind="primary">
+			{#if $account.account && $account.currProfile}
+				<Avatar src={$account.currProfile.avatar} size="36px" borderWidth="1px" />
+			{:else if $account.account}
+				<ArrowLeftRightLine class="button-icon no-text -rotate-45" size="22px" />
+			{/if}
+		</Button>
+	{:else if mode === "section"}
+		<button
+			class="section-button no-text"
+			style="padding: 1.5rem 0.5rem 1.5rem 0.5rem; margin-right: 0;"
+			bind:this={button}
+			class:active={$guide.open}
+			on:click={toggle}
+		>
+			{#if $account.account && $account.currProfile}
+				<Avatar src={$account.currProfile.avatar} size="36px" borderWidth="1px" />
+			{:else if $account.account}
+				<ArrowLeftRightLine class="button-icon no-text -rotate-45" size="22px" />
+			{/if}
+		</button>
+	{/if}
 	{#if open}
 		<div
 			class="account-dropdown bg-zinc-200 dark:bg-zinc-700"

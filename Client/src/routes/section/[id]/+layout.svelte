@@ -12,6 +12,9 @@
 	import { onMount } from "svelte";
 	import { section } from "$lib/state/section.state";
 	import { ParagraphStyle, Theme, WidthSettings } from "$lib/util/constants/sections";
+	import { Guide } from "$lib/ui/user/guide";
+	import { account } from "$lib/state/account.state";
+	import AccountDropdown from "$lib/ui/user/AccountDropdown.svelte";
 
 	const iconSize = "22px";
 
@@ -126,9 +129,14 @@
 			<button class="section-button no-text" title="Bookmark Chapter">
 				<BookmarkLine size={iconSize} />
 			</button>
-			<button class="section-button no-text hide-this" title="Share This">
-				<ShareBoxLine size={iconSize} />
-			</button>
+			{#if $account.account}
+				<div class="hidden lg:block">
+					<Guide mode="section" />
+				</div>
+				<div class="lg:hidden">
+					<AccountDropdown mode="section" />
+				</div>
+			{/if}
 		</div>
 	</div>
 	<div class="section-container">
