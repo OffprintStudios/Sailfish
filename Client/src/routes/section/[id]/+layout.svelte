@@ -11,13 +11,15 @@
 	import FormattingDropdown from "./FormattingDropdown.svelte";
 	import { onMount } from "svelte";
 	import { section } from "$lib/state/section.state";
-	import { Theme } from "$lib/util/constants/sections";
+	import { ParagraphStyle, Theme, WidthSettings } from "$lib/util/constants/sections";
 
 	const iconSize = "22px";
 
 	onMount(() => {
 		const themeColor = document.querySelector("meta[name='theme-color']");
 		themeColor.setAttribute("content", "rgb(247, 241, 228)");
+
+		/* theme */
 		const sectionPage = document.getElementById("section-page");
 		sectionPage.classList.remove(
 			Theme.white,
@@ -27,7 +29,56 @@
 			Theme.ink
 		);
 		sectionPage.classList.add($section.theme);
+
+		/* font family */
 		sectionPage.style.setProperty("--section-font-family", $section.font as string);
+
+		/* width */
+		switch ($section.width) {
+			case WidthSettings.Normal:
+				sectionPage.style.setProperty("--section-width", WidthSettings.Normal);
+				break;
+			case WidthSettings.Narrow:
+				sectionPage.style.setProperty("--section-width", WidthSettings.Narrow);
+				break;
+			case WidthSettings.Wide:
+				sectionPage.style.setProperty("--section-width", WidthSettings.Wide);
+				break;
+		}
+
+		/* font size */
+		let size = 16;
+		let lineHeight = 24;
+		if ($section.fontSize < 1) {
+			size = Math.floor(size * $section.fontSize + 2);
+			lineHeight = Math.floor(lineHeight * $section.fontSize + 2);
+		} else if ($section.fontSize > 1) {
+			size = Math.floor(size * $section.fontSize - 2);
+			lineHeight = Math.floor(lineHeight * $section.fontSize - 2);
+		}
+		sectionPage.style.setProperty("--section-font-size", `${size}px`);
+		sectionPage.style.setProperty("--section-line-height", `${lineHeight}px`);
+
+		/* paragraph style */
+		switch ($section.paragraphs) {
+			case ParagraphStyle.original:
+				sectionPage.style.setProperty("--section-paragraph-margins", "1rem 0 1rem 0");
+				sectionPage.style.setProperty("--section-paragraph-indent", "0");
+				break;
+			case ParagraphStyle.indented:
+				sectionPage.style.setProperty("--section-paragraph-margins", "0");
+				sectionPage.style.setProperty("--section-paragraph-indent", "2.5rem");
+				break;
+			case ParagraphStyle.doubleSpaced:
+				sectionPage.style.setProperty("--section-paragraph-margins", "1rem 0 1rem 0");
+				sectionPage.style.setProperty("--section-paragraph-indent", "0");
+				break;
+			case ParagraphStyle.both:
+				sectionPage.style.setProperty("--section-paragraph-margins", "1rem 0 1rem 0");
+				sectionPage.style.setProperty("--section-paragraph-indent", "2.5rem");
+				break;
+		}
+
 		const themeColorValue =
 			getComputedStyle(sectionPage).getPropertyValue("--section-background");
 		themeColor.setAttribute("content", themeColorValue);

@@ -51,7 +51,6 @@
 	}
 
 	$: basePathname = data.pathname.split("/")[1];
-	$: console.log(basePathname);
 
 	async function agreeToTerms() {
 		if ($account.account) {

@@ -489,6 +489,11 @@ div.section-page {
     --section-dropdown-bg: var(--section-background);
   }
   --section-font-family: 'Inter', sans-serif;
+  --section-font-size: 16px;
+  --section-line-height: 24px;
+  --section-width: 46rem;
+  --section-paragraph-margins: 1rem 0 1rem 0;
+  --section-paragraph-indent: 0;
   background-color: var(--section-background);
 
   div.section-tools {
@@ -501,8 +506,9 @@ div.section-page {
     );
   }
   div.section-container {
-    @apply max-w-[46rem] mx-auto p-4 mt-16 text-base;
+    @apply mx-auto p-4 mt-16 transition;
     color: var(--section-text-color);
+    max-width: var(--section-width);
     h1,
     h2,
     h3,
@@ -513,6 +519,14 @@ div.section-page {
     }
     div.section-body {
       font-family: var(--section-font-family) !important;
+      font-size: var(--section-font-size) !important;
+      line-height: var(--section-line-height) !important;
+      p {
+        margin: var(--section-paragraph-margins) !important;
+      }
+      p + p {
+        text-indent: var(--section-paragraph-indent) !important;
+      }
     }
   }
   button.section-button {
@@ -539,7 +553,7 @@ div.section-page {
     }
   }
   div.section-dropdown {
-    @apply absolute rounded-xl z-50 max-h-[calc(100vh-80px)] w-[325px] p-2 overflow-hidden overflow-y-scroll;
+    @apply absolute flex flex-col rounded-xl z-50 max-h-[calc(100vh-80px)] w-[325px] p-2 overflow-hidden overflow-y-scroll;
     border: 1px solid var(--section-tool-color);
     box-shadow: var(--dropshadow);
     color: var(--section-text-color);
