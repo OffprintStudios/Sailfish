@@ -78,7 +78,6 @@ body {
   font-size: 14px;
   font-family: var(--body-text);
   background: var(--background);
-  @apply lg:overflow-y-hidden;
 }
 h1,
 h2,
@@ -435,4 +434,119 @@ section {
       @apply bg-zinc-600;
     }
   }
+}
+
+/* Sections */
+div.section-page {
+  &.white {
+    --section-background: rgb(255, 255, 255);
+    --section-text-color: rgb(39, 39, 39);
+    --section-button-hover: rgb(234, 229, 217);
+    --section-tool-color: rgb(37, 37, 37);
+    --section-header-color: rgb(68, 123, 181);
+    --section-tool-header-color: var(--section-text-color);
+    --section-select-bg: rgba(234, 229, 217, 1);
+    --section-dropdown-bg: var(--section-background);
+  }
+  &.paper {
+    --section-background: rgb(247, 241, 228);
+    --section-text-color: rgb(39, 39, 39);
+    --section-button-hover: rgb(234, 229, 217);
+    --section-tool-color: rgb(192, 154, 63);
+    --section-header-color: rgb(192, 154, 63);
+    --section-tool-header-color: var(--section-tool-color);
+    --section-select-bg: rgba(192, 154, 63, 0.25);
+    --section-dropdown-bg: var(--section-background);
+  }
+  &.slate {
+    --section-background: rgb(72, 72, 74);
+    --section-text-color: rgb(213, 213, 213);
+    --section-button-hover: rgb(81, 81, 83);
+    --section-tool-color: rgb(255, 255, 255);
+    --section-header-color: rgb(68, 123, 181);
+    --section-tool-header-color: var(--section-text-color);
+    --section-select-bg: rgba(81, 81, 83, 1);
+    --section-dropdown-bg: var(--section-background);
+  }
+  &.dimmed {
+    --section-background: rgb(44, 44, 46);
+    --section-text-color: rgb(186, 186, 186);
+    --section-button-hover: rgb(55, 55, 56);
+    --section-tool-color: rgb(255, 255, 255);
+    --section-header-color: rgb(66, 120, 176);
+    --section-tool-header-color: var(--section-text-color);
+    --section-select-bg: rgba(55, 55, 56, 1);
+    --section-dropdown-bg: var(--section-background);
+  }
+  &.ink {
+    --section-background: rgb(0, 0, 0);
+    --section-text-color: rgb(186, 186, 186);
+    --section-button-hover: rgb(55, 55, 56);
+    --section-tool-color: rgb(255, 255, 255);
+    --section-header-color: rgb(66, 120, 176);
+    --section-tool-header-color: var(--section-text-color);
+    --section-select-bg: rgba(55, 55, 56, 1);
+    --section-dropdown-bg: var(--section-background);
+  }
+  --section-font-family: 'Inter', sans-serif;
+  background-color: var(--section-background);
+
+  div.section-tools {
+    @apply flex items-center max-w-5xl mx-auto px-4 py-4 transition sticky top-0 z-10 h-[72px];
+    background-image: linear-gradient(
+                    to bottom,
+                    var(--section-background),
+                    var(--section-background) 85%,
+                    transparent
+    );
+  }
+  div.section-container {
+    @apply max-w-[46rem] mx-auto p-4 mt-16 text-base;
+    color: var(--section-text-color);
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      font-family: var(--header-text) !important;
+      color: var(--section-header-color) !important;
+    }
+    div.section-body {
+      font-family: var(--section-font-family) !important;
+    }
+  }
+  button.section-button {
+    @apply flex items-center px-2 py-1.5 transition focus:ring-0 m-0 text-base rounded-lg select-none relative h-[36px];
+    text-transform: lowercase;
+    font-variant: small-caps;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--section-tool-color);
+    &:hover {
+      background-color: var(--section-button-hover);
+    }
+    span {
+      @apply relative -top-0.5;
+    }
+    &.no-text {
+      @apply px-2 h-[36px] mx-0.5 first:ml-0 last:mr-0;
+    }
+    &.active {
+      background-color: var(--section-button-hover);
+    }
+    &.hide-this {
+      @apply lg:flex hidden;
+    }
+  }
+  div.section-dropdown {
+    @apply absolute rounded-xl z-50 max-h-[calc(100vh-80px)] w-[325px] p-2 overflow-hidden overflow-y-scroll;
+    border: 1px solid var(--section-tool-color);
+    box-shadow: var(--dropshadow);
+    color: var(--section-text-color);
+    background: var(--section-dropdown-bg);
+  }
+}
+div.section-comments {
+  @apply h-[100px] block;
+  background: var(--background);
 }
