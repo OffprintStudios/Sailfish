@@ -99,9 +99,11 @@
 			<button class="section-button no-text hide-this" title="Table of Contents">
 				<ListUnordered size={iconSize} />
 			</button>
-			<button class="section-button no-text hide-this" title="Notes & Highlights">
-				<StickyNoteLine size={iconSize} />
-			</button>
+			{#if $account.account && $account.currProfile}
+				<button class="section-button no-text hide-this" title="Notes & Highlights">
+					<StickyNoteLine size={iconSize} />
+				</button>
+			{/if}
 			<FormattingDropdown {iconSize} />
 		</div>
 		<div
@@ -126,9 +128,11 @@
 				<span class="text-xs" style="top: 0.03rem;">1.23</span>
 				<span>k</span>
 			</button>
-			<button class="section-button no-text" title="Bookmark Chapter">
-				<BookmarkLine size={iconSize} />
-			</button>
+			{#if $account.account && $account.currProfile}
+				<button class="section-button no-text" title="Bookmark Chapter">
+					<BookmarkLine size={iconSize} />
+				</button>
+			{/if}
 			{#if $account.account}
 				<div class="hidden lg:block">
 					<Guide mode="section" />
