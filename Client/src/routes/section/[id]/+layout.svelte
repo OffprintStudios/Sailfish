@@ -1,11 +1,11 @@
 <script lang="ts">
 	import {
+		ArrowRightSLine,
 		ArrowLeftSLine,
 		ListUnordered,
 		StickyNoteLine,
 		DiscussLine,
 		BookmarkLine,
-		ShareBoxLine,
 		OpenArmLine
 	} from "svelte-remixicon";
 	import FormattingDropdown from "./FormattingDropdown.svelte";
@@ -17,6 +17,10 @@
 	import AccountDropdown from "$lib/ui/user/AccountDropdown.svelte";
 
 	const iconSize = "22px";
+	let navHidden = false;
+	let scrollY = 0;
+	let sectionContainer: HTMLDivElement;
+	let sectionContainerHeight = 0;
 
 	onMount(() => {
 		const themeColor = document.querySelector("meta[name='theme-color']");
@@ -85,14 +89,26 @@
 		const themeColorValue =
 			getComputedStyle(sectionPage).getPropertyValue("--section-background");
 		themeColor.setAttribute("content", themeColorValue);
+
+		getSectionHeight();
 	});
+
+	function getSectionHeight() {
+		sectionContainerHeight = sectionContainer.scrollHeight + 100;
+	}
 </script>
 
+<svelte:window bind:scrollY />
+
 <div id="section-page" class="section-page paper">
-	<div class="section-tools">
+	<div
+		class="section-tools pinned"
+		class:in-content={scrollY < sectionContainerHeight}
+		class:out-of-content={scrollY >= sectionContainerHeight}
+	>
 		<div class="flex items-center w-1/3">
 			<button class="section-button">
-				<ArrowLeftSLine class="mr-1" size={iconSize} />
+				<ArrowLeftSLine class="lg:mr-1" size={iconSize} />
 				<span class="hidden lg:block">Back</span>
 			</button>
 			<div class="hidden lg:block mx-0.5"><!--spacer--></div>
@@ -100,7 +116,11 @@
 				<ListUnordered size={iconSize} />
 			</button>
 			{#if $account.account && $account.currProfile}
-				<button class="section-button no-text hide-this" title="Notes & Highlights">
+				<button
+					class="section-button no-text hide-this"
+					title="Notes & Highlights"
+					style="margin-right: 0.25rem;"
+				>
 					<StickyNoteLine size={iconSize} />
 				</button>
 			{/if}
@@ -143,9 +163,49 @@
 			{/if}
 		</div>
 	</div>
-	<div class="section-container">
-		<h1 class="text-4xl mb-8 text-center">II: The Start Of Something New</h1>
-		<slot />
+	<div bind:this={sectionContainer}>
+		<div class="section-container">
+			<h1 class="text-4xl mb-16 text-center">II: The Start Of Something New</h1>
+			<slot />
+			<div class="section-authors-note">
+				<div class="flex items-center">
+					<h3 class="text-2xl">From the author—</h3>
+				</div>
+				<div class="authors-note">
+					<p>
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+						tempor incididunt ut labore et dolore magna aliqua. Sit amet consectetur
+						adipiscing elit pellentesque. Condimentum vitae sapien pellentesque habitant
+						morbi. Egestas fringilla phasellus faucibus scelerisque. Suspendisse
+						ultrices gravida dictum fusce ut placerat orci. Accumsan lacus vel facilisis
+						volutpat est. Justo laoreet sit amet cursus. Risus at ultrices mi tempus
+						imperdiet.
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="section-nav">
+			<button class="section-button">
+				<ArrowLeftSLine class="lg:mr-1" size={iconSize} />
+				<span class="hidden lg:block">Prev</span>
+			</button>
+			<div class="mx-2"><!--spacer--></div>
+			<button class="section-button" title="Cheers">
+				<OpenArmLine size={iconSize} class="mr-1" />
+				<span class="text-xs" style="top: 0.03rem;">4.87</span>
+				<span>k</span>
+			</button>
+			<button class="section-button" title="Comments">
+				<DiscussLine size={iconSize} class="mr-1" />
+				<span class="text-xs" style="top: 0.03rem;">1.23</span>
+				<span>k</span>
+			</button>
+			<div class="mx-2"><!--spacer--></div>
+			<button class="section-button">
+				<span class="hidden lg:block">Next</span>
+				<ArrowRightSLine class="lg:ml-1" size={iconSize} />
+			</button>
+		</div>
 	</div>
+	<div class="section-comments" />
 </div>
-<div class="section-comments" />

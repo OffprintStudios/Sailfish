@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { computePosition, flip, offset, shift, type ShiftOptions } from "@floating-ui/dom";
+	import {
+		computePosition,
+		flip,
+		offset,
+		shift,
+		arrow,
+		type ShiftOptions
+	} from "@floating-ui/dom";
 	import { clickOutside, throttle } from "$lib/util/functions";
 	import { navigating } from "$app/stores";
 	import {
@@ -19,6 +26,7 @@
 
 	let button: HTMLButtonElement;
 	let dropdown: HTMLDivElement;
+	let arrowEl: HTMLDivElement;
 
 	function determineState() {
 		open = !open;
@@ -30,12 +38,32 @@
 		if (button) {
 			computePosition(button, dropdown, {
 				placement: "bottom",
-				middleware: [offset({ mainAxis: 8 }), flip(), shift({ padding: 5 } as ShiftOptions)]
+				middleware: [
+					offset({ mainAxis: 8 }),
+					flip(),
+					shift({ padding: 5 } as ShiftOptions),
+					arrow({ element: arrowEl })
+				]
 			})
-				.then(({ x, y }) => {
+				.then(({ x, y, placement, middlewareData }) => {
 					Object.assign(dropdown.style, {
 						left: `${x}px`,
 						top: `${y}px`
+					});
+
+					const { x: arrowX, y: arrowY } = middlewareData.arrow;
+					const staticSide = {
+						top: "bottom",
+						right: "left",
+						bottom: "top",
+						left: "right"
+					}[placement.split("-")[0]];
+					Object.assign(arrowEl.style, {
+						left: arrowX != null ? `${arrowX}px` : "",
+						top: arrowY != null ? `${arrowY}px` : "",
+						right: "",
+						bottom: "",
+						[staticSide]: "-7px"
 					});
 				})
 				.catch(() => {
@@ -153,6 +181,7 @@
 			use:clickOutside
 			on:outclick={throttled}
 		>
+			<div class="arrow" bind:this={arrowEl}><!--arrow--></div>
 			<div class="lg:flex items-center justify-center my-2 hidden" title="Adjust Page Width">
 				<button
 					class="section-button"
@@ -288,6 +317,11 @@
 	div.theme-circle {
 		@apply w-[40px] h-[40px] rounded-full border-2 mx-1 first:ml-0 last:mr-0 cursor-pointer;
 		box-shadow: var(--dropshadow);
+		border-color: var(--section-tool-color);
+	}
+	div.arrow {
+		@apply absolute w-[12px] h-[12px] transform rotate-45 border-t border-l;
+		background: var(--section-background);
 		border-color: var(--section-tool-color);
 	}
 </style>

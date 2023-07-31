@@ -12,7 +12,7 @@
 	import Button from "$lib/ui/util/Button.svelte";
 	import type { Account } from "$lib/models/accounts";
 	import { ThemePref } from "$lib/util/constants";
-	import { fly, scale } from "svelte/transition";
+	import { fly, fade } from "svelte/transition";
 	import { cubicIn, cubicOut } from "svelte/easing";
 
 	export let data: { token: string | null; pathname: string } = { token: null, pathname: "" };
@@ -87,7 +87,7 @@
 
 <Popup />
 {#if basePathname.startsWith("section")}
-	<main class="relative" transition:scale>
+	<main class="relative" transition:fade>
 		<slot />
 	</main>
 {:else}
