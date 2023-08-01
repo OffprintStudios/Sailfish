@@ -195,7 +195,7 @@ extension SectionView {
                     LEFT JOIN works work ON section.work_id = work.id
                     LEFT JOIN volumes volume ON section.volume_id = volume.id
                     LEFT JOIN profiles profile ON work.author_id = profile.id
-                    LEFT JOIN comments comment ON comment.section_id = section.id
+                    LEFT JOIN section_comments comment ON comment.section_id = section.id
                     GROUP BY section.id, work.id, profile.id, volume.id
             """)
             

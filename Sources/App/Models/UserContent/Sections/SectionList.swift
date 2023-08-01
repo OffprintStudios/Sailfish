@@ -71,7 +71,7 @@ extension SectionList {
                     LEFT JOIN section_cheers cheer ON section.id = cheer.section_id
                     LEFT JOIN works work ON section.work_id = work.id
                     LEFT JOIN volumes volume ON section.volume_id = volume.id
-                    LEFT JOIN comments comment ON comment.section_id = section.id
+                    LEFT JOIN section_comments comment ON comment.section_id = section.id
                     GROUP BY section.id, work.id, volume.id
             """)
             

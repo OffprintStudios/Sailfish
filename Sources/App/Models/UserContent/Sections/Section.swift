@@ -33,7 +33,7 @@ final class Section: Model, Content {
     @OptionalField(key: FieldKeys.noteBottom)
     var noteBottom: String?
 
-    @Children(for: \.$section)
+    @Siblings(through: SectionComment.self, from: \.$section, to: \.$comment)
     var comments: [Comment]
     
     @Field(key: FieldKeys.lang)

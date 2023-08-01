@@ -8,6 +8,40 @@ import Fluent
 struct ReadingService {
     let request: Request
     
+    func fetchWork(id: String) async throws -> WorkPage {
+        let profile = try request.authService.getUser(withProfile: true).profile
+        guard let work: Work = try await Work.query(on: request.db)
+            .with(\.$author)
+            .with(\.$tags, { $0.with(\.$parent) })
+            .filter(\.$id == id)
+            .first()
+        else {
+            throw Abort(.notFound, reason: "Work not found. Are you sure you're looking for the right one?")
+        }
+        let tableOfContents = try await SectionList.query(on: request.db)
+            .filter(\.$work.$id == work.requireID())
+            .sort(\.$rank, .ascending)
+            .all()
+        if profile != nil {
+            let readingHistory = try await request.libraryService.fetchHistory(work.id!)
+            let libraryItem = try await request.libraryService.fetchLibraryItem(for: work.id!)
+            try await request.workService.updateIpViews(for: work)
+            return .init(
+                work: work,
+                tableOfContents: tableOfContents,
+                readingHistory: readingHistory,
+                libraryItem: libraryItem
+            )
+        }
+        try await request.workService.updateIpViews(for: work)
+        return .init(
+            work: work,
+            tableOfContents: tableOfContents,
+            readingHistory: nil,
+            libraryItem: nil
+        )
+    }
+    
     func fetchSection(id: String) async throws -> SectionPage {
         let profile = try request.authService.getUser(withProfile: true).profile
         guard let section = try await SectionView.query(on: request.db).filter(\.$id == id).first() else {
@@ -48,6 +82,13 @@ struct ReadingService {
 }
 
 extension ReadingService {
+    struct WorkPage {
+        let work: Work
+        let tableOfContents: [SectionList]
+        let readingHistory: ReadingHistory?
+        let libraryItem: LibraryService.CheckLibrary?
+    }
+    
     struct SectionPage {
         let section: SectionView
         let tableOfContents: [SectionList]

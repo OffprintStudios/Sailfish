@@ -83,6 +83,8 @@ public func configure(_ app: Application) async throws {
         AddTagEventId(),
         Cheer.Create(),
         Highlight.Create(),
+        SectionComment.Create(),
+        SectionBlacklist.Create(),
         SectionView.Create(),
         SectionList.Create(),
     ])
