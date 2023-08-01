@@ -5,8 +5,8 @@
 import Vapor
 import Fluent
 
-final class Mark: Model, Content {
-    static let schema = "section_marks"
+final class Highlight: Model, Content {
+    static let schema = "section_highlights"
     
     @ID(key: .id)
     var id: UUID?
@@ -38,10 +38,10 @@ final class Mark: Model, Content {
     init() { }
 }
 
-extension Mark {
+extension Highlight {
     struct Create: AsyncMigration {
         func prepare(on database: Database) async throws {
-            return try await database.schema(Mark.schema)
+            return try await database.schema(Highlight.schema)
                 .id()
                 .field(FieldKeys.profile, .string, .required, .references(Profile.schema, Profile.FieldKeys.id, onDelete: .cascade))
                 .field(FieldKeys.section, .string, .required, .references(Section.schema, "id", onDelete: .cascade))
@@ -55,7 +55,7 @@ extension Mark {
         }
         
         func revert(on database: Database) async throws {
-            return try await database.schema(Mark.schema).delete()
+            return try await database.schema(Highlight.schema).delete()
         }
     }
     

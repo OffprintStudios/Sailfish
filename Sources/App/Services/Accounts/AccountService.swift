@@ -18,7 +18,9 @@ struct AccountService {
 
     /// Fetches a user's profile by its ID
     func fetchProfile(_ id: String) async throws -> Profile {
-        let account = try request.authService.getUser().account
+        guard let account = try request.authService.getUser().account else {
+            throw Abort(.internalServerError, reason: "Could not process your account. Try again in a little bit.")
+        }
         guard let profile = try await account.$profiles.query(on: request.db).filter(\.$id == id).first() else {
             throw Abort(.notFound, reason: "Could not find the specified profile.")
         }
@@ -27,13 +29,17 @@ struct AccountService {
 
     /// Fetches all profiles belonging to a user
     func fetchProfiles() async throws -> [Profile] {
-        let account = try request.authService.getUser().account
+        guard let account = try request.authService.getUser().account else {
+            throw Abort(.internalServerError, reason: "Could not process your account. Try again in a little bit.")
+        }
         return try await account.$profiles.get(on: request.db)
     }
 
     /// Creates a new profile for a user
     func createProfile(with profileForm: Profile.ProfileForm) async throws -> Profile {
-        let account = try request.authService.getUser().account
+        guard let account = try request.authService.getUser().account else {
+            throw Abort(.internalServerError, reason: "Could not process your account. Try again in a little bit.")
+        }
         let existingUser = try await Profile.query(on: request.db).filter(\.$username == profileForm.username).first()
         
         if existingUser != nil {
@@ -71,7 +77,9 @@ struct AccountService {
     
     /// Sends a confirmation email
     func sendConfirmationEmail() async throws -> Response {
-        let account = try request.authService.getUser().account
+        guard let account = try request.authService.getUser().account else {
+            throw Abort(.internalServerError, reason: "Could not process your account. Try again in a little bit.")
+        }
         let confirmCode = NanoID.with(size: NANO_ID_CODE_SIZE)
         let confirmation = EmailConfirmation(code: confirmCode)
         try await request.db.transaction { database in
@@ -127,7 +135,9 @@ struct AccountService {
     
     /// Sets the `termsAgree` account flag to `true`
     func agreeToTerms() async throws -> ClientAccount {
-        let account = try request.authService.getUser().account
+        guard let account = try request.authService.getUser().account else {
+            throw Abort(.internalServerError, reason: "Could not process your account. Try again in a little bit.")
+        }
         account.termsAgree = true
         try await request.db.transaction { database in
             try await account.save(on: database)
@@ -137,7 +147,9 @@ struct AccountService {
 
     /// Soft-deletes a given profile
     func deleteProfile(_ id: String) async throws {
-        let account = try request.authService.getUser().account
+        guard let account = try request.authService.getUser().account else {
+            throw Abort(.internalServerError, reason: "Could not process your account. Try again in a little bit.")
+        }
         try await account.$profiles.query(on: request.db).filter(\.$id == id).delete()
     }
 }

@@ -81,6 +81,10 @@ public func configure(_ app: Application) async throws {
         SpecialEventPrompt.Create(),
         SpecialEventPromptVote.Create(),
         AddTagEventId(),
+        Cheer.Create(),
+        Highlight.Create(),
+        SectionView.Create(),
+        SectionList.Create(),
     ])
 
     try await app.autoMigrate()

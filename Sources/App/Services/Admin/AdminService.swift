@@ -108,7 +108,9 @@ struct AdminService {
     
     /// Files a new report
     func reportUser(with formInfo: AccountReport.ReportForm) async throws -> Response {
-        let account = try request.authService.getUser().account
+        guard let account = try request.authService.getUser().account else {
+            throw Abort(.internalServerError, reason: "Could not process your account. Try again in a little bit.")
+        }
         let newReport = try AccountReport(reportedBy: account.id!, formInfo: formInfo)
         try await request.db.transaction { database in
             try await newReport.save(on: database)
@@ -162,7 +164,9 @@ struct AdminService {
     }
     
     private func canAction(_ toAction: Account) throws -> Bool {
-        let account = try request.authService.getUser().account
+        guard let account = try request.authService.getUser().account else {
+            throw Abort(.internalServerError, reason: "Could not process your account. Try again in a little bit.")
+        }
         if canAccess(needs: [.admin], has: toAction.roles) {
             // if the user being actioned is an admin
             return false

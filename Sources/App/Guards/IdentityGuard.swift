@@ -18,11 +18,17 @@ import Fluent
 struct IdentityGuard: AsyncMiddleware {
     var requiredRoles: [Account.Roles]
     var checkProfile: Bool
+    var optional: Bool
 
     func respond(to request: Request, chainingTo next: AsyncResponder) async throws -> Response {
         guard let payload = try? request.jwt.verify(as: Session.TokenPayload.self) else {
-            request.logger.warning("Someone tried to pass off as a verified user!")
-            throw Abort(.unauthorized, reason: "You aren't allowed to do that.")
+            if optional == true {
+                request.user = .init(account: nil, profile: nil)
+                return try await next.respond(to: request)
+            } else {
+                request.logger.warning("Someone tried to pass off as a verified user!")
+                throw Abort(.unauthorized, reason: "You aren't allowed to do that.")
+            }
         }
 
         guard let account = try await Account.find(payload.accountId, on: request.db) else {
@@ -50,9 +56,10 @@ struct IdentityGuard: AsyncMiddleware {
             throw Abort(.unauthorized, reason: "You aren't allowed to do that.")
         }
     }
-
-    init(needs requiredRoles: [Account.Roles], checkProfile: Bool = false) {
+    
+    init(needs requiredRoles: [Account.Roles], checkProfile: Bool = false, optional: Bool = false) {
         self.requiredRoles = requiredRoles
         self.checkProfile = checkProfile
+        self.optional = optional
     }
 }

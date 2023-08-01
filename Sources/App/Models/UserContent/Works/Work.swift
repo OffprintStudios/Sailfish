@@ -10,28 +10,28 @@ import SwiftSoup
 final class Work: Model, Content {
     static let schema = "works"
 
-    @ID(custom: "id", generatedBy: .user)
+    @ID(custom: FieldKeys.id, generatedBy: .user)
     var id: String?
     
-    @Parent(key: "author_id")
+    @Parent(key: FieldKeys.author)
     var author: Profile
     
-    @Field(key: "title")
+    @Field(key: FieldKeys.title)
     var title: String
     
-    @Field(key: "short_desc")
+    @Field(key: FieldKeys.shortDesc)
     var shortDesc: String
     
-    @Field(key: "long_desc")
+    @Field(key: FieldKeys.longDesc)
     var longDesc: String
     
-    @Field(key: "category")
+    @Field(key: FieldKeys.category)
     var category: Category
     
-    @Field(key: "rating")
+    @Field(key: FieldKeys.rating)
     var rating: ContentRating
     
-    @Field(key: "status")
+    @Field(key: FieldKeys.status)
     var status: Status
     
     @Siblings(through: WorkTag.self, from: \.$work, to: \.$tag)
@@ -43,25 +43,25 @@ final class Work: Model, Content {
     @Siblings(through: LibraryItem.self, from: \.$work, to: \.$profile)
     var addedBy: [Profile]
     
-    @OptionalField(key: "cover_art")
+    @OptionalField(key: FieldKeys.coverArt)
     var coverArt: String?
     
-    @OptionalField(key: "banner_art")
+    @OptionalField(key: FieldKeys.bannerArt)
     var bannerArt: String?
     
-    @Field(key: "words")
+    @Field(key: FieldKeys.words)
     var words: Int64
     
-    @Field(key: "views")
+    @Field(key: FieldKeys.views)
     var views: Int64
     
     @Children(for: \.$work)
     var ipViews: [WorkIPView]
     
-    @Field(key: "likes")
+    @Field(key: FieldKeys.likes)
     var likes: Int64
     
-    @Field(key: "dislikes")
+    @Field(key: FieldKeys.dislikes)
     var dislikes: Int64
     
     @Siblings(through: WorkComment.self, from: \.$work, to: \.$comment)
@@ -76,28 +76,28 @@ final class Work: Model, Content {
     @Children(for: \.$work)
     var votes: [ReadingHistory]
     
-    @Field(key: "kind")
+    @Field(key: FieldKeys.kind)
     var kind: Kind
     
-    @Field(key: "approval_status")
+    @Field(key: FieldKeys.approvalStatus)
     var approvalStatus: ApprovalStatus
     
-    @OptionalField(key: "license")
+    @OptionalField(key: FieldKeys.license)
     var license: [LicenseMarkers]?
     
-    @OptionalField(key: "published_on")
+    @OptionalField(key: FieldKeys.publishedOn)
     var publishedOn: Date?
     
-    @OptionalField(key: "last_section_update")
+    @OptionalField(key: FieldKeys.lastSectionUpdate)
     var lastSectionUpdate: Date?
     
-    @Timestamp(key: "created_at", on: .create)
+    @Timestamp(key: FieldKeys.createdAt, on: .create)
     var createdAt: Date?
     
-    @Timestamp(key: "updated_at", on: .update)
+    @Timestamp(key: FieldKeys.updatedAt, on: .update)
     var updatedAt: Date?
     
-    @Timestamp(key: "deleted_at", on: .delete)
+    @Timestamp(key: FieldKeys.deletedAt, on: .delete)
     var deletedAt: Date?
     
     init() { }
@@ -120,6 +120,31 @@ final class Work: Model, Content {
 }
 
 extension Work {
+    enum FieldKeys {
+        static let id: FieldKey = "id"
+        static let author: FieldKey = "author_id"
+        static let title: FieldKey = "title"
+        static let shortDesc: FieldKey = "short_desc"
+        static let longDesc: FieldKey = "long_desc"
+        static let category: FieldKey = "category"
+        static let rating: FieldKey = "rating"
+        static let status: FieldKey = "status"
+        static let coverArt: FieldKey = "cover_art"
+        static let bannerArt: FieldKey = "banner_art"
+        static let words: FieldKey = "words"
+        static let views: FieldKey = "views"
+        static let likes: FieldKey = "likes"
+        static let dislikes: FieldKey = "dislikes"
+        static let kind: FieldKey = "kind"
+        static let approvalStatus: FieldKey = "approval_status"
+        static let license: FieldKey = "license"
+        static let publishedOn: FieldKey = "published_on"
+        static let lastSectionUpdate: FieldKey = "last_section_update"
+        static let createdAt: FieldKey = "created_at"
+        static let updatedAt: FieldKey = "updated_at"
+        static let deletedAt: FieldKey = "deleted_at"
+    }
+    
     struct WorkForm: Content {
         var title: String
         var shortDesc: String

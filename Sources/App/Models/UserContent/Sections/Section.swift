@@ -9,52 +9,52 @@ import SwiftSoup
 final class Section: Model, Content {
     static let schema = "sections"
 
-    @ID(custom: "id", generatedBy: .user)
+    @ID(custom: FieldKeys.id, generatedBy: .user)
     var id: String?
 
-    @Parent(key: "work_id")
+    @Parent(key: FieldKeys.workId)
     var work: Work
     
-    @OptionalParent(key: "volume_id")
+    @OptionalParent(key: FieldKeys.volumeId)
     var volume: Volume?
 
-    @Field(key: "title")
+    @Field(key: FieldKeys.title)
     var title: String
 
-    @Field(key: "body")
+    @Field(key: FieldKeys.body)
     var body: String
 
-    @Field(key: "words")
+    @Field(key: FieldKeys.words)
     var words: Int64
 
-    @OptionalField(key: "note_top")
+    @OptionalField(key: FieldKeys.noteTop)
     var noteTop: String?
 
-    @OptionalField(key: "note_bottom")
+    @OptionalField(key: FieldKeys.noteBottom)
     var noteBottom: String?
 
     @Children(for: \.$section)
     var comments: [Comment]
     
-    @Field(key: "lang")
+    @Field(key: FieldKeys.lang)
     var lang: Language
 
-    @Field(key: "rank")
+    @Field(key: FieldKeys.rank)
     var rank: Int64
 
-    @OptionalField(key: "published_on")
+    @OptionalField(key: FieldKeys.publishedOn)
     var publishedOn: Date?
     
-    @OptionalField(key: "first_published")
+    @OptionalField(key: FieldKeys.firstPublished)
     var firstPublished: Date?
 
-    @Timestamp(key: "created_at", on: .create)
+    @Timestamp(key: FieldKeys.createdAt, on: .create)
     var createdAt: Date?
 
-    @Timestamp(key: "updated_at", on: .update)
+    @Timestamp(key: FieldKeys.updatedAt, on: .update)
     var updatedAt: Date?
     
-    @Timestamp(key: "deleted_at", on: .delete)
+    @Timestamp(key: FieldKeys.deletedAt, on: .delete)
     var deletedAt: Date?
 
     init() { }
@@ -77,6 +77,24 @@ final class Section: Model, Content {
 }
 
 extension Section {
+    enum FieldKeys {
+        static let id: FieldKey = "id"
+        static let workId: FieldKey = "work_id"
+        static let volumeId: FieldKey = "volume_id"
+        static let title: FieldKey = "title"
+        static let body: FieldKey = "body"
+        static let words: FieldKey = "words"
+        static let noteTop: FieldKey = "note_top"
+        static let noteBottom: FieldKey = "note_bottom"
+        static let lang: FieldKey = "lang"
+        static let rank: FieldKey = "rank"
+        static let publishedOn: FieldKey = "published_on"
+        static let firstPublished: FieldKey = "first_published"
+        static let createdAt: FieldKey = "created_at"
+        static let updatedAt: FieldKey = "updated_at"
+        static let deletedAt: FieldKey = "deleted_at"
+    }
+    
     struct SectionForm: Content {
         var title: String
         var body: String

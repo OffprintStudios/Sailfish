@@ -9,31 +9,31 @@ import SwiftSoup
 final class Volume: Model, Content {
     static let schema = "volumes"
     
-    @ID(custom: "id", generatedBy: .user)
+    @ID(custom: FieldKeys.id, generatedBy: .user)
     var id: String?
     
-    @Parent(key: "work_id")
+    @Parent(key: FieldKeys.work)
     var work: Work
     
-    @Field(key: "title")
+    @Field(key: FieldKeys.title)
     var title: String
     
-    @Field(key: "desc")
+    @Field(key: FieldKeys.desc)
     var desc: String
     
     @Children(for: \.$volume)
     var sections: [Section]
     
-    @OptionalField(key: "cover_art")
+    @OptionalField(key: FieldKeys.coverArt)
     var coverArt: String?
 
-    @OptionalField(key: "published_on")
+    @OptionalField(key: FieldKeys.publishedOn)
     var publishedOn: Date?
     
-    @Timestamp(key: "created_at", on: .create)
+    @Timestamp(key: FieldKeys.createdAt, on: .create)
     var createdAt: Date?
     
-    @Timestamp(key: "updated_at", on: .update)
+    @Timestamp(key: FieldKeys.updatedAt, on: .update)
     var updatedAt: Date?
     
     init() { }
@@ -46,6 +46,17 @@ final class Volume: Model, Content {
 }
 
 extension Volume {
+    enum FieldKeys {
+        static let id: FieldKey = "id"
+        static let work: FieldKey = "work_id"
+        static let title: FieldKey = "title"
+        static let desc: FieldKey = "desc"
+        static let coverArt: FieldKey = "cover_art"
+        static let publishedOn: FieldKey = "published_on"
+        static let createdAt: FieldKey = "created_at"
+        static let updatedAt: FieldKey = "updated_at"
+    }
+    
     struct VolumeForm: Content {
         var title: String
         var desc: String

@@ -10,19 +10,19 @@ import SwiftSoup
 final class Comment: Model, Content {
     static let schema = "comments"
 
-    @ID(custom: "id", generatedBy: .user)
+    @ID(custom: FieldKeys.id, generatedBy: .user)
     var id: String?
 
-    @Parent(key: "profile_id")
+    @Parent(key: FieldKeys.profile)
     var profile: Profile
     
-    @OptionalParent(key: "section_id")
+    @OptionalParent(key: FieldKeys.section)
     var section: Section?
 
-    @Field(key: "body")
+    @Field(key: FieldKeys.body)
     var body: String
 
-    @Field(key: "spoiler")
+    @Field(key: FieldKeys.spoiler)
     var spoiler: Bool
 
     @Children(for: \.$comment)
@@ -40,10 +40,10 @@ final class Comment: Model, Content {
     @Siblings(through: WorkComment.self, from: \.$comment, to: \.$work)
     var works: [Work]
 
-    @Timestamp(key: "created_at", on: .create)
+    @Timestamp(key: FieldKeys.createdAt, on: .create)
     var createdAt: Date?
 
-    @Timestamp(key: "updated_at", on: .update)
+    @Timestamp(key: FieldKeys.updatedAt, on: .update)
     var updatedAt: Date?
 
     init() { }
@@ -65,6 +65,16 @@ final class Comment: Model, Content {
 }
 
 extension Comment {
+    enum FieldKeys {
+        static let id: FieldKey = "id"
+        static let profile: FieldKey = "profile_id"
+        static let section: FieldKey = "section_id"
+        static let body: FieldKey = "body"
+        static let spoiler: FieldKey = "spoiler"
+        static let createdAt: FieldKey = "created_at"
+        static let updatedAt: FieldKey = "updated_at"
+    }
+    
     struct CommentForm: Content {
         var itemId: String
         var body: String

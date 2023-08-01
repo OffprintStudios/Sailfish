@@ -307,6 +307,27 @@ struct WorkService: HasComments {
         }
         throw Abort(.badRequest, reason: "Comments are disabled for drafts.")
     }
+    
+    func updateIpViews(for workId: String) async throws {
+        guard let work: Work = try await Work.find(workId, on: request.db) else {
+            throw Abort(.notFound, reason: "Work not found. Are you sure you're looking for the right one?")
+        }
+        if work.publishedOn != nil {
+            if let ipAddress = request.headers.first(name: "X-Offprint-Client-IP") {
+                let existingView = try await work.$ipViews.query(on: request.db).filter(\.$ipAddress == ipAddress).first()
+                if existingView == nil {
+                    let newView = WorkIPView(ipAddress: ipAddress)
+                    try await request.db.transaction { database in
+                        try await work.$ipViews.create(newView, on: database)
+                    }
+                }
+            }
+            work.views = Int64(try await work.$ipViews.query(on: request.db).count())
+            try await request.db.transaction { database in
+                try await work.save(on: database)
+            }
+        }
+    }
 }
 
 extension WorkService {
