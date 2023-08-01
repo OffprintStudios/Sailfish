@@ -8,7 +8,7 @@ import Fluent
 struct ReadingService {
     let request: Request
     
-    func fetchWork(id: String) async throws -> WorkPage {
+    func fetchWork(_ id: String) async throws -> WorkPage {
         let profile = try request.authService.getUser(withProfile: true).profile
         guard let work: Work = try await Work.query(on: request.db)
             .with(\.$author)
@@ -42,7 +42,7 @@ struct ReadingService {
         )
     }
     
-    func fetchSection(id: String) async throws -> SectionPage {
+    func fetchSection(_ id: String) async throws -> SectionPage {
         let profile = try request.authService.getUser(withProfile: true).profile
         guard let section = try await SectionView.query(on: request.db).filter(\.$id == id).first() else {
             throw Abort(.notFound, reason: "The section you're trying to view does not exist.")
@@ -82,14 +82,14 @@ struct ReadingService {
 }
 
 extension ReadingService {
-    struct WorkPage {
+    struct WorkPage: Content {
         let work: Work
         let tableOfContents: [SectionList]
         let readingHistory: ReadingHistory?
         let libraryItem: LibraryService.CheckLibrary?
     }
     
-    struct SectionPage {
+    struct SectionPage: Content {
         let section: SectionView
         let tableOfContents: [SectionList]
         let readingHistory: ReadingHistory?
