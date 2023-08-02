@@ -154,12 +154,7 @@
 						</Button>
 					{/if}
 				{/if}
-				<a
-					href="/work/{work.id}/{slugify(work.title)}/section/{section.id}/{slugify(
-						section.title
-					)}"
-					data-sveltekit-preload-data
-				>
+				<a href="/section/{section.id}" data-sveltekit-preload-data>
 					<span class="title">
 						{section.title}
 						{#if section.volume}

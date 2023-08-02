@@ -596,8 +596,25 @@ div.section-page {
     color: var(--section-text-color);
     background: var(--section-dropdown-bg);
   }
-  div.section-comments {
-    @apply h-[1000px] block shadow-inner;
+  div.section-meta {
+    @apply py-6 block shadow-inner text-white;
     background: rgb(39, 39, 39);
+    div.section-about {
+      @apply flex flex-col rounded-xl overflow-hidden max-w-3xl mx-auto;
+    }
+    button.meta-button {
+      @apply flex items-center px-1.5 py-2.5 transition transform hover:bg-zinc-600 focus:ring-0 m-0 text-base rounded-lg select-none relative;
+      text-transform: lowercase;
+      font-variant: small-caps;
+      font-weight: 700;
+      letter-spacing: 1px;
+      font-family: var(--body-text);
+      &.thumbs-up {
+        @apply text-green-600;
+      }
+      &.thumbs-down {
+        @apply text-red-600;
+      }
+    }
   }
 }

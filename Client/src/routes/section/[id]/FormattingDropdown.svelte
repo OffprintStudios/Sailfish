@@ -7,6 +7,7 @@
 		arrow,
 		type ShiftOptions
 	} from "@floating-ui/dom";
+	import { createEventDispatcher } from "svelte";
 	import { clickOutside, throttle } from "$lib/util/functions";
 	import { navigating } from "$app/stores";
 	import {
@@ -33,6 +34,7 @@
 	}
 
 	const throttled = throttle(determineState, 150);
+	const dispatch = createEventDispatcher();
 
 	$: {
 		if (button) {
@@ -78,16 +80,16 @@
 
 	function switchFont(value: Font) {
 		$section.font = value;
-		console.log($section.font as string);
 		document
-			.getElementById("section-page")
-			.style.setProperty("--section-font-family", $section.font as string);
+			?.getElementById("section-page")
+			?.style.setProperty("--section-font-family", $section.font as string);
+		dispatch("change");
 	}
 
 	function switchTheme(value: string) {
 		$section.theme = Theme[value];
-		const sectionPage = document.getElementById("section-page");
-		const themeColor = document.querySelector("meta[name='theme-color']");
+		const sectionPage = document.getElementById("section-page")!;
+		const themeColor = document.querySelector("meta[name='theme-color']")!;
 		sectionPage.classList.remove(
 			Theme.white,
 			Theme.paper,
@@ -102,7 +104,7 @@
 	}
 
 	function increaseWidth() {
-		const sectionPage = document.getElementById("section-page");
+		const sectionPage = document.getElementById("section-page")!;
 		if ($section.width === WidthSettings.Normal) {
 			$section.width = WidthSettings.Wide;
 			sectionPage.style.setProperty("--section-width", WidthSettings.Wide);
@@ -110,10 +112,11 @@
 			$section.width = WidthSettings.Normal;
 			sectionPage.style.setProperty("--section-width", WidthSettings.Normal);
 		}
+		dispatch("change");
 	}
 
 	function decreaseWidth() {
-		const sectionPage = document.getElementById("section-page");
+		const sectionPage = document.getElementById("section-page")!;
 		if ($section.width === WidthSettings.Normal) {
 			$section.width = WidthSettings.Narrow;
 			sectionPage.style.setProperty("--section-width", WidthSettings.Narrow);
@@ -121,11 +124,12 @@
 			$section.width = WidthSettings.Normal;
 			sectionPage.style.setProperty("--section-width", WidthSettings.Normal);
 		}
+		dispatch("change");
 	}
 
 	function adjustParagraphs(style: ParagraphStyle) {
 		$section.paragraphs = style;
-		const sectionPage = document.getElementById("section-page");
+		const sectionPage = document.getElementById("section-page")!;
 		switch ($section.paragraphs) {
 			case ParagraphStyle.original:
 				sectionPage.style.setProperty("--section-paragraph-margins", "1rem 0 1rem 0");
@@ -144,11 +148,12 @@
 				sectionPage.style.setProperty("--section-paragraph-indent", "2.5rem");
 				break;
 		}
+		dispatch("change");
 	}
 
 	function adjustFontSize(value: number) {
 		$section.fontSize = value;
-		const sectionPage = document.getElementById("section-page");
+		const sectionPage = document.getElementById("section-page")!;
 		let size = 16;
 		let lineHeight = 24;
 		if (value < 1) {
@@ -160,6 +165,7 @@
 		}
 		sectionPage.style.setProperty("--section-font-size", `${size}px`);
 		sectionPage.style.setProperty("--section-line-height", `${lineHeight}px`);
+		dispatch("change");
 	}
 </script>
 
