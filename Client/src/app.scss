@@ -535,7 +535,7 @@ div.section-page {
     }
   }
   div.section-container {
-    @apply mx-auto p-4 mt-16 transition;
+    @apply mx-auto p-4 mt-16 transition relative;
     color: var(--section-text-color);
     max-width: var(--section-width);
     h1,

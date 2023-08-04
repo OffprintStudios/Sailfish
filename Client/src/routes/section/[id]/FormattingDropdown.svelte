@@ -43,7 +43,7 @@
 				middleware: [
 					offset({ mainAxis: 8 }),
 					flip(),
-					shift({ padding: 5 } as ShiftOptions),
+					shift({ padding: 12 } as ShiftOptions),
 					arrow({ element: arrowEl })
 				]
 			})

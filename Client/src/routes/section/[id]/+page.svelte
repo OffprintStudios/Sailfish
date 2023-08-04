@@ -3,30 +3,29 @@
 		ArrowRightSLine,
 		ArrowLeftSLine,
 		ListUnordered,
-		StickyNoteLine,
 		DiscussLine,
 		BookmarkLine,
 		OpenArmLine,
 		ThumbUpLine,
-		ThumbDownLine
+		ThumbDownLine,
+		ShareBoxLine
 	} from "svelte-remixicon";
 	import FormattingDropdown from "./FormattingDropdown.svelte";
 	import { onMount } from "svelte";
 	import { section } from "$lib/state/section.state";
 	import { ParagraphStyle, Theme, WidthSettings } from "$lib/util/constants/sections";
-	import { Guide } from "$lib/ui/user/guide";
 	import { account } from "$lib/state/account.state";
-	import AccountDropdown from "$lib/ui/user/AccountDropdown.svelte";
 	import type { SectionPage } from "$lib/models/content/works";
 	import { abbreviate, slugify } from "$lib/util/functions";
 	import { LinkTag } from "$lib/ui/content";
+	import { fade } from "svelte/transition";
 	import SvelteMarkdown from "svelte-markdown";
 	import Avatar from "$lib/ui/util/Avatar.svelte";
+	import SectionContent from "./SectionContent.svelte";
 
 	export let data: SectionPage;
 	const iconSize = "22px";
 	let scrollY = 0;
-	let sectionContainer: HTMLDivElement;
 	let sectionContainerHeight = 0;
 
 	onMount(() => {
@@ -96,13 +95,7 @@
 		const themeColorValue =
 			getComputedStyle(sectionPage).getPropertyValue("--section-background");
 		themeColor.setAttribute("content", themeColorValue);
-
-		getSectionHeight();
 	});
-
-	function getSectionHeight() {
-		sectionContainerHeight = sectionContainer.scrollHeight + 100;
-	}
 </script>
 
 <svelte:window bind:scrollY />
@@ -110,8 +103,8 @@
 <div id="section-page" class="section-page paper">
 	<div
 		class="section-tools pinned"
-		class:in-content={scrollY < sectionContainerHeight}
-		class:out-of-content={scrollY >= sectionContainerHeight}
+		class:in-content={scrollY < sectionContainerHeight + 100}
+		class:out-of-content={scrollY >= sectionContainerHeight + 100}
 	>
 		<div class="flex items-center w-1/3">
 			<button class="section-button">
@@ -122,7 +115,7 @@
 			<button class="section-button no-text hide-this" title="Table of Contents">
 				<ListUnordered size={iconSize} />
 			</button>
-			{#if $account.account && $account.currProfile}
+			<!--{#if $account.account && $account.currProfile}
 				<button
 					class="section-button no-text hide-this"
 					title="Notes & Highlights"
@@ -130,8 +123,8 @@
 				>
 					<StickyNoteLine size={iconSize} />
 				</button>
-			{/if}
-			<FormattingDropdown {iconSize} on:change={getSectionHeight} />
+			{/if}-->
+			<FormattingDropdown {iconSize} />
 		</div>
 		<div
 			class="w-1/3 flex flex-col items-center justify-center"
@@ -147,74 +140,56 @@
 			</span>
 		</div>
 		<div class="w-1/3 flex items-center justify-end">
-			<button class="section-button hide-this" title="Cheers">
-				<OpenArmLine size={iconSize} class="mr-1" />
-				<span class="text-xs" style="top: 0.03rem;">
-					{abbreviate(data.section.section.cheers)}
-				</span>
-			</button>
-			<button class="section-button hide-this" title="Comments">
-				<DiscussLine size={iconSize} class="mr-1" />
-				<span class="text-xs" style="top: 0.03rem;">
-					{abbreviate(data.section.section.comments)}
-				</span>
-			</button>
+			{#if scrollY >= sectionContainerHeight + 100}
+				<div class="flex items-center mr-0.5" transition:fade={{ delay: 0, duration: 150 }}>
+					<button class="section-button hide-this" title="Cheers">
+						<OpenArmLine size={iconSize} class="mr-1" />
+						<span class="text-xs" style="top: 0.03rem;">
+							{abbreviate(data.section.section.cheers)}
+						</span>
+					</button>
+					<button class="section-button hide-this" title="Comments">
+						<DiscussLine size={iconSize} class="mr-1" />
+						<span class="text-xs" style="top: 0.03rem;">
+							{abbreviate(data.section.section.comments)}
+						</span>
+					</button>
+				</div>
+			{/if}
 			{#if $account.account && $account.currProfile}
 				<button class="section-button no-text" title="Bookmark Chapter">
 					<BookmarkLine size={iconSize} />
 				</button>
 			{/if}
-			{#if $account.account}
-				<div class="hidden lg:block">
-					<Guide mode="section" />
-				</div>
-				<div class="lg:hidden">
-					<AccountDropdown mode="section" />
-				</div>
-			{/if}
+			<button class="section-button no-text" title="Share This">
+				<ShareBoxLine size={iconSize} />
+			</button>
 		</div>
 	</div>
-	<div bind:this={sectionContainer}>
-		<div class="section-container">
-			<h1 class="text-4xl mb-16 text-center">{data.section.section.title}</h1>
-			<div class="section-body">
-				{@html data.section.section.body}
-			</div>
-			{#if data.section.section.noteBottom}
-				<div class="section-authors-note">
-					<div class="flex items-center">
-						<h3 class="text-2xl">From the author—</h3>
-					</div>
-					<div class="authors-note">
-						{@html data.section.section.noteBottom}
-					</div>
-				</div>
-			{/if}
-		</div>
-		<div class="section-nav">
-			<button class="section-button">
-				<ArrowLeftSLine class="lg:mr-1" size={iconSize} />
-				<span class="hidden lg:block">Prev</span>
-			</button>
-			<div class="mx-2"><!--spacer--></div>
-			<button class="section-button" title="Cheers">
-				<OpenArmLine size={iconSize} class="mr-1" />
-				<span class="text-xs" style="top: 0.03rem;">
-					{abbreviate(data.section.section.cheers)}
-				</span>
-			</button>
-			<button class="section-button" title="Comments">
-				<DiscussLine size={iconSize} class="mr-1" />
-				<span class="text-xs" style="top: 0.03rem;">
-					{abbreviate(data.section.section.comments)}
-				</span>
-			</button>
-			<div class="mx-2"><!--spacer--></div>
-			<button class="section-button">
-				<span class="hidden lg:block">Next</span>
-				<ArrowRightSLine class="lg:ml-1" size={iconSize} />
-			</button>
-		</div>
+	<SectionContent content={data.section} bind:containerHeight={sectionContainerHeight} />
+	<div class="section-nav">
+		<button class="section-button">
+			<ArrowLeftSLine class="lg:mr-1" size={iconSize} />
+			<span class="hidden lg:block">Prev</span>
+		</button>
+		<div class="mx-2"><!--spacer--></div>
+		<button class="section-button" title="Cheers">
+			<OpenArmLine size={iconSize} class="mr-1" />
+			<span class="text-xs" style="top: 0.03rem;">
+				{abbreviate(data.section.section.cheers)}
+			</span>
+		</button>
+		<button class="section-button" title="Comments">
+			<DiscussLine size={iconSize} class="mr-1" />
+			<span class="text-xs" style="top: 0.03rem;">
+				{abbreviate(data.section.section.comments)}
+			</span>
+		</button>
+		<div class="mx-2"><!--spacer--></div>
+		<button class="section-button">
+			<span class="hidden lg:block">Next</span>
+			<ArrowRightSLine class="lg:ml-1" size={iconSize} />
+		</button>
 	</div>
 	<div class="section-meta">
 		<div
