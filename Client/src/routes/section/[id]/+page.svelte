@@ -1,32 +1,18 @@
 <script lang="ts">
-	import {
-		ArrowRightSLine,
-		ArrowLeftSLine,
-		ListUnordered,
-		DiscussLine,
-		BookmarkLine,
-		OpenArmLine,
-		ThumbUpLine,
-		ThumbDownLine,
-		ShareBoxLine
-	} from "svelte-remixicon";
-	import FormattingDropdown from "./FormattingDropdown.svelte";
 	import { onMount } from "svelte";
 	import { section } from "$lib/state/section.state";
 	import { ParagraphStyle, Theme, WidthSettings } from "$lib/util/constants/sections";
-	import { account } from "$lib/state/account.state";
 	import type { SectionPage } from "$lib/models/content/works";
-	import { abbreviate, slugify } from "$lib/util/functions";
-	import { LinkTag } from "$lib/ui/content";
-	import { fade } from "svelte/transition";
-	import SvelteMarkdown from "svelte-markdown";
-	import Avatar from "$lib/ui/util/Avatar.svelte";
 	import SectionContent from "./SectionContent.svelte";
+	import SectionTools from "./SectionTools.svelte";
+	import SectionBottomNav from "./SectionBottomNav.svelte";
+	import SectionMeta from "./SectionMeta.svelte";
 
 	export let data: SectionPage;
 	const iconSize = "22px";
 	let scrollY = 0;
 	let sectionContainerHeight = 0;
+	let showToC = false;
 
 	onMount(() => {
 		const themeColor = document.querySelector("meta[name='theme-color']")!;
@@ -101,175 +87,21 @@
 <svelte:window bind:scrollY />
 
 <div id="section-page" class="section-page paper">
-	<div
-		class="section-tools pinned"
-		class:in-content={scrollY < sectionContainerHeight + 100}
-		class:out-of-content={scrollY >= sectionContainerHeight + 100}
-	>
-		<div class="flex items-center w-1/3">
-			<button class="section-button">
-				<ArrowLeftSLine class="lg:mr-1" size={iconSize} />
-				<span class="hidden lg:block">Back</span>
-			</button>
-			<div class="hidden lg:block mx-0.5"><!--spacer--></div>
-			<button class="section-button no-text hide-this" title="Table of Contents">
-				<ListUnordered size={iconSize} />
-			</button>
-			<!--{#if $account.account && $account.currProfile}
-				<button
-					class="section-button no-text hide-this"
-					title="Notes & Highlights"
-					style="margin-right: 0.25rem;"
-				>
-					<StickyNoteLine size={iconSize} />
-				</button>
-			{/if}-->
-			<FormattingDropdown {iconSize} />
-		</div>
-		<div
-			class="w-1/3 flex flex-col items-center justify-center"
-			style="color: var(--section-tool-header-color); font-family: var(--header-text);"
-		>
-			<span
-				class="font-bold text-base relative top-1 truncate max-w-[194px] lg:max-w-[250px]"
-			>
-				{data.section.work.title}
-			</span>
-			<span class="text-[0.75rem] relative -top-0.5 hidden lg:block truncate max-w-[250px]">
-				{data.section.section.title}
-			</span>
-		</div>
-		<div class="w-1/3 flex items-center justify-end">
-			{#if scrollY >= sectionContainerHeight + 100}
-				<div class="flex items-center mr-0.5" transition:fade={{ delay: 0, duration: 150 }}>
-					<button class="section-button hide-this" title="Cheers">
-						<OpenArmLine size={iconSize} class="mr-1" />
-						<span class="text-xs" style="top: 0.03rem;">
-							{abbreviate(data.section.section.cheers)}
-						</span>
-					</button>
-					<button class="section-button hide-this" title="Comments">
-						<DiscussLine size={iconSize} class="mr-1" />
-						<span class="text-xs" style="top: 0.03rem;">
-							{abbreviate(data.section.section.comments)}
-						</span>
-					</button>
-				</div>
-			{/if}
-			{#if $account.account && $account.currProfile}
-				<button class="section-button no-text" title="Bookmark Chapter">
-					<BookmarkLine size={iconSize} />
-				</button>
-			{/if}
-			<button class="section-button no-text" title="Share This">
-				<ShareBoxLine size={iconSize} />
-			</button>
-		</div>
-	</div>
+	<SectionTools
+		tableOfContents={data.tableOfContents}
+		workTitle={data.section.work.title}
+		sectionTitle={data.section.section.title}
+		cheers={data.section.section.cheers}
+		comments={data.section.section.comments}
+		containerHeight={sectionContainerHeight}
+		{iconSize}
+		{scrollY}
+	/>
 	<SectionContent content={data.section} bind:containerHeight={sectionContainerHeight} />
-	<div class="section-nav">
-		<button class="section-button">
-			<ArrowLeftSLine class="lg:mr-1" size={iconSize} />
-			<span class="hidden lg:block">Prev</span>
-		</button>
-		<div class="mx-2"><!--spacer--></div>
-		<button class="section-button" title="Cheers">
-			<OpenArmLine size={iconSize} class="mr-1" />
-			<span class="text-xs" style="top: 0.03rem;">
-				{abbreviate(data.section.section.cheers)}
-			</span>
-		</button>
-		<button class="section-button" title="Comments">
-			<DiscussLine size={iconSize} class="mr-1" />
-			<span class="text-xs" style="top: 0.03rem;">
-				{abbreviate(data.section.section.comments)}
-			</span>
-		</button>
-		<div class="mx-2"><!--spacer--></div>
-		<button class="section-button">
-			<span class="hidden lg:block">Next</span>
-			<ArrowRightSLine class="lg:ml-1" size={iconSize} />
-		</button>
-	</div>
-	<div class="section-meta">
-		<div
-			class="flex flex-col lg:flex-row items-center max-w-3xl mx-auto w-11/12 border-b-4 border-dotted border-zinc-700 p-4 pb-8"
-		>
-			{#if data.section.work.coverArt}
-				<div class="bg-zinc-700 p-1 rounded-xl mr-4">
-					<img
-						src={data.section.work.coverArt}
-						alt="cover art"
-						class="max-w-[150px] max-h-[110px] lg:max-w-[250px] lg:max-h-[210px]"
-					/>
-				</div>
-			{/if}
-			<div class="w-full" style="font-family: var(--header-text);">
-				<h3 class="text-4xl text-center lg:text-left">{data.section.work.title}</h3>
-				<div class="flex flex-col lg:flex-row items-center w-full">
-					<span class="text-lg text-zinc-500 flex-1">
-						by
-						<a
-							class="text-zinc-500 hover:text-zinc-500"
-							href="/profile/{data.section.author.id}/{slugify(
-								data.section.author.name
-							)}"
-						>
-							{data.section.author.name}
-						</a>
-					</span>
-					<div
-						class="py-2 w-full font-normal lg:hidden"
-						style="font-family: var(--body-text); text-align: center;"
-					>
-						{data.section.work.desc}
-					</div>
-					<div class="flex items-center">
-						<button class="meta-button thumbs-up">
-							<ThumbUpLine class="mr-2" />
-							<span class="text-xs">1.2k</span>
-						</button>
-						<div class="mx-0.5"><!--spacer--></div>
-						<button class="meta-button thumbs-down">
-							<ThumbDownLine class="mr-2" />
-							<span class="text-xs">20</span>
-						</button>
-					</div>
-				</div>
-				<div
-					class="py-2 w-full font-normal hidden lg:block"
-					style="font-family: var(--body-text);"
-				>
-					{data.section.work.desc}
-				</div>
-			</div>
-		</div>
-		<div
-			class="flex flex-col items-center justify-center max-w-[400px] mx-auto w-11/12 px-4 py-2 mt-4 w-full rounded-xl font-normal"
-			style="font-family: var(--body-text);"
-		>
-			<Avatar src={data.section.author.avatar} size="125px" />
-			<h4 class="mt-3 text-2xl">{data.section.author.name}</h4>
-			<div class="markdown-text">
-				<SvelteMarkdown source={data.section.author.info.bio} />
-			</div>
-			{#if Object.keys(data.section.author.links).length !== 0}
-				<div class="flex items-center flex-wrap">
-					{#each Object.keys(data.section.author.links) as key}
-						<LinkTag kind={key} href={data.section.author.links[key]} />
-					{/each}
-				</div>
-			{/if}
-		</div>
-	</div>
+	<SectionBottomNav
+		cheers={data.section.section.cheers}
+		comments={data.section.section.comments}
+		{iconSize}
+	/>
+	<SectionMeta sectionView={data.section} />
 </div>
-
-<style lang="scss">
-	:global(div.markdown-text) {
-		:global(p) {
-			@apply text-white;
-			margin: 0.5rem 0 0.5rem 0 !important;
-			text-align: center !important;
-		}
-	}
-</style>

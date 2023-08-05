@@ -24,8 +24,8 @@
 
 <div class="section-container" bind:this={sectionContainer}>
 	<h1 class="text-4xl mb-16 text-center">{content.section.title}</h1>
-	<!--<div class="absolute" bind:this={annotationOptions}>hi hello how are you</div>-->
 	<div class="section-body">
+		<!--<div class="absolute" bind:this={annotationOptions}>hi hello how are you</div>-->
 		{@html content.section.body}
 	</div>
 	{#if content.section.noteBottom}

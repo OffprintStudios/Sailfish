@@ -567,7 +567,7 @@ div.section-page {
     @apply flex items-center justify-center w-full mb-8;
   }
   button.section-button {
-    @apply flex items-center mx-0.5 first:ml-0 last:ml-0 px-2 py-1.5 transition focus:ring-0 text-base rounded-lg select-none relative h-[36px];
+    @apply flex items-center px-2 py-1.5 transition focus:ring-0 text-base rounded-lg select-none relative h-[36px];
     text-transform: lowercase;
     font-variant: small-caps;
     font-weight: 700;
@@ -580,7 +580,7 @@ div.section-page {
       @apply relative -top-0.5;
     }
     &.no-text {
-      @apply px-2 h-[36px] mx-0.5 first:ml-0 last:mr-0;
+      @apply px-2 h-[36px];
     }
     &.active {
       background-color: var(--section-button-hover);
