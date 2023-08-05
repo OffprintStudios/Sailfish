@@ -1,5 +1,11 @@
 import { writable } from "svelte/store";
-import { Font, ParagraphStyle, Theme, WidthSettings } from "$lib/util/constants/sections";
+import {
+	Font,
+	Justification,
+	ParagraphStyle,
+	Theme,
+	WidthSettings
+} from "$lib/util/constants/sections";
 import { browser } from "$app/environment";
 
 interface SectionState {
@@ -8,6 +14,7 @@ interface SectionState {
 	paragraphs: ParagraphStyle;
 	fontSize: number;
 	width: WidthSettings;
+	justification: Justification;
 }
 
 const defaultSectionState: SectionState = {
@@ -15,7 +22,8 @@ const defaultSectionState: SectionState = {
 	theme: Theme.paper,
 	paragraphs: ParagraphStyle.original,
 	fontSize: 1,
-	width: WidthSettings.Normal
+	width: WidthSettings.Normal,
+	justification: Justification.original
 };
 
 const initialSectionState: SectionState = browser

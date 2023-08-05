@@ -1,26 +1,20 @@
 <script lang="ts">
+	import { arrow, computePosition, flip, offset, shift, type ShiftOptions } from '@floating-ui/dom';
+	import { createEventDispatcher } from 'svelte';
+	import { clickOutside, throttle } from '$lib/util/functions';
+	import { navigating } from '$app/stores';
 	import {
-		computePosition,
-		flip,
-		offset,
-		shift,
-		arrow,
-		type ShiftOptions
-	} from "@floating-ui/dom";
-	import { createEventDispatcher } from "svelte";
-	import { clickOutside, throttle } from "$lib/util/functions";
-	import { navigating } from "$app/stores";
-	import {
-		PantoneLine,
-		FontSize2,
+		AlignJustify,
 		ArrowLeftSLine,
 		ArrowRightSLine,
 		FontSize,
+		FontSize2,
+		PantoneLine,
 		Paragraph
-	} from "svelte-remixicon";
-	import { fade } from "svelte/transition";
-	import { section } from "$lib/state/section.state";
-	import { Font, Theme, WidthSettings, ParagraphStyle } from "$lib/util/constants/sections";
+	} from 'svelte-remixicon';
+	import { fade } from 'svelte/transition';
+	import { section } from '$lib/state/section.state';
+	import { Font, Justification, ParagraphStyle, Theme, WidthSettings } from '$lib/util/constants/sections';
 
 	export let open = false;
 	export let iconSize = "22px";
@@ -167,6 +161,17 @@
 		sectionPage.style.setProperty("--section-line-height", `${lineHeight}px`);
 		dispatch("change");
 	}
+
+	function changeJustification(style: Justification) {
+		$section.justification = style;
+		const sectionBody = document.getElementById("section-body");
+		if (style === Justification.original) {
+			sectionBody?.classList.remove("justified");
+		} else if (style === Justification.justified) {
+			sectionBody?.classList.add("justified");
+		}
+		dispatch("change");
+	}
 </script>
 
 <div class="relative z-[2]">
@@ -188,18 +193,19 @@
 			on:outclick={throttled}
 		>
 			<div class="arrow" bind:this={arrowEl}><!--arrow--></div>
-			<div class="lg:flex items-center justify-center my-2 hidden" title="Adjust Page Width">
-				<button
-					class="section-button"
-					style="color: var(--section-text-color);"
-					on:click={decreaseWidth}
-				>
-					<ArrowLeftSLine size="24px" />
-				</button>
-				<span
-					class="text-base text-center relative mx-2 top-0.5 font-bold uppercase w-[75px]"
-					style="font-family: var(--header-text); color: var(--section-text-color);"
-				>
+			<div class="section-dropdown-content">
+				<div class="lg:flex items-center justify-center my-2 hidden" title="Adjust Page Width">
+					<button
+						class="section-button"
+						style="color: var(--section-text-color);"
+						on:click={decreaseWidth}
+					>
+						<ArrowLeftSLine size="24px" />
+					</button>
+					<span
+						class="text-base text-center relative mx-2 top-0.5 font-bold uppercase w-[75px]"
+						style="font-family: var(--header-text); color: var(--section-text-color);"
+					>
 					{#if $section.width === WidthSettings.Narrow}
 						Narrow
 					{:else if $section.width === WidthSettings.Normal}
@@ -208,112 +214,126 @@
 						Wide
 					{/if}
 				</span>
-				<button
-					class="section-button"
-					style="color: var(--section-text-color);"
-					on:click={increaseWidth}
-				>
-					<ArrowRightSLine size="24px" />
-				</button>
-			</div>
-			<div class="flex items-center justify-center mt-2 mb-4">
-				<div
-					class="theme-circle"
-					title="White"
-					on:click={() => switchTheme(Theme.white)}
-					style="background: rgb(255, 255, 255);"
-				>
-					<!--spacer-->
+					<button
+						class="section-button"
+						style="color: var(--section-text-color);"
+						on:click={increaseWidth}
+					>
+						<ArrowRightSLine size="24px" />
+					</button>
+				</div>
+				<div class="flex items-center justify-center mt-2 mb-4">
+					<div
+						class="theme-circle"
+						title="White"
+						on:click={() => switchTheme(Theme.white)}
+						style="background: rgb(255, 255, 255);"
+					>
+						<!--spacer-->
+					</div>
+					<div
+						class="theme-circle"
+						title="Paper"
+						on:click={() => switchTheme(Theme.paper)}
+						style="background: rgb(247, 241, 228);"
+					>
+						<!--spacer-->
+					</div>
+					<div
+						class="theme-circle"
+						title="Slate"
+						on:click={() => switchTheme(Theme.slate)}
+						style="background: rgb(72, 72, 74);"
+					>
+						<!--spacer-->
+					</div>
+					<div
+						class="theme-circle"
+						title="Dimmed"
+						on:click={() => switchTheme(Theme.dimmed)}
+						style="background: rgb(44, 44, 46);"
+					>
+						<!--spacer-->
+					</div>
+					<div
+						class="theme-circle"
+						title="Ink"
+						on:click={() => switchTheme(Theme.ink)}
+						style="background: rgb(0, 0, 0);"
+					>
+						<!--spacer-->
+					</div>
+				</div>
+				<div class="flex items-center mb-4" title="Change Font">
+					<FontSize size="28px" class="ml-2 mr-4" />
+					<select
+						class="flex-1 rounded-lg focus:ring-0 border-0"
+						style="background: var(--section-select-bg); color: var(--section-text-color);"
+						on:change={(e) => switchFont(e.target?.value)}
+						value={$section.font}
+					>
+						<option value={Font.inter}> Inter </option>
+						<option value={Font.libreBaskerville}> Libre Baskerville </option>
+						<option value={Font.josefinSlab}> Josefin Slab </option>
+						<option value={Font.ibmPlexMono}> Plex Mono </option>
+					</select>
 				</div>
 				<div
-					class="theme-circle"
-					title="Paper"
-					on:click={() => switchTheme(Theme.paper)}
-					style="background: rgb(247, 241, 228);"
+					class="flex items-center"
+					style="font-family: var(--header-text);"
+					title="Change Font Size"
 				>
-					<!--spacer-->
+					<FontSize2 size="28px" class="ml-2 mr-4" />
+					<div class="w-full ml-1">
+						<input
+							id="font-size"
+							class="w-full"
+							type="range"
+							min="0.8"
+							max="1.8"
+							step="0.2"
+							list="size-list"
+							bind:value={$section.fontSize}
+							on:change={(e) => adjustFontSize(e.target.value)}
+						/>
+						<datalist id="size-list" class="flex items-center justify-between w-full">
+							<option value="0.8" label="0.8">0.8</option>
+							<option value="1.0" label="1.0">1.0</option>
+							<option value="1.2" label="1.2">1.2</option>
+							<option value="1.4" label="1.4">1.4</option>
+							<option value="1.6" label="1.6">1.6</option>
+							<option value="1.8" label="1.8">1.8</option>
+						</datalist>
+					</div>
 				</div>
-				<div
-					class="theme-circle"
-					title="Slate"
-					on:click={() => switchTheme(Theme.slate)}
-					style="background: rgb(72, 72, 74);"
-				>
-					<!--spacer-->
+				<div class="my-2"><!--spacer--></div>
+				<div class="flex items-center" title="Adjust Paragraph Style">
+					<Paragraph size="28px" class="ml-2 mr-4" />
+					<select
+						class="flex-1 rounded-lg focus:ring-0 border-0"
+						style="background: var(--section-select-bg); color: var(--section-text-color);"
+						on:change={(e) => adjustParagraphs(e.target.value)}
+						value={$section.paragraphs}
+					>
+						<option value={ParagraphStyle.original}> Original </option>
+						<option value={ParagraphStyle.indented}> Indented </option>
+						<option value={ParagraphStyle.doubleSpaced}> Double-Spaced </option>
+						<option value={ParagraphStyle.both}> Both </option>
+					</select>
 				</div>
-				<div
-					class="theme-circle"
-					title="Dimmed"
-					on:click={() => switchTheme(Theme.dimmed)}
-					style="background: rgb(44, 44, 46);"
-				>
-					<!--spacer-->
+				<div class="my-2"><!--spacer--></div>
+				<div class="flex items-center" title="Change Justification">
+					<AlignJustify size="28px" class="ml-2 mr-4" />
+					<select
+						class="flex-1 rounded-lg focus:ring-0 border-0"
+						style="background: var(--section-select-bg); color: var(--section-text-color);"
+						on:change={(e) => changeJustification(e.target.value)}
+						value={$section.justification}
+					>
+						<option value={Justification.original}>Original</option>
+						<option value={Justification.justified}>Justified</option>
+					</select>
 				</div>
-				<div
-					class="theme-circle"
-					title="Ink"
-					on:click={() => switchTheme(Theme.ink)}
-					style="background: rgb(0, 0, 0);"
-				>
-					<!--spacer-->
-				</div>
-			</div>
-			<div class="flex items-center mb-4" title="Change Font">
-				<FontSize size="28px" class="ml-2 mr-4" />
-				<select
-					class="flex-1 rounded-lg focus:ring-0 border-0"
-					style="background: var(--section-select-bg); color: var(--section-text-color);"
-					on:change={(e) => switchFont(e.target.value)}
-					value={$section.font}
-				>
-					<option value={Font.inter}> Inter </option>
-					<option value={Font.libreBaskerville}> Libre Baskerville </option>
-					<option value={Font.josefinSlab}> Josefin Slab </option>
-					<option value={Font.ibmPlexMono}> Plex Mono </option>
-				</select>
-			</div>
-			<div
-				class="flex items-center"
-				style="font-family: var(--header-text);"
-				title="Change Font Size"
-			>
-				<FontSize2 size="28px" class="ml-2 mr-4" />
-				<div class="w-full ml-1">
-					<input
-						id="font-size"
-						class="w-full"
-						type="range"
-						min="0.8"
-						max="1.8"
-						step="0.2"
-						list="size-list"
-						bind:value={$section.fontSize}
-						on:change={(e) => adjustFontSize(e.target.value)}
-					/>
-					<datalist id="size-list" class="flex items-center justify-between w-full">
-						<option value="0.8" label="0.8">0.8</option>
-						<option value="1.0" label="1.0">1.0</option>
-						<option value="1.2" label="1.2">1.2</option>
-						<option value="1.4" label="1.4">1.4</option>
-						<option value="1.6" label="1.6">1.6</option>
-						<option value="1.8" label="1.8">1.8</option>
-					</datalist>
-				</div>
-			</div>
-			<div class="my-2"><!--spacer--></div>
-			<div class="flex items-center" title="Adjust Paragraph Style">
-				<Paragraph size="28px" class="ml-2 mr-4" />
-				<select
-					class="flex-1 rounded-lg focus:ring-0 border-0"
-					style="background: var(--section-select-bg); color: var(--section-text-color);"
-					on:change={(e) => adjustParagraphs(e.target.value)}
-					value={$section.paragraphs}
-				>
-					<option value={ParagraphStyle.original}> Original </option>
-					<option value={ParagraphStyle.indented}> Indented </option>
-					<option value={ParagraphStyle.doubleSpaced}> Double-Spaced </option>
-					<option value={ParagraphStyle.both}> Both </option>
-				</select>
 			</div>
 		</div>
 	{/if}

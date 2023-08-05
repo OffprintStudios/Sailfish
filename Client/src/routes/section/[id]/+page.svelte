@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-	import { section } from "$lib/state/section.state";
-	import { ParagraphStyle, Theme, WidthSettings } from "$lib/util/constants/sections";
-	import type { SectionPage } from "$lib/models/content/works";
-	import SectionContent from "./SectionContent.svelte";
-	import SectionTools from "./SectionTools.svelte";
-	import SectionBottomNav from "./SectionBottomNav.svelte";
-	import SectionMeta from "./SectionMeta.svelte";
+	import { onMount } from 'svelte';
+	import { section } from '$lib/state/section.state';
+	import { Justification, ParagraphStyle, Theme, WidthSettings } from '$lib/util/constants/sections';
+	import type { SectionPage } from '$lib/models/content/works';
+	import SectionContent from './SectionContent.svelte';
+	import SectionTools from './SectionTools.svelte';
+	import SectionBottomNav from './SectionBottomNav.svelte';
+	import SectionMeta from './SectionMeta.svelte';
 
 	export let data: SectionPage;
 	const iconSize = "22px";
@@ -20,6 +20,7 @@
 
 		/* theme */
 		const sectionPage = document.getElementById("section-page")!;
+		const sectionBody = document.getElementById("section-body");
 		sectionPage.classList.remove(
 			Theme.white,
 			Theme.paper,
@@ -78,6 +79,15 @@
 				break;
 		}
 
+		switch($section.justification) {
+			case Justification.original:
+				sectionBody?.classList.remove("justified");
+				break;
+			case Justification.justified:
+				sectionBody?.classList.add("justified");
+				break;
+		}
+
 		const themeColorValue =
 			getComputedStyle(sectionPage).getPropertyValue("--section-background");
 		themeColor.setAttribute("content", themeColorValue);
@@ -88,11 +98,8 @@
 
 <div id="section-page" class="section-page paper">
 	<SectionTools
+		sectionView={data.section}
 		tableOfContents={data.tableOfContents}
-		workTitle={data.section.work.title}
-		sectionTitle={data.section.section.title}
-		cheers={data.section.section.cheers}
-		comments={data.section.section.comments}
 		containerHeight={sectionContainerHeight}
 		{iconSize}
 		{scrollY}

@@ -61,7 +61,7 @@
 		</div>
 	</div>
 	<div
-		class="flex flex-col items-center justify-center max-w-[400px] mx-auto w-11/12 px-4 py-2 mt-4 w-full rounded-xl font-normal"
+		class="flex flex-col items-center justify-center max-w-[400px] mx-auto w-11/12 px-4 py-2 mt-4 rounded-xl font-normal"
 		style="font-family: var(--body-text);"
 	>
 		<Avatar src={sectionView.author.avatar} size="125px" />

@@ -555,6 +555,10 @@ div.section-page {
       font-family: var(--section-font-family) !important;
       font-size: var(--section-font-size) !important;
       line-height: var(--section-line-height) !important;
+      &.justified {
+        text-align: justify;
+        hyphens: auto;
+      }
       p {
         margin: var(--section-paragraph-margins) !important;
       }
@@ -590,11 +594,14 @@ div.section-page {
     }
   }
   div.section-dropdown {
-    @apply absolute flex flex-col rounded-xl z-50 max-h-[calc(100vh-80px)] w-[325px] p-2;
+    @apply absolute  rounded-xl z-50 max-h-[calc(100vh-80px)] w-[325px] p-2;
     border: 1px solid var(--section-tool-color);
     box-shadow: var(--dropshadow);
     color: var(--section-text-color);
     background: var(--section-dropdown-bg);
+  div.section-dropdown-content {
+    @apply flex flex-col overflow-y-auto;
+  }
   }
   div.section-meta {
     @apply py-6 block shadow-inner text-white;

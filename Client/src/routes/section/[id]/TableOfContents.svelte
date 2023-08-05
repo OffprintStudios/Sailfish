@@ -10,9 +10,10 @@
 	import type { SectionList } from "$lib/models/content/works";
 	import { throttle, clickOutside } from "$lib/util/functions";
 	import { navigating } from "$app/stores";
-	import { ListUnordered } from "svelte-remixicon";
+	import { ListUnordered, ArrowRightSLine, CheckboxCircleLine } from "svelte-remixicon";
 	import { fade } from "svelte/transition";
 
+	export let sectionId: string;
 	export let sectionList: SectionList[];
 	export let open = false;
 	export let iconSize = "22px";
@@ -74,7 +75,7 @@
 
 <div class="relative z-[2]">
 	<button
-		class="section-button no-text hide-this"
+		class="section-button no-text"
 		class:active={open}
 		title="Table of Contents"
 		bind:this={button}
@@ -90,11 +91,20 @@
 			use:clickOutside
 			on:outclick={throttled}
 		>
-			{#each sectionList as section}
-				<a class="toc-link">
-					{section.title}
-				</a>
-			{/each}
+			<div class="section-dropdown-content">
+				{#each sectionList as section}
+					<a class="toc-link" title={section.title}>
+						{#if section.id === sectionId}
+							<span class="min-w-[22px] max-w-[22px]">
+								<ArrowRightSLine size="18px" />
+							</span>
+						{:else}
+							<span class="min-w-[22px] max-w-[22px]"><!--placeholder--></span>
+						{/if}
+						<span class="max-w-full truncate">{section.title}</span>
+					</a>
+				{/each}
+			</div>
 			<div class="arrow" bind:this={arrowEl}><!--arrow--></div>
 		</div>
 	{/if}
@@ -102,12 +112,9 @@
 
 <style lang="scss">
 	a.toc-link {
-		@apply w-full py-2 px-1 first:rounded-t-lg no-underline;
+		@apply flex items-center w-full py-2 px-1 first:rounded-t-lg last:rounded-b-lg no-underline;
 		&:nth-child(odd) {
 			background-color: var(--section-button-hover);
-		}
-		&:nth-last-child(2) {
-			@apply rounded-b-lg;
 		}
 		color: var(--section-text-color);
 		&:hover {
