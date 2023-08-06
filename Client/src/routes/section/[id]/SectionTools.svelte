@@ -1,28 +1,53 @@
 <script lang="ts">
-	import { abbreviate } from "$lib/util/functions";
+	import { abbreviate, slugify } from '$lib/util/functions';
 	import type { SectionList, SectionView } from '$lib/models/content/works';
 	import { fade } from "svelte/transition";
 	import {
 		ArrowLeftSLine,
 		OpenArmLine,
 		DiscussLine,
-		BookmarkLine
+		BookmarkLine,
+		BookmarkFill,
+		Loader5Line,
 	} from "svelte-remixicon";
 	import { account } from '$lib/state/account.state';
 	import TableOfContents from "./TableOfContents.svelte";
 	import FormattingDropdown from "./FormattingDropdown.svelte";
 	import toast from 'svelte-french-toast';
+	import { goto } from '$app/navigation';
+	import { patchReq, type ResponseError } from '$lib/http';
+	import type { ReadingHistory } from '$lib/models/content/library';
 
 	export let tableOfContents: SectionList[];
 	export let sectionView: SectionView;
+	export let readingHistory: ReadingHistory | undefined;
 	export let containerHeight: number;
 	export let scrollY: number;
 	export let iconSize = "22px";
 
-	function bookmarkSection() {
+	let bookmarking = false;
+
+	function goToWork() {
+		goto(`/work/${sectionView.work.id}/${slugify(sectionView.work.title)}`);
+	}
+
+	async function bookmarkSection() {
 		if (!$account.currProfile) {
 			toast.error("You need to be logged in to use this feature!");
+			return;
 		}
+		bookmarking = true;
+		const response = await patchReq<ReadingHistory>(
+			`/history/set-bookmark?workId=${sectionView.work.id}&sectionId=${sectionView.id}&profileId=${$account.currProfile?.id}`,
+			{}
+		);
+		if ((response as ResponseError).statusCode) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			readingHistory = response as ReadingHistory;
+		}
+		bookmarking = false;
 	}
 </script>
 
@@ -32,7 +57,7 @@
 	class:out-of-content={scrollY >= containerHeight + 100}
 >
 	<div class="flex items-center w-1/3">
-		<button class="section-button">
+		<button class="section-button" on:click={goToWork}>
 			<ArrowLeftSLine class="lg:mr-1" size={iconSize} />
 			<span class="hidden lg:block">Back</span>
 		</button>
@@ -80,7 +105,15 @@
 		<FormattingDropdown {iconSize} />
 		<div class="mx-0.5"><!--spacer--></div>
 		<button class="section-button no-text" title="Bookmark Chapter" on:click={bookmarkSection}>
-			<BookmarkLine size={iconSize} />
+			{#if bookmarking}
+				<Loader5Line size={iconSize} class="animate-[spin_2s_linear_infinite]" />
+			{:else}
+				{#if readingHistory?.bookmarked.id === sectionView.id}
+					<BookmarkFill size={iconSize} />
+				{:else}
+					<BookmarkLine size={iconSize} />
+				{/if}
+			{/if}
 		</button>
 	</div>
 </div>

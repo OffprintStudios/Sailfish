@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { SectionView } from "$lib/models/content/works";
 	import { ArrowDownSLine, ArrowUpSLine } from 'svelte-remixicon';
-	import { slide, fade } from 'svelte/transition';
-	import { cubicIn, cubicOut } from 'svelte/easing';
+	import { slide } from 'svelte/transition';
 
 	export let content: SectionView;
 	export let containerHeight = 0;
@@ -25,11 +24,7 @@
 	}*/
 </script>
 
-<div class="section-container"
-	 in:fade={{ easing: cubicOut, delay: 400, duration: 300 }}
-	 out:fade={{ easing: cubicIn, duration: 300 }}
-	 bind:this={sectionContainer}
->
+<div class="section-container" bind:this={sectionContainer}>
 	<div class="mb-16">
 		<h1 class="text-4xl text-center">{content.section.title}</h1>
 		{#if content.section.noteTop}

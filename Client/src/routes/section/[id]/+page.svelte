@@ -7,13 +7,17 @@
 	import SectionTools from './SectionTools.svelte';
 	import SectionBottomNav from './SectionBottomNav.svelte';
 	import SectionMeta from './SectionMeta.svelte';
+	import { patchReq, type ResponseError } from '$lib/http';
+	import type { ReadingHistory } from '$lib/models/content/library';
+	import { account } from '$lib/state/account.state';
+	import toast from 'svelte-french-toast';
 
 	export let data: SectionPage;
 	const iconSize = "22px";
 	let scrollY = 0;
 	let sectionContainerHeight = 0;
 
-	onMount(() => {
+	onMount(async () => {
 		const themeColor = document.querySelector("meta[name='theme-color']")!;
 		themeColor.setAttribute("content", "rgb(247, 241, 228)");
 
@@ -90,7 +94,24 @@
 		const themeColorValue =
 			getComputedStyle(sectionPage).getPropertyValue("--section-background");
 		themeColor.setAttribute("content", themeColorValue);
+
+		if($account.currProfile) {
+			await markAsRead();
+		}
 	});
+
+	async function markAsRead() {
+		const response = await patchReq<ReadingHistory>(
+			`/history/set-as-read?workId=${data.section.work.id}&sectionId=${data.section.id}&profileId=${$account.currProfile?.id}`,
+			{}
+		);
+		if ((response as ResponseError).statusCode) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			data.readingHistory = response as ReadingHistory;
+		}
+	}
 </script>
 
 <svelte:window bind:scrollY />
@@ -99,13 +120,12 @@
 	<SectionTools
 		sectionView={data.section}
 		tableOfContents={data.tableOfContents}
+		readingHistory={data.readingHistory}
 		containerHeight={sectionContainerHeight}
 		{iconSize}
 		{scrollY}
 	/>
-	{#key data.section}
-		<SectionContent content={data.section} bind:containerHeight={sectionContainerHeight} />
-	{/key}
+	<SectionContent content={data.section} bind:containerHeight={sectionContainerHeight} />
 	<SectionBottomNav
 		authorId={data.section.author.id}
 		sectionId={data.section.id}

@@ -40,13 +40,11 @@
   --header-text: 'Josefin Sans', sans-serif;
   --body-serif-text: 'Josefin Slab', serif;
   --section-text: 'Inter', sans-serif;
-
-
 }
 
 html,
 body {
-  @apply lg:w-full h-full;
+  @apply lg:w-full h-full lg:overflow-hidden;
 }
 html {
   /* Light Mode */
