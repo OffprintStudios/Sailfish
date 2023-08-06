@@ -62,7 +62,7 @@
 			<span class="hidden lg:block">Back</span>
 		</button>
 		<div class="hidden lg:block mx-0.5"><!--spacer--></div>
-		<TableOfContents authorId={sectionView.author.id} sectionId={sectionView.id} sectionList={tableOfContents} {iconSize} />
+		<FormattingDropdown {iconSize} />
 		<!--{#if $account.account && $account.currProfile}
 			<button
 				class="section-button no-text hide-this"
@@ -93,7 +93,7 @@
 						{abbreviate(sectionView.section.cheers)}
 					</span>
 				</button>
-				<div class="mx-0.5"><!--spacer--></div>
+				<div class="hidden lg:block mx-0.5"><!--spacer--></div>
 				<button class="section-button hide-this" title="Comments">
 					<DiscussLine size={iconSize} class="mr-1" />
 					<span class="text-xs" style="top: 0.03rem;">
@@ -102,8 +102,8 @@
 				</button>
 			</div>
 		{/if}
-		<FormattingDropdown {iconSize} />
-		<div class="mx-0.5"><!--spacer--></div>
+		<TableOfContents authorId={sectionView.author.id} sectionId={sectionView.id} sectionList={tableOfContents} {iconSize} />
+		<div class="hidden lg:block mx-0.5"><!--spacer--></div>
 		<button class="section-button no-text" title="Bookmark Chapter" on:click={bookmarkSection}>
 			{#if bookmarking}
 				<Loader5Line size={iconSize} class="animate-[spin_2s_linear_infinite]" />
