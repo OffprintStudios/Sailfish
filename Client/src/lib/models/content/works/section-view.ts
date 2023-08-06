@@ -8,6 +8,8 @@ export interface SectionView {
 		readonly title: string;
 		readonly desc: string;
 		readonly coverArt?: string;
+		likes: number;
+		dislikes: number;
 	};
 	readonly volume: {
 		readonly id: string;

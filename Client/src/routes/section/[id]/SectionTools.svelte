@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { abbreviate, slugify } from '$lib/util/functions';
-	import type { SectionList, SectionView } from '$lib/models/content/works';
+	import type { Cheer, SectionList, SectionView } from '$lib/models/content/works';
 	import { fade } from "svelte/transition";
 	import {
 		ArrowLeftSLine,
 		OpenArmLine,
+		OpenArmFill,
 		DiscussLine,
 		BookmarkLine,
 		BookmarkFill,
@@ -15,17 +16,19 @@
 	import FormattingDropdown from "./FormattingDropdown.svelte";
 	import toast from 'svelte-french-toast';
 	import { goto } from '$app/navigation';
-	import { patchReq, type ResponseError } from '$lib/http';
+	import { patchReq, postReq, type ResponseError } from '$lib/http';
 	import type { ReadingHistory } from '$lib/models/content/library';
 
 	export let tableOfContents: SectionList[];
 	export let sectionView: SectionView;
 	export let readingHistory: ReadingHistory | undefined;
+	export let cheer: Cheer | undefined;
 	export let containerHeight: number;
 	export let scrollY: number;
 	export let iconSize = "22px";
 
 	let bookmarking = false;
+	let cheering = false;
 
 	function goToWork() {
 		goto(`/work/${sectionView.work.id}/${slugify(sectionView.work.title)}`);
@@ -33,7 +36,7 @@
 
 	async function bookmarkSection() {
 		if (!$account.currProfile) {
-			toast.error("You need to be logged in to use this feature!");
+			toast.error("You need to be logged in and have a profile selected to use this feature.");
 			return;
 		}
 		bookmarking = true;
@@ -48,6 +51,27 @@
 			readingHistory = response as ReadingHistory;
 		}
 		bookmarking = false;
+	}
+
+	async function toggleCheer() {
+		if (!$account.currProfile) {
+			toast.error("You need to be logged in and have a profile selected to use this feature.");
+			return;
+		}
+		cheering = true;
+		const response = await postReq<{ cheer?: Cheer }>(`/reading/toggle-cheer/${sectionView.id}?profileId=${$account.currProfile?.id}`, {});
+		if ((response as ResponseError).statusCode) {
+			const error = response as ResponseError;
+			toast.error(error.message);
+		} else {
+			cheer = response as Cheer;
+			if (cheer?.id) {
+				sectionView.section.cheers = sectionView.section.cheers + 1;
+			} else {
+				sectionView.section.cheers = sectionView.section.cheers - 1;
+			}
+		}
+		cheering = false;
 	}
 </script>
 
@@ -87,11 +111,20 @@
 	<div class="w-1/3 flex items-center justify-end">
 		{#if scrollY >= containerHeight + 100}
 			<div class="flex items-center mr-0.5" transition:fade={{ delay: 0, duration: 150 }}>
-				<button class="section-button hide-this" title="Cheers">
-					<OpenArmLine size={iconSize} class="mr-1" />
-					<span class="text-xs" style="top: 0.03rem;">
-						{abbreviate(sectionView.section.cheers)}
-					</span>
+				<button class="section-button hide-this" class:active={!!cheer} title="Cheers" on:click={toggleCheer}>
+					{#if cheering}
+						<Loader5Line size={iconSize} class="mr-1 animate-[spin_2s_linear_infinite]" />
+						<span style="top: 0.03rem;">-</span>
+					{:else}
+						{#if cheer}
+							<OpenArmFill size={iconSize} class="mr-1" />
+						{:else}
+							<OpenArmLine size={iconSize} class="mr-1" />
+						{/if}
+						<span class="text-xs" style="top: 0.03rem;">
+							{abbreviate(sectionView.section.cheers)}
+						</span>
+					{/if}
 				</button>
 				<div class="hidden lg:block mx-0.5"><!--spacer--></div>
 				<button class="section-button hide-this" title="Comments">

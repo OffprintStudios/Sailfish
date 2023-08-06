@@ -41,6 +41,12 @@ extension SectionView {
         @OptionalField(key: FieldKeys.workCoverArt)
         var coverArt: String?
         
+        @Field(key: FieldKeys.workLikes)
+        var likes: Int64
+        
+        @Field(key: FieldKeys.workDislikes)
+        var dislikes: Int64
+        
         init() { }
     }
     
@@ -124,6 +130,8 @@ extension SectionView {
         static let workTitle: FieldKey = "title"
         static let workShortDesc: FieldKey = "desc"
         static let workCoverArt: FieldKey = "cover_art"
+        static let workLikes: FieldKey = "likes"
+        static let workDislikes: FieldKey = "dislikes"
         static let volumeGroup: FieldKey = "volume"
         static let volumeId: FieldKey = "id"
         static let volumeTitle: FieldKey = "title"
@@ -151,14 +159,6 @@ extension SectionView {
     }
     
     struct Create: AsyncMigration {
-        private typealias WorkKeys = Work.FieldKeys
-        private typealias VolumeKeys = Volume.FieldKeys
-        private typealias AuthorKeys = Profile.FieldKeys
-        private typealias SectionKeys = Section.FieldKeys
-        private typealias SectionViewKeys = SectionView.FieldKeys
-        private typealias CheersKeys = Cheer.FieldKeys
-        private typealias CommentsKeys = Comment.FieldKeys
-        
         func prepare(on database: Database) async throws {
             let sqlDb = database as! SQLDatabase
             
@@ -169,6 +169,8 @@ extension SectionView {
                             work.title AS work_title,
                             work.short_desc AS work_desc,
                             work.cover_art AS work_cover_art,
+                            work.likes AS work_likes,
+                            work.dislikes AS work_dislikes,
                             volume.id AS volume_id,
                             volume.title AS volume_title,
                             profile.id AS author_id,

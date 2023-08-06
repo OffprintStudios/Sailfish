@@ -587,6 +587,10 @@ div.section-page {
     &.active {
       background-color: var(--section-button-hover);
     }
+    &.primary-active {
+      background-color: var(--section-tool-color);
+      color: var(--section-text-color);
+    }
     &.hide-this {
       @apply lg:flex hidden;
     }
@@ -608,17 +612,26 @@ div.section-page {
       @apply flex flex-col rounded-xl overflow-hidden max-w-3xl mx-auto;
     }
     button.meta-button {
-      @apply flex items-center px-1.5 py-2.5 transition transform hover:bg-zinc-600 focus:ring-0 m-0 text-base rounded-lg select-none relative;
+      @apply flex items-center px-1.5 py-2.5 transition m-0.5 lg:m-0 transform hover:bg-zinc-600 focus:ring-0 border-2 border-zinc-700 text-base rounded-lg select-none relative;
       text-transform: lowercase;
       font-variant: small-caps;
       font-weight: 700;
       letter-spacing: 1px;
       font-family: var(--body-text);
       &.thumbs-up {
-        @apply text-green-600;
+        @apply hover:text-green-600;
+        &.selected {
+          @apply text-green-600;
+        }
       }
       &.thumbs-down {
-        @apply text-red-600;
+        @apply hover:text-red-600;
+        &.selected {
+          @apply text-red-600;
+        }
+      }
+      &.with-text {
+        @apply py-1.5;
       }
     }
   }

@@ -13,17 +13,17 @@ const defaultAccountState: AccountState = {
 	account: null,
 	token: null,
 	profiles: [],
-	currProfile: null,
+	currProfile: null
 };
 
 const initialAccountState: AccountState = browser
-	? JSON.parse(window.localStorage.getItem('account') ?? 'null') ?? defaultAccountState
+	? JSON.parse(window.localStorage.getItem("account") ?? "null") ?? defaultAccountState
 	: defaultAccountState;
 
 export const account = writable<AccountState>(initialAccountState);
 
 account.subscribe((value) => {
 	if (browser) {
-		window.localStorage.setItem('account', JSON.stringify(value));
+		window.localStorage.setItem("account", JSON.stringify(value));
 	}
 });

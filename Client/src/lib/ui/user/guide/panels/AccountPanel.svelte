@@ -30,8 +30,15 @@
 	let profileSwitcherOpen = false;
 	let showAddForm = false;
 
-	function selectProfile(profile: Profile) {
+	async function selectProfile(profile: Profile) {
 		$account.currProfile = profile;
+		const response = await fetch(`/api/auth/set-profile?profileId=${$account.currProfile.id}`, {
+			method: "POST",
+			credentials: "include"
+		});
+		if (response.status !== 200) {
+			toast.error("Could not set profile in cookies!");
+		}
 		profileSwitcherOpen = false;
 	}
 

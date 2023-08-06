@@ -84,9 +84,11 @@ public func configure(_ app: Application) async throws {
         Cheer.Create(),
         Highlight.Create(),
         SectionComment.Create(),
+        CommentVote.Create(),
         SectionBlacklist.Create(),
         SectionView.Create(),
         SectionList.Create(),
+        SectionCommentView.Create(),
     ])
 
     try await app.autoMigrate()

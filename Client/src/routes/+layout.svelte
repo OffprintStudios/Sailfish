@@ -19,7 +19,7 @@
 	let loadingTerms = false;
 	let loadingConfirm = false;
 
-	onMount(() => {
+	onMount(async () => {
 		if (
 			$app.brightness === "dark" ||
 			(!($app.brightness === "dark") &&
@@ -37,6 +37,13 @@
 			);
 			themeColor.setAttribute("content", accentColor);
 		}
+
+		await fetch(`/api/auth/set-profile?profileId=${$account.currProfile?.id}`, { method: "POST", credentials: "include" })
+			.then(res => {
+				if (res.status !== 200) {
+					toast.error("Could not set profile ID!");
+				}
+			});
 	});
 
 	if (data.token) {

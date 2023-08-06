@@ -11,6 +11,7 @@
 	import type { ReadingHistory } from '$lib/models/content/library';
 	import { account } from '$lib/state/account.state';
 	import toast from 'svelte-french-toast';
+	import { slugify } from '$lib/util/functions';
 
 	export let data: SectionPage;
 	const iconSize = "22px";
@@ -116,12 +117,40 @@
 
 <svelte:window bind:scrollY />
 
+<svelte:head>
+	<title>{data.section.work.title} &mdash; Offprint</title>
+	<!-- Primary Meta Tags -->
+	<meta name="title" content={data.section.work.title} />
+	<meta name="description" content={data.section.work.desc} />
+
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="website" />
+	<meta
+		property="og:url"
+		content="https://offprint.net/work/{data.section.work.id}/{slugify(data.section.work.title)}"
+	/>
+	<meta property="og:title" content={data.section.work.title} />
+	<meta property="og:description" content={data.section.work.desc} />
+	<meta property="og:image" content={data.section.work.coverArt ?? data.section.author.avatar} />
+
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary_large_image" />
+	<meta
+		property="twitter:url"
+		content="https://offprint.net/work/{data.section.work.id}/{slugify(data.section.work.title)}"
+	/>
+	<meta property="twitter:title" content={data.section.work.title} />
+	<meta property="twitter:description" content={data.section.work.desc} />
+	<meta property="twitter:image" content={data.section.work.coverArt ?? data.section.author.avatar} />
+</svelte:head>
+
 <div id="section-page" class="section-page paper">
 	<SectionTools
 		sectionView={data.section}
 		tableOfContents={data.tableOfContents}
 		readingHistory={data.readingHistory}
 		containerHeight={sectionContainerHeight}
+		cheer={data.cheer}
 		{iconSize}
 		{scrollY}
 	/>
@@ -131,8 +160,14 @@
 		sectionId={data.section.id}
 		tableOfContents={data.tableOfContents}
 		cheers={data.section.section.cheers}
+		cheer={data.cheer}
 		comments={data.section.section.comments}
 		{iconSize}
 	/>
-	<SectionMeta sectionView={data.section} />
+	<SectionMeta
+		readingHistory={data.readingHistory}
+		sectionView={data.section}
+		topComments={data.topComments}
+		libraryItem={data.libraryItem}
+	/>
 </div>

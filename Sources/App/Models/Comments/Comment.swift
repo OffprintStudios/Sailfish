@@ -42,6 +42,9 @@ final class Comment: Model, Content {
     
     @Siblings(through: SectionComment.self, from: \.$comment, to: \.$section)
     var sections: [Section]
+    
+    @Children(for: \.$comment)
+    var votes: [CommentVote]
 
     @Timestamp(key: FieldKeys.createdAt, on: .create)
     var createdAt: Date?

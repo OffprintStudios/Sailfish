@@ -25,5 +25,15 @@ struct ReadingController: RouteCollection {
             let id = request.parameters.get("id")!
             return try await request.readingService.fetchSection(id)
         }
+        
+        reading.get("fetch-section-comments", ":id") { request async throws -> ReadingService.FetchCommentsResponse in
+            let id = request.parameters.get("id")!
+            return try await request.readingService.fetchSectionComments(for: id)
+        }
+        
+        readingWithAuth.post("toggle-cheer", ":id") { request async throws -> ReadingService.ToggleCheerResponse in
+            let id = request.parameters.get("id")!
+            return try await request.readingService.toggleCheer(for: id)
+        }
     }
 }

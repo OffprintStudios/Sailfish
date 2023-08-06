@@ -17,9 +17,14 @@ export const load: LayoutServerLoad = async ({
 		};
 		const response = await postReqServer<RefreshPackage>(`/auth/refresh`, info);
 		if ((response as ServerResponseError).statusCode) {
+			cookies.delete("token");
 			return { token: null, pathname };
 		} else {
 			const result = response as RefreshPackage;
+			cookies.set("token", result.accessToken, {
+				path: "/",
+				httpOnly: true
+			});
 			return { token: result.accessToken, pathname };
 		}
 	} else {

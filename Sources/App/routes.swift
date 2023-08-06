@@ -29,4 +29,5 @@ func routes(_ app: Application) throws {
     try app.register(collection: ExploreController())
     try app.register(collection: SearchController())
     try app.register(collection: ReadingController())
+    try app.register(collection: CommentController())
 }
