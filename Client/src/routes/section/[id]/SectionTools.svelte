@@ -8,14 +8,22 @@
 		DiscussLine,
 		BookmarkLine
 	} from "svelte-remixicon";
+	import { account } from '$lib/state/account.state';
 	import TableOfContents from "./TableOfContents.svelte";
 	import FormattingDropdown from "./FormattingDropdown.svelte";
+	import toast from 'svelte-french-toast';
 
 	export let tableOfContents: SectionList[];
 	export let sectionView: SectionView;
 	export let containerHeight: number;
 	export let scrollY: number;
 	export let iconSize = "22px";
+
+	function bookmarkSection() {
+		if (!$account.currProfile) {
+			toast.error("You need to be logged in to use this feature!");
+		}
+	}
 </script>
 
 <div
@@ -29,7 +37,7 @@
 			<span class="hidden lg:block">Back</span>
 		</button>
 		<div class="hidden lg:block mx-0.5"><!--spacer--></div>
-		<TableOfContents sectionId={sectionView.id} sectionList={tableOfContents} {iconSize} />
+		<TableOfContents authorId={sectionView.author.id} sectionId={sectionView.id} sectionList={tableOfContents} {iconSize} />
 		<!--{#if $account.account && $account.currProfile}
 			<button
 				class="section-button no-text hide-this"
@@ -60,6 +68,7 @@
 						{abbreviate(sectionView.section.cheers)}
 					</span>
 				</button>
+				<div class="mx-0.5"><!--spacer--></div>
 				<button class="section-button hide-this" title="Comments">
 					<DiscussLine size={iconSize} class="mr-1" />
 					<span class="text-xs" style="top: 0.03rem;">
@@ -69,7 +78,8 @@
 			</div>
 		{/if}
 		<FormattingDropdown {iconSize} />
-		<button class="section-button no-text" title="Bookmark Chapter">
+		<div class="mx-0.5"><!--spacer--></div>
+		<button class="section-button no-text" title="Bookmark Chapter" on:click={bookmarkSection}>
 			<BookmarkLine size={iconSize} />
 		</button>
 	</div>

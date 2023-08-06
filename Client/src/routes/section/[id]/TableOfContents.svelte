@@ -10,9 +10,11 @@
 	import type { SectionList } from "$lib/models/content/works";
 	import { throttle, clickOutside } from "$lib/util/functions";
 	import { navigating } from "$app/stores";
-	import { ListUnordered, ArrowRightSLine, CheckboxCircleLine } from "svelte-remixicon";
+	import { ListUnordered, ArrowRightSLine } from "svelte-remixicon";
 	import { fade } from "svelte/transition";
+	import { account } from '$lib/state/account.state';
 
+	export let authorId: string;
 	export let sectionId: string;
 	export let sectionList: SectionList[];
 	export let open = false;
@@ -92,18 +94,33 @@
 			on:outclick={throttled}
 		>
 			<div class="section-dropdown-content">
-				{#each sectionList as section}
-					<a class="toc-link" title={section.title}>
-						{#if section.id === sectionId}
+				{#if $account.currProfile?.id === authorId}
+					{#each sectionList as section}
+						<a class="toc-link" title={section.title} href="/section/{section.id}">
+							{#if section.id === sectionId}
 							<span class="min-w-[22px] max-w-[22px]">
 								<ArrowRightSLine size="18px" />
 							</span>
-						{:else}
-							<span class="min-w-[22px] max-w-[22px]"><!--placeholder--></span>
-						{/if}
-						<span class="max-w-full truncate">{section.title}</span>
-					</a>
-				{/each}
+							{:else}
+								<span class="min-w-[22px] max-w-[22px]"><!--placeholder--></span>
+							{/if}
+							<span class="max-w-full truncate">{section.title}</span>
+						</a>
+					{/each}
+				{:else}
+					{#each published as section}
+						<a class="toc-link" title={section.title} href="/section/{section.id}">
+							{#if section.id === sectionId}
+							<span class="min-w-[22px] max-w-[22px]">
+								<ArrowRightSLine size="18px" />
+							</span>
+							{:else}
+								<span class="min-w-[22px] max-w-[22px]"><!--placeholder--></span>
+							{/if}
+							<span class="max-w-full truncate">{section.title}</span>
+						</a>
+					{/each}
+				{/if}
 			</div>
 			<div class="arrow" bind:this={arrowEl}><!--arrow--></div>
 		</div>

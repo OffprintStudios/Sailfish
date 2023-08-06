@@ -12,7 +12,6 @@
 	const iconSize = "22px";
 	let scrollY = 0;
 	let sectionContainerHeight = 0;
-	let showToC = false;
 
 	onMount(() => {
 		const themeColor = document.querySelector("meta[name='theme-color']")!;
@@ -104,8 +103,13 @@
 		{iconSize}
 		{scrollY}
 	/>
-	<SectionContent content={data.section} bind:containerHeight={sectionContainerHeight} />
+	{#key data.section}
+		<SectionContent content={data.section} bind:containerHeight={sectionContainerHeight} />
+	{/key}
 	<SectionBottomNav
+		authorId={data.section.author.id}
+		sectionId={data.section.id}
+		tableOfContents={data.tableOfContents}
 		cheers={data.section.section.cheers}
 		comments={data.section.section.comments}
 		{iconSize}

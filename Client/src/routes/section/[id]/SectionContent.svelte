@@ -1,19 +1,19 @@
 <script lang="ts">
 	import type { SectionView } from "$lib/models/content/works";
-	import { computePosition, inline, type ReferenceElement } from "@floating-ui/dom";
 	import { ArrowDownSLine, ArrowUpSLine } from 'svelte-remixicon';
-	import { slide } from 'svelte/transition';
+	import { slide, fade } from 'svelte/transition';
+	import { cubicIn, cubicOut } from 'svelte/easing';
 
 	export let content: SectionView;
 	export let containerHeight = 0;
 
-	let annotationOptions: HTMLDivElement;
+	// let annotationOptions: HTMLDivElement;
 	let sectionContainer: HTMLDivElement;
 	let noteTopOpen = false;
 
 	$: containerHeight = sectionContainer?.scrollHeight;
 
-	function selectChanged(e: MouseEvent) {
+	/*function selectChanged(e: MouseEvent) {
 		const selection = window.getSelection();
 		const range = selection?.getRangeAt(0);
 		const virtualEl: ReferenceElement = {
@@ -22,10 +22,14 @@
 		};
 		computePosition(virtualEl, annotationOptions, { middleware: [inline()] });
 		console.log("computed");
-	}
+	}*/
 </script>
 
-<div class="section-container" bind:this={sectionContainer}>
+<div class="section-container"
+	 in:fade={{ easing: cubicOut, delay: 400, duration: 300 }}
+	 out:fade={{ easing: cubicIn, duration: 300 }}
+	 bind:this={sectionContainer}
+>
 	<div class="mb-16">
 		<h1 class="text-4xl text-center">{content.section.title}</h1>
 		{#if content.section.noteTop}
