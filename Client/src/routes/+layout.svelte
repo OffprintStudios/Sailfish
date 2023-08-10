@@ -94,7 +94,7 @@
 
 <Popup />
 {#if basePathname.startsWith("section")}
-	<main class="relative h-full lg:overflow-y-scroll" transition:fade>
+	<main class="relative h-full" transition:fade>
 		<slot />
 	</main>
 {:else}

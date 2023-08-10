@@ -23,6 +23,7 @@ struct IdentityGuard: AsyncMiddleware {
     func respond(to request: Request, chainingTo next: AsyncResponder) async throws -> Response {
         guard let payload = try? request.jwt.verify(as: Session.TokenPayload.self) else {
             if optional == true {
+                print("Payload Failed, Optional Routed")
                 request.user = .init(account: nil, profile: nil)
                 return try await next.respond(to: request)
             } else {

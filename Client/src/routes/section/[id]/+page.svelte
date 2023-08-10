@@ -12,11 +12,13 @@
 	import { account } from '$lib/state/account.state';
 	import toast from 'svelte-french-toast';
 	import { slugify } from '$lib/util/functions';
+	import { afterNavigate } from '$app/navigation';
 
 	export let data: SectionPage;
 	const iconSize = "22px";
 	let scrollY = 0;
 	let sectionContainerHeight = 0;
+	let sectionPage: HTMLDivElement;
 
 	onMount(async () => {
 		const themeColor = document.querySelector("meta[name='theme-color']")!;
@@ -101,6 +103,13 @@
 		}
 	});
 
+	afterNavigate(() => {
+		const sectionPage = document.getElementById("section-page");
+		if (sectionPage) {
+			sectionPage.scrollIntoView({ behavior: "instant", block: "start", inline: "nearest" });
+		}
+	});
+
 	async function markAsRead() {
 		const response = await patchReq<ReadingHistory>(
 			`/history/set-as-read?workId=${data.section.work.id}&sectionId=${data.section.id}&profileId=${$account.currProfile?.id}`,
@@ -113,9 +122,12 @@
 			data.readingHistory = response as ReadingHistory;
 		}
 	}
-</script>
 
-<svelte:window bind:scrollY />
+	function onPageScroll() {
+		console.log(sectionPage.scrollTop);
+		scrollY = sectionPage.scrollTop;
+	}
+</script>
 
 <svelte:head>
 	<title>{data.section.work.title} &mdash; Offprint</title>
@@ -144,7 +156,7 @@
 	<meta property="twitter:image" content={data.section.work.coverArt ?? data.section.author.avatar} />
 </svelte:head>
 
-<div id="section-page" class="section-page paper">
+<div id="section-page" class="section-page paper" on:scroll={onPageScroll} bind:this={sectionPage}>
 	<SectionTools
 		sectionView={data.section}
 		tableOfContents={data.tableOfContents}
@@ -152,7 +164,7 @@
 		containerHeight={sectionContainerHeight}
 		cheer={data.cheer}
 		{iconSize}
-		{scrollY}
+		bind:scrollY
 	/>
 	<SectionContent content={data.section} bind:containerHeight={sectionContainerHeight} />
 	<SectionBottomNav

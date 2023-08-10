@@ -2,7 +2,7 @@
 	/**
 	 * Original timestamp
 	 */
-	export let timestamp = new Date().toISOString();
+	export let timestamp = new Date();
 	/**
 	 * Timestamp format for display
 	 * @example "YYYY-MM-DD"

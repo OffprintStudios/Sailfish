@@ -1,6 +1,4 @@
 import type { LayoutServerLoad } from "./$types";
-import { postReqServer, type ServerResponseError } from "$lib/server";
-import type { RefreshPackage, SessionInfo } from "$lib/models/accounts";
 
 export const load: LayoutServerLoad = async ({
 	cookies,
@@ -11,22 +9,8 @@ export const load: LayoutServerLoad = async ({
 	const { pathname } = url;
 
 	if (accountId && refreshToken) {
-		const info: SessionInfo = {
-			accountId: accountId,
-			refreshToken: refreshToken
-		};
-		const response = await postReqServer<RefreshPackage>(`/auth/refresh`, info);
-		if ((response as ServerResponseError).statusCode) {
-			cookies.delete("token");
-			return { token: null, pathname };
-		} else {
-			const result = response as RefreshPackage;
-			cookies.set("token", result.accessToken, {
-				path: "/",
-				httpOnly: true
-			});
-			return { token: result.accessToken, pathname };
-		}
+		const token = cookies.get("token") ?? null;
+		return { token, pathname };
 	} else {
 		return { token: null, pathname };
 	}

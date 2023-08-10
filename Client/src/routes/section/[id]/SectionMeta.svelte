@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { SectionView } from "$lib/models/content/works";
 	import { slugify, copyToClipboard } from "$lib/util/functions";
-	import { ThumbUpLine, ThumbUpFill, ThumbDownLine, ThumbDownFill, Bookmark3Line, Bookmark3Fill, Loader5Line, ShareBoxLine } from "svelte-remixicon";
+	import { ThumbUpLine, ThumbUpFill, ThumbDownLine, ThumbDownFill, Bookmark3Line, Bookmark3Fill, Loader5Line, ShareBoxLine, ArrowRightSLine } from "svelte-remixicon";
 	import { Avatar } from "$lib/ui/util";
 	import { LinkTag } from "$lib/ui/content";
 	import SvelteMarkdown from "svelte-markdown";
@@ -11,6 +11,7 @@
 	import { account } from '$lib/state/account.state';
 	import { delReq, patchReq, putReq, type ResponseError } from '$lib/http';
 	import type { SectionComment } from '$lib/models/comments';
+	import { NewComment } from '$lib/ui/comments';
 
 	export let sectionView: SectionView;
 	export let readingHistory: ReadingHistory | undefined;
@@ -141,7 +142,7 @@
 				</div>
 				<div
 					class="py-2 w-full font-normal hidden lg:block"
-					style="font-family: var(--body-text);"
+					style="font-family: var(--body-text); color: var(--text-color);"
 				>
 					{sectionView.work.desc}
 				</div>
@@ -242,8 +243,14 @@
 			</div>
 		</div>
 	</div>
-	<div class="flex flex-col max-w-3xl mx-auto w-11/12 border-b-4 border-dotted border-zinc-700 p-8">
-		top comments
+	<div class="flex flex-col max-w-3xl mx-auto w-11/12 border-b-4 border-dotted border-zinc-700 py-4 lg:p-8">
+		<div class="flex items-center mb-4 pb-4 px-2 border-b border-zinc-700">
+			<h3 class="text-xl flex-1">Top Comments</h3>
+			<ArrowRightSLine size="24px" />
+		</div>
+		{#each topComments as comment}
+			<NewComment {comment} collapsed={true} topComment={true} />
+		{/each}
 	</div>
 	<div
 		class="flex flex-col items-center justify-center max-w-[400px] mx-auto w-11/12 px-4 py-2 mt-4 rounded-xl font-normal"
@@ -267,7 +274,7 @@
 <style lang="scss">
 	:global(div.markdown-text) {
 		:global(p) {
-			@apply text-white;
+		  	color: var(--text-color);
 			margin: 0.5rem 0 0.5rem 0 !important;
 			text-align: center !important;
 		}

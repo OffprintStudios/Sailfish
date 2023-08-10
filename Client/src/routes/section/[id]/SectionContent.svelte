@@ -2,6 +2,8 @@
 	import type { SectionView } from "$lib/models/content/works";
 	import { ArrowDownSLine, ArrowUpSLine } from 'svelte-remixicon';
 	import { slide } from 'svelte/transition';
+	import { afterNavigate } from '$app/navigation';
+	import { onMount } from 'svelte';
 
 	export let content: SectionView;
 	export let containerHeight = 0;
@@ -10,7 +12,13 @@
 	let sectionContainer: HTMLDivElement;
 	let noteTopOpen = false;
 
-	$: containerHeight = sectionContainer?.scrollHeight;
+	onMount(() => {
+		containerHeight = sectionContainer.scrollHeight;
+	});
+
+	afterNavigate(() => {
+		containerHeight = sectionContainer.scrollHeight;
+	});
 
 	/*function selectChanged(e: MouseEvent) {
 		const selection = window.getSelection();

@@ -1,6 +1,6 @@
 // NOTE: USE ONLY FOR CLIENT-SIDE COMPONENTS
 
-import type { AxiosInstance, AxiosRequestConfig } from "axios";
+import type { AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders } from "axios";
 import Axios from "axios";
 import { BASE_URL } from "./base-url";
 import type { ResponseError } from "./response-error";
@@ -19,7 +19,7 @@ http.interceptors.request.use((request) => {
 	if (token) {
 		request.headers = {
 			Authorization: `Bearer ${token}`
-		};
+		} as AxiosRequestHeaders;
 	}
 	return request;
 });
@@ -178,7 +178,7 @@ export async function headReq<T = unknown>(
 		});
 }
 
-function getError(err: any): ResponseError {
+function getError(err: AxiosError): ResponseError {
 	return {
 		statusCode: err.response.status ?? 500,
 		message: err.response.data.reason ?? err.response.statusText,

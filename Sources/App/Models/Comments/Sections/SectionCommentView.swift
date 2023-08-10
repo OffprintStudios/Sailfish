@@ -59,6 +59,9 @@ extension SectionCommentView {
         @Field(key: FieldKeys.profileRoles)
         var roles: [Account.Roles]
         
+        @Field(key: FieldKeys.profileInfo)
+        var info: Profile.Info
+        
         @Field(key: FieldKeys.profileStats)
         var stats: Profile.Stats
         
@@ -75,6 +78,7 @@ extension SectionCommentView {
         static let profileAvatar: FieldKey = "avatar"
         static let profileBanner: FieldKey = "banner"
         static let profileRoles: FieldKey = "roles"
+        static let profileInfo: FieldKey = "info"
         static let profileStats: FieldKey = "stats"
         static let body: FieldKey = "body"
         static let spoiler: FieldKey = "spoiler"
@@ -99,6 +103,7 @@ extension SectionCommentView {
                            profile.banner_art AS profile_banner,
                            account.roles AS profile_roles,
                            profile.stats AS profile_stats,
+                           profile.info AS profile_info,
                            comment.body AS body,
                            comment.spoiler AS spoiler,
                            COUNT(likes.id) AS likes,
