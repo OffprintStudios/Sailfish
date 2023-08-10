@@ -86,7 +86,7 @@
 			<span class="hidden lg:block">Back</span>
 		</button>
 		<div class="hidden lg:block mx-0.5"><!--spacer--></div>
-		<FormattingDropdown {iconSize} />
+		<TableOfContents authorId={sectionView.author.id} sectionId={sectionView.id} sectionList={tableOfContents} {iconSize} />
 		<!--{#if $account.account && $account.currProfile}
 			<button
 				class="section-button no-text hide-this"
@@ -135,7 +135,7 @@
 				</button>
 			</div>
 		{/if}
-		<TableOfContents authorId={sectionView.author.id} sectionId={sectionView.id} sectionList={tableOfContents} {iconSize} />
+		<FormattingDropdown {iconSize} />
 		<div class="hidden lg:block mx-0.5"><!--spacer--></div>
 		<button class="section-button no-text" title="Bookmark Chapter" on:click={bookmarkSection}>
 			{#if bookmarking}
