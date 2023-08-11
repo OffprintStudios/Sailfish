@@ -567,7 +567,7 @@ div.section-page {
     }
   }
   div.section-nav {
-    @apply flex items-center justify-center w-full mb-8;
+    @apply flex items-center justify-center w-full mb-8 mt-4;
   }
   button.section-button {
     @apply flex items-center px-2 py-1.5 transition focus:ring-0 text-base rounded-lg select-none relative h-[36px];
