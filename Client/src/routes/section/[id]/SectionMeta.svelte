@@ -1,7 +1,18 @@
 <script lang="ts">
 	import type { SectionView } from "$lib/models/content/works";
 	import { slugify, copyToClipboard } from "$lib/util/functions";
-	import { ThumbUpLine, ThumbUpFill, ThumbDownLine, ThumbDownFill, Bookmark3Line, Bookmark3Fill, Loader5Line, ShareBoxLine, ArrowRightSLine } from "svelte-remixicon";
+	import {
+		ThumbUpLine,
+		ThumbUpFill,
+		ThumbDownLine,
+		ThumbDownFill,
+		Bookmark3Line,
+		Bookmark3Fill,
+		Loader5Line,
+		ShareBoxLine,
+		ArrowRightSLine,
+		LightbulbFlashLine,
+	} from "svelte-remixicon";
 	import { Avatar } from "$lib/ui/util";
 	import { LinkTag } from "$lib/ui/content";
 	import SvelteMarkdown from "svelte-markdown";
@@ -12,57 +23,14 @@
 	import { delReq, patchReq, putReq, type ResponseError } from '$lib/http';
 	import type { SectionComment } from '$lib/models/comments';
 	import { NewComment } from '$lib/ui/comments';
+	import { goto } from '$app/navigation';
 
 	export let sectionView: SectionView;
 	export let readingHistory: ReadingHistory | undefined;
 	export let topComments: SectionComment[];
 	export let libraryItem: { hasItem: boolean; } | undefined;
 
-	let voting = false;
 	let addingToLibrary = false;
-
-	async function setVote(vote: Vote) {
-		if (!$account.currProfile) {
-			toast.error("You must be logged in and have a profile selected to use this feature.");
-			return;
-		}
-		voting = true;
-		if (sectionView.section.publishedOn === undefined) {
-			toast.error(`This feature is disabled for unpublished sections.`);
-			voting = false;
-			return;
-		}
-		if ($account.account && $account.currProfile) {
-			if ($account.currProfile.id === sectionView.author.id) {
-				toast.error(`You cannot vote on your own work!`);
-				voting = false;
-				return;
-			}
-			const response = await patchReq<{
-				history: ReadingHistory;
-				likes: number;
-				dislikes: number;
-			}>(`/history/set-vote?workId=${sectionView.work.id}&profileId=${$account.currProfile.id}`, {
-				vote: readingHistory?.vote === vote ? Vote.noVote : vote
-			});
-			if ((response as ResponseError).error) {
-				const error = response as ResponseError;
-				toast.error(error.message);
-			} else {
-				const result = response as {
-					history: ReadingHistory;
-					likes: number;
-					dislikes: number;
-				};
-				readingHistory = result.history;
-				sectionView.work.likes = result.likes;
-				sectionView.work.dislikes = result.dislikes;
-			}
-		} else {
-			toast.error(`You must be logged in to perform this action.`);
-		}
-		voting = false;
-	}
 
 	async function setLibrary() {
 		if (!$account.currProfile) {
@@ -149,78 +117,7 @@
 			</div>
 		</div>
 		<div class="flex items-center justify-center lg:justify-end pt-4 flex-wrap">
-			{#if readingHistory?.vote === Vote.noVote}
-				<button class="meta-button thumbs-up" on:click={() => setVote(Vote.liked)}>
-					{#if voting}
-						<Loader5Line class="mr-2 animate-[spin_2s_linear_infinite]" />
-						<span>-</span>
-					{:else}
-						<ThumbUpLine class="mr-2" />
-						<span class="text-xs">{sectionView.work.likes}</span>
-					{/if}
-				</button>
-				<div class="mx-0.5"><!--spacer--></div>
-				<button class="meta-button thumbs-down" on:click={() => setVote(Vote.disliked)}>
-					{#if voting}
-						<Loader5Line class="mr-2 animate-[spin_2s_linear_infinite]" />
-						<span>-</span>
-					{:else}
-						<ThumbDownLine class="mr-2" />
-						<span class="text-xs">{sectionView.work.dislikes}</span>
-					{/if}
-				</button>
-			{:else if readingHistory?.vote === Vote.liked}
-				<button class="meta-button thumbs-up selected" on:click={() => setVote(Vote.noVote)}>
-					{#if voting}
-						<Loader5Line class="mr-2 animate-[spin_2s_linear_infinite]" />
-						<span>-</span>
-					{:else}
-						<ThumbUpFill class="mr-2" />
-						<span class="text-xs">{sectionView.work.likes}</span>
-					{/if}
-				</button>
-				<div class="mx-0.5"><!--spacer--></div>
-				<button class="meta-button thumbs-down" on:click={() => setVote(Vote.disliked)}>
-					{#if voting}
-						<Loader5Line class="mr-2 animate-[spin_2s_linear_infinite]" />
-						<span>-</span>
-					{:else}
-						<ThumbDownLine class="mr-2" />
-						<span class="text-xs">{sectionView.work.dislikes}</span>
-					{/if}
-				</button>
-			{:else if readingHistory?.vote === Vote.disliked}
-				<button class="meta-button thumbs-up" on:click={() => setVote(Vote.liked)}>
-					{#if voting}
-						<Loader5Line class="mr-2 animate-[spin_2s_linear_infinite]" />
-						<span>-</span>
-					{:else}
-						<ThumbUpLine class="mr-2" />
-						<span class="text-xs">{sectionView.work.likes}</span>
-					{/if}
-				</button>
-				<div class="mx-0.5"><!--spacer--></div>
-				<button class="meta-button thumbs-down selected" on:click={() => setVote(Vote.noVote)}>
-					{#if voting}
-						<Loader5Line class="mr-2 animate-[spin_2s_linear_infinite]" />
-						<span>-</span>
-					{:else}
-						<ThumbDownFill class="mr-2" />
-						<span class="text-xs">{sectionView.work.dislikes}</span>
-					{/if}
-				</button>
-			{:else}
-				<button class="meta-button thumbs-up" on:click={() => setVote(Vote.noVote)}>
-					<ThumbUpLine class="mr-2" />
-					<span class="text-xs">{sectionView.work.likes}</span>
-				</button>
-				<div class="mx-0.5"><!--spacer--></div>
-				<button class="meta-button thumbs-down" on:click={() => setVote(Vote.noVote)}>
-					<ThumbDownLine class="mr-2" />
-					<span class="text-xs">{sectionView.work.dislikes}</span>
-				</button>
-			{/if}
-			<div class="flex items-center ml-2.5 pl-2.5 border-l-2 border-zinc-700">
+			<div class="flex items-center">
 				<button class="meta-button with-text" on:click={setLibrary}>
 					{#if addingToLibrary}
 						<Loader5Line class="mr-2 animate-[spin_2s_linear_infinite]" />
@@ -243,14 +140,24 @@
 			</div>
 		</div>
 	</div>
-	<div class="flex flex-col max-w-3xl mx-auto w-11/12 border-b-4 border-dotted border-zinc-700 py-4 lg:p-8">
+	<div
+		class="flex flex-col max-w-3xl mx-auto w-11/12 border-b-4 border-dotted border-zinc-700 py-4 lg:p-8 cursor-pointer"
+		on:click={() => goto(`/section/${sectionView.id}/comments`)}
+	>
 		<div class="flex items-center mb-4 pb-4 px-2 border-b border-zinc-700">
 			<h3 class="text-xl flex-1">Top Comments</h3>
 			<ArrowRightSLine size="24px" />
 		</div>
-		{#each topComments as comment}
-			<NewComment {comment} collapsed={true} topComment={true} />
-		{/each}
+		{#if topComments.length === 0}
+			<div class="flex flex-col items-center justify-center h-[200px] w-full">
+				<LightbulbFlashLine size="62px" />
+				<span class="all-small-caps font-bold tracking-wide text-base">Share Your Thoughts</span>
+			</div>
+		{:else}
+			{#each topComments as comment}
+				<NewComment {comment} collapsed={true} topComment={true} />
+			{/each}
+		{/if}
 	</div>
 	<div
 		class="flex flex-col items-center justify-center max-w-[400px] mx-auto w-11/12 px-4 py-2 mt-4 rounded-xl font-normal"

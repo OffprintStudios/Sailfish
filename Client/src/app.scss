@@ -506,7 +506,7 @@ div.section-page {
   --section-paragraph-margins: 1rem 0 1rem 0;
   --section-paragraph-indent: 0;
   background-color: var(--section-background);
-  @apply lg:overflow-y-scroll;
+  @apply relative lg:overflow-y-scroll;
 
   div.section-tools {
     @apply items-center justify-center w-full mx-auto px-4 py-4 transition sticky top-0 z-10 h-[62px] lg:h-[72px];

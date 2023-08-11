@@ -12,13 +12,15 @@
 	import { account } from '$lib/state/account.state';
 	import toast from 'svelte-french-toast';
 	import { slugify } from '$lib/util/functions';
-	import { afterNavigate } from '$app/navigation';
+	import { beforeNavigate, afterNavigate } from '$app/navigation';
+	import type { BeforeNavigate } from '@sveltejs/kit';
 
 	export let data: SectionPage;
 	const iconSize = "22px";
 	let scrollY = 0;
 	let sectionContainerHeight = 0;
 	let sectionPage: HTMLDivElement;
+	let toolsInMeta = false;
 
 	onMount(async () => {
 		const themeColor = document.querySelector("meta[name='theme-color']")!;
@@ -101,12 +103,40 @@
 		if($account.currProfile) {
 			await markAsRead();
 		}
+
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (!entry.isIntersecting) {
+					toolsInMeta = false;
+					themeColor.setAttribute("content", themeColorValue);
+				} else {
+					toolsInMeta = true;
+					const bgColor = getComputedStyle(document.documentElement).getPropertyValue("--background");
+					themeColor.setAttribute("content", bgColor);
+				}
+			})
+		}, {
+			root: null,
+			rootMargin: "0px 0px -92% 0px",
+			threshold: 0,
+		});
+		observer.observe(document.getElementById("section-meta")!);
+	});
+
+	beforeNavigate((e: BeforeNavigate) => {
+		if (!e.to?.url.pathname.startsWith("/section")) {
+			const themeColor = document.querySelector("meta[name='theme-color']")!;
+			const accentColor = getComputedStyle(document.documentElement).getPropertyValue(
+				"--accent"
+			);
+			themeColor.setAttribute("content", accentColor);
+		}
 	});
 
 	afterNavigate(() => {
 		const sectionPage = document.getElementById("section-page");
 		if (sectionPage) {
-			sectionPage.scrollIntoView({ behavior: "instant", block: "start", inline: "nearest" });
+			sectionPage.scrollTo(0, 0);
 		}
 	});
 
@@ -124,7 +154,6 @@
 	}
 
 	function onPageScroll() {
-		console.log(sectionPage.scrollTop);
 		scrollY = sectionPage.scrollTop;
 	}
 </script>
@@ -164,6 +193,7 @@
 		containerHeight={sectionContainerHeight}
 		cheer={data.cheer}
 		{iconSize}
+		bind:toolsInMeta
 		bind:scrollY
 	/>
 	<SectionContent content={data.section} bind:containerHeight={sectionContainerHeight} />
@@ -176,10 +206,12 @@
 		comments={data.section.section.comments}
 		{iconSize}
 	/>
-	<SectionMeta
-		readingHistory={data.readingHistory}
-		sectionView={data.section}
-		topComments={data.topComments}
-		libraryItem={data.libraryItem}
-	/>
+	<div id="section-meta">
+		<SectionMeta
+			readingHistory={data.readingHistory}
+			sectionView={data.section}
+			topComments={data.topComments}
+			libraryItem={data.libraryItem}
+		/>
+	</div>
 </div>

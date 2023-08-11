@@ -26,6 +26,7 @@
 	export let containerHeight: number;
 	export let scrollY: number;
 	export let iconSize = "22px";
+	export let toolsInMeta = false;
 
 	let bookmarking = false;
 	let cheering = false;
@@ -77,8 +78,8 @@
 
 <div
 	class="section-tools pinned"
-	class:in-content={scrollY < containerHeight + 100}
-	class:out-of-content={scrollY >= containerHeight + 100}
+	class:in-content={!toolsInMeta}
+	class:out-of-content={toolsInMeta}
 >
 	<div class="flex items-center w-1/3">
 		<button class="section-button" on:click={goToWork}>
@@ -109,7 +110,7 @@
 		</span>
 	</div>
 	<div class="w-1/3 flex items-center justify-end">
-		{#if scrollY >= containerHeight + 100}
+		{#if toolsInMeta}
 			<div class="flex items-center mr-0.5" transition:fade={{ delay: 0, duration: 150 }}>
 				<button class="section-button hide-this" class:active={!!cheer} title="Cheers" on:click={toggleCheer}>
 					{#if cheering}
