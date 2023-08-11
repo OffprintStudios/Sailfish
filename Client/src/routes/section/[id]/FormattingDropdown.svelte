@@ -63,7 +63,7 @@
 					});
 				})
 				.catch(() => {
-					console.log(`Button not yet assigned!`);
+					console.warn(`Button not yet assigned!`);
 				});
 		}
 

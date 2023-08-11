@@ -25,11 +25,30 @@
 	import { Avatar } from '$lib/ui/util';
 	import SvelteMarkdown from 'svelte-markdown';
 	import { LinkTag } from '$lib/ui/content';
+	import { onMount } from 'svelte';
 
 	export let data: SectionPage;
+	const published = data.tableOfContents.filter((section) => section.publishedOn !== undefined);
 	const iconSize = "22px";
 	let noteTopOpen = false;
 	let addingToLibrary = false;
+	let cheering = false;
+
+	onMount(() => {
+		const sectionNav = document.getElementById("section-nav")!;
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach(async (entry) => {
+				if ($account.account && $account.currProfile && entry.isIntersecting) {
+					await markAsRead();
+				}
+			});
+		}, {
+			root: null,
+			rootMargin: "0px 0px -50% 0px",
+			threshold: 0,
+		});
+		observer.observe(sectionNav);
+	});
 
 	async function markAsRead() {
 		const response = await patchReq<ReadingHistory>(
@@ -43,9 +62,6 @@
 			data.readingHistory = response as ReadingHistory;
 		}
 	}
-
-	const published = data.tableOfContents.filter((section) => section.publishedOn !== undefined);
-	let cheering = false;
 
 	function goBack() {
 		let sections = published;
