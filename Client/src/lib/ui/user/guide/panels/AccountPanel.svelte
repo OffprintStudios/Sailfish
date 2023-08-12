@@ -232,7 +232,7 @@
 						{#each $account.profiles as profile}
 							<button class="profile-button" on:click={() => selectProfile(profile)}>
 								<Avatar src={profile.avatar} size="72px" borderWidth="1px" />
-								<span>Alyx, Of Many Figments</span>
+								<span>{profile.username}</span>
 							</button>
 						{/each}
 						{#if $account.profiles.length < 3}

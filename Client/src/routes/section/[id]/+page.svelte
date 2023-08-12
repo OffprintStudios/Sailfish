@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { SectionPage, Cheer } from '$lib/models/content/works';
-	import { delReq, patchReq, postReq, putReq, type ResponseError } from '$lib/http';
+	import { patchReq, postReq, type ResponseError } from '$lib/http';
 	import type { ReadingHistory } from '$lib/models/content/library';
 	import { account } from '$lib/state/account.state';
 	import toast from 'svelte-french-toast';
@@ -13,25 +13,16 @@
 		OpenArmLine,
 		DiscussLine,
 		ArrowRightSLine,
-		Bookmark3Fill,
-		Bookmark3Line,
-		ShareBoxLine,
-		LightbulbFlashLine,
 	} from 'svelte-remixicon';
 	import { slide } from 'svelte/transition';
-	import { abbreviate, copyToClipboard, slugify } from '$lib/util/functions';
+	import { abbreviate } from '$lib/util/functions';
 	import { goto } from '$app/navigation';
-	import { NewComment } from '$lib/ui/comments';
-	import { Avatar } from '$lib/ui/util';
-	import SvelteMarkdown from 'svelte-markdown';
-	import { LinkTag } from '$lib/ui/content';
 	import { onMount } from 'svelte';
 
 	export let data: SectionPage;
 	const published = data.tableOfContents.filter((section) => section.publishedOn !== undefined);
 	const iconSize = "22px";
 	let noteTopOpen = false;
-	let addingToLibrary = false;
 	let cheering = false;
 
 	onMount(() => {
@@ -110,48 +101,6 @@
 		}
 		cheering = false;
 	}
-
-	async function setLibrary() {
-		if (!$account.currProfile) {
-			toast.error("You must be logged in and have a profile selected to use this feature.");
-			return;
-		}
-		addingToLibrary = true;
-		if (data.section.section.publishedOn === undefined) {
-			toast.error(`This feature is disabled for unpublished works.`);
-			addingToLibrary = false;
-			return;
-		}
-		if ($account.account && $account.currProfile) {
-			if ($account.currProfile.id === data.section.author.id) {
-				toast.error(`You cannot add your own work to your library!`);
-				addingToLibrary = false;
-				return;
-			}
-
-			let response: { hasItem: boolean } | ResponseError;
-			if (data.libraryItem?.hasItem) {
-				response = await delReq<{ hasItem: boolean }>(
-					`/library/remove-one?workId=${data.section.work.id}&profileId=${$account.currProfile.id}`
-				);
-			} else {
-				response = await putReq<{ hasItem: boolean }>(
-					`/library/add-one?workId=${data.section.work.id}&profileId=${$account.currProfile.id}`,
-					{}
-				);
-			}
-
-			if ((response as ResponseError).error) {
-				const error = response as ResponseError;
-				toast.error(error.message);
-			} else {
-				data.libraryItem = response as { hasItem: boolean };
-			}
-		} else {
-			toast.error(`You must be logged in to perform this action.`);
-		}
-		addingToLibrary = false;
-	}
 </script>
 
 <div id="section-container" class="section-container">
@@ -213,7 +162,7 @@
 		{/if}
 	</button>
 	<div class="mx-0.5"><!--spacer--></div>
-	<button class="section-button" title="Comments">
+	<button class="section-button" title="Comments" on:click={() => goto(`/section/${data.section.id}/comments`)}>
 		<DiscussLine size={iconSize} class="mr-1" />
 		<span class="text-xs" style="top: 0.03rem;">
 			{abbreviate(data.section.section.comments)}
@@ -224,108 +173,6 @@
 		<span class="hidden lg:block">Next</span>
 		<ArrowRightSLine class="lg:ml-1" size={iconSize} />
 	</button>
-</div>
-<div id="section-meta" class="section-meta">
-	<div
-		class="flex flex-col max-w-3xl mx-auto w-11/12 border-b-4 border-dotted border-zinc-700 p-4 pb-8"
-	>
-		<div class="flex flex-col lg:flex-row items-center">
-			{#if data.section.work.coverArt}
-				<div class="bg-zinc-700 p-1 rounded-xl lg:mr-4">
-					<img
-						src={data.section.work.coverArt}
-						alt="cover art"
-						class="max-w-[150px] max-h-[110px] rounded-lg"
-					/>
-				</div>
-			{/if}
-			<div class="w-full" style="font-family: var(--header-text);">
-				<h3 class="text-4xl text-center lg:text-left">{data.section.work.title}</h3>
-				<div class="flex flex-col lg:flex-row items-center w-full">
-				<span class="text-lg text-zinc-500 flex-1">
-					by
-					<a
-						class="text-zinc-500 hover:text-zinc-500"
-						href="/profile/{data.section.author.id}/{slugify(data.section.author.name)}"
-					>
-						{data.section.author.name}
-					</a>
-				</span>
-					<div
-						class="py-2 w-full font-normal lg:hidden"
-						style="font-family: var(--body-text); text-align: center;"
-					>
-						{data.section.work.desc}
-					</div>
-				</div>
-				<div
-					class="py-2 w-full font-normal hidden lg:block"
-					style="font-family: var(--body-text); color: var(--text-color);"
-				>
-					{data.section.work.desc}
-				</div>
-			</div>
-		</div>
-		<div class="flex items-center justify-center lg:justify-end pt-4 flex-wrap">
-			<div class="flex items-center">
-				<button class="meta-button with-text" on:click={setLibrary}>
-					{#if addingToLibrary}
-						<Loader5Line class="mr-2 animate-[spin_2s_linear_infinite]" />
-						<span class="relative -top-0.5">Adding</span>
-					{:else}
-						{#if data.libraryItem?.hasItem}
-							<Bookmark3Fill class="mr-2" />
-							<span class="relative -top-0.5">Added</span>
-						{:else}
-							<Bookmark3Line class="mr-2" />
-							<span class="relative -top-0.5">Library</span>
-						{/if}
-					{/if}
-				</button>
-				<div class="mx-0.5"><!--spacer--></div>
-				<button class="meta-button with-text" on:click={() => copyToClipboard(`https://offprint.net/section/${data.section.id}`)}>
-					<ShareBoxLine class="mr-2" />
-					<span class="relative -top-0.5">Share</span>
-				</button>
-			</div>
-		</div>
-	</div>
-	<div
-		class="flex flex-col max-w-3xl mx-auto w-11/12 border-b-4 border-dotted border-zinc-700 py-4 lg:p-8 cursor-pointer"
-		on:click={() => goto(`/section/${data.section.id}/comments`)}
-	>
-		<div class="flex items-center mb-4 pb-4 px-2 border-b border-zinc-700">
-			<h3 class="text-xl flex-1">Top Comments</h3>
-			<ArrowRightSLine size="24px" />
-		</div>
-		{#if data.topComments.length === 0}
-			<div class="flex flex-col items-center justify-center h-[200px] w-full">
-				<LightbulbFlashLine size="62px" />
-				<span class="all-small-caps font-bold tracking-wide text-base">Share Your Thoughts</span>
-			</div>
-		{:else}
-			{#each data.topComments as comment}
-				<NewComment {comment} collapsed={true} topComment={true} />
-			{/each}
-		{/if}
-	</div>
-	<div
-		class="flex flex-col items-center justify-center max-w-[400px] mx-auto w-11/12 px-4 py-2 mt-4 rounded-xl font-normal"
-		style="font-family: var(--body-text);"
-	>
-		<Avatar src={data.section.author.avatar} size="125px" />
-		<h4 class="mt-3 text-2xl">{data.section.author.name}</h4>
-		<div class="markdown-text">
-			<SvelteMarkdown source={data.section.author.info.bio} />
-		</div>
-		{#if Object.keys(data.section.author.links).length !== 0}
-			<div class="flex items-center flex-wrap">
-				{#each Object.keys(data.section.author.links) as key}
-					<LinkTag kind={key} href={data.section.author.links[key]} />
-				{/each}
-			</div>
-		{/if}
-	</div>
 </div>
 
 <style lang="scss">

@@ -100,7 +100,7 @@ struct ReadingService {
         if profile != nil {
             var ids: [String] = []
             for comment in comments.items {
-                ids.append(comment.comment.id!)
+                ids.append(comment.$comment.id)
             }
             let votesPer = try await CommentVote.query(on: request.db)
                 .filter(\.$comment.$id ~~ ids)

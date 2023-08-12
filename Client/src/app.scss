@@ -508,6 +508,10 @@ div.section-page {
   background-color: var(--section-background);
   @apply relative lg:overflow-y-scroll;
 
+  &.in-comments {
+    background-color: var(--background);
+  }
+
   div.section-tools {
     @apply items-center justify-center w-full mx-auto px-4 py-4 transition sticky top-0 z-10 h-[62px] lg:h-[72px];
     &.pinned {
@@ -531,6 +535,9 @@ div.section-page {
                       var(--background) 85%,
                       transparent
       );
+    }
+    &.comments-page {
+      background: var(--background);
     }
   }
   div.section-container {
@@ -607,34 +614,50 @@ div.section-page {
   }
   }
   div.section-meta {
-    @apply py-6 block shadow-inner text-white;
+    @apply py-6 block shadow-inner;
     background: var(--background);
+
     div.section-about {
       @apply flex flex-col rounded-xl overflow-hidden max-w-3xl mx-auto;
     }
-    button.meta-button {
-      @apply flex items-center px-1.5 py-2.5 transition m-0.5 lg:m-0 transform focus:ring-0 text-base rounded-lg select-none relative;
-      text-transform: lowercase;
-      font-variant: small-caps;
-      font-weight: 700;
-      letter-spacing: 1px;
-      font-family: var(--body-text);
-      color: var(--text-color);
-      &.thumbs-up {
-        @apply hover:text-green-600;
-        &.selected {
-          @apply text-green-600;
-        }
-      }
-      &.thumbs-down {
-        @apply hover:text-red-600;
-        &.selected {
-          @apply text-red-600;
-        }
-      }
-      &.with-text {
-        @apply py-1.5;
+
+    &.on-comments {
+      @apply shadow-none;
+    }
+  }
+  button.meta-button {
+    @apply flex items-center px-1.5 py-2.5 transition m-0.5 lg:m-0 transform focus:ring-0 text-base rounded-lg select-none relative;
+    text-transform: lowercase;
+    font-variant: small-caps;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-family: var(--body-text);
+    color: var(--text-color);
+
+    &.thumbs-up {
+      @apply hover:text-green-600;
+      &.selected {
+        @apply text-green-600;
       }
     }
+
+    &.thumbs-down {
+      @apply hover:text-red-600;
+      &.selected {
+        @apply text-red-600;
+      }
+    }
+
+    &.with-text {
+      @apply py-1.5;
+    }
+    &.active {
+      @apply text-white;
+      background: var(--accent);
+    }
+  }
+  div.section-comments {
+    @apply py-6 relative;
+    background: var(--background);
   }
 }

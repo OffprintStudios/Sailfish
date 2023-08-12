@@ -1,20 +1,20 @@
 <script lang="ts">
-	import { abbreviate, slugify } from '$lib/util/functions';
+	import { abbreviate, copyToClipboard, slugify, pluralize } from '$lib/util/functions';
 	import type { SectionPage } from '$lib/models/content/works';
 	import { afterNavigate, beforeNavigate, goto } from '$app/navigation';
 	import { account } from '$lib/state/account.state';
 	import toast from 'svelte-french-toast';
-	import { patchReq, postReq, type ResponseError } from '$lib/http';
+	import { delReq, patchReq, postReq, putReq, type ResponseError } from '$lib/http';
 	import type { ReadingHistory } from '$lib/models/content/library';
 	import type { Cheer } from '$lib/models/content/works';
 	import {
-		ArrowLeftSLine,
+		ArrowLeftSLine, ArrowRightSLine, Bookmark3Fill, Bookmark3Line,
 		BookmarkFill,
 		BookmarkLine,
-		DiscussLine,
+		DiscussLine, LightbulbFlashLine,
 		Loader5Line,
 		OpenArmFill,
-		OpenArmLine
+		OpenArmLine, ShareBoxLine
 	} from 'svelte-remixicon';
 	import { fade } from 'svelte/transition';
 	import FormattingDropdown from './FormattingDropdown.svelte';
@@ -23,12 +23,18 @@
 	import { onMount } from 'svelte';
 	import { Justification, ParagraphStyle, Theme, WidthSettings } from '$lib/util/constants/sections';
 	import { section } from '$lib/state/section.state';
+	import { page } from '$app/stores';
+	import SvelteMarkdown from 'svelte-markdown';
+	import { Avatar } from '$lib/ui/util';
+	import { NewComment } from '$lib/ui/comments';
+	import { LinkTag } from '$lib/ui/content';
 
 	export let data: SectionPage;
 
 	const iconSize = "22px";
 	let toolsInMeta = false;
 	let bookmarking = false;
+	let addingToLibrary = false;
 	let cheering = false;
 
 	onMount(() => {
@@ -112,9 +118,11 @@
 		const observer = new IntersectionObserver((entries) => {
 			entries.forEach(entry => {
 				if (!entry.isIntersecting) {
+					console.log("is not intersecting");
 					toolsInMeta = false;
 					themeColor.setAttribute("content", themeColorValue);
 				} else {
+					console.log("is intersecting");
 					toolsInMeta = true;
 					const bgColor = getComputedStyle(document.documentElement).getPropertyValue("--background");
 					themeColor.setAttribute("content", bgColor);
@@ -145,8 +153,12 @@
 		}
 	});
 
-	function goToWork() {
-		goto(`/work/${data.section.work.id}/${slugify(data.section.work.title)}`);
+	function goBack() {
+		if ($page.url.pathname.includes("/comments")) {
+			goto(`/section/${data.section.id}`);
+		} else {
+			goto(`/work/${data.section.work.id}/${slugify(data.section.work.title)}`);
+		}
 	}
 
 	async function bookmarkSection() {
@@ -188,6 +200,48 @@
 		}
 		cheering = false;
 	}
+
+	async function setLibrary() {
+		if (!$account.currProfile) {
+			toast.error("You must be logged in and have a profile selected to use this feature.");
+			return;
+		}
+		addingToLibrary = true;
+		if (data.section.section.publishedOn === undefined) {
+			toast.error(`This feature is disabled for unpublished works.`);
+			addingToLibrary = false;
+			return;
+		}
+		if ($account.account && $account.currProfile) {
+			if ($account.currProfile.id === data.section.author.id) {
+				toast.error(`You cannot add your own work to your library!`);
+				addingToLibrary = false;
+				return;
+			}
+
+			let response: { hasItem: boolean } | ResponseError;
+			if (data.libraryItem?.hasItem) {
+				response = await delReq<{ hasItem: boolean }>(
+					`/library/remove-one?workId=${data.section.work.id}&profileId=${$account.currProfile.id}`
+				);
+			} else {
+				response = await putReq<{ hasItem: boolean }>(
+					`/library/add-one?workId=${data.section.work.id}&profileId=${$account.currProfile.id}`,
+					{}
+				);
+			}
+
+			if ((response as ResponseError).error) {
+				const error = response as ResponseError;
+				toast.error(error.message);
+			} else {
+				data.libraryItem = response as { hasItem: boolean };
+			}
+		} else {
+			toast.error(`You must be logged in to perform this action.`);
+		}
+		addingToLibrary = false;
+	}
 </script>
 
 <svelte:head>
@@ -217,47 +271,65 @@
 	<meta property="twitter:image" content={data.section.work.coverArt ?? data.section.author.avatar} />
 </svelte:head>
 
-<div id="section-page" class="section-page paper">
+<div
+	id="section-page"
+	class="section-page paper"
+	class:in-comments={$page.url.pathname.includes("/comments")}
+>
 	<div
 		class="section-tools pinned"
-		class:in-content={!toolsInMeta}
-		class:out-of-content={toolsInMeta}
+		class:in-content={!toolsInMeta && !$page.url.pathname.includes("/comments")}
+		class:out-of-content={toolsInMeta && !$page.url.pathname.includes("/comments")}
+		class:comments-page={$page.url.pathname.includes("/comments")}
 	>
 		<div class="flex items-center w-1/3">
-			<button class="section-button" on:click={goToWork}>
+			<button class="section-button" on:click={goBack}>
 				<ArrowLeftSLine class="lg:mr-1" size={iconSize} />
 				<span class="hidden lg:block">Back</span>
 			</button>
-			<div class="hidden lg:block mx-0.5"><!--spacer--></div>
-			<TableOfContents
-				authorId={data.section.author.id}
-				sectionId={data.section.id}
-				sectionList={data.tableOfContents}
-				{iconSize}
-			/>
-			<!--{#if $account.account && $account.currProfile}
-				<button
-					class="section-button no-text hide-this"
-					title="Notes & Highlights"
-					style="margin-right: 0.25rem;"
-				>
-					<StickyNoteLine size={iconSize} />
-				</button>
-			{/if}-->
+			{#if !$page.url.pathname.includes("/comments")}
+				<div class="hidden lg:block mx-0.5"><!--spacer--></div>
+				<TableOfContents
+					authorId={data.section.author.id}
+					sectionId={data.section.id}
+					sectionList={data.tableOfContents}
+					{iconSize}
+				/>
+				<!--{#if $account.account && $account.currProfile}
+					<button
+						class="section-button no-text hide-this"
+						title="Notes & Highlights"
+						style="margin-right: 0.25rem;"
+					>
+						<StickyNoteLine size={iconSize} />
+					</button>
+				{/if}-->
+			{/if}
 		</div>
 		<div
 			class="w-1/3 flex flex-col items-center justify-center"
 			style="color: var(--section-tool-header-color); font-family: var(--header-text);"
 		>
-		<span class="font-bold text-base relative top-1 truncate max-w-[138px] md:max-w-[194px] lg:max-w-[250px]">
-			{data.section.work.title}
-		</span>
-			<span class="text-[0.75rem] relative -top-0.5 hidden lg:block truncate max-w-[250px]">
-			{data.section.section.title}
-		</span>
+			{#if $page.url.pathname.includes("/comments")}
+				<span class="font-bold text-base relative">
+					{abbreviate(data.section.section.comments)} comment{pluralize(data.section.section.comments)}
+				</span>
+			{:else}
+				<span class="font-bold text-base relative top-1 truncate max-w-[138px] md:max-w-[194px] lg:max-w-[250px]">
+					<a
+						style="color: var(--section-tool-color);"
+						href="/work/{data.section.work.id}/{slugify(data.section.work.title)}"
+					>
+						{data.section.work.title}
+					</a>
+				</span>
+				<span class="text-[0.75rem] relative -top-0.5 hidden lg:block truncate max-w-[250px]">
+					{data.section.section.title}
+				</span>
+			{/if}
 		</div>
 		<div class="w-1/3 flex items-center justify-end">
-			{#if toolsInMeta}
+			{#if toolsInMeta && !$page.url.pathname.includes("/comments")}
 				<div class="flex items-center mr-0.5" transition:fade={{ delay: 0, duration: 150 }}>
 					<button class="section-button hide-this" class:active={!!data.cheer} title="Cheers" on:click={toggleCheer}>
 						{#if cheering}
@@ -275,7 +347,7 @@
 						{/if}
 					</button>
 					<div class="hidden lg:block mx-0.5"><!--spacer--></div>
-					<button class="section-button hide-this" title="Comments">
+					<button class="section-button hide-this" title="Comments" on:click={() => goto(`/section/${data.section.id}/comments`)}>
 						<DiscussLine size={iconSize} class="mr-1" />
 						<span class="text-xs" style="top: 0.03rem;">
 						{abbreviate(data.section.section.comments)}
@@ -283,20 +355,131 @@
 					</button>
 				</div>
 			{/if}
-			<FormattingDropdown {iconSize} />
-			<div class="hidden lg:block mx-0.5"><!--spacer--></div>
-			<button class="section-button no-text" title="Bookmark Chapter" on:click={bookmarkSection}>
-				{#if bookmarking}
-					<Loader5Line size={iconSize} class="animate-[spin_2s_linear_infinite]" />
-				{:else}
-					{#if data.readingHistory?.bookmarked.id === data.section.id}
-						<BookmarkFill size={iconSize} />
+			{#if !$page.url.pathname.includes("/comments")}
+				<FormattingDropdown {iconSize} />
+				<div class="hidden lg:block mx-0.5"><!--spacer--></div>
+				<button class="section-button no-text" title="Bookmark Chapter" on:click={bookmarkSection}>
+					{#if bookmarking}
+						<Loader5Line size={iconSize} class="animate-[spin_2s_linear_infinite]" />
 					{:else}
-						<BookmarkLine size={iconSize} />
+						{#if data.readingHistory?.bookmarked.id === data.section.id}
+							<BookmarkFill size={iconSize} />
+						{:else}
+							<BookmarkLine size={iconSize} />
+						{/if}
 					{/if}
-				{/if}
-			</button>
+				</button>
+			{/if}
 		</div>
 	</div>
 	<slot />
+	<div id="section-meta" class="section-meta" class:on-comments={$page.url.pathname.includes("/comments")}>
+		{#if !$page.url.pathname.includes("/comments")}
+			<div
+				class="flex flex-col max-w-3xl mx-auto w-11/12 border-b-4 border-dotted border-zinc-200 dark:border-zinc-700 p-4 pb-8"
+			>
+				<div class="flex flex-col lg:flex-row items-center">
+					{#if data.section.work.coverArt}
+						<div class="bg-zinc-700 p-1 rounded-xl lg:mr-4">
+							<img
+								src={data.section.work.coverArt}
+								alt="cover art"
+								class="max-w-[150px] max-h-[110px] rounded-lg"
+							/>
+						</div>
+					{/if}
+					<div class="w-full" style="font-family: var(--header-text);">
+						<h3 class="text-4xl text-center lg:text-left">{data.section.work.title}</h3>
+						<div class="flex flex-col lg:flex-row items-center w-full">
+					<span class="text-lg text-zinc-500 flex-1">
+						by
+						<a
+							class="text-zinc-500 hover:text-zinc-500"
+							href="/profile/{data.section.author.id}/{slugify(data.section.author.name)}"
+						>
+							{data.section.author.name}
+						</a>
+					</span>
+							<div
+								class="py-2 w-full font-normal lg:hidden"
+								style="font-family: var(--body-text); text-align: center;"
+							>
+								{data.section.work.desc}
+							</div>
+						</div>
+						<div
+							class="py-2 w-full font-normal hidden lg:block"
+							style="font-family: var(--body-text); color: var(--text-color);"
+						>
+							{data.section.work.desc}
+						</div>
+					</div>
+				</div>
+				<div class="flex items-center justify-center lg:justify-end pt-4 flex-wrap">
+					<div class="flex items-center">
+						<button class="meta-button with-text" on:click={setLibrary}>
+							{#if addingToLibrary}
+								<Loader5Line class="mr-2 animate-[spin_2s_linear_infinite]" />
+								<span class="relative -top-0.5">Adding</span>
+							{:else}
+								{#if data.libraryItem?.hasItem}
+									<Bookmark3Fill class="mr-2" />
+									<span class="relative -top-0.5">Added</span>
+								{:else}
+									<Bookmark3Line class="mr-2" />
+									<span class="relative -top-0.5">Library</span>
+								{/if}
+							{/if}
+						</button>
+						<div class="mx-0.5"><!--spacer--></div>
+						<button class="meta-button with-text" on:click={() => copyToClipboard(`https://offprint.net/section/${data.section.id}`)}>
+							<ShareBoxLine class="mr-2" />
+							<span class="relative -top-0.5">Share</span>
+						</button>
+					</div>
+				</div>
+			</div>
+			<div
+				class="flex flex-col max-w-3xl mx-auto w-11/12 border-b-4 border-dotted border-zinc-200 dark:border-zinc-700 py-4 lg:p-8 cursor-pointer"
+				on:click={() => goto(`/section/${data.section.id}/comments`)}
+				on:keydown={() => goto(`/section/${data.section.id}/comments`)}
+				on:keyup={() => goto(`/section/${data.section.id}/comments`)}
+				on:keypress={() => goto(`/section/${data.section.id}/comments`)}
+				role="button"
+				tabindex="0"
+			>
+				<div class="flex items-center mb-4 pb-4 px-2 border-b border-zinc-200 dark:border-zinc-700">
+					<h3 class="text-xl flex-1">Top Comments</h3>
+					<ArrowRightSLine size="24px" />
+				</div>
+				{#if data.topComments.length === 0}
+					<div class="flex flex-col items-center justify-center h-[200px] w-full">
+						<LightbulbFlashLine size="62px" />
+						<span class="all-small-caps font-bold tracking-wide text-base">Share Your Thoughts</span>
+					</div>
+				{:else}
+					{#each data.topComments as comment}
+						<NewComment {comment} collapsed={true} topComment={true} />
+					{/each}
+				{/if}
+			</div>
+			<div
+				class="flex flex-col items-center justify-center max-w-[400px] mx-auto w-11/12 px-4 py-2 mt-4 rounded-xl font-normal"
+				style="font-family: var(--body-text);"
+			>
+				<Avatar src={data.section.author.avatar} size="125px" />
+				<h4 class="mt-3 text-2xl">{data.section.author.name}</h4>
+				<div class="markdown-text">
+					<SvelteMarkdown source={data.section.author.info.bio} />
+				</div>
+				{#if Object.keys(data.section.author.links).length !== 0}
+					<div class="flex items-center flex-wrap">
+						{#each Object.keys(data.section.author.links) as key}
+							<LinkTag kind={key} href={data.section.author.links[key]} />
+						{/each}
+					</div>
+				{/if}
+			</div>
+		{/if}
+	</div>
 </div>

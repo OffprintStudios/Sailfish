@@ -93,7 +93,7 @@
 
 <style lang="scss">
 	div.comment {
-	  @apply flex flex-col w-full px-4 transition;
+	  @apply flex flex-col w-full px-2 lg:px-4 transition;
 	  button.extras-button {
 		@apply flex items-center rounded-xl transition px-2 py-2.5;
 		color: var(--text-color);

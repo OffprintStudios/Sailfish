@@ -58,17 +58,16 @@
 	import Color from "@tiptap/extension-color";
 	import { Dropdown } from "$lib/ui/dropdown";
 
-	let bubbleMenu;
+	let bubbleMenu: HTMLElement;
 	let editor: Readable<Editor>;
-	let linkText, imgSrc, vidSrc;
+	let linkText: string | undefined, imgSrc: string | undefined, vidSrc: string | undefined;
 	let linkMenuOpen = false;
 
 	export let label: string;
 	export let value: string;
-	export let errorMessage = null;
+	export let errorMessage: string | null = null;
 	export let hasHeader = false;
 	export let kind: "normal" | "primary" = "normal";
-	export let context: "normal" | "comment" = "normal";
 
 	let background = "bg-zinc-200 dark:bg-zinc-700";
 	if (kind === "primary") {
@@ -398,7 +397,7 @@
 						class="color-picker"
 						title="Text Color"
 						on:change={(event) =>
-							$editor.chain().focus().setColor(event.target.value).run()}
+							$editor.chain().focus().setColor(event.target?.value).run()}
 					/>
 					<button
 						on:click={() => $editor.chain().focus().unsetColor().run()}
