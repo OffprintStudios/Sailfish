@@ -241,7 +241,7 @@
 		}
 
 		const commentForm = document.getElementById("comment-form");
-		commentForm?.scrollTo();
+		commentForm?.scrollIntoView();
 	}
 </script>
 

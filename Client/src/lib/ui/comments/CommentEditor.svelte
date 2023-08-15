@@ -22,12 +22,21 @@
 	import Placeholder from '@tiptap/extension-placeholder';
 	import BubbleMenu from '@tiptap/extension-bubble-menu';
 	import { Icon } from 'svelte-remix';
+	import { slide } from 'svelte/transition';
 
 	export let value: string;
+
+	enum ToolBar {
+		Formatting,
+		AddMedia,
+		AddEmoji
+	}
 
 	const iconSize = "20px";
 	let bubbleMenu: HTMLElement;
 	let editor: Readable<Editor>;
+	let optionsOpen = false;
+	let currOptions = ToolBar.Formatting;
 
 	onMount(() => {
 		editor = createEditor({
@@ -62,6 +71,15 @@
 			},
 		});
 	});
+
+	function openOptions(toolBar?: ToolBar) {
+		if (!toolBar) {
+			optionsOpen = false;
+			return;
+		}
+		currOptions = toolBar;
+		optionsOpen = true;
+	}
 </script>
 
 <div
@@ -70,33 +88,60 @@
 >
 	<EditorContent editor={$editor} on:change />
 	{#if editor}
-		<div class="flex items-center p-2">
+		{#if optionsOpen}
+			<div 
+				class="p-2 bg-zinc-300 dark:bg-zinc-600"
+				transition:slide={{ delay: 0, duration: 200, axis: 'y' }}
+			>
+				{#if currOptions = ToolBar.Formatting}
+					<div class="flex items-center"></div>
+				{:else if currOptions = ToolBar.AddMedia}
+					<div class="flex items-center"></div>
+				{:else if currOptions = ToolBar.AddEmoji}
+					<div class="flex items-center"></div>
+				{/if}
+			</div>
+		{/if}
+		<div 
+			class="flex items-center p-2"
+			class:pt-0={optionsOpen}
+		>
 			<button
-				class="hover:bg-zinc-300 dark:hover:bg-zinc-600"
+				class="editor-button hover:bg-zinc-300 dark:hover:bg-zinc-600"
 				type="button"
-				title="Formatting"
+				title="Change Formatting"
+				class:active={optionsOpen}
+				on:click={() => optionsOpen = !optionsOpen}
 			>
 				<Icon name="font-size" width={iconSize} height={iconSize} tabindex="-1" />
 			</button>
 			<button
-				class="hover:bg-zinc-300 dark:hover:bg-zinc-600"
+				class="editor-button hover:bg-zinc-300 dark:hover:bg-zinc-600"
+				type="button"
+				title="Add Media"
+			>
+				<Icon name="gallery-line" width={iconSize} height={iconSize} tabindex="-1" />
+			</button>
+			<button
+				class="editor-button hover:bg-zinc-300 dark:hover:bg-zinc-600"
 				type="button"
 				title="Add Emoji"
 			>
 				<Icon name="emotion-line" width={iconSize} height={iconSize} tabindex="-1" />
 			</button>
 			<button
-				class="hover:bg-zinc-300 dark:hover:bg-zinc-600"
+				class="editor-button hover:bg-zinc-300 dark:hover:bg-zinc-600"
 				type="button"
-				title="Add Media"
+				title="Mark As Spoiler"
 			>
-				<Icon name="gallery-line" width={iconSize} height={iconSize} tabindex="-1" />
+				<Icon name="alert-line" width={iconSize} height={iconSize} tabindex="-1" />
 			</button>
 			<div class="flex-1"><!--spacer--></div>
 			<button
-				class="active-primary"
+				class="editor-button active-primary"
 				type="button"
 				title="Send Message"
+				disabled={optionsOpen}
 			>
 				<Icon name="send-plane-fill" width={iconSize} height={iconSize} tabindex="-1" />
 			</button>
@@ -105,14 +150,30 @@
 </div>
 
 <style lang="scss">
-  	button {
+  	button.editor-button {
     	@apply p-2 rounded-lg transition transform flex items-center;
+		&.active {
+			@apply bg-zinc-300 rounded-t-none;
+		}
 		&.active-primary {
 	  		background: var(--accent);
-	 		 color: white;
+	 		color: white;
 	  		&:hover {
 				background: var(--accent-light);
 	  		}
+			&:disabled {
+				@apply bg-zinc-200 text-zinc-400 cursor-not-allowed;
+			}
 		}
   	}
+	:global(.dark button.editor-button) {
+		&.active {
+			@apply bg-zinc-600;
+		}
+		&.active-primary {
+			&:disabled {
+				@apply text-zinc-500 bg-zinc-700;
+			}
+		}
+	}
 </style>
