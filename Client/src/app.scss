@@ -156,7 +156,7 @@ div.panel-container {
     }
   }
   button.panel-button, a.panel-button, div.panel-button {
-    @apply flex items-center block no-underline p-3 text-lg border-b border-zinc-400 w-full last:border-0 bg-zinc-300;
+    @apply flex items-center no-underline p-3 text-lg border-b border-zinc-400 w-full last:border-0 bg-zinc-300;
     color: var(--text-color);
     font-family: var(--header-text);
     .caret {
@@ -250,7 +250,7 @@ div.guide-dropdown {
     }
   }
   a.stat-box {
-    @apply block cursor-pointer flex flex-col items-center select-none no-underline p-4 w-1/3 transition transform;
+    @apply cursor-pointer flex flex-col items-center select-none no-underline p-4 w-1/3 transition transform;
     color: var(--text-color);
     div.stat {
       @apply flex items-center;

@@ -7,15 +7,7 @@
 	import { delReq, patchReq, postReq, putReq, type ResponseError } from '$lib/http';
 	import type { ReadingHistory } from '$lib/models/content/library';
 	import type { Cheer } from '$lib/models/content/works';
-	import {
-		ArrowLeftSLine, ArrowRightSLine, Bookmark3Fill, Bookmark3Line,
-		BookmarkFill,
-		BookmarkLine, ChatNewLine,
-		DiscussLine, LightbulbFlashLine,
-		Loader5Line,
-		OpenArmFill,
-		OpenArmLine, ShareBoxLine
-	} from 'svelte-remixicon';
+	import { Icon } from 'svelte-remix';
 	import { fade } from 'svelte/transition';
 	import FormattingDropdown from './FormattingDropdown.svelte';
 	import TableOfContents from './TableOfContents.svelte';
@@ -36,6 +28,7 @@
 	let bookmarking = false;
 	let addingToLibrary = false;
 	let cheering = false;
+	let links = new Map<string, string>(Object.entries(data.section.author.links));
 
 	onMount(() => {
 		const themeColor = document.querySelector("meta[name='theme-color']")!;
@@ -118,11 +111,9 @@
 		const observer = new IntersectionObserver((entries) => {
 			entries.forEach(entry => {
 				if (!entry.isIntersecting) {
-					console.log("is not intersecting");
 					toolsInMeta = false;
 					themeColor.setAttribute("content", themeColorValue);
 				} else {
-					console.log("is intersecting");
 					toolsInMeta = true;
 					const bgColor = getComputedStyle(document.documentElement).getPropertyValue("--background");
 					themeColor.setAttribute("content", bgColor);
@@ -294,7 +285,7 @@
 	>
 		<div class="flex items-center w-1/3">
 			<button class="section-button" on:click={goBack}>
-				<ArrowLeftSLine class="lg:mr-1" size={iconSize} />
+				<Icon name="arrow-left-s-line" class="lg:mr-1" width={iconSize} height={iconSize} />
 				<span class="hidden lg:block">Back</span>
 			</button>
 			{#if !$page.url.pathname.includes("/comments")}
@@ -343,13 +334,13 @@
 				<div class="flex items-center mr-0.5" transition:fade={{ delay: 0, duration: 150 }}>
 					<button class="section-button hide-this" class:active={!!data.cheer} title="Cheers" on:click={toggleCheer}>
 						{#if cheering}
-							<Loader5Line size={iconSize} class="mr-1 animate-[spin_2s_linear_infinite]" />
+							<Icon name="loader-5-line" width={iconSize} height={iconSize} class="mr-1 animate-[spin_2s_linear_infinite]" />
 							<span style="top: 0.03rem;">-</span>
 						{:else}
 							{#if data.cheer}
-								<OpenArmFill size={iconSize} class="mr-1" />
+								<Icon name="open-arm-fill" width={iconSize} height={iconSize} class="mr-1" />
 							{:else}
-								<OpenArmLine size={iconSize} class="mr-1" />
+								<Icon name="open-arm-line" width={iconSize} height={iconSize} class="mr-1" />
 							{/if}
 							<span class="text-xs" style="top: 0.03rem;">
 							{abbreviate(data.section.section.cheers)}
@@ -358,7 +349,7 @@
 					</button>
 					<div class="hidden lg:block mx-0.5"><!--spacer--></div>
 					<button class="section-button hide-this" title="Comments" on:click={() => goto(`/section/${data.section.id}/comments`)}>
-						<DiscussLine size={iconSize} class="mr-1" />
+						<Icon name="discuss-line" width={iconSize} height={iconSize} class="mr-1" />
 						<span class="text-xs" style="top: 0.03rem;">
 						{abbreviate(data.section.section.comments)}
 					</span>
@@ -370,19 +361,19 @@
 				<div class="hidden lg:block mx-0.5"><!--spacer--></div>
 				<button class="section-button no-text" title="Bookmark Chapter" on:click={bookmarkSection}>
 					{#if bookmarking}
-						<Loader5Line size={iconSize} class="animate-[spin_2s_linear_infinite]" />
+						<Icon name="loader-5-line" width={iconSize} height={iconSize} class="animate-[spin_2s_linear_infinite]" />
 					{:else}
 						{#if data.readingHistory?.bookmarked.id === data.section.id}
-							<BookmarkFill size={iconSize} />
+							<Icon name="bookmark-fill" width={iconSize} height={iconSize} />
 						{:else}
-							<BookmarkLine size={iconSize} />
+							<Icon name="bookmark-line" width={iconSize} height={iconSize} />
 						{/if}
 					{/if}
 				</button>
 			{/if}
 			{#if $page.url.pathname.includes("/comments")}
 				<button class="section-button no-text" on:click={goToCommentForm}>
-					<ChatNewLine size={iconSize} />
+					<Icon name="chat-new-line" width={iconSize} height={iconSize} />
 				</button>
 			{/if}
 		</div>
@@ -434,21 +425,21 @@
 					<div class="flex items-center">
 						<button class="meta-button with-text" on:click={setLibrary}>
 							{#if addingToLibrary}
-								<Loader5Line class="mr-2 animate-[spin_2s_linear_infinite]" />
+								<Icon name="loader-5-line" width="1rem" height="1rem" class="mr-2 animate-[spin_2s_linear_infinite]" />
 								<span class="relative -top-0.5">Adding</span>
 							{:else}
 								{#if data.libraryItem?.hasItem}
-									<Bookmark3Fill class="mr-2" />
+									<Icon name="bookmark-3-fill" width="1rem" height="1rem" class="mr-2" />
 									<span class="relative -top-0.5">Added</span>
 								{:else}
-									<Bookmark3Line class="mr-2" />
+									<Icon name="bookmark-3-line" width="1rem" height="1rem" class="mr-2" />
 									<span class="relative -top-0.5">Library</span>
 								{/if}
 							{/if}
 						</button>
 						<div class="mx-0.5"><!--spacer--></div>
 						<button class="meta-button with-text" on:click={() => copyToClipboard(`https://offprint.net/section/${data.section.id}`)}>
-							<ShareBoxLine class="mr-2" />
+							<Icon name="share-box-line" width="1rem" height="1rem" class="mr-2" />
 							<span class="relative -top-0.5">Share</span>
 						</button>
 					</div>
@@ -465,11 +456,11 @@
 			>
 				<div class="flex items-center mb-4 pb-4 px-2 border-b border-zinc-200 dark:border-zinc-700">
 					<h3 class="text-xl flex-1">Top Comments</h3>
-					<ArrowRightSLine size="24px" />
+					<Icon name="arrow-right-s-line" width="24px" height="24px" />
 				</div>
 				{#if data.topComments.length === 0}
 					<div class="flex flex-col items-center justify-center h-[200px] w-full">
-						<LightbulbFlashLine size="62px" />
+						<Icon name="lightbulb-flash-line" width="62px" height="62px" />
 						<span class="all-small-caps font-bold tracking-wide text-base">Share Your Thoughts</span>
 					</div>
 				{:else}
@@ -487,10 +478,10 @@
 				<div class="markdown-text">
 					<SvelteMarkdown source={data.section.author.info.bio} />
 				</div>
-				{#if Object.keys(data.section.author.links).length !== 0}
+				{#if links.size !== 0}
 					<div class="flex items-center flex-wrap">
-						{#each Object.keys(data.section.author.links) as key}
-							<LinkTag kind={key} href={data.section.author.links[key]} />
+						{#each links.entries() as [key, value]}
+							<LinkTag kind={key} href={value} />
 						{/each}
 					</div>
 				{/if}
