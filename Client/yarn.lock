@@ -2834,6 +2834,11 @@ svelte-preprocess@^5.0.4:
     sorcery "^0.11.0"
     strip-indent "^3.0.0"
 
+svelte-remix@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/svelte-remix/-/svelte-remix-0.5.2.tgz#fac1c5926f2b2a66cc9e63e3b01031e0bbcd4418"
+  integrity sha512-nD9sq2dLilhL/xpsFjLFp2Xe3eAceBXJzaCuIK8mvBIzk4GaZJM+WjR5QLG47OUFWDM6+WjLp3ZtObvb+p2VhA==
+
 svelte-remixicon@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/svelte-remixicon/-/svelte-remixicon-1.5.0.tgz#671b5457298b24fa4c009916361b69982385ca99"

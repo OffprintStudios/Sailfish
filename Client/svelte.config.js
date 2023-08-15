@@ -1,5 +1,6 @@
 import adapter from '@sveltejs/adapter-node';
-import preprocess from 'svelte-preprocess';
+import { vitePreprocess } from '@sveltejs/kit/vite';
+import preprocess from "svelte-preprocess";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -7,12 +8,9 @@ const config = {
 	// for more information about preprocessors
 	preprocess: [
 		preprocess({
-			scss: {
-				prependData: '@use "src/variables.scss" as *;'
-			},
-
-			postcss: true
-		})
+			postcss: true,
+		}),
+		vitePreprocess(),
 	],
 
 	kit: {

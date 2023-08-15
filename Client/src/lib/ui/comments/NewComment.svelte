@@ -1,10 +1,9 @@
 <script lang="ts">
-	import type { NewComment } from '$lib/models/comments';
-	import { Avatar, Time } from '$lib/ui/util';
-	import { ArrowUpSLine, ArrowDownSLine, More2Fill, AlarmWarningLine, Link, Medal2Line } from 'svelte-remixicon';
-	import { slide } from 'svelte/transition';
-	import { copyToClipboard, slugify, abbreviate, clickOutside, throttle } from '$lib/util/functions';
-	import RoleBadge from '$lib/ui/util/RoleBadge.svelte';
+	import type { NewComment } from "$lib/models/comments";
+	import { Avatar, Time, RoleBadge } from "../util";
+	import { Icon } from "svelte-remix";
+	import { slide } from "svelte/transition";
+	import { copyToClipboard, slugify, abbreviate, clickOutside, throttle } from "$lib/util/functions";
 
 	export let comment: NewComment;
 	export let collapsed = false;
@@ -43,11 +42,15 @@
 		</div>
 		{#if topComment}
 			<div class="text-green-600 px-1.5 mr-2">
-				<span><Medal2Line size={iconSize} /></span>
+				<span><Icon name="medal-2-line" width={iconSize} height={iconSize} tabindex="-1" /></span>
 			</div>
 		{/if}
-		<button class="rounded-xl p-1.5 transition hover:bg-zinc-200 dark:hover:bg-zinc-700" style="color: var(--text-color);" on:click={throttledExtras}>
-			<More2Fill size="20px" />
+		<button 
+			class="rounded-xl p-1.5 transition hover:bg-zinc-200 dark:hover:bg-zinc-700" 
+			style="color: var(--text-color);" 
+			on:click={throttledExtras}
+		>
+			<Icon name="more-2-fill" width="20px" height="20px" tabindex="-1" />
 		</button>
 	</div>
 	{#if extrasOpen}
@@ -58,12 +61,12 @@
 			on:outclick={throttledExtras}
 		>
 			<button class="extras-button" on:click={() => copyToClipboard("TODO: replace this")}>
-				<Link class="mr-2" />
+				<Icon name="link" width="1rem" height="1rem" class="mr-2" tabindex="-1" />
 				<span style="font-size: 0.825rem; line-height: 1rem;">Copy Link</span>
 			</button>
 			<div class="mx-0.5"><!--spacer--></div>
 			<button class="extras-button">
-				<AlarmWarningLine class="mr-2" />
+				<Icon name="alarm-warning-line" width="1rem" height="1rem" class="mr-2" tabindex="-1" />
 				<span style="font-size: 0.825rem; line-height: 1rem;">Report This</span>
 			</button>
 		</div>
@@ -85,12 +88,12 @@
 		{/if}
 		<div class="flex-1"><!--spacer--></div>
 		<button class="tool-link button">
-			<ArrowUpSLine size={iconSize} />
+			<Icon name="arrow-up-s-line" width={iconSize} height={iconSize} tabindex="-1" />
 			<span>{abbreviate(comment.likes)}</span>
 		</button>
 		<div class="mx-0.5"><!--spacer--></div>
 		<button class="tool-link button">
-			<ArrowDownSLine size={iconSize} />
+			<Icon name="arrow-down-s-line" width={iconSize} height={iconSize} tabindex="-1" />
 			<span>{abbreviate(comment.dislikes)}</span>
 		</button>
 	</div>
@@ -98,23 +101,26 @@
 
 <style lang="scss">
 	div.comment {
-	  @apply flex flex-col w-full px-2 lg:px-4 transition;
-	  button.extras-button {
-		@apply flex items-center rounded-xl transition px-2 py-2.5;
-		color: var(--text-color);
-	  }
-	  div.comment-tools {
-        @apply flex items-center text-xs text-zinc-400 pt-2;
-	  }
-	  button.tool-link {
-        @apply flex items-center rounded-xl pl-0.5 pr-1 py-0.5 transition;
-		&:hover {
-		  @apply underline;
-		  background-color: transparent !important;
+		@apply flex flex-col w-full px-2 transition;
+		button.extras-button {
+			@apply flex items-center rounded-xl transition px-2 py-2.5;
+			color: var(--text-color);
+	  	}
+	  	div.comment-tools {
+        	@apply flex items-center text-xs text-zinc-400 pt-2;
+	  	}
+	  	button.tool-link {
+      	  @apply flex items-center rounded-xl pl-0.5 pr-1 py-0.5 transition;
+			&:hover {
+			  @apply underline;
+			  background-color: transparent !important;
+			}
+			&.button {
+			  @apply no-underline;
+			}
+	  	}
+		@media (min-width: 1024px) {
+			@apply px-4;
 		}
-		&.button {
-		  @apply no-underline;
-		}
-	  }
 	}
 </style>

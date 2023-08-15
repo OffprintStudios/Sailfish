@@ -2,9 +2,9 @@
 	import { onMount } from 'svelte';
 	import type { SectionCommentsPage } from '$lib/models/comments';
 	import { NewComment } from '$lib/ui/comments';
-	import { SortDesc, Medal2Line } from 'svelte-remixicon';
 	import { CommentEditor } from '$lib/ui/comments';
 	import { account } from '$lib/state/account.state';
+	import { Icon } from "svelte-remix";
 	import Avatar from '$lib/ui/util/Avatar.svelte';
 
 	export let data: SectionCommentsPage;
@@ -26,12 +26,12 @@
 			class="flex items-center px-2 lg:px-0 lg:mx-4 pb-2 border-b border-zinc-200 dark:border-zinc-700"
 		>
 			<button class="meta-button with-text">
-				<Medal2Line class="mr-1" />
+				<Icon name="medal-2-line" class="mr-1 w-[1rem] h-[1rem]" tabindex="-1" />
 				<span class="relative -top-0.5">Top</span>
 			</button>
 			<div class="mx-0.5"><!--spacer--></div>
 			<button class="meta-button with-text active">
-				<SortDesc class="mr-1" />
+				<Icon name="sort-desc" class="mr-1 w-[1rem] h-[1rem]" tabindex="-1" />
 				<span class="relative -top-0.5">Oldest</span>
 			</button>
 		</div>

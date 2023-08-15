@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { Readable } from 'svelte/store';
-	import type { Editor } from '@tiptap/core';
-	import { BubbleMenu as BubbleMenuComponent, createEditor, EditorContent } from 'svelte-tiptap';
+	import { BubbleMenu as BubbleMenuComponent, createEditor, Editor, EditorContent } from 'svelte-tiptap';
 	import Document from '@tiptap/extension-document';
 	import Paragraph from '@tiptap/extension-paragraph';
 	import Text from '@tiptap/extension-text';
@@ -22,13 +21,7 @@
 	import Link from '@tiptap/extension-link';
 	import Placeholder from '@tiptap/extension-placeholder';
 	import BubbleMenu from '@tiptap/extension-bubble-menu';
-	import {
-		GalleryLine,
-		EmotionLine,
-		SendPlaneFill,
-		FontSize,
-		CodeBoxLine
-	} from "svelte-remixicon";
+	import { Icon } from 'svelte-remix';
 
 	export let value: string;
 
@@ -83,21 +76,21 @@
 				type="button"
 				title="Formatting"
 			>
-				<FontSize size={iconSize} />
+				<Icon name="font-size" width={iconSize} height={iconSize} tabindex="-1" />
 			</button>
 			<button
 				class="hover:bg-zinc-300 dark:hover:bg-zinc-600"
 				type="button"
 				title="Add Emoji"
 			>
-				<EmotionLine size={iconSize} />
+				<Icon name="emotion-line" width={iconSize} height={iconSize} tabindex="-1" />
 			</button>
 			<button
 				class="hover:bg-zinc-300 dark:hover:bg-zinc-600"
 				type="button"
 				title="Add Media"
 			>
-				<GalleryLine size={iconSize} />
+				<Icon name="gallery-line" width={iconSize} height={iconSize} tabindex="-1" />
 			</button>
 			<div class="flex-1"><!--spacer--></div>
 			<button
@@ -105,7 +98,7 @@
 				type="button"
 				title="Send Message"
 			>
-				<SendPlaneFill size={iconSize} />
+				<Icon name="send-plane-fill" width={iconSize} height={iconSize} tabindex="-1" />
 			</button>
 		</div>
 	{/if}
