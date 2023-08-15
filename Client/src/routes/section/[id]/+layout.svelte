@@ -10,7 +10,7 @@
 	import {
 		ArrowLeftSLine, ArrowRightSLine, Bookmark3Fill, Bookmark3Line,
 		BookmarkFill,
-		BookmarkLine,
+		BookmarkLine, ChatNewLine,
 		DiscussLine, LightbulbFlashLine,
 		Loader5Line,
 		OpenArmFill,
@@ -242,6 +242,16 @@
 		}
 		addingToLibrary = false;
 	}
+
+	function goToCommentForm() {
+		if (!$account.account && !$account.currProfile) {
+			toast.error("Log in and select a profile to use this feature.");
+			return;
+		}
+
+		const commentForm = document.getElementById("comment-form");
+		commentForm?.scrollTo();
+	}
 </script>
 
 <svelte:head>
@@ -370,13 +380,18 @@
 					{/if}
 				</button>
 			{/if}
+			{#if $page.url.pathname.includes("/comments")}
+				<button class="section-button no-text" on:click={goToCommentForm}>
+					<ChatNewLine size={iconSize} />
+				</button>
+			{/if}
 		</div>
 	</div>
 	<slot />
 	<div id="section-meta" class="section-meta" class:on-comments={$page.url.pathname.includes("/comments")}>
 		{#if !$page.url.pathname.includes("/comments")}
 			<div
-				class="flex flex-col max-w-3xl mx-auto w-11/12 border-b-4 border-dotted border-zinc-200 dark:border-zinc-700 p-4 pb-8"
+				class="flex flex-col max-w-3xl mx-auto border-b-4 border-dotted border-zinc-200 dark:border-zinc-700 p-4 pb-8"
 			>
 				<div class="flex flex-col lg:flex-row items-center">
 					{#if data.section.work.coverArt}
@@ -440,7 +455,7 @@
 				</div>
 			</div>
 			<div
-				class="flex flex-col max-w-3xl mx-auto w-11/12 border-b-4 border-dotted border-zinc-200 dark:border-zinc-700 py-4 lg:p-8 cursor-pointer"
+				class="flex flex-col max-w-3xl mx-auto px-2 border-b-4 border-dotted border-zinc-200 dark:border-zinc-700 py-4 lg:p-8 cursor-pointer"
 				on:click={() => goto(`/section/${data.section.id}/comments`)}
 				on:keydown={() => goto(`/section/${data.section.id}/comments`)}
 				on:keyup={() => goto(`/section/${data.section.id}/comments`)}

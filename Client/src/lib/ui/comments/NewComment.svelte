@@ -34,6 +34,9 @@
 				{#if comment.profile.info.tagline !== null && comment.profile.info.tagline !== "null" && comment.profile.info.tagline !== undefined}
 					<span>{comment.profile.info.tagline}</span>
 					<span class="mx-1">•</span>
+				{:else}
+					<span>Patron</span>
+					<span class="mx-1">•</span>
 				{/if}
 				<span><Time timestamp={comment.createdAt} relative live /></span>
 			</div>
@@ -69,9 +72,11 @@
 		{@html comment.body}
 	</div>
 	<div class="comment-tools">
-		<button class="tool-link">
-			<span>Reply</span>
-		</button>
+		{#if !topComment}
+			<button class="tool-link">
+				<span>Reply</span>
+			</button>
+		{/if}
 		{#if comment.updatedAt.valueOf() > comment.createdAt.valueOf()}
 			<span class="mx-1">•</span>
 			<button class="tool-link">

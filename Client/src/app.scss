@@ -73,7 +73,7 @@ body {
   color: var(--text-color);
   margin: 0;
   box-sizing: border-box;
-  font-size: 14px;
+  font-size: 16px;
   font-family: var(--body-text);
   background: var(--background);
 }
@@ -279,6 +279,7 @@ div.ProseMirror {
   min-height: 10rem !important;
   max-height: 85vh !important;
   overflow-y: scroll;
+  font-size: 16px;
 
   &:focus {
     border-color: var(--borders);
@@ -447,7 +448,8 @@ div.section-page {
     --section-dropdown-bg: var(--section-background);
 
     div.section-tools {
-      &.out-of-content {
+      &.out-of-content,
+      &.in-comments {
         --section-tool-color: rgb(255, 255, 255);
         --section-tool-header-color: rgb(255, 255, 255);
         --section-button-hover: rgb(81, 81, 83);
@@ -464,7 +466,8 @@ div.section-page {
     --section-select-bg: rgba(192, 154, 63, 0.25);
     --section-dropdown-bg: var(--section-background);
     div.section-tools {
-      &.out-of-content {
+      &.out-of-content,
+      &.in-comments {
         --section-button-hover: rgb(55, 55, 56);
       }
     }
@@ -570,6 +573,19 @@ div.section-page {
       }
       p + p {
         text-indent: var(--section-paragraph-indent) !important;
+      }
+      p:first-child:first-letter {
+        initial-letter: 3;
+        -moz-initial-letter: 3;
+        -webkit-initial-letter: 3;
+        font-family: var(--section-font-family);
+        @apply pr-1;
+        @media (min-width: 1024px) {
+          initial-letter: 2;
+          -moz-initial-letter: 2;
+          -webkit-initial-letter: 2;
+          @apply pr-1;
+        }
       }
     }
   }
