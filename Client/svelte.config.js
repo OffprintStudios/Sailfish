@@ -1,6 +1,6 @@
-import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/kit/vite';
 import preprocess from "svelte-preprocess";
+import adapter from "@sveltejs/adapter-node";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -19,6 +19,14 @@ const config = {
 			name: '1.0.0-alpha.010',
 			pollInterval: 1000 * 60,
 		},
+		vite: {
+			server: {
+				port: 3000,
+				fs: {
+					allow: ['.yarn']
+				}
+			},
+		}
 	}
 };
 

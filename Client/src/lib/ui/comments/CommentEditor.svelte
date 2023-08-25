@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, createEventDispatcher } from 'svelte';
 	import type { Readable } from 'svelte/store';
-	import { createEventDispatcher  } from 'svelte';
 	import { BubbleMenu as BubbleMenuComponent, createEditor, Editor, EditorContent } from 'svelte-tiptap';
 	import Document from '@tiptap/extension-document';
 	import Paragraph from '@tiptap/extension-paragraph';

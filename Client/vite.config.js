@@ -11,13 +11,6 @@ const config = {
 			},
 		}
 	},
-
-	server: {
-		port: 3000,
-		fs: {
-			allow: ['.yarn']
-		}
-	},
 };
 
 export default config;
