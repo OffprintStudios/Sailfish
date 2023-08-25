@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { Readable } from 'svelte/store';
+	import { createEventDispatcher  } from 'svelte';
 	import { BubbleMenu as BubbleMenuComponent, createEditor, Editor, EditorContent } from 'svelte-tiptap';
 	import Document from '@tiptap/extension-document';
 	import Paragraph from '@tiptap/extension-paragraph';
@@ -25,8 +26,10 @@
 	import { slide } from 'svelte/transition';
 
 	export let value: string;
+	export let markedAsSpoiler = false;
 
 	enum ToolBar {
+		Closed,
 		Formatting,
 		AddMedia,
 		AddEmoji
@@ -35,8 +38,8 @@
 	const iconSize = "20px";
 	let bubbleMenu: HTMLElement;
 	let editor: Readable<Editor>;
-	let optionsOpen = false;
-	let currOptions = ToolBar.Formatting;
+	let currOptions = ToolBar.Closed;
+	
 
 	onMount(() => {
 		editor = createEditor({
@@ -72,13 +75,12 @@
 		});
 	});
 
-	function openOptions(toolBar?: ToolBar) {
-		if (!toolBar) {
-			optionsOpen = false;
-			return;
+	function openOptions(toolBar: ToolBar) {
+		if (toolBar === currOptions) {
+			currOptions = ToolBar.Closed;
+		} else {
+			currOptions = toolBar;
 		}
-		currOptions = toolBar;
-		optionsOpen = true;
 	}
 </script>
 
@@ -88,30 +90,63 @@
 >
 	<EditorContent editor={$editor} on:change />
 	{#if editor}
-		{#if optionsOpen}
+		{#if currOptions !== ToolBar.Closed}
 			<div 
 				class="p-2 bg-zinc-300 dark:bg-zinc-600"
 				transition:slide={{ delay: 0, duration: 200, axis: 'y' }}
 			>
-				{#if currOptions = ToolBar.Formatting}
+				{#if currOptions === ToolBar.Formatting}
+					<div class="flex items-center">
+						<button
+							on:click={() => $editor.chain().focus().toggleBold().run()}
+							class:active={$editor.isActive("bold")}
+							type="button"
+							title="Bold"
+						>
+							<Icon name="bold" width={iconSize} height={iconSize} />
+						</button>
+						<button
+							on:click={() => $editor.chain().focus().toggleItalic().run()}
+							class:active={$editor.isActive("italic")}
+							type="button"
+							title="Italic"
+						>
+							<Icon name="italic" width={iconSize} height={iconSize} />
+						</button>
+						<button
+							on:click={() => $editor.chain().focus().toggleUnderline().run()}
+							class:active={$editor.isActive("underline")}
+							type="button"
+							title="Underline"
+						>
+							<Icon name="underline" width={iconSize} height={iconSize} />
+						</button>
+						<button
+							on:click={() => $editor.chain().focus().toggleStrike().run()}
+							class:active={$editor.isActive("strike")}
+							type="button"
+							title="Strikethrough"
+						>
+							<Icon name="strikethrough" width={iconSize} height={iconSize} />
+						</button>
+					</div>
+				{:else if currOptions === ToolBar.AddMedia}
 					<div class="flex items-center"></div>
-				{:else if currOptions = ToolBar.AddMedia}
-					<div class="flex items-center"></div>
-				{:else if currOptions = ToolBar.AddEmoji}
+				{:else if currOptions === ToolBar.AddEmoji}
 					<div class="flex items-center"></div>
 				{/if}
 			</div>
 		{/if}
 		<div 
 			class="flex items-center p-2"
-			class:pt-0={optionsOpen}
+			class:pt-0={currOptions !== ToolBar.Closed}
 		>
 			<button
 				class="editor-button hover:bg-zinc-300 dark:hover:bg-zinc-600"
 				type="button"
 				title="Change Formatting"
-				class:active={optionsOpen}
-				on:click={() => optionsOpen = !optionsOpen}
+				class:active={currOptions === ToolBar.Formatting}
+				on:click={() => openOptions(ToolBar.Formatting)}
 			>
 				<Icon name="font-size" width={iconSize} height={iconSize} tabindex="-1" />
 			</button>
@@ -119,6 +154,8 @@
 				class="editor-button hover:bg-zinc-300 dark:hover:bg-zinc-600"
 				type="button"
 				title="Add Media"
+				class:active={currOptions === ToolBar.AddMedia}
+				on:click={() => openOptions(ToolBar.AddMedia)}
 			>
 				<Icon name="gallery-line" width={iconSize} height={iconSize} tabindex="-1" />
 			</button>
@@ -126,6 +163,8 @@
 				class="editor-button hover:bg-zinc-300 dark:hover:bg-zinc-600"
 				type="button"
 				title="Add Emoji"
+				class:active={currOptions === ToolBar.AddEmoji}
+				on:click={() => openOptions(ToolBar.AddEmoji)}
 			>
 				<Icon name="emotion-line" width={iconSize} height={iconSize} tabindex="-1" />
 			</button>
@@ -133,6 +172,8 @@
 				class="editor-button hover:bg-zinc-300 dark:hover:bg-zinc-600"
 				type="button"
 				title="Mark As Spoiler"
+				class:active-primary={markedAsSpoiler}
+				on:click={() => markedAsSpoiler = !markedAsSpoiler}
 			>
 				<Icon name="alert-line" width={iconSize} height={iconSize} tabindex="-1" />
 			</button>
@@ -141,7 +182,7 @@
 				class="editor-button active-primary"
 				type="button"
 				title="Send Message"
-				disabled={optionsOpen}
+				disabled={currOptions !== ToolBar.Closed}
 			>
 				<Icon name="send-plane-fill" width={iconSize} height={iconSize} tabindex="-1" />
 			</button>
