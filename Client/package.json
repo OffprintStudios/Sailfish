@@ -93,5 +93,5 @@
     "vite": "^4.4.9"
   },
   "type": "module",
-  "packageManager": "yarn@3.6.3"
+  "packageManager": "yarn@4.0.0-rc.50"
 }
