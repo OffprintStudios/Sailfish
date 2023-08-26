@@ -7,7 +7,6 @@
 	import { account } from "$lib/state/account.state";
 	import { Roles } from "$lib/models/accounts";
 	import { page } from "$app/stores";
-	import { guide } from "$lib/ui/guide";
 	import { navigating } from "$app/stores";
 
 	export let open = false;
@@ -100,12 +99,11 @@
 			<a
 				class="dropdown-link"
 				class:active={($page.url.pathname === "/" ||
-					$page.url.pathname.includes("/explore")) &&
-					$guide.open === false}
+					$page.url.pathname.includes("/explore"))}
 				href="/"
 			>
 				<span class="link-icon">
-					{#if ($page.url.pathname === "/" || $page.url.pathname.includes("/explore")) && $guide.open === false}
+					{#if ($page.url.pathname === "/" || $page.url.pathname.includes("/explore"))}
 						<Icon name="compass-discover-fill" width={iconSize} height={iconSize} />
 					{:else}
 						<Icon name="compass-discover-line" width={iconSize} height={iconSize} />
@@ -115,11 +113,11 @@
 			</a>
 			<a
 				class="dropdown-link"
-				class:active={$page.url.pathname === "/social" && $guide.open === false}
+				class:active={$page.url.pathname === "/social" }
 				href="/social"
 			>
 				<span class="link-icon">
-					{#if $page.url.pathname === "/feed" && $guide.open === false}
+					{#if $page.url.pathname === "/feed"}
 						<Icon name="team-fill" width={iconSize} height={iconSize} />
 					{:else}
 						<Icon name="team-line" width={iconSize} height={iconSize} />
@@ -129,11 +127,11 @@
 			</a>
 			<a
 				class="dropdown-link"
-				class:active={$page.url.pathname.includes("/library") && $guide.open === false}
+				class:active={$page.url.pathname.includes("/library")}
 				href="/library"
 			>
 				<span class="link-icon">
-					{#if $page.url.pathname.includes("/library") && $guide.open === false}
+					{#if $page.url.pathname.includes("/library")}
 						<Icon name="bookmark-fill" width={iconSize} height={iconSize} />
 					{:else}
 						<Icon name="bookmark-line" width={iconSize} height={iconSize} />
