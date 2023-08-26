@@ -18,14 +18,6 @@ const config = {
 		version: {
 			name: '1.0.0-alpha.010',
 			pollInterval: 1000 * 60,
-		},
-		vite: {
-			server: {
-				port: 3000,
-				fs: {
-					allow: ['.yarn']
-				}
-			},
 		}
 	}
 };
