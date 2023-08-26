@@ -15,12 +15,9 @@
 	import { Roles } from "$lib/models/accounts";
 	import type { ReadingHistory } from "$lib/models/content/library";
 	import toast from "svelte-french-toast";
-	import type { Paginate } from "$lib/util/types";
-	import { type Comment, CommentType } from "$lib/models/comments";
 	import { page } from "$app/stores";
-	import { Thread } from "$lib/ui/comments";
 
-	export let data: { work: Work; comments: Paginate<Comment> };
+	export let data: { work: Work };
 	let queueItem: ApprovalQueue;
 	let history: ReadingHistory;
 	let pageNum = +($page.url.searchParams.get("page") ?? "1");
@@ -118,15 +115,5 @@
 	<div class="max-w-4xl w-11/12 lg:w-full mx-auto">
 		<WorkInfo work={data.work} />
 		<ListContainer work={data.work} {history} />
-		{#if data.work.publishedOn && data.comments}
-			<div class="my-6 border-b w-full"><!--spacer--></div>
-			<Thread
-				type={CommentType.Work}
-				threadId={data.work.id}
-				content={data.comments}
-				{pageNum}
-				{perPage}
-			/>
-		{/if}
 	</div>
 </div>
