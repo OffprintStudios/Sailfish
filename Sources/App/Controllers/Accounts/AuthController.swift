@@ -46,9 +46,7 @@ struct AuthController: RouteCollection {
 
         auth.grouped(IdentityGuard(needs: [.user])).post("check-roles") { request async throws -> HasRoles in
             let info = try request.content.decode(CheckRoles.self)
-            guard let account = try request.authService.getUser().account else {
-                throw Abort(.internalServerError, reason: "Could not process your account. Try again in a little bit.")
-            }
+            let account = try request.authService.getUser().account
             return HasRoles(goodToGo: canAccess(needs: info.needs, has: account.roles))
         }
     }

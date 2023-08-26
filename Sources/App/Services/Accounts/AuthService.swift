@@ -67,10 +67,7 @@ struct AuthService {
 
     /// Retrieves a user's account from `request.user`. If `withProfile` is true, we also retrieve
     /// the associated profile. Otherwise, `profile` is `nil`
-    func getUser(withProfile: Bool = false) throws -> (account: Account?, profile: Profile?) {
-        if request.user?.account == nil {
-            return (nil, nil)
-        }
+    func getUser(withProfile: Bool = false) throws -> (account: Account, profile: Profile?) {
         if withProfile {
             if let account = request.user?.account, let profile = request.user?.profile {
                 return (account, profile)

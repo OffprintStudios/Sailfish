@@ -22,9 +22,7 @@ struct ProfileService {
     
     /// Updates an existing profile
     func updateProfile(with profileForm: Profile.ProfileForm) async throws -> Profile {
-        guard let account = try request.authService.getUser().account else {
-            throw Abort(.internalServerError, reason: "Could not process your account. Try again in a little bit.")
-        }
+        let account = try request.authService.getUser().account
         let profile = try request.authService.getUser(withProfile: true).profile!
         let existingUsername = try await Profile.query(on: request.db).filter(\.$username == profileForm.username).first()
         if let alreadyExists = existingUsername {

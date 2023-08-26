@@ -10,81 +10,18 @@ import SwiftSoup
 
 struct WorkService: HasComments {    
     let request: Request
-
-    /// Fetches a work given its ID. If no such work exists, throws a `notFound` error.
-    func fetchWork(_ id: String, sectionId: String? = nil) async throws -> FetchWork {
-        guard let work: Work = try await Work.query(on: request.db)
-            .with(\.$author)
-            .with(\.$tags, { $0.with(\.$parent) })
-            .filter(\.$id == id)
-            .first() else {
-            throw Abort(.notFound, reason: "Work not found. Are you sure you're looking for the right one?")
-        }
-        
-        if work.publishedOn != nil {
-            if let ipAddress = request.headers.first(name: "X-Offprint-Client-IP") {
-                let existingView = try await work.$ipViews.query(on: request.db).filter(\.$ipAddress == ipAddress).first()
-                if existingView == nil {
-                    let newView = WorkIPView(ipAddress: ipAddress)
-                    try await request.db.transaction { database in
-                        try await work.$ipViews.create(newView, on: database)
-                    }
-                }
-            }
-            work.views = Int64(try await work.$ipViews.query(on: request.db).count())
-            try await request.db.transaction { database in
-                try await work.save(on: database)
-            }
-            var commentsQuery = work.$comments.query(on: request.db)
-                .with(\.$profile)
-                .with(\.$history)
-            if let hasSectionId = sectionId {
-                commentsQuery = commentsQuery.filter(\.$section.$id == hasSectionId)
-            }
-            return .init(
-                work: work,
-                comments: try await commentsQuery.paginate(for: request)
-            )
-        }
-        return .init(work: work, comments: nil)
-    }
     
-    /// Fetches a paginated list of published works based on the provided `ContentFilter`.
-    func fetchWorks(filter: ContentFilter) async throws -> Page<Work> {
-        try await Work.query(on: request.db)
+    /// Fetches all works from a user's profile.
+    func fetchWorks() async throws -> Page<Work> {
+        let profile = try request.authService.getUser(withProfile: true).profile!
+        return try await Work.query(on: request.db)
             .with(\.$author)
             .with(\.$tags) { tag in
                 tag.with(\.$parent)
             }
-            .filter(\.$rating ~~ determineRatings(from: filter))
-            .filter(\.$publishedOn <= Date())
-            .sort(\.$publishedOn, .descending)
+            .filter(\.$author.$id == profile.id!)
+            .sort(\.$createdAt, .descending)
             .paginate(for: request)
-    }
-    
-    /// Fetches a paginated list of works specific to an author based on the provided `ContentFilter`.
-    /// If `published` is `true`, this will return only published works. Otherwise, this will return all
-    /// works—published or unpublished.
-    func fetchWorks(for authorId: String, published: Bool = false, filter: ContentFilter) async throws -> Page<Work> {
-        let query = Work.query(on: request.db)
-            .with(\.$author)
-            .with(\.$tags) { tag in
-                tag.with(\.$parent)
-            }
-            .filter(\.$author.$id == authorId)
-        
-        if published == true {
-            return try await query
-                .filter(\.$publishedOn <= Date())
-                .filter(\.$rating ~~ determineRatings(from: filter))
-                .sort(\.$publishedOn, .descending)
-                .paginate(for: request)
-        } else {
-            return try await query
-                .filter(\.$publishedOn == nil)
-                .sort(\.$createdAt, .descending)
-                .paginate(for: request)
-        }
     }
     
     /// Creates a new work given the provided `formInfo`.

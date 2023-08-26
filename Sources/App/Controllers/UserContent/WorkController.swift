@@ -20,19 +20,8 @@ struct WorkController: RouteCollection {
             BannedGuard(),
         ])
         
-        works.get("fetch-work", ":id") { request async throws -> WorkService.FetchWork in
-            let id = request.parameters.get("id")!
-            let sectionId: String? = request.query["sectionId"]
-            return try await request.workService.fetchWork(id, sectionId: sectionId)
-        }
-        
         works.get("fetch-works") { request async throws -> Page<Work> in
-            let query = try request.query.decode(FetchWorksQuery.self)
-            if let authorId = query.authorId {
-                return try await request.workService.fetchWorks(for: authorId, published: query.published ?? false, filter: query.filter ?? .restricted)
-            } else {
-                return try await request.workService.fetchWorks(filter: query.filter ?? .restricted)
-            }
+            return try await request.workService.fetchWorks()
         }
         
         worksWithAuth.post("create-work") { request async throws -> Work in
@@ -106,15 +95,5 @@ struct WorkController: RouteCollection {
             let commentForm = try request.content.decode(Comment.CommentForm.self)
             return try await request.workService.editComment(commentId, for: id, with: commentForm)
         }
-    }
-}
-
-extension WorkController {
-    struct FetchWorksQuery: Content {
-        var authorId: String?
-        var published: Bool?
-        var filter: ContentFilter?
-        var page: Int?
-        var per: Int?
     }
 }

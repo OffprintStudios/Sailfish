@@ -181,9 +181,7 @@ struct BlogService: HasComments {
 
     /// Creates a blog given the provided `formInfo`.
     func createBlog(with formInfo: Blog.BlogForm) async throws -> Blog {
-        guard let account = try request.authService.getUser().account else {
-            throw Abort(.internalServerError, reason: "Could not process your account. Try again in a little bit.")
-        }
+        let account = try request.authService.getUser().account
         let profile = try request.authService.getUser(withProfile: true).profile
         if canAccess(needs: [.admin, .moderator, .contributor], has: account.roles) == false {
             if formInfo.newsPost == true {

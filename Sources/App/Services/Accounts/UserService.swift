@@ -5,7 +5,7 @@
 import Vapor
 
 struct UserService {
-    var account: Account?
+    var account: Account
     var profile: Profile?
 }
 

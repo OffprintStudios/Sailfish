@@ -8,9 +8,36 @@ import SwiftSoup
 
 struct ReadingService {
     let request: Request
+
+    /// Fetches a paginated list of published works based on the provided `ContentFilter`.
+    func fetchWorks(filter: ContentFilter) async throws -> Page<Work> {
+        try await Work.query(on: request.db)
+            .with(\.$author)
+            .with(\.$tags) { tag in
+                tag.with(\.$parent)
+            }
+            .filter(\.$rating ~~ determineRatings(from: filter))
+            .filter(\.$publishedOn <= Date())
+            .sort(\.$publishedOn, .descending)
+            .paginate(for: request)
+    }
+
+    /// Fetches a paginated list of published works written by one author based on the provided `ContentFilter`.
+    func fetchWorks(for authorId: String, filter: ContentFilter) async throws -> Page<Work> {
+        try await Work.query(on: request.db)
+            .with(\.$author)
+            .with(\.$tags) { tag in
+                tag.with(\.$parent)
+            }
+            .filter(\.$author.$id == authorId)
+            .filter(\.$rating ~~ determineRatings(from: filter))
+            .filter(\.$publishedOn <= Date())
+            .sort(\.$publishedOn, .descending)
+            .paginate(for: request)
+    }
     
+    /// Fetches a single work along with its table of contents.
     func fetchWork(_ id: String) async throws -> WorkPage {
-        let profile = try request.authService.getUser(withProfile: true).profile
         guard let work: Work = try await Work.query(on: request.db)
             .with(\.$author)
             .with(\.$tags, { $0.with(\.$parent) })
@@ -23,28 +50,16 @@ struct ReadingService {
             .filter(\.$work.$id == work.requireID())
             .sort(\.$rank, .ascending)
             .all()
-        if profile != nil {
-            let readingHistory = try await request.libraryService.fetchHistory(work.id!)
-            let libraryItem = try await request.libraryService.fetchLibraryItem(for: work.id!)
-            try await request.workService.updateIpViews(for: work)
-            return .init(
-                work: work,
-                tableOfContents: tableOfContents,
-                readingHistory: readingHistory,
-                libraryItem: libraryItem
-            )
-        }
         try await request.workService.updateIpViews(for: work)
         return .init(
             work: work,
-            tableOfContents: tableOfContents,
-            readingHistory: nil,
-            libraryItem: nil
+            tableOfContents: tableOfContents
         )
     }
     
+    /// Fetches a single section along with its top comments. Additionally, fetches the table of contents
+    /// for the parent work.
     func fetchSection(_ id: String) async throws -> SectionPage {
-        let profile = try request.authService.getUser(withProfile: true).profile
         guard let section = try await SectionView.query(on: request.db).filter(\.$id == id).first() else {
             throw Abort(.notFound, reason: "The section you're trying to view does not exist.")
         }
@@ -57,58 +72,19 @@ struct ReadingService {
             .limit(3)
             .sort(\.$likes, .descending)
             .all()
-        if let hasProfile = profile {
-            let readingHistory = try await request.libraryService.fetchHistory(section.work.id)
-            let cheer = try await Cheer.query(on: request.db)
-                .filter(\.$profile.$id == hasProfile.id!)
-                .filter(\.$section.$id == section.id!)
-                .first()
-            let highlights = try await Highlight.query(on: request.db)
-                .filter(\.$profile.$id == hasProfile.id!)
-                .filter(\.$section.$id == section.id!)
-                .all()
-            let libraryItem = try await request.libraryService.fetchLibraryItem(for: section.work.id)
-            try await request.workService.updateIpViews(for: section.work.id)
-            return .init(
-                section: section,
-                tableOfContents: tableOfContents,
-                readingHistory: readingHistory,
-                highlights: highlights,
-                cheer: cheer,
-                topComments: topComments,
-                libraryItem: libraryItem
-            )
-        }
         try await request.workService.updateIpViews(for: section.work.id)
         return .init(
             section: section,
             tableOfContents: tableOfContents,
-            readingHistory: nil,
-            highlights: [],
-            cheer: nil,
-            topComments: topComments,
-            libraryItem: nil
+            topComments: topComments
         )
     }
     
-    func fetchSectionComments(for sectionId: String) async throws -> FetchCommentsResponse {
-        let profile = try request.authService.getUser(withProfile: true).profile
-        let comments = try await SectionCommentView.query(on: request.db)
+    func fetchSectionComments(for sectionId: String) async throws -> Page<SectionCommentView> {
+        return try await SectionCommentView.query(on: request.db)
             .filter(\.$section.$id == sectionId)
             .sort(\.$createdAt, .ascending)
             .paginate(for: request)
-        if profile != nil {
-            var ids: [String] = []
-            for comment in comments.items {
-                ids.append(comment.$comment.id)
-            }
-            let votesPer = try await CommentVote.query(on: request.db)
-                .filter(\.$comment.$id ~~ ids)
-                .filter(\.$profile.$id == profile!.id!)
-                .all()
-            return .init(page: comments, votes: votesPer)
-        }
-        return .init(page: comments, votes: [])
     }
     
     func toggleCheer(for sectionId: String) async throws -> ToggleCheerResponse {
@@ -183,27 +159,16 @@ extension ReadingService {
     struct WorkPage: Content {
         let work: Work
         let tableOfContents: [SectionList]
-        let readingHistory: ReadingHistory?
-        let libraryItem: LibraryService.CheckLibrary?
     }
     
     struct SectionPage: Content {
         let section: SectionView
         let tableOfContents: [SectionList]
-        let readingHistory: ReadingHistory?
-        let highlights: [Highlight]
-        let cheer: Cheer?
         let topComments: [SectionCommentView]
-        let libraryItem: LibraryService.CheckLibrary?
     }
     
     struct ToggleCheerResponse: Content {
         let cheer: Cheer?
-    }
-    
-    struct FetchCommentsResponse: Content {
-        let page: Page<SectionCommentView>
-        let votes: [CommentVote]
     }
 }
 

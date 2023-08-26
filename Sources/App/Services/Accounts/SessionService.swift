@@ -12,9 +12,7 @@ struct SessionService {
 
     /// Fetches sessions belonging to an account.
     func fetchSessions() async throws -> [Session] {
-        guard let account = try request.authService.getUser().account else {
-            throw Abort(.internalServerError, reason: "Could not process your account. Try again in a little bit.")
-        }
+        let account = try request.authService.getUser().account
         return try await account.$sessions.get(on: request.db)
     }
 
@@ -67,9 +65,7 @@ struct SessionService {
 
     /// Deletes a given session via its ID.
     func deleteSession(_ id: UUID) async throws {
-        guard let account = try request.authService.getUser().account else {
-            throw Abort(.internalServerError, reason: "Could not process your account. Try again in a little bit.")
-        }
+        let account = try request.authService.getUser().account
         return try await account.$sessions.query(on: request.db)
             .filter(\.$id == id)
             .delete()
