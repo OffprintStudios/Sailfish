@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LoginCircleLine, UserAddLine, SearchEyeLine } from "svelte-remixicon";
+	import { Icon } from "svelte-remix";
 	import { account } from "$lib/state/account.state";
 	import { getReq, type ResponseError } from "$lib/http";
 	import { activity } from "$lib/state/activity.state";
@@ -68,19 +68,19 @@
 			<Guide />
 		{:else}
 			<Button kind="primary" asLink href="/registration/log-in" title="Log In">
-				<LoginCircleLine class="button-icon" />
+				<Icon name="login-circle-line" class="button-icon" />
 				<span class="button-text">Log in</span>
 			</Button>
 			<div class="mx-0.5"><!--spacer--></div>
 			<Button kind="primary" asLink href="/registration/sign-up" title="Sign Up">
-				<UserAddLine class="button-icon" />
+				<Icon name="user-add-line" class="button-icon"/>
 				<span class="button-text">Sign up</span>
 			</Button>
 		{/if}
 	</div>
 	<div class="lg:hidden flex items-center">
 		<Button kind="primary" asLink href="/search" title="Sign Up">
-			<SearchEyeLine class="button-icon no-text" size="24px" />
+			<Icon name="search-eye-line" width="24px" height="24px" />
 		</Button>
 		<div class="mx-0.5"><!--spacer--></div>
 		{#if $account.account}
@@ -89,11 +89,11 @@
 			<AccountDropdown />
 		{:else}
 			<Button kind="primary" asLink href="/registration/log-in" title="Log In">
-				<LoginCircleLine class="button-icon no-text" size="24px" />
+				<Icon name="login-circle-line" class="button-icon no-text" width="24px" height="24px" />
 			</Button>
 			<div class="mx-0.5"><!--spacer--></div>
 			<Button kind="primary" asLink href="/registration/sign-up" title="Sign Up">
-				<UserAddLine class="button-icon no-text" size="24px" />
+				<Icon name="user-add-line" width="24px" height="24px" class="button-icon no-text" />
 			</Button>
 		{/if}
 	</div>

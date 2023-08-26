@@ -10,7 +10,7 @@
 	import { createForm } from "felte";
 	import { Button } from "$lib/ui/util";
 	import { TextArea } from "$lib/ui/forms";
-	import { CheckLine, CloseLine } from "svelte-remixicon";
+	import { Icon } from "svelte-remix";
 	import { postReq, type ResponseError } from "$lib/http";
 	import type { ReportForm } from "$lib/ui/admin";
 	import toast from "svelte-french-toast";
@@ -70,7 +70,9 @@
 <div class="rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-700 dark:highlight-shadowed">
 	<div class="p-4 flex items-center">
 		<h3 class="text-2xl flex-1">Submit Report</h3>
-		<Button on:click={closePopup}><CloseLine class="button-icon no-text" size="24px" /></Button>
+		<Button on:click={closePopup}>
+			<Icon name="close-line" class="button-icon no-text" size="24px" />
+		</Button>
 	</div>
 	<form class="px-4 pb-4 w-full lg:w-[400px]" use:form>
 		<select
@@ -105,12 +107,12 @@
 		/>
 		<div class="flex items-center justify-center">
 			<Button type="submit" kind="primary" loading={$isSubmitting} loadingText="Saving...">
-				<CheckLine class="button-icon" />
+				<Icon name="check-line" class="button-icon" />
 				<span class="button-text">Submit</span>
 			</Button>
 			<div class="mx-0.5"><!--spacer--></div>
 			<Button type="button" on:click={closePopup}>
-				<CloseLine class="button-icon" />
+				<Icon name="close-line" class="button-icon" />
 				<span class="button-text">Cancel</span>
 			</Button>
 		</div>

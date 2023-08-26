@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { ChatNewLine } from "svelte-remixicon";
+	import { Icon } from "svelte-remix";
 	import type { Comment as CommentModel } from "../../models/comments";
 	import type { Paginate } from "$lib/util/types";
-	import { CommentType } from "$lib/models/comments";
+	import type { CommentType } from "$lib/models/comments";
 	import { account } from "$lib/state/account.state";
 	import { Paginator } from "../util";
 	import { NavLink } from "../nav";
@@ -42,7 +42,7 @@
 	</div>
 	{#if $account.account && $account.currProfile}
 		<NavLink href="#comment-form">
-			<ChatNewLine class="link-icon" />
+			<Icon name="chat-new-line" class="link-icon" />
 			<span class="link-name">Add New</span>
 		</NavLink>
 	{/if}

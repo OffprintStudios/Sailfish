@@ -4,7 +4,7 @@
 	import { account } from "$lib/state/account.state";
 	import { Editor } from "../forms";
 	import { Avatar, Button } from "../util";
-	import { CheckboxBlankCircleLine, CheckboxCircleLine, CheckLine } from "svelte-remixicon";
+	import { Icon } from "svelte-remix";
 	import type { CommentForm } from "$lib/models/comments";
 	import type { ThreadService } from "./thread.service";
 	import { stripHtml } from "string-strip-html";
@@ -91,15 +91,15 @@
 			isActive={$data.spoiler}
 		>
 			{#if $data.spoiler === true}
-				<CheckboxCircleLine class="button-icon" />
+				<Icon name="checkbox-circle-line" class="button-icon" />
 			{:else}
-				<CheckboxBlankCircleLine class="button-icon" />
+				<Icon name="checkbox-blank-circle-line" class="button-icon" />
 			{/if}
 			<span class="button-text">Spoiler</span>
 		</Button>
 		<div class="mx-0.5"><!--spacer--></div>
 		<Button type="submit" loading={$isSubmitting} loadingText="Posting...">
-			<CheckLine class="button-icon" />
+			<Icon name="check-line" class="button-icon" />
 			<span class="button-text">Post</span>
 		</Button>
 	</div>
