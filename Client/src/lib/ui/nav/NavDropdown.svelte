@@ -1,17 +1,6 @@
 <script lang="ts">
 	import { computePosition, flip, offset, shift, type ShiftOptions } from "@floating-ui/dom";
-	import {
-		BookmarkFill,
-		BookmarkLine,
-		CompassDiscoverFill,
-		CompassDiscoverLine,
-		Dashboard2Fill,
-		Dashboard2Line,
-		MenuLine,
-		TeamFill,
-		TeamLine,
-		ListCheck2
-	} from "svelte-remixicon";
+	import { Icon } from "svelte-remix";
 	import { slide } from "svelte/transition";
 	import { clickOutside, hasRoles, throttle } from "$lib/util/functions";
 	import Button from "$lib/ui/util/Button.svelte";
@@ -62,12 +51,13 @@
 
 <div class="relative z-[2]">
 	<Button on:click={throttled} bind:thisButton={button} isActive={open} kind="primary">
-		<MenuLine class="button-icon no-text" size="24px" />
+		<Icon name="menu-line" width={iconSize} height={iconSize} class="button-icon no-text" />
 	</Button>
 	{#if open}
 		<div
 			class="nav-dropdown-items bg-zinc-200 dark:bg-zinc-700"
 			transition:slide|local={{ delay: 0, duration: 150 }}
+			role="dialog"
 			bind:this={dropdown}
 			on:click={throttled}
 			use:clickOutside
@@ -82,9 +72,9 @@
 					>
 						<span class="link-icon">
 							{#if $page.url.pathname.startsWith("/dashboard")}
-								<Dashboard2Fill size={iconSize} />
+								<Icon name="dashboard-2-fill" width={iconSize} height={iconSize} />
 							{:else}
-								<Dashboard2Line size={iconSize} />
+								<Icon name="dashboard-2-line" width={iconSize} height={iconSize} />
 							{/if}
 						</span>
 						<span class="link-name">Dash</span>
@@ -98,9 +88,9 @@
 					>
 						<span class="link-icon">
 							{#if $page.url.pathname.startsWith("/queue")}
-								<ListCheck2 size={iconSize} />
+								<Icon name="list-check-2" width={iconSize} height={iconSize} />
 							{:else}
-								<ListCheck2 size={iconSize} />
+								<Icon name="list-check-2" width={iconSize} height={iconSize} />
 							{/if}
 						</span>
 						<span class="link-name">Queue</span>
@@ -116,9 +106,9 @@
 			>
 				<span class="link-icon">
 					{#if ($page.url.pathname === "/" || $page.url.pathname.includes("/explore")) && $guide.open === false}
-						<CompassDiscoverFill size={iconSize} />
+						<Icon name="compass-discover-fill" width={iconSize} height={iconSize} />
 					{:else}
-						<CompassDiscoverLine size={iconSize} />
+						<Icon name="compass-discover-line" width={iconSize} height={iconSize} />
 					{/if}
 				</span>
 				<span class="link-name">Explore</span>
@@ -130,9 +120,9 @@
 			>
 				<span class="link-icon">
 					{#if $page.url.pathname === "/feed" && $guide.open === false}
-						<TeamFill size={iconSize} />
+						<Icon name="team-fill" width={iconSize} height={iconSize} />
 					{:else}
-						<TeamLine size={iconSize} />
+						<Icon name="team-line" width={iconSize} height={iconSize} />
 					{/if}
 				</span>
 				<span class="link-name"> Social </span>
@@ -144,9 +134,9 @@
 			>
 				<span class="link-icon">
 					{#if $page.url.pathname.includes("/library") && $guide.open === false}
-						<BookmarkFill size={iconSize} />
+						<Icon name="bookmark-fill" width={iconSize} height={iconSize} />
 					{:else}
-						<BookmarkLine size={iconSize} />
+						<Icon name="bookmark-line" width={iconSize} height={iconSize} />
 					{/if}
 				</span>
 				<span class="link-name">Library</span>

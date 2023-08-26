@@ -1,18 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores";
-	import {
-		CompassDiscoverFill,
-		CompassDiscoverLine,
-		BookmarkLine,
-		BookmarkFill,
-		TeamLine,
-		TeamFill,
-		Dashboard2Line,
-		Dashboard2Fill,
-		QuestionAnswerLine,
-		QuestionAnswerFill,
-		ListCheck2
-	} from "svelte-remixicon";
+	import { Icon } from "svelte-remix";
 	import { account } from "$lib/state/account.state";
 	import { hasRoles } from "$lib/util/functions";
 	import { Roles } from "$lib/models/accounts";
@@ -30,9 +18,9 @@
 			>
 				<span class="link-icon">
 					{#if $page.url.pathname.startsWith("/dashboard")}
-						<Dashboard2Fill size={iconSize} />
+						<Icon name="dashboard-2-fill" width={iconSize} height={iconSize} />
 					{:else}
-						<Dashboard2Line size={iconSize} />
+						<Icon name="dashboard-2-line" width={iconSize} height={iconSize} />
 					{/if}
 				</span>
 				<span class="link-name">Dash</span>
@@ -42,9 +30,9 @@
 			<a class="link" class:active={$page.url.pathname.startsWith("/queue")} href="/queue">
 				<span class="link-icon">
 					{#if $page.url.pathname.startsWith("/queue")}
-						<ListCheck2 size={iconSize} />
+						<Icon name="list-check-2" width={iconSize} height={iconSize} />
 					{:else}
-						<ListCheck2 size={iconSize} />
+						<Icon name="list-check-2" width={iconSize} height={iconSize} />
 					{/if}
 				</span>
 				<span class="link-name">Queue</span>
@@ -59,9 +47,9 @@
 	>
 		<span class="link-icon">
 			{#if $page.url.pathname === "/" || $page.url.pathname.includes("/explore")}
-				<CompassDiscoverFill size={iconSize} />
+				<Icon name="compass-discover-fill" width={iconSize} height={iconSize} />
 			{:else}
-				<CompassDiscoverLine size={iconSize} />
+				<Icon name="compass-discover-line" width={iconSize} height={iconSize} />
 			{/if}
 		</span>
 		<span class="link-name">Explore</span>
@@ -69,9 +57,9 @@
 	<a class="link" class:active={$page.url.pathname.includes("/social")} href="/social">
 		<span class="link-icon">
 			{#if $page.url.pathname.includes("/social")}
-				<TeamFill size={iconSize} />
+				<Icon name="team-fill" width={iconSize} height={iconSize} />
 			{:else}
-				<TeamLine size={iconSize} />
+				<Icon name="team-line" width={iconSize} height={iconSize} />
 			{/if}
 		</span>
 		<span class="link-name"> Social </span>
@@ -79,9 +67,9 @@
 	<a class="link" class:active={$page.url.pathname.includes("/library")} href="/library">
 		<span class="link-icon">
 			{#if $page.url.pathname.includes("/library")}
-				<BookmarkFill size={iconSize} />
+				<Icon name="bookmark-fill" width={iconSize} height={iconSize} />
 			{:else}
-				<BookmarkLine size={iconSize} />
+				<Icon name="bookmark-line" width={iconSize} height={iconSize} />
 			{/if}
 		</span>
 		<span class="link-name">Library</span>

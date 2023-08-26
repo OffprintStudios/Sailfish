@@ -178,7 +178,8 @@ export async function headReq<T = unknown>(
 		});
 }
 
-function getError(err: AxiosError): ResponseError {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getError(err: any): ResponseError {
 	return {
 		statusCode: err.response.status ?? 500,
 		message: err.response.data.reason ?? err.response.statusText,

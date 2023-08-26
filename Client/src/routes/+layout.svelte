@@ -7,7 +7,7 @@
 	import { account } from "$lib/state/account.state";
 	import { Popup } from "$lib/ui/popup";
 	import { activity } from "$lib/state/activity.state";
-	import { CheckLine, CloseCircleLine } from "svelte-remixicon";
+	import { Icon } from "svelte-remix";
 	import { getReq, patchReq, type ResponseError } from "$lib/http";
 	import Button from "$lib/ui/util/Button.svelte";
 	import type { Account } from "$lib/models/accounts";
@@ -35,7 +35,7 @@
 			let accentColor = getComputedStyle(document.documentElement).getPropertyValue(
 				"--accent"
 			);
-			themeColor.setAttribute("content", accentColor);
+			themeColor?.setAttribute("content", accentColor);
 		}
 
 		await fetch(`/api/auth/set-profile?profileId=${$account.currProfile?.id}`, { method: "POST", credentials: "include" })
@@ -113,7 +113,7 @@
 					>
 						<div class="flex-1">
 							<div class="flex items-center">
-								<CloseCircleLine size="18px" class="mr-2" />
+								<Icon name="close-circle-line" width="18px" height="18px" class="mr-2" />
 								<span class="font-bold text-lg">Head's Up!</span>
 							</div>
 							<span>
@@ -127,7 +127,7 @@
 							loading={loadingTerms}
 							loadingText="Saving..."
 						>
-							<CheckLine class="button-icon" />
+							<Icon name="check-line" class="button-icon" />
 							<span class="button-text">I agree</span>
 						</Button>
 					</div>
@@ -138,7 +138,7 @@
 					>
 						<div class="flex-1">
 							<div class="flex items-center">
-								<CloseCircleLine size="18px" class="mr-2" />
+								<Icon name="close-circle-line" width="18px" height="18px" class="mr-2" />
 								<span class="font-bold text-lg">Head's Up!</span>
 							</div>
 							<span>
@@ -152,7 +152,7 @@
 							loading={loadingConfirm}
 							loadingText="Sending..."
 						>
-							<CheckLine class="button-icon" />
+							<Icon name="check-line" class="button-icon" />
 							<span class="button-text">Confirm</span>
 						</Button>
 					</div>

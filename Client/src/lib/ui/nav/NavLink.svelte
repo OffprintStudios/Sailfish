@@ -2,7 +2,7 @@
 	import { page } from "$app/stores";
 
 	export let type: 'link' | 'button' = 'link';
-	export let href = null;
+	export let href: string | null = null;
 	export let isActive = false;
 	export let hasMargin = true;
 </script>

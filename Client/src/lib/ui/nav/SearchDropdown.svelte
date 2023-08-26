@@ -4,7 +4,7 @@
 	import { slide } from "svelte/transition";
 	import { clickOutside } from "$lib/util/functions";
 	import { DEFAULT_SLOGANS } from "$lib/util/constants";
-	import { Loader5Line, SearchEyeLine } from "svelte-remixicon";
+	import { Icon } from "svelte-remix";
 	import { onMount } from "svelte";
 	import type { Paginate } from "$lib/util/types";
 	import type { Work } from "$lib/models/content/works";
@@ -121,7 +121,7 @@
 			const workResponse = await getReq<Paginate<Work>>(
 				`/search/works?filter=${$app.filter}&title=${query}&page=1&per=3`
 			);
-			const blogResponse = await getReq<Paginate<Work>>(
+			const blogResponse = await getReq<Paginate<Blog>>(
 				`/search/blogs?filter=${$app.filter}&title=${query}&page=1&per=3`
 			);
 			const userResponse = await getReq<Paginate<Profile>>(
@@ -146,7 +146,7 @@
 
 <div class="relative z-[2]">
 	<button class="search-button" on:click={determineState} bind:this={button}>
-		<SearchEyeLine size="20px" class="mr-2" />
+		<Icon name="search-eye-line" width="20px" height="20px" class="mr-2" />
 		<span>{currSlogan}</span>
 	</button>
 	{#if open}
@@ -158,12 +158,12 @@
 			on:outclick={determineState}
 		>
 			<div class="search-button">
-				<SearchEyeLine size="20px" class="mx-2" />
+				<Icon name="search-eye-line" width="20px" height="20px" class="mx-2" />
 				<input
 					type="text"
 					class="text-white text-sm px-0 py-2.5 flex-1 m-0 bg-transparent border-0 focus:ring-0 rounded-lg placeholder:text-zinc-200"
 					placeholder={currSlogan}
-					on:keyup={(e) => searchFor(e.target.value)}
+					on:keyup={(e) => searchFor(e.target?.value)}
 					autofocus
 				/>
 			</div>
@@ -198,8 +198,10 @@
 					{#if loading}
 						<div class="empty">
 							<p>
-								<Loader5Line
-									size="36px"
+								<Icon 
+									name="loader-5-line" 
+									width="36px" 
+									height="36px" 
 									class="animate-[spin_2s_linear_infinite]"
 								/>
 							</p>
@@ -246,6 +248,7 @@
 									profile={user}
 									showOptions={false}
 									showBanner={false}
+									roles={[]}
 								/>
 							{/each}
 							<a href="/search?query={query}" class="py-2 px-4 my-6">See more</a>
