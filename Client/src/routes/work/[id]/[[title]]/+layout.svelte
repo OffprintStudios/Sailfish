@@ -81,7 +81,7 @@
     </div>
 </div>
 
-<div class="mx-auto max-w-4xl">
+<div class="mx-auto max-w-4xl w-11/12">
     <div class="flex items-end h-[75px]">
         <div
 			class="relative overflow-hidden w-max flex flex-col items-center justify-center bg-zinc-300 dark:bg-zinc-600 border-4 border-zinc-300 dark:border-zinc-600 rounded-xl z-[2]"
