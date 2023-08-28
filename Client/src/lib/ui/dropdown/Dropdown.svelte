@@ -75,6 +75,9 @@
 			:global(span) {
 				@apply text-sm;
 			}
+			:global(svg) {
+				@apply w-[18px] h-[18px];
+			}
 		}
 		:global(span.label) {
 			@apply text-xs uppercase font-bold tracking-wider px-2 py-1.5 relative mb-2;

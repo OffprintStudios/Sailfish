@@ -9,6 +9,8 @@ export type { Highlight } from "./highlight";
 export type { WorkForm } from "./work-form";
 export type { VolumeForm } from "./volume-form";
 export type { SectionForm } from "./section-form";
+export type { Review } from "./review";
+export type { FetchWorkPage } from "./fetch-work-page";
 export { Kind } from "./kind";
 export { Category } from "./category";
 export { Status } from "./status";

@@ -38,7 +38,7 @@ struct ReadingService {
     
     /// Fetches a single work along with its table of contents.
     func fetchWork(_ id: String) async throws -> WorkPage {
-        guard let work: Work = try await Work.query(on: request.db)
+        guard let work = try await Work.query(on: request.db)
             .with(\.$author)
             .with(\.$tags, { $0.with(\.$parent) })
             .filter(\.$id == id)
@@ -50,10 +50,14 @@ struct ReadingService {
             .filter(\.$work.$id == work.requireID())
             .sort(\.$rank, .ascending)
             .all()
-        try await request.workService.updateIpViews(for: work)
+        let topReviews = try await work.$reviews.query(on: request.db)
+            .sort(\.$likes, .descending)
+            .limit(3)
+            .all()
         return .init(
             work: work,
-            tableOfContents: tableOfContents
+            tableOfContents: tableOfContents,
+            topReviews: topReviews
         )
     }
     
@@ -159,6 +163,7 @@ extension ReadingService {
     struct WorkPage: Content {
         let work: Work
         let tableOfContents: [SectionList]
+        let topReviews: [ReviewView]
     }
     
     struct SectionPage: Content {

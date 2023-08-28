@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Loader5Line } from "svelte-remixicon";
+	import { Icon } from "svelte-remix";
 
 	export let loading = false;
 	export let isActive = false;
@@ -32,7 +32,7 @@
 		tabindex="0"
 	>
 		{#if loading}
-			<Loader5Line class="button-icon animate-spin" />
+			<Icon name="loader-5-line" class="button-icon animate-spin" />
 			<span class="button-text">{loadingText}</span>
 		{:else}
 			<slot />
@@ -56,7 +56,7 @@
 		bind:this={thisButton}
 	>
 		{#if loading}
-			<Loader5Line class="button-icon animate-spin" />
+			<Icon name="loader-5-line" class="button-icon animate-spin" />
 			<span class="button-text">{loadingText}</span>
 		{:else}
 			<slot />

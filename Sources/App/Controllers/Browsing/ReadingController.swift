@@ -7,9 +7,7 @@ import Fluent
 
 struct ReadingController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
-        let reading = routes.grouped("reading").grouped([
-            IdentityGuard(needs: [.user], checkProfile: true),
-        ])
+        let reading = routes.grouped("reading")
         let readingWithAuth = routes.grouped("reading").grouped([
             IdentityGuard(needs: [.user], checkProfile: true),
             ConfirmationGuard(),
