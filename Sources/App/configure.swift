@@ -89,6 +89,9 @@ public func configure(_ app: Application) async throws {
         SectionView.Create(),
         SectionList.Create(),
         SectionCommentView.Create(),
+        Review.Create(),
+        ReviewVote.Create(),
+        ReviewView.Create(),
     ])
 
     try await app.autoMigrate()
@@ -97,6 +100,7 @@ public func configure(_ app: Application) async throws {
     app.logger.notice("Adding database middleware")
     app.databases.middleware.use(SpecialEvent.Middleware(), on: .psql)
     app.databases.middleware.use(SpecialEventPrompt.Middleware(), on: .psql)
+    app.databases.middleware.use(Review.Middleware(), on: .psql)
 
     // Setting up queues
     app.logger.notice("Setting up queues...")

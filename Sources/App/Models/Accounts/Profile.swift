@@ -63,6 +63,9 @@ final class Profile: Model, Content {
     
     @Children(for: \.$profile)
     var history: [ReadingHistory]
+    
+    @Children(for: \.$profile)
+    var reviews: [Review]
 
     @Timestamp(key: FieldKeys.createdAt, on: .create)
     var createdAt: Date?

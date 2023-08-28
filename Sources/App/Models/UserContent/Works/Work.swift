@@ -76,6 +76,9 @@ final class Work: Model, Content {
     @Children(for: \.$work)
     var votes: [ReadingHistory]
     
+    @Children(for: \.$work)
+    var reviews: [ReviewView]
+    
     @Field(key: FieldKeys.kind)
     var kind: Kind
     
