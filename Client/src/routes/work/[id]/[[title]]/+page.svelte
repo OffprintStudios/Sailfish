@@ -1,13 +1,23 @@
 <script lang="ts">
-	import type { FetchWorkPage } from "$lib/models/content/works";
+	import type { FetchWorkPage, SectionList } from "$lib/models/content/works";
 	import { TagBadge } from "$lib/ui/content";
 	import { Icon } from "svelte-remix";
-	import { readingTime } from "$lib/util/functions";
+	import { abbreviate, readingTime } from "$lib/util/functions";
 	import { InfoBar } from "$lib/ui/util";
-	import Time from "$lib/ui/util/Time.svelte";
-	import WorkCard from "$lib/ui/content/WorkCard.svelte";
+	import { Time } from "$lib/ui/util";
+	import { afterNavigate } from "$app/navigation";
 
 	export let data: FetchWorkPage;
+
+	const tableCopy = [...data.tableOfContents];
+	tableCopy.reverse()
+	let latestSections = tableCopy.slice(0, 3);
+
+	afterNavigate(() => {
+		const tableRecopy = [...data.tableOfContents];
+		tableRecopy.reverse();
+		latestSections = tableRecopy.slice(0, 3);
+	});
 
 	/*async function fetchQueueItem() {
 		const response = await getReq<ApprovalQueue>(
@@ -52,6 +62,38 @@
 				<TagBadge {tag} size="large" kind={tag.kind}  />
 			{/each}
 		</div>
+	</section>
+	<section class="mb-6">
+		<h3>Latest Updates</h3>
+		<ul class="list-none w-full bg-zinc-200 dark:bg-zinc-700 rounded-xl overflow-hidden">
+			{#each latestSections as section}
+				<li class="with-link border-zinc-300 dark:border-zinc-600 hover:bg-zinc-400 dark:hover:bg-zinc-500">
+					<a href="/section/{section.id}">
+						<div class="flex flex-col flex-1">
+							<span>{section.title}</span>
+							<div class="flex items-center text-xs uppercase font-bold text-zinc-500 dark:text-zinc-400">
+								<span><Icon name="calendar-2-line" width="16px" height="16px" class="mr-1" /></span>
+								{#if section.publishedOn}
+									<span class="relative top-[0.075rem]"><Time timestamp={section.publishedOn} /></span>
+								{:else}
+									<span class="relative top-[0.075rem]"><Time timestamp={section.createdAt} /></span>
+								{/if}
+								<span class="mx-1">•</span>
+								<span class="hidden lg:block"><Icon name="open-arm-line" width="16px" height="16px" class="mr-1" /></span>
+								<span class="hidden lg:block relative top-[0.075rem]">{abbreviate(section.cheers)}</span>
+								<span class="hidden lg:block mx-1">•</span>
+								<span class="hidden lg:block"><Icon name="question-answer-line" width="16px" height="16px" class="mr-1" /></span>
+								<span class="hidden lg:block relative top-[0.075rem]">{abbreviate(section.comments)}</span>
+								<span class="hidden lg:block mx-1">•</span>
+								<span><Icon name="time-line" width="16px" height="16px" class="mr-1" /></span>
+								<span class="relative top-[0.075rem]">{readingTime(section.words)}</span>
+							</div>
+						</div>
+						<Icon name="arrow-right-s-line" width="20px" height="20px" class="text-zinc-500 dark:text-zinc-400" />
+					</a>
+				</li>
+			{/each}
+		</ul>
 	</section>
 	<section class="mb-6">
 		<h3>Stats</h3>
@@ -126,26 +168,19 @@
 	</section>
 </div>
 
-<!--<div class="max-w-7xl mx-auto mb-6 xl:mt-6">
-	<WorkHeader work={data.work} {history} />
-	{#if !data.work.publishedOn && !queueItem}
-	
-		<div class="mb-6"></div>
-	{:else if queueItem !== null && queueItem !== undefined}
-		<ApprovalOptionsBar {queueItem} />
-	{/if}
-	<div class="max-w-4xl w-11/12 lg:w-full mx-auto">
-		<WorkInfo work={data.work} />
-		<ListContainer work={data.work} {history} />
-	</div>
-</div>-->
-
 <style lang="scss">
 	section {
 		ul {
 			@apply ml-0;
 			li {
-				@apply flex items-center px-4 py-3.5 border-b-2 last:border-0;
+				@apply flex items-center my-0 px-4 py-3.5 border-b-2 last:border-0;
+			}
+			li.with-link {
+				@apply my-0 px-0 py-0 border-b-2 last:border-0 transition;
+				a {
+					@apply w-full h-full flex items-center px-4 py-3.5 no-underline;
+					color: var(--text-color);
+				}
 			}
 		}
 	}

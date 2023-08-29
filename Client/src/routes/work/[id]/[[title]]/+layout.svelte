@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { FetchWorkPage } from "$lib/models/content/works";
+    import { type FetchWorkPage, Kind } from "$lib/models/content/works";
 	import { TagKind } from "$lib/models/tags";
     import { Dropdown } from "$lib/ui/dropdown";
 	import { Button } from "$lib/ui/util";
@@ -12,6 +12,25 @@
     const firstGenre = data.work.tags.filter(tag => tag.kind === TagKind.genre)[0];
     const fandoms = data.work.tags.filter(tag => tag.kind === TagKind.fandom);
     const firstFandom = fandoms.length > 0 ? fandoms[0].name : data.work.category.toString();
+
+    let sectionsName = "Sections";
+    switch (data.work.kind) {
+        case Kind.Prose:
+            sectionsName = "Chapters";
+            break;
+        case Kind.Poetry:
+            sectionsName = "Poems";
+            break;
+        case Kind.Nonfiction:
+            sectionsName = "Sections";
+            break;
+        case Kind.Script:
+            sectionsName = "Parts";
+            break;
+        case Kind.Anthology:
+            sectionsName = "Entries";
+            break;
+    }
 </script>
 
 <svelte:head>
@@ -24,7 +43,7 @@
 	<meta property="og:type" content="book" />
 	<meta
 		property="og:url"
-		content="https://offprint.net/prose/{data.work.id}/{slugify(data.work.title)}"
+		content="https://offprint.net/work/{data.work.id}/{slugify(data.work.title)}"
 	/>
 	<meta property="og:title" content={data.work.title} />
 	<meta
@@ -42,7 +61,7 @@
 	<meta property="twitter:site" content="offprint" />
 	<meta
 		property="twitter:url"
-		content="https://offprint.net/prose/{data.work.id}/{slugify(data.work.title)}"
+		content="https://offprint.net/work/{data.work.id}/{slugify(data.work.title)}"
 	/>
 	<meta property="twitter:title" content={data.work.title} />
 	<meta property="twitter:description" content={data.work.shortDesc} />
@@ -150,7 +169,7 @@
                 class:active={$page.url.pathname.includes(`/sections`)}
                 href="/work/{data.work.id}/{slugify(data.work.title)}/sections"
             >
-                Chapters
+                {sectionsName}
             </a>
             <a 
                 class="work-tab-button w-1/3 lg:w-auto" 
