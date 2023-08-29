@@ -73,7 +73,7 @@
         <img class="w-full h-full object-cover" src={data.work.bannerArt} alt="Banner Art" />
     {/if}
     <div class="absolute top-4 w-full">
-        <div class="flex items-center w-full px-4 lg:px-0 mx-auto max-w-4xl">
+        <div class="flex items-center w-full px-4">
             <div class="flex-1"><!--spacer--></div>
             <Button kind="primary">
                 <Icon name="add-line" class="button-icon" />
