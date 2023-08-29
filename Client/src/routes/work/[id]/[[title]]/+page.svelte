@@ -6,10 +6,12 @@
 	import { InfoBar } from "$lib/ui/util";
 	import { Time } from "$lib/ui/util";
 	import { afterNavigate } from "$app/navigation";
+	import { account } from "$lib/state/account.state";
 
 	export let data: FetchWorkPage;
+	const publishedSections = data.tableOfContents.filter(section => section.publishedOn !== undefined);
 
-	const tableCopy = [...data.tableOfContents];
+	const tableCopy = $account.currProfile?.id === data.work.author.id ? [...data.tableOfContents] : publishedSections;
 	tableCopy.reverse()
 	let latestSections = tableCopy.slice(0, 3);
 
@@ -45,10 +47,6 @@
 </script>
 
 <div class="pb-8">
-	<!--<InfoBar
-			message="<b>This work is a draft.</b> No views will be counted when navigating to
-                                this page, and all social features (such as comments and likes/dislikes) are disabled."
-		/>-->
 	<section class="mb-2">
 		<h3>Description</h3>
 		<div class="html-description">
@@ -63,14 +61,14 @@
 			{/each}
 		</div>
 	</section>
-	<section class="mb-6">
+	<section class="hidden lg:block mb-6">
 		<h3>Latest Updates</h3>
 		<ul class="list-none w-full bg-zinc-200 dark:bg-zinc-700 rounded-xl overflow-hidden">
 			{#each latestSections as section}
 				<li class="with-link border-zinc-300 dark:border-zinc-600 hover:bg-zinc-400 dark:hover:bg-zinc-500">
 					<a href="/section/{section.id}">
 						<div class="flex flex-col flex-1">
-							<span>{section.title}</span>
+							<span class="line-clamp-1">{section.title}</span>
 							<div class="flex items-center text-xs uppercase font-bold text-zinc-500 dark:text-zinc-400">
 								<span><Icon name="calendar-2-line" width="16px" height="16px" class="mr-1" /></span>
 								{#if section.publishedOn}
@@ -89,7 +87,7 @@
 								<span class="relative top-[0.075rem]">{readingTime(section.words)}</span>
 							</div>
 						</div>
-						<Icon name="arrow-right-s-line" width="20px" height="20px" class="text-zinc-500 dark:text-zinc-400" />
+						<Icon name="arrow-right-s-line" width="20px" height="20px" class="ml-4 text-zinc-500 dark:text-zinc-400" />
 					</a>
 				</li>
 			{/each}

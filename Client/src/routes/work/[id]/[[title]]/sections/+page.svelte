@@ -3,10 +3,12 @@
 	import { Button, Time } from "$lib/ui/util";
 	import { Icon } from "svelte-remix";
     import { abbreviate, readingTime } from "$lib/util/functions";
+	import { account } from "$lib/state/account.state";
 
     export let data: FetchWorkPage;
+    const publishedSections = data.tableOfContents.filter(section => section.publishedOn !== undefined);
     let sortNewest = false;
-    let sectionList = [...data.tableOfContents];
+    let sectionList = $account.currProfile?.id === data.work.author.id ? [...data.tableOfContents] : publishedSections;
 
     let sectionsName = "Sections";
     switch (data.work.kind) {
@@ -60,7 +62,7 @@
             <li class="with-link border-zinc-300 dark:border-zinc-600 hover:bg-zinc-400 dark:hover:bg-zinc-500">
                 <a href="/section/{section.id}">
                     <div class="flex flex-col flex-1">
-                        <span>{section.title}</span>
+                        <span class="line-clamp-1">{section.title}</span>
                         <div class="flex items-center text-xs uppercase font-bold text-zinc-500 dark:text-zinc-400">
                             <span><Icon name="calendar-2-line" width="16px" height="16px" class="mr-1" /></span>
                             {#if section.publishedOn}
@@ -79,7 +81,7 @@
                             <span class="relative top-[0.075rem]">{readingTime(section.words)}</span>
                         </div>
                     </div>
-                    <Icon name="arrow-right-s-line" width="20px" height="20px" class="text-zinc-500 dark:text-zinc-400" />
+                    <Icon name="arrow-right-s-line" width="20px" height="20px" class="ml-4 text-zinc-500 dark:text-zinc-400" />
                 </a>
             </li>
         {/each}

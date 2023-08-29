@@ -2,10 +2,11 @@
     import { type FetchWorkPage, Kind } from "$lib/models/content/works";
 	import { TagKind } from "$lib/models/tags";
     import { Dropdown } from "$lib/ui/dropdown";
-	import { Button } from "$lib/ui/util";
+	import { Button, InfoBar } from "$lib/ui/util";
     import { slugify, abbreviate } from "$lib/util/functions";
 	import { Icon } from "svelte-remix";
     import { page } from "$app/stores";
+    import { account } from "$lib/state/account.state";
 
     export let data: FetchWorkPage;
 
@@ -152,10 +153,18 @@
                 <span>{abbreviate(data.work.words)}</span>
             </span>
         </div>
-        <button class="go-read start-reading">
-            <Icon name="book-open-line" width="18px" height="18px" class="mr-2" />
-            <span class="uppercase text-xs tracking-wide font-bold relative top-[0.075rem]">Start Reading</span>
-        </button>
+        {#if !data.work.publishedOn}
+            <InfoBar
+			    message="<b>This work is a draft.</b> No views will be counted when navigating to
+                                this page, and all social features (such as comments and likes/dislikes) are disabled."
+		    />
+        {/if}
+        {#if $account.currProfile?.id !== data.work.author.id && data.work.publishedOn}
+            <a class="go-read start-reading" href="/section/{data.tableOfContents[0].id}">
+                <Icon name="book-open-line" width="18px" height="18px" class="mr-2" />
+                <span class="uppercase text-xs tracking-wide font-bold relative top-[0.075rem]">Start Reading</span>
+            </a>
+        {/if}
         <div class="flex items-center lg:justify-center">
             <a 
                 class="work-tab-button w-1/3 lg:w-auto" 
@@ -187,8 +196,8 @@
 </div>
 
 <style lang="scss">
-    button.go-read {
-        @apply flex items-center justify-center p-3 my-6 rounded-xl max-w-lg w-full mx-auto transition text-white;
+    a.go-read {
+        @apply flex items-center justify-center p-3 my-6 rounded-xl max-w-lg w-full mx-auto transition text-white no-underline;
         &.start-reading {
             @apply bg-green-600;
             &:hover {
