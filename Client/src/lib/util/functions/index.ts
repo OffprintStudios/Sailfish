@@ -7,3 +7,4 @@ export { abbreviate } from "./abbreviate";
 export { localeDate } from "./locale-date";
 export { hasRoles } from "./has-roles";
 export { throttle } from "./throttle";
+export { readingTime } from "./reading-time";

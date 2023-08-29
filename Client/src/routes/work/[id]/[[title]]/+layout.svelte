@@ -5,6 +5,7 @@
 	import { Button } from "$lib/ui/util";
     import { slugify, abbreviate } from "$lib/util/functions";
 	import { Icon } from "svelte-remix";
+    import { page } from "$app/stores";
 
     export let data: FetchWorkPage;
 
@@ -52,32 +53,35 @@
     {#if data.work.bannerArt}
         <img class="w-full h-full object-cover" src={data.work.bannerArt} alt="Banner Art" />
     {/if}
-    <div class="absolute top-4 right-4 flex items-center">
-        <Button kind="primary">
-            <Icon name="add-line" class="button-icon" />
-            <span class="button-text">Library</span>
-        </Button>
-        <div class="mx-0.5"><!--spacer--></div>
-        <Dropdown kind="primary">
-            <svelte:fragment slot="button">
-                <Icon name="more-fill" width="24px" height="24px" class="button-icon no-text" />
-            </svelte:fragment>
-            <svelte:fragment slot="items">
-                <button>
-                    <Icon name="bar-chart-fill" class="mr-2" />
-                    <span>Add to Shelf</span>
-                </button>
-                <button>
-                    <Icon name="share-box-line" class="mr-2" />
-                    <span>Share This</span>
-                </button>
-                <div class="divider"><!--spacer--></div>
-                <button>
-                    <Icon name="alarm-warning-line" class="mr-2" />
-                    <span>Report</span>
-                </button>
-            </svelte:fragment>
-        </Dropdown>
+    <div class="absolute top-4 w-full">
+        <div class="flex items-center w-full px-4 lg:px-0 mx-auto max-w-4xl">
+            <div class="flex-1"><!--spacer--></div>
+            <Button kind="primary">
+                <Icon name="add-line" class="button-icon" />
+                <span class="button-text">Library</span>
+            </Button>
+            <div class="mx-0.5"><!--spacer--></div>
+            <Dropdown kind="primary">
+                <svelte:fragment slot="button">
+                    <Icon name="more-fill" width="24px" height="24px" class="button-icon no-text" />
+                </svelte:fragment>
+                <svelte:fragment slot="items">
+                    <button>
+                        <Icon name="bar-chart-fill" class="mr-2" />
+                        <span>Add to Shelf</span>
+                    </button>
+                    <button>
+                        <Icon name="share-box-line" class="mr-2" />
+                        <span>Share This</span>
+                    </button>
+                    <div class="divider"><!--spacer--></div>
+                    <button>
+                        <Icon name="alarm-warning-line" class="mr-2" />
+                        <span>Report</span>
+                    </button>
+                </svelte:fragment>
+            </Dropdown>
+        </div>
     </div>
 </div>
 
@@ -90,7 +94,7 @@
             <img
                 src={data.work.coverArt}
                 alt="cover art"
-                class="max-w-[120px] max-h-[192px] lg:max-w-[200px] lg:max-h-[320px]"
+                class="max-w-[160px] max-h-[256px] lg:max-w-[200px] lg:max-h-[320px]"
             />
         </div>
         <div class="flex-1"><!--spacer--></div>
@@ -106,19 +110,19 @@
             </Button>
         </div>
     </div>
-    <div class="flex flex-col py-6">
-        <div class="flex items-center text-sm uppercase font-bold tracking-wide">
+    <div class="flex flex-col w-full pt-6 mb-6 border-b border-zinc-200 dark:border-zinc-700">
+        <div class="flex items-center text-xs lg:text-sm uppercase font-bold tracking-wide">
             <span>{firstFandom}</span>
             <span class="relative mx-1 -top-[0.075rem]">•</span>
             <span>{firstGenre.name}</span>
         </div>
         <div>
-            <h1 class="text-4xl">{data.work.title}</h1>
+            <h1 class="text-3xl lg:text-4xl">{data.work.title}</h1>
         </div>
-        <div class="text-2xl text-zinc-400 dark:text-zinc-500" style="font-family: var(--header-text);">
+        <div class="text-lg lg:text-2xl text-zinc-400 dark:text-zinc-500" style="font-family: var(--header-text);">
             <span>by <a class="text-zinc-400 dark:text-zinc-500" href="/profile/{data.work.author.id}/{slugify(data.work.author.username)}">{data.work.author.username}</a></span>
         </div>
-        <div class="flex items-center text-zinc-400 dark:text-zinc-500">
+        <div class="flex items-center text-sm text-zinc-400 dark:text-zinc-500">
             <span class="flex items-center" title="Views">
                 <Icon name="line-chart-line" width="20px" height="20px" class="mr-1" />
                 <span>{abbreviate(data.work.views)}</span>
@@ -129,7 +133,73 @@
                 <span>{abbreviate(data.work.words)}</span>
             </span>
         </div>
+        <button class="go-read start-reading">
+            <Icon name="book-open-line" width="18px" height="18px" class="mr-2" />
+            <span class="uppercase text-xs tracking-wide font-bold relative top-[0.075rem]">Start Reading</span>
+        </button>
+        <div class="flex items-center lg:justify-center">
+            <a 
+                class="work-tab-button w-1/3 lg:w-auto" 
+                class:active={$page.url.pathname === `/work/${data.work.id}/${slugify(data.work.title)}`}
+                href="/work/{data.work.id}/{slugify(data.work.title)}"
+            >
+                Details
+            </a>
+            <a 
+                class="work-tab-button w-1/3 lg:w-auto" 
+                class:active={$page.url.pathname.includes(`/sections`)}
+                href="/work/{data.work.id}/{slugify(data.work.title)}/sections"
+            >
+                Chapters
+            </a>
+            <a 
+                class="work-tab-button w-1/3 lg:w-auto" 
+                class:active={$page.url.pathname.includes(`/reviews`)}
+                href="/work/{data.work.id}/{slugify(data.work.title)}/reviews"
+            >
+                Reviews
+            </a>
+        </div>
     </div>
 </div>
 
-<!--<slot />-->
+<div class="mx-auto w-11/12 max-w-4xl">
+    <slot />
+</div>
+
+<style lang="scss">
+    button.go-read {
+        @apply flex items-center justify-center p-3 my-6 rounded-xl max-w-lg w-full mx-auto transition text-white;
+        &.start-reading {
+            @apply bg-green-600;
+            &:hover {
+                @apply bg-green-700
+            }
+        }
+        &.continue-reading {
+            @apply bg-blue-600;
+            &:hover {
+                @apply bg-blue-700;
+            }
+        }
+    }
+    a.work-tab-button {
+        @apply px-4 py-3 text-center no-underline border-b-4 border-transparent uppercase text-sm tracking-wide font-bold;
+        color: var(--text-color);
+        &.active {
+            @apply border-zinc-700;
+        }
+        &:hover {
+            @apply border-zinc-700;
+        }
+    }
+
+    :global(.dark a.work-tab-button) {
+        &.active {
+            @apply border-white;
+        }
+        &:hover {
+            @apply border-white;
+        }
+    }
+</style>
