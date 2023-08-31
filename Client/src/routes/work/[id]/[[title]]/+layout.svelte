@@ -76,12 +76,19 @@
     <div class="absolute top-4 w-full">
         <div class="flex items-center w-full px-4">
             <div class="flex-1"><!--spacer--></div>
-            <Button kind="primary">
-                <Icon name="add-line" class="button-icon" />
-                <span class="button-text">Library</span>
-            </Button>
+            {#if $account.currProfile?.id === data.work.author.id}
+                <Button kind="blurred">
+                    <Icon name="edit-2-line" class="button-icon" />
+                    <span class="button-text">Edit</span>
+                </Button>
+            {:else}
+                <Button kind="blurred">
+                    <Icon name="add-line" class="button-icon" />
+                    <span class="button-text">Library</span>
+                </Button>
+            {/if}
             <div class="mx-0.5"><!--spacer--></div>
-            <Dropdown kind="primary">
+            <Dropdown kind="blurred">
                 <svelte:fragment slot="button">
                     <Icon name="more-fill" width="24px" height="24px" class="button-icon no-text" />
                 </svelte:fragment>
@@ -90,15 +97,41 @@
                         <Icon name="bar-chart-fill" class="mr-2" />
                         <span>Add to Shelf</span>
                     </button>
+                    {#if $account.currProfile?.id === data.work.author.id}
+                        <button>
+                            {#if data.work.coverArt}
+                                <Icon name="image-edit-line" class="mr-2" />
+                                <span>Edit Cover Art</span>
+                            {:else}
+                                <Icon name="image-add-line" class="mr-2" />
+                                <span>Add Cover Art</span>
+                            {/if}
+                        </button>
+                        <button>
+                            <Icon name="landscape-line" class="mr-2" />
+                            {#if data.work.bannerArt}
+                                <span>Edit Banner Art</span>
+                            {:else}
+                                <span>Add Banner Art</span>
+                            {/if}
+                        </button>
+                    {/if}
                     <button>
                         <Icon name="share-box-line" class="mr-2" />
                         <span>Share This</span>
                     </button>
                     <div class="divider"><!--spacer--></div>
-                    <button>
-                        <Icon name="alarm-warning-line" class="mr-2" />
-                        <span>Report</span>
-                    </button>
+                    {#if $account.currProfile?.id === data.work.author.id}
+                        <button>
+                            <Icon name="delete-bin-2-line" class="mr-2" />
+                            <span>Delete</span>
+                        </button>
+                    {:else}
+                        <button>
+                            <Icon name="alarm-warning-line" class="mr-2" />
+                            <span>Report</span>
+                        </button>
+                    {/if}
                 </svelte:fragment>
             </Dropdown>
         </div>

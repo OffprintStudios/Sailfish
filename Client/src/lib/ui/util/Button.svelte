@@ -9,7 +9,7 @@
 	export let classes = "";
 	export let loadingText = "Loading...";
 	export let type = "button";
-	export let kind: "primary" | "normal" = "normal";
+	export let kind: "primary" | "blurred" | "normal" = "normal";
 	export let title = "";
 	export let asLink = false;
 	export let href = "";
@@ -47,6 +47,7 @@
 		class:negative={isNegative}
 		class:position-inline={inline}
 		class:z-10={!noAxis}
+		class:blurred={kind === "blurred"}
 		{title}
 		class:disabled
 		class={classes}
@@ -78,7 +79,7 @@
 		&.primary,
 		&.active {
 			@apply text-white;
-			background: var(--accent);
+			background: rgba(var(--accent-value), 0.5);
 
 			&:hover {
 				background: var(--accent-light);
@@ -134,9 +135,14 @@
 			}
 		}
 
+		&.blurred {
+			@apply text-white bg-zinc-400 bg-opacity-30;
+			backdrop-filter: blur(7px);
+		}
+
 		&:hover {
+			@apply bg-zinc-400;
 			color: white;
-			background: var(--accent);
 			text-decoration: none;
 		}
 
@@ -146,11 +152,11 @@
 		}
 
 		:global(svg.button-icon) {
-			@apply mr-1.5 relative;
+			@apply mr-1.5 relative w-4 h-4;
 		}
 
 		:global(svg.button-icon.no-text) {
-			@apply mr-0;
+			@apply mr-0 w-6 h-6;
 		}
 
 		:global(svg.button-icon.variable-text) {

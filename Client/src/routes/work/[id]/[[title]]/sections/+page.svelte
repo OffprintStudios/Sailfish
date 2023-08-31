@@ -43,14 +43,21 @@
             <span class="font-bold">0 Volumes, {data.tableOfContents.length} {sectionsName}</span>
             <span class="text-zinc-500">{data.work.status}</span>
         </div>
+        {#if $account.currProfile?.id === data.work.author.id}
+            <Button>
+                <Icon name="add-line" class="button-icon" />
+                <span class="button-text">Add</span>
+            </Button>
+            <div class="mx-1"><!--spacer--></div>
+        {/if}
         <Button on:click={toggleSort}>
             {#if sortNewest}
-                <Icon name="sort-asc" class="button-icon" width="16px" height="16px" />
+                <Icon name="sort-asc" class="button-icon" />
                 <span class="button-text">
                     Newest
                 </span>
             {:else}
-                <Icon name="sort-desc" class="button-icon" width="16px" height="16px" />
+                <Icon name="sort-desc" class="button-icon" />
                 <span class="button-text">
                     Oldest
                 </span>

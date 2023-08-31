@@ -6,7 +6,7 @@
 	import { clickOutside } from "$lib/util/functions";
 	import { throttle } from "$lib/util/functions";
 
-	export let kind: "primary" | "normal" = "normal";
+	export let kind: "primary" | "blurred" | "normal" = "normal";
 	export let open = false;
 	export let position: Placement = "bottom-start";
 	export let inline = false;
@@ -41,7 +41,7 @@
 
 <div class="relative z-[2]">
 	<Button
-		kind={kind === "normal" ? "normal" : "primary"}
+		{kind}
 		isActive={open}
 		{inline}
 		{noAxis}
