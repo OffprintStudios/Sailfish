@@ -7,9 +7,10 @@
 	import { Icon } from "svelte-remix";
 	import Avatar from '$lib/ui/util/Avatar.svelte';
 
-	export let data: SectionCommentsPage;
+	export let data: { sectionComments: SectionCommentsPage };
 
 	onMount(() => {
+		console.log(data);
 		setTimeout(() => {
 			const sectionPage = document.getElementById("section-page");
 			sectionPage?.classList.add("in-comments");
@@ -36,11 +37,11 @@
 			</button>
 		</div>
 		<div class="mb-8"><!--spacer--></div>
-		{#each data.page.items as comment}
+		<!--{#each data.page.items as comment}
 			<div class="mx-2 lg:mx-0">
 				<NewComment {comment} />
 			</div>
-		{/each}
+		{/each}-->
 		<div
 			class="w-full my-6 border-b-4 border-dotted border-zinc-200 dark:border-zinc-700"
 			class:hidden={!$account.currProfile}

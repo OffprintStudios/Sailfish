@@ -33,9 +33,13 @@ struct ReadingController: RouteCollection {
             return try await request.readingService.fetchSection(id)
         }
         
-        reading.get("fetch-section-comments", ":id") { request async throws -> Page<SectionCommentView> in
+        reading.get("fetch-section-comments", ":id") { request async throws -> SectionCommentsPage in
             let id = request.parameters.get("id")!
-            return try await request.readingService.fetchSectionComments(for: id)
+            let page = try await request.readingService.fetchSectionComments(for: id)
+            return .init(
+                page: page,
+                votes: 
+            )
         }
         
         readingWithAuth.post("toggle-cheer", ":id") { request async throws -> ReadingService.ToggleCheerResponse in
@@ -51,5 +55,10 @@ extension ReadingController {
         var filter: ContentFilter?
         var page: Int?
         var per: Int?
+    }
+
+    struct SectionCommentsPage: Content {
+        var page: Page<SectionCommentView>
+        var votes: [CommentVote]
     }
 }

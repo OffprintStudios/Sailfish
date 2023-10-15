@@ -15,6 +15,10 @@ struct CommentService {
         
         return try await comment.$history.query(on: request.db).all()
     }
+
+    func fetchVotes(for profileId: String, across commentIds: [String]) async throws -> [CommentVote] {
+        
+    }
     
     func adjustVote(_ commentId: String, rating: CommentVote.Rating) async throws -> CommentVote{
         let profile = try request.authService.getUser(withProfile: true).profile!

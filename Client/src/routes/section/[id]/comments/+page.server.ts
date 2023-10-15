@@ -23,6 +23,6 @@ export const load: PageServerLoad = async ({ params, cookies, url }) => {
 		const err = response as ServerResponseError;
 		throw error(err.statusCode, { message: err.message });
 	} else {
-		return response as SectionCommentsPage;
+		return { sectionComments: response as SectionCommentsPage };
 	}
 };
