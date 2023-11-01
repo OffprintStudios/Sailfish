@@ -112,6 +112,7 @@ public func configure(_ app: Application) async throws {
             "https://offprint.net",
             "https://www.offprint.net",
             "https://staging.offprint.net",
+            "https://offprint.cafe",
             "https://sailfish.onrender.com",
         ]),
         allowedMethods: [.GET, .POST, .PUT, .PATCH, .DELETE, .OPTIONS],
