@@ -11,7 +11,11 @@ import Fluent
 struct ProfileController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let profiles = routes.grouped("profiles")
-        let secure = profiles.grouped(SessionToken.authenticator(), SessionToken.guardMiddleware(), IdentityGuard(needs: [.user]))
+        let secure = profiles.grouped(
+            SessionToken.authenticator(), 
+            SessionToken.guardMiddleware(), 
+            IdentityGuard(needs: [.user])
+        )
         
         profiles.get(":id") { request async throws -> ProfileView in
             let id = request.parameters.get("id")!
