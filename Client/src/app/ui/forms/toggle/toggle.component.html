@@ -1,0 +1,14 @@
+<div class="my-1.5">
+    <label class="switch">
+        <input
+            [id]="id"
+            [required]="required"
+            [(ngModel)]="value"
+            (ngModelChange)="onChange($event)"
+            (blur)="onTouched()"
+            type="checkbox"
+        />
+        <span class="slider"><!--slider--></span>
+    </label>
+    <span class="relative top-[0.075rem]"><ng-content /></span>
+</div>

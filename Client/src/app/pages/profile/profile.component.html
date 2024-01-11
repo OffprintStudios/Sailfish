@@ -1,0 +1,132 @@
+<div
+    class="w-full"
+    *ngIf="profile$ | async as profile"
+>
+    <div
+        class="relative w-full"
+        [ngClass]="{
+            'h-[14rem]': profile.bannerArt,
+            'md:h-[32rem]': profile.bannerArt,
+            'h-[12rem]': !profile.bannerArt,
+            'md:h-[26rem]': !profile.bannerArt,
+        }"
+        style="background: rgb(var(--accent));"
+    >
+        @if (profile.bannerArt) {
+            <img [src]="profile.bannerArt" class="object-cover w-full h-full" />
+        }
+        <img src="/assets/images/backpacker.jpg" class="object-cover w-full h-full" />
+    </div>
+    <div class="flex items-end relative z-10 px-4 md:hidden bg-zinc-200 dark:bg-zinc-700 max-h-[62.5px]">
+        <div class="w-[125px] h-[125px] rounded-full overflow-hidden border-4 border-zinc-300 dark:border-zinc-600">
+            <img [src]="profile.avatar" class="w-full h-full object-cover">
+        </div>
+        <div class="flex-1"><!--spacer--></div>
+        <div class="flex items-center bg-zinc-200 dark:bg-zinc-600 p-1 rounded-xl">
+            <app-button [id]="'follow-button-mobile'" [title]="'Follow ' + profile.username">
+                <span class="button-icon no-text" style="top: 0.1825rem"><ng-icon name="remixUserFollowLine" size="18px" /></span>
+            </app-button>
+            <div class="mx-0.5"><!--spacer--></div>
+            <app-button [id]="'more-options-button-mobile'" [title]="'More Options'">
+                <span class="button-icon no-text" style="top: 0.1825rem"><ng-icon name="remixMore2Fill" size="18px" /></span>
+            </app-button>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-4 md:gap-4 max-w-7xl md:w-11/12 mx-auto">
+        <div class="flex flex-col bg-zinc-200 dark:bg-zinc-700 md:rounded-xl px-4 pt-2 md:py-4 relative md:bottom-24 col-span-1" style="box-shadow: var(--dropshadow);">
+            <div class="self-center hidden md:block max-w-[260px] max-h-[260px] rounded-full overflow-hidden border-4 border-zinc-300 dark:border-zinc-600 mb-4">
+                <img [src]="profile.avatar" class="w-full h-full object-cover">
+            </div>
+            <h1 class="text-4xl">{{ profile.username }}</h1>
+            <div class="flex items-center text-zinc-500 dark:text-zinc-400 text-xs md:text-sm">
+                <a [routerLink]="['/profile', profile.id, profile.username | slugify, 'followers']">
+                    {{ profile.followers | abbreviate }} follower{{ profile.followers | pluralize }}
+                </a>
+                <span class="mx-1">•</span>
+                <a [routerLink]="['/profile', profile.id, profile.username | slugify, 'following']">
+                    {{ profile.following | abbreviate }} following
+                </a>
+                <span class="flex-1"><!--spacer--></span>
+                <span class="block md:hidden">
+                    Joined {{ profile.createdAt | localeDate:'mediumDate' }}
+                </span>
+            </div>
+            <div class="my-2"><!--spacer--></div>
+            <!-- TODO: add profile roles -->
+            <span class="text-sm">{{ profile.bio }}</span>
+            <div class="hidden md:block my-2"><!--spacer--></div>
+            <div class="hidden md:flex items-center w-full bg-zinc-300 dark:bg-zinc-600 rounded-xl overflow-hidden">
+                <button class="card-button big" [id]="'follow-button'" [title]="'Follow ' + profile.username">
+                    <span class="button-icon"><ng-icon name="remixUserFollowLine" /></span>
+                    <span class="button-text">Follow</span>
+                </button>
+                <button class="card-button small" [id]="'more-options-button'" [title]="'More Options'" (click)="isOptionsMenuOpen = !isOptionsMenuOpen">
+                    @if (isOptionsMenuOpen) {
+                        <span class="button-icon no-text"><ng-icon name="remixArrowUpSLine" /></span>
+                    } @else {
+                        <span class="button-icon no-text"><ng-icon name="remixArrowDownSLine" /></span>
+                    }
+                </button>
+            </div>
+            <div class="mt-2 rounded-xl overflow-hidden bg-zinc-300 dark:bg-zinc-600" *ngIf="isOptionsMenuOpen">
+                <button class="card-button full top" [id]="'send-message-button'" [title]="'Send a message to ' + profile.username">
+                    <span class="button-icon"><ng-icon name="remixSendPlaneLine" /></span>
+                    <span class="button-text">Send Message</span>
+                </button>
+                <button class="card-button full" [id]="'report-user-button'" [title]="'Report ' + profile.username">
+                    <span class="button-icon"><ng-icon name="remixAlarmWarningLine" /></span>
+                    <span class="button-text">Report</span>
+                </button>
+            </div>
+            <div class="hidden md:block my-2"><!--spacer--></div>
+            <div class="md:flex items-center text-sm hidden">
+                <span class="mr-2 relative top-0.5"><ng-icon name="remixCake2Line" size="22px" /></span>
+                <span>Joined {{ profile.createdAt | localeDate:'mediumDate' }}</span>
+            </div>
+            <div class="flex md:flex-col items-center md:items-baseline mt-4 md:mt-0">
+                @for (link of links; track $index) {
+                    <app-social-link-badge [link]="link" />
+                }
+            </div>
+            <!-- TODO: add links -->
+            <div class="md:hidden my-1"><!--spacer--></div>
+            <div class="flex md:hidden items-center justify-center w-full">
+                <a class="nav-link-mobile" [routerLink]="['/profile', profile.id, profile.username | slugify]" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{exact: true}">
+                    <span>Home</span>
+                </a>
+                <a class="nav-link-mobile" [routerLink]="['/profile', profile.id, profile.username | slugify, 'works']" [routerLinkActive]="'active'">
+                    <span>Works</span>
+                </a>
+                <a class="nav-link-mobile" [routerLink]="['/profile', profile.id, profile.username | slugify, 'blogs']" [routerLinkActive]="'active'">
+                    <span>Blogs</span>
+                </a>
+                <a class="nav-link-mobile" [routerLink]="['/profile', profile.id, profile.username | slugify, 'shelves']" [routerLinkActive]="'active'">
+                    <span>Shelves</span>
+                </a>
+            </div>
+        </div>
+        <div class="my-6 col-span-3">
+            <div class="hidden md:flex items-center justify-center w-full md:pb-2 mb-4 border-b border-zinc-300/50 dark:border-zinc-600/50">
+                <a class="nav-link" [routerLink]="['/profile', profile.id, profile.username | slugify]" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{exact: true}">
+                    <span class="nav-link-icon"><ng-icon name="remixHome6Line" size="20px" /></span>
+                    <span>Home</span>
+                </a>
+                <a class="nav-link" [routerLink]="['/profile', profile.id, profile.username | slugify, 'works']" [routerLinkActive]="'active'">
+                    <span class="nav-link-icon"><ng-icon name="lucideBookCopy" size="20px" /></span>
+                    <span>0 Works</span>
+                </a>
+                <a class="nav-link" [routerLink]="['/profile', profile.id, profile.username | slugify, 'blogs']" [routerLinkActive]="'active'">
+                    <span class="nav-link-icon"><ng-icon name="remixCupLine" size="20px" /></span>
+                    <span>0 Blogs</span>
+                </a>
+                <a class="nav-link" [routerLink]="['/profile', profile.id, profile.username | slugify, 'shelves']" [routerLinkActive]="'active'">
+                    <span class="nav-link-icon"><ng-icon name="lucideLibrary" size="20px" /></span>
+                    <span>Shelves</span>
+                </a>
+            </div>
+            <div class="w-11/12 mx-auto md:w-full">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</div>

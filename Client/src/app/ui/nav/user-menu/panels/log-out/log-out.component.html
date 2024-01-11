@@ -1,0 +1,35 @@
+<div class="flex items-center">
+    <app-button [id]="'back-button'" [title]="'Back'" (click)="onBack.emit()">
+        <span class="button-icon"><ng-icon name="remixArrowLeftSLine" /></span>
+        <span class="button-text">Back</span>
+    </app-button>
+</div>
+<div class="mx-4 mb-4 mt-8 flex flex-col">
+    <h2 class="mb-8 text-center text-3xl">Log Out</h2>
+    <p
+        class="mb-8 text-center"
+        style="font-family: var(--body-text); color: var(--text-color)"
+    >
+        Are you sure you want to log out?
+    </p>
+    <app-button
+        [id]="'yes-button'"
+        [title]="'Yes Button'"
+        [kind]="'primary'"
+        [fullWidth]="true"
+        (click)="onLogOut.emit()"
+    >
+        <span class="button-icon"><ng-icon name="remixCheckLine" /></span>
+        <span class="button-text">Yes</span>
+    </app-button>
+    <div class="my-1"><!--spacer--></div>
+    <app-button
+        [id]="'no-button'"
+        [title]="'No Button'"
+        [fullWidth]="true"
+        (click)="onBack.emit()"
+    >
+        <span class="button-icon"><ng-icon name="remixCloseLine" /></span>
+        <span class="button-text">No</span>
+    </app-button>
+</div>

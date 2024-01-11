@@ -1,0 +1,15 @@
+<button
+    class="btn"
+    [id]="id"
+    [title]="title"
+    [type]="type"
+    [ngClass]="{
+        'primary': kind === 'primary',
+        'active': active,
+        'w-full': fullWidth,
+    }"
+    [disabled]="disabled || loading"
+    (click)="click.emit()"
+>
+    <ng-content />
+</button>

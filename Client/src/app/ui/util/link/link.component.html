@@ -1,0 +1,12 @@
+<a
+    class="link"
+    [id]="id"
+    [title]="title"
+    [ngClass]="{
+        'primary': kind === 'primary',
+        'w-full': fullWidth,
+    }"
+    [routerLink]="link"
+>
+    <ng-content />
+</a>

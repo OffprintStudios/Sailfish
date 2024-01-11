@@ -1,0 +1,33 @@
+<div
+    class="flex flex-col items-center justify-center pt-[55px] md:pt-0 w-full h-[100svh] md:h-screen bg-cover bg-center"
+    style="background-image: url('/assets/images/mountains.jpg')"
+>
+    <div class="bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur-lg md:rounded-xl max-w-md p-6 md:p-12 w-full h-full md:h-fit overflow-y-scroll">
+        @if (showUnavailableActionPrompt) {
+            <div class="flex flex-col items-center justify-center">
+                <h1 class="text-3xl">Whoops!</h1>
+                <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold text-center pb-8" style="font-family: var(--header-text);">
+                    Looks like you've taken the wrong turn.
+                </span>
+                <ng-icon name="remixUserForbidLine" size="150px" />
+                <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold text-center pt-8" style="font-family: var(--header-text);">
+                    You're already logged in!
+                </span>
+            </div>
+        } @else {
+            <div class="flex flex-col items-center justify-center">
+                <h1 class="text-3xl">Check your inbox!</h1>
+                <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold text-center pb-8" style="font-family: var(--header-text);">
+                    We've sent a confirmation email.
+                </span>
+                <ng-icon name="remixMailCheckLine" size="150px" />
+                <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold text-center pt-8" style="font-family: var(--header-text);">
+                    Your account will remain locked<br/>until you confirm it.
+                </span>
+                <a class="text-center w-full pt-4 text-zinc-500 dark:text-zinc-400 text-sm hover:underline" [routerLink]="['/auth/log-in']">
+                    After that, just log on in!
+                </a>
+            </div>
+        }
+    </div>
+</div>

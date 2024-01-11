@@ -1,0 +1,47 @@
+div.navbar-container {
+    @apply fixed top-0 w-full h-[55px] md:h-[65px] z-50 drop-shadow-2xl border-b border-white border-opacity-25 backdrop-blur-lg;
+    background-color: rgba(var(--accent), var(--color-opacity));
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+div.navbar-container.not-home {
+    @apply border-b-transparent;
+    background-color: rgba(var(--accent), 0.80);
+}
+
+button.navbar-button, a.navbar-button {
+    @apply hidden md:flex items-center text-white mx-0.5 px-2 pb-0.5 rounded-xl transition;
+}
+
+a.navbar-button {
+    @apply flex px-3 py-1;
+}
+
+button.navbar-button > span , a.navbar-button > span {
+    @apply relative;
+}
+
+button.navbar-button > span.icon, a.navbar-button > span.icon {
+    @apply top-1;
+}
+
+button.navbar-button > span.text, a.navbar-button > span.text {
+    @apply top-0.5 ml-1.5 hidden lg:block;
+}
+
+a.navbar-button > span.link-text {
+    @apply hidden md:block all-small-caps font-bold tracking-wider ml-1.5;
+}
+
+button.navbar-button:hover, a.navbar-button:hover {
+    @apply bg-zinc-300 bg-opacity-25 backdrop-blur;
+}
+
+a.page-link {
+    @apply hidden md:block relative top-0.5 text-white ml-4 all-small-caps text-lg border-b-2 border-transparent transition font-semibold;
+    font-family: var(--header-text);
+}
+
+a.page-link.active {
+    @apply border-zinc-300 border-opacity-50;
+}

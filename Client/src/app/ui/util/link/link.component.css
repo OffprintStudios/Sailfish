@@ -1,0 +1,44 @@
+.link {
+    @apply flex items-center justify-center px-2.5 py-1.5 transition transform focus:ring-0 m-0 text-base rounded-lg select-none relative all-small-caps font-bold z-[5];
+    letter-spacing: 1px;
+    color: var(--text-color);
+    font-family: var(--body-text);
+}
+
+.link:hover {
+    @apply text-white no-underline bg-zinc-500/50;
+}
+
+.link.primary {
+    @apply text-white;
+    background: rgb(var(--accent));
+}
+
+.link.primary:hover {
+    background: rgb(var(--accent-light));
+}
+
+.link:active {
+    @apply text-white scale-95 cursor-pointer shadow-inner;
+    background: rgb(var(--accent-dark));
+}
+
+.link > span.link-icon {
+    @apply mr-1.5 relative top-0.5;
+}
+
+.link > span.link-icon.no-text {
+    @apply mr-0;
+}
+
+.link > span.link-icon.variable-text {
+    @apply mr-0 lg:mr-1.5 relative;
+}
+
+.link > span.link-text {
+    @apply relative -top-[0.075rem];
+}
+
+.link > span.link-small-text {
+    @apply text-sm font-medium;
+}

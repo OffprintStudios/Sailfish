@@ -1,0 +1,22 @@
+<div>
+    <label [for]="id" class="all-small-caps font-bold tracking-wide relative left-2 select-none">
+        {{ label }}<span class="text-red-600 text-xl relative top-0.5 ml-1">{{ required ? '*' : '' }}</span>
+    </label>
+    <input
+        [id]="id"
+        [type]="type"
+        [placeholder]="placeholder"
+        [autocomplete]="autocomplete"
+        [required]="required"
+        [(ngModel)]="value"
+        (ngModelChange)="onChange($event)"
+        (blur)="onTouched()"
+        class="text-field border-zinc-400 dark:border-zinc-500 bg-zinc-300 dark:bg-zinc-600"
+    />
+    @if (errorMessage) {
+        <div class="flex pt-1">
+            <span class="flex-1"><!--spacer--></span>
+            <span class="w-full text-right text-red-600 text-xs relative mr-2">{{ errorMessage }}</span>
+        </div>
+    }
+</div>

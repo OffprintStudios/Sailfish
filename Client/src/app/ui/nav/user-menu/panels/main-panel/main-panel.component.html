@@ -1,0 +1,145 @@
+<div
+    class="flex w-full flex-col overflow-hidden rounded-xl bg-zinc-400/25 backdrop-blur-lg dark:bg-zinc-500/25"
+    *ngIf="currProfile$ | async as profile"
+>
+    <div class="h-[75px] w-full" style="background-color: rgb(var(--accent))">
+        <!--banner-->
+    </div>
+    <div class="flex w-full items-center p-2">
+        <div class="mr-2 overflow-hidden rounded-full border border-zinc-300">
+            <img [ngSrc]="profile.avatar" width="60" height="60" alt="avatar" />
+        </div>
+        <div class="flex flex-1 flex-col">
+            <h1 class="max-w-[270px] truncate text-2xl">
+                <a class="hover:underline" [routerLink]="['/profile', profile.id, profile.username | slugify]">
+                    {{ profile.username }}
+                </a>
+            </h1>
+            <!--TODO: add role badges-->
+        </div>
+    </div>
+    <div
+        class="all-small-caps flex w-full border-t border-zinc-400 text-lg font-bold dark:border-zinc-500"
+        style="font-family: var(--header-text)"
+    >
+        <a
+            class="flex h-[65px] w-1/3 flex-col items-center justify-center pt-0.5 transition hover:bg-zinc-300 hover:dark:bg-zinc-600"
+        >
+            <div class="relative top-2">
+                <span><ng-icon name="remixQuillPenLine" /></span>
+                <span class="relative -top-1 ml-1 text-xl">0</span>
+            </div>
+            <span class="relative -top-1.5">Works</span>
+        </a>
+        <a
+            class="flex h-[65px] w-1/3 flex-col items-center justify-center border-l border-r border-zinc-400 pt-0.5 transition hover:bg-zinc-300 dark:border-zinc-500 hover:dark:bg-zinc-600"
+        >
+            <div class="relative top-2">
+                <span><ng-icon name="remixCupLine" /></span>
+                <span class="relative -top-1 ml-1 text-xl">0</span>
+            </div>
+            <span class="relative -top-1.5">Blogs</span>
+        </a>
+        <a
+            class="flex h-[65px] w-1/3 flex-col items-center justify-center pt-0.5 transition hover:bg-zinc-300 hover:dark:bg-zinc-600"
+        >
+            <div class="relative top-2">
+                <span><ng-icon name="remixEyeLine" /></span>
+                <span class="relative -top-1 ml-1 text-xl">0</span>
+            </div>
+            <span class="relative -top-1.5">Follows</span>
+        </a>
+    </div>
+</div>
+<div class="my-2"><!--spacer--></div>
+<div
+    class="flex w-full flex-col overflow-hidden rounded-xl bg-zinc-400/25 backdrop-blur-lg dark:bg-zinc-500/25"
+>
+    <a
+        class="flex items-center border-b border-zinc-400 px-4 pb-1.5 pt-2 transition hover:bg-zinc-300/75 dark:border-zinc-500 dark:hover:bg-zinc-600/75"
+    >
+        <span class="relative top-0.5 mr-2"
+            ><ng-icon name="remixBook2Line" size="24px"
+        /></span>
+        <span class="flex-1">Create New Work</span>
+        <span class="relative top-0.5 text-zinc-400 dark:text-zinc-500"
+            ><ng-icon name="remixLinksLine" size="20px"
+        /></span>
+    </a>
+    <a
+        class="flex items-center px-4 pb-1.5 pt-2 transition hover:bg-zinc-300/75 dark:hover:bg-zinc-600/75"
+    >
+        <span class="relative top-0.5 mr-2"
+            ><ng-icon name="remixCupLine" size="24px"
+        /></span>
+        <span class="flex-1">Create New Blog</span>
+        <span class="relative top-0.5 text-zinc-400 dark:text-zinc-500"
+            ><ng-icon name="remixLinksLine" size="20px"
+        /></span>
+    </a>
+</div>
+<div class="my-2"><!--spacer--></div>
+<div
+    class="flex w-full flex-col overflow-hidden rounded-xl bg-zinc-400/25 backdrop-blur-lg dark:bg-zinc-500/25"
+>
+    <button
+        class="flex items-center px-4 pb-1.5 pt-2 transition hover:bg-zinc-300/75 dark:hover:bg-zinc-600/75"
+        (click)="showSwitchProfile = !showSwitchProfile"
+    >
+        <span class="relative top-0.5 mr-2"
+            ><ng-icon name="remixArrowLeftRightLine" size="24px"
+        /></span>
+        <span class="flex-1 text-left">Switch Profile</span>
+        <span class="relative top-0.5 text-zinc-400 dark:text-zinc-500">
+            @if (showSwitchProfile) {
+                <ng-icon name="remixArrowUpSLine" size="20px" />
+            } @else {
+                <ng-icon name="remixArrowDownSLine" size="20px"/>
+            }
+        </span>
+    </button>
+    @if (showSwitchProfile) {
+        <div class="flex items-center justify-center pb-3">
+            @for (profile of profiles$ | async; track profile.id) {
+                <button
+                    class="flex flex-col items-center rounded-xl p-4 mx-1 w-[100px] h-[100px] hover:bg-zinc-300 dark:hover:bg-zinc-600 transition"
+                    (click)="selectProfile(profile.id)"
+                >
+                    <img class="rounded-full border-2 object-cover" [ngSrc]="profile.avatar" width="50" height="50" />
+                    <span class="pt-1 all-small-caps font-bold text-sm truncate max-w-[80px]">
+                        {{ profile.username }}
+                    </span>
+                </button>
+            }
+        </div>
+    }
+</div>
+<div class="my-2"><!--spacer--></div>
+<div
+    class="flex w-full flex-col overflow-hidden rounded-xl bg-zinc-400/25 backdrop-blur-lg dark:bg-zinc-500/25"
+>
+    <button
+        class="flex items-center border-b border-zinc-400 px-4 pb-1.5 pt-2 transition hover:bg-zinc-300/75 dark:border-zinc-500 dark:hover:bg-zinc-600/75"
+        (click)="onClickSettings.emit()"
+    >
+        <span class="relative top-0.5 mr-2"
+            ><ng-icon name="remixSettings6Line" size="24px"
+        /></span>
+        <span class="flex-1 text-left">Quick Settings</span>
+        <span class="relative top-0.5 text-zinc-400 dark:text-zinc-500"
+            ><ng-icon name="remixArrowRightSLine" size="20px"
+        /></span>
+    </button>
+    <button
+        class="flex items-center px-4 pb-1.5 pt-2 transition hover:bg-zinc-300/75 dark:hover:bg-zinc-600/75"
+        (click)="onClickLogOut.emit()"
+    >
+        <span class="relative top-0.5 mr-2"
+            ><ng-icon name="remixLogoutBoxLine" size="24px"
+        /></span>
+        <span class="flex-1 text-left">Log Out</span>
+        <span class="relative top-0.5 text-zinc-400 dark:text-zinc-500"
+            ><ng-icon name="remixArrowRightSLine" size="20px"
+        /></span>
+    </button>
+</div>
