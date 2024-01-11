@@ -1,1 +1,0 @@
-export { SectionFont } from './section-font';
