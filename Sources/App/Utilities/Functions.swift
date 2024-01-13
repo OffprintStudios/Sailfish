@@ -36,3 +36,10 @@ func defaultWhitelist() throws -> Whitelist {
             .addAttributes("span", "style")
             .addAttributes("hr", "contenteditable")
 }
+
+/// Returns the word count for an input string.
+func countWords(of text: String) throws -> Int64 {
+    let cleanedString = try SwiftSoup.clean(text, .none())!
+    let wordCount = cleanedString.split { $0.isLetter }.count
+    return Int64(wordCount)
+}
