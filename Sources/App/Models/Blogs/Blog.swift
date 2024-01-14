@@ -17,7 +17,7 @@ final class Blog: Model, Content {
     @Field(key: FieldKeys.body)
     var body: String
 
-    @Field(key: FieldKeys.rating)
+    @Enum(key: FieldKeys.rating)
     var rating: ContentRating
 
     @Field(key: FieldKeys.words)
@@ -28,6 +28,12 @@ final class Blog: Model, Content {
 
     @OptionalChild(for: \.$blog)
     var publishInfo: PublishedBlog?
+
+    @Siblings(through: FavoriteBlog.self, from: \.$blog, to: \.$profile)
+    var favoritedBy: [Profile]
+
+    @Children(for: \.$blog)
+    var votes: [BlogVote]
 
     @OptionalField(key: FieldKeys.editedOn)
     var editedOn: Date?

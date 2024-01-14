@@ -46,7 +46,12 @@ public func configure(_ app: Application) async throws {
         Follower.Create(),
         ProfileView.Create(),
         ContentRating.CreateEnum(),
-        Blog.Create()
+        Blog.Create(),
+        FavoriteBlog.Create(),
+        BlogVote.Create(),
+        NewsPost.Create(),
+        PublishedBlog.Create(),
+        BlogView.Create(),
     ])
     
     try await app.autoMigrate()

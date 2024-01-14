@@ -46,6 +46,8 @@ final class ProfileView: Model, Content {
     
     @Timestamp(key: FieldKeys.updatedAt, on: .update)
     var updatedAt: Date?
+
+    init() { }
 }
 
 extension ProfileView {
