@@ -6,6 +6,7 @@ import Vapor
 import JWT
 import SotoS3
 import SendGrid
+import Redis
 
 // configures your application
 public func configure(_ app: Application) async throws {
@@ -52,6 +53,7 @@ public func configure(_ app: Application) async throws {
         NewsPost.Create(),
         PublishedBlog.Create(),
         BlogView.Create(),
+        PostView.Create(),
     ])
     
     try await app.autoMigrate()
@@ -64,6 +66,13 @@ public func configure(_ app: Application) async throws {
     // Registering Leaf templates
     app.logger.notice("Registering Leaf templates...")
     app.views.use(.leaf)
+
+    // Configuring Redis
+    app.logger.notice("Configuring Redis...")
+    guard let redisUrl = Environment.get("REDIS_URL") else {
+        fatalError("REDIS_URL not configured in your environment!")
+    }
+    app.redis.configuration = try RedisConfiguration(url: redisUrl)
 
     // Adding Jobs
     app.logger.notice("Adding jobs...")

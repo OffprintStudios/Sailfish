@@ -23,6 +23,9 @@ final class Blog: Model, Content {
     @Field(key: FieldKeys.words)
     var words: Int64
 
+    @Field(key: FieldKeys.views)
+    var views: Int64
+
     @OptionalChild(for: \.$blog)
     var newsPostInfo: NewsPost?
 
@@ -68,6 +71,7 @@ extension Blog {
                 .field(FieldKeys.body, .string, .required)
                 .field(FieldKeys.rating, ratingType, .required)
                 .field(FieldKeys.words, .int64, .required, .sql(.default(0)))
+                .field(FieldKeys.views, .int64, .required, .sql(.default(0)))
                 .field(FieldKeys.editedOn, .datetime)
                 .field(FieldKeys.createdAt, .datetime)
                 .field(FieldKeys.updatedAt, .datetime)
@@ -117,6 +121,7 @@ extension Blog {
         static let body: FieldKey = "body"
         static let rating: FieldKey = "rating"
         static let words: FieldKey = "words"
+        static let views: FieldKey = "views"
         static let editedOn: FieldKey = "edited_on"
         static let createdAt: FieldKey = "created_at"
         static let updatedAt: FieldKey = "updated_at"

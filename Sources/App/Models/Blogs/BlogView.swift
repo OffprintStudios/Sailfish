@@ -23,6 +23,9 @@ final class BlogView: Model, Content {
     @Field(key: FieldKeys.words)
     var words: Int64
 
+    @Field(key: FieldKeys.views)
+    var views: Int64
+
     @OptionalField(key: FieldKeys.editedOn)
     var editedOn: Date?
 
@@ -69,6 +72,10 @@ extension BlogView {
                            blog.body AS \(raw: FieldKeys.body.description),
                            blog.rating AS \(raw: FieldKeys.rating.description),
                            blog.words AS \(raw: FieldKeys.words.description),
+                           blog.views AS \(raw: FieldKeys.views.description),
+                           COUNT(likes.id) AS \(raw: FieldKeys.likes.description),
+                           COUNT(dislikes.id) AS \(raw: FieldKeys.dislikes.description),
+                           COUNT(favorites.id) AS \(raw: FieldKeys.favorites.description),
                            blog.edited_on AS \(raw: FieldKeys.editedOn.description),
                            info.listed AS \(raw: FieldKeys.listed.description),
                            info.published_on AS \(raw: FieldKeys.publishedOn.description),
@@ -77,7 +84,10 @@ extension BlogView {
                     FROM blogs blog
                     LEFT JOIN profiles profile ON blog.author_id = profile.id
                     LEFT JOIN published_blogs info ON info.blog_id = blog.id
-                    GROUP BY blog.id, profile.id, info.id
+                    LEFT JOIN blog_votes likes ON likes.blog_id = blog.id AND likes.vote = 1
+                    LEFT JOIN blog_votes dislikes ON dislikes.blog_id = blog.id AND dislikes.vote = -1
+                    LEFT JOIN favorite_blogs favorites ON favorites.blog_id = blog.id
+                    GROUP BY blog.id, profile.id, info.id, favorites.id
             """)
 
             try await query.run()
@@ -99,6 +109,10 @@ extension BlogView {
         static let body: FieldKey = "body"
         static let rating: FieldKey = "rating"
         static let words: FieldKey = "words"
+        static let views: FieldKey = "views"
+        static let likes: FieldKey = "likes"
+        static let dislikes: FieldKey = "dislikes"
+        static let favorites: FieldKey = "favorites"
         static let editedOn: FieldKey = "edited_on"
         static let listed: FieldKey = "listed"
         static let publishedOn: FieldKey = "published_on"

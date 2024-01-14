@@ -30,7 +30,9 @@ let package = Package(
         // Vapor SendGrid package
         .package(url: "https://github.com/vapor-community/sendgrid.git", from: "4.0.0"),
         // Vapor OAuth
-        .package(url: "https://github.com/brokenhandsio/vapor-oauth", branch: "main")
+        .package(url: "https://github.com/brokenhandsio/vapor-oauth", branch: "main"),
+        // Vapor Redis
+        .package(url: "https://github.com/vapor/redis.git", from: "4.0.0")
     ],
     targets: [
         .executableTarget(
@@ -47,7 +49,8 @@ let package = Package(
                 .product(name: "SwiftSoup", package: "SwiftSoup"),
                 .product(name: "SotoS3", package: "soto"),
                 .product(name: "SendGrid", package: "sendgrid"),
-                .product(name: "OAuth", package: "vapor-oauth")
+                .product(name: "OAuth", package: "vapor-oauth"),
+                .product(name: "Redis", package: "redis")
             ]
         ),
         .testTarget(name: "AppTests", dependencies: [

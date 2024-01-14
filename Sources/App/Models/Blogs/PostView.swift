@@ -53,6 +53,7 @@ extension PostView {
                             blog.title AS \(raw: FieldKeys.title.description),
                             post.blurb AS \(raw: FieldKeys.blurb.description),
                             post.banner_art AS \(raw: FieldKeys.bannerArt.description),
+                            blog.views AS \(raw: FieldKeys.views.description),
                             info.published_on AS \(raw: FieldKeys.publishedOn.description)
                     FROM blogs blog
                     LEFT JOIN profiles profile ON blog.author_id = profile.id
@@ -79,6 +80,7 @@ extension PostView {
         static let title: FieldKey = "title"
         static let blurb: FieldKey = "blurb"
         static let bannerArt: FieldKey = "banner_art"
+        static let views: FieldKey = "views"
         static let publishedOn: FieldKey = "published_on"
     }
 }
