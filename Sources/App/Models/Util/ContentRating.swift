@@ -11,7 +11,7 @@ enum ContentRating: String, Codable {
 extension ContentRating {
     struct CreateEnum: AsyncMigration {
         func prepare(on database: Database) async throws {
-            try await database.enum(ContentRating.schema)
+            _ = try await database.enum(ContentRating.schema)
                 .case(ContentRating.everyone.rawValue)
                 .case(ContentRating.teen.rawValue)
                 .case(ContentRating.mature.rawValue)
