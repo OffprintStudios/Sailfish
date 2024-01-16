@@ -54,6 +54,10 @@ public func configure(_ app: Application) async throws {
         PublishedBlog.Create(),
         BlogView.Create(),
         PostView.Create(),
+        Comment.Create(),
+        CommentHistory.Create(),
+        CommentVote.Create(),
+        BlogComment.Create(),
     ])
     
     try await app.autoMigrate()
@@ -62,6 +66,7 @@ public func configure(_ app: Application) async throws {
     app.logger.notice("Adding model middleware...")
     app.databases.middleware.use(Account.Middleware(), on: .psql)
     app.databases.middleware.use(Profile.Middleware(), on: .psql)
+    app.databases.middleware.use(Blog.Middleware(), on: .psql)
 
     // Registering Leaf templates
     app.logger.notice("Registering Leaf templates...")

@@ -45,6 +45,12 @@ final class Profile: Model, Content {
     
     @Siblings(through: Follower.self, from: \.$subscribedTo, to: \.$profile)
     var followers: [Profile]
+
+    @Children(for: \.$author)
+    var blogs: [Blog]
+
+    @Siblings(through: FavoriteBlog.self, from: \.$profile, to: \.$blog)
+    var favoriteBlogs: [Blog]
     
     @Timestamp(key: FieldKeys.createdAt, on: .create)
     var createdAt: Date?
@@ -133,6 +139,13 @@ extension Profile {
             validations.add("tagline", as: String.self, is: .count(3...32), required: false)
         }
     }
+
+    enum Presence: String, Codable {
+        case online = "Online"
+        case offline = "Offline"
+        case away = "Away"
+        case doNotDisturb = "Do Not Disturb"
+    }
     
     enum FieldKeys {
         static let id: FieldKey = "id"
@@ -147,12 +160,5 @@ extension Profile {
         static let createdAt: FieldKey = "created_at"
         static let updatedAt: FieldKey = "updated_at"
         static let deletedAt: FieldKey = "deleted_at"
-    }
-    
-    enum Presence: String, Codable {
-        case online = "Online"
-        case offline = "Offline"
-        case away = "Away"
-        case doNotDisturb = "Do Not Disturb"
     }
 }

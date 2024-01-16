@@ -38,6 +38,9 @@ final class Blog: Model, Content {
     @Children(for: \.$blog)
     var votes: [BlogVote]
 
+    @Siblings(through: BlogComment.self, from: \.$blog, to: \.$comment)
+    var comments: [Comment]
+
     @OptionalField(key: FieldKeys.editedOn)
     var editedOn: Date?
 
