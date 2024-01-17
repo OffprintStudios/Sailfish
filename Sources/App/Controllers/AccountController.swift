@@ -14,7 +14,7 @@ struct AccountController: RouteCollection {
         let secure = accounts.grouped(SessionToken.authenticator(), SessionToken.guardMiddleware(), IdentityGuard(needs: [.user]))
         let secureProfiles = secure.grouped("profiles")
         
-        secureProfiles.get("fetch") { request async throws -> [ProfileView] in
+        secureProfiles.get("all") { request async throws -> [ProfileView] in
             guard let account = request.user?.account else {
                 throw Abort(.unauthorized, reason: "You don't have permission to do that.")
             }
