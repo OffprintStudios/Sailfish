@@ -60,7 +60,7 @@ struct BlogController: RouteCollection {
 
             try await blog.save(on: request.db)
 
-            return .ok
+            return .accepted
         }
 
         // DELETE
