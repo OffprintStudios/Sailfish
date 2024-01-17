@@ -32,7 +32,7 @@ export class AuthService {
     }
 
     public fetchProfiles(token: string): Observable<Profile[]> {
-        return this.http.get<Profile[]>(`${environment.apiUrl}/accounts/profiles/fetch`, {
+        return this.http.get<Profile[]>(`${environment.apiUrl}/accounts/profiles/all`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
