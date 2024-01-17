@@ -10,7 +10,7 @@ import Fluent
 
 struct ProfileController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
-        let profiles = routes.grouped("profiles/:id")
+        let profiles = routes.grouped("profiles").grouped(":id")
         
         profiles.get() { request async throws -> ProfileView in
             let id = request.parameters.get("id")!

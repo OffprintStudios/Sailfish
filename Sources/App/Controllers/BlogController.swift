@@ -10,6 +10,7 @@ struct BlogController: RouteCollection {
                 SessionToken.guardMiddleware(),
                 IdentityGuard(needs: [.user], checkProfile: true)
             )
+        let blogsWithId = blogs.grouped(":id")
         
         blogs.get("all") { request async throws -> Page<BlogView> in 
             let profile = request.user!.profile!
@@ -30,7 +31,7 @@ struct BlogController: RouteCollection {
         }
 
         // READ
-        blogs.get(":id") { request async throws -> BlogView in 
+        blogsWithId.get() { request async throws -> BlogView in 
             let profile = request.user!.profile!
             let id = request.parameters.get("id")!
 
@@ -45,7 +46,7 @@ struct BlogController: RouteCollection {
         }
 
         // UPDATE
-        blogs.patch(":id/update") { request async throws -> HTTPResponseStatus in 
+        blogsWithId.patch("update") { request async throws -> HTTPResponseStatus in 
             let profile = request.user!.profile!
             let id = request.parameters.get("id")!
             let formInfo = try request.content.decode(Blog.FormInfo.self)
@@ -64,7 +65,7 @@ struct BlogController: RouteCollection {
         }
 
         // DELETE
-        blogs.delete(":id/delete") { request async throws -> HTTPResponseStatus in 
+        blogsWithId.delete("delete") { request async throws -> HTTPResponseStatus in 
             let profile = request.user!.profile!
             let id = request.parameters.get("id")!
 
