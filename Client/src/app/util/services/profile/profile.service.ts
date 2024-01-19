@@ -10,4 +10,8 @@ export class ProfileService {
     public fetchOne(id: string) {
         return this.http.get<Profile>(`${environment.apiUrl}/profiles/${id}`);
     }
+
+    public fetchBlogs(id: string) {
+
+    }
 }

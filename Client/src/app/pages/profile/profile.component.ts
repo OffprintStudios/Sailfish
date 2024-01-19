@@ -60,14 +60,6 @@ export class ProfileComponent implements OnInit {
     profile$: Observable<Profile | null> = of(null);
     isOptionsMenuOpen = false;
 
-    links = [
-        "https://threads.net/@ofmanyfigments",
-        "https://mastodon.social/@ofmanyfigments",
-        "https://www.youtube.com/@MrBallen",
-        "https://www.twitch.tv/hasanabi",
-        "https://patreon.com/kanglim",
-    ];
-
     ngOnInit() {
         this.profile$ = this.route.data.pipe(map(({profile}) => profile));
     }

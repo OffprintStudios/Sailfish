@@ -84,7 +84,7 @@
                 <span>Joined {{ profile.createdAt | localeDate:'mediumDate' }}</span>
             </div>
             <div class="flex md:flex-col items-center md:items-baseline mt-4 md:mt-0">
-                @for (link of links; track $index) {
+                @for (link of profile.links; track $index) {
                     <app-social-link-badge [link]="link" />
                 }
             </div>
