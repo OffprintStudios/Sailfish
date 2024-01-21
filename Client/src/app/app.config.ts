@@ -11,6 +11,7 @@ import { provideAnimations } from "@angular/platform-browser/animations";
 import { provideToastr } from "ngx-toastr";
 import { AppState } from "$state/app";
 import { NgxsDispatchPluginModule } from "@ngxs-labs/dispatch-decorator";
+import { NgxsSelectSnapshotModule } from "@ngxs-labs/select-snapshot";
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -29,6 +30,7 @@ export const appConfig: ApplicationConfig = {
                 key: ['auth', 'app']
             }),
             NgxsDispatchPluginModule.forRoot(),
+            NgxsSelectSnapshotModule.forRoot(),
         ),
         provideToastr(),
     ],

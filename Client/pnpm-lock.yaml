@@ -50,6 +50,9 @@ dependencies:
   '@ngxs-labs/dispatch-decorator':
     specifier: ^5.0.0
     version: 5.0.0(@angular/core@17.0.9)(@ngxs/store@3.8.2)(rxjs@7.8.1)
+  '@ngxs-labs/select-snapshot':
+    specifier: ^5.0.0
+    version: 5.0.0(@angular/core@17.0.9)(@ngxs/store@3.8.2)(rxjs@7.8.1)
   '@ngxs/storage-plugin':
     specifier: ^3.8.2
     version: 3.8.2(@angular/core@17.0.9)(@ngxs/store@3.8.2)(rxjs@7.8.1)
@@ -2312,6 +2315,19 @@ packages:
       '@angular/core': '>=15.0.0'
       '@ngxs/store': '>=3.7.2'
       rxjs: '>=6.1.0'
+    dependencies:
+      '@angular/core': 17.0.9(rxjs@7.8.1)(zone.js@0.14.2)
+      '@ngxs/store': 3.8.2(@angular/core@17.0.9)(rxjs@7.8.1)
+      rxjs: 7.8.1
+      tslib: 2.6.2
+    dev: false
+
+  /@ngxs-labs/select-snapshot@5.0.0(@angular/core@17.0.9)(@ngxs/store@3.8.2)(rxjs@7.8.1):
+    resolution: {integrity: sha512-rZSwuqFRclbCEfrydl2qcX4Lxfo6INHQuTOjgwpwRkaRCjH7QxPC7Yw+jLFZCQy7wJEMTtw+5K0br1pjExEa5g==}
+    peerDependencies:
+      '@angular/core': '>=15.0.0'
+      '@ngxs/store': '>=3.7.3'
+      rxjs: '>=6.5.2'
     dependencies:
       '@angular/core': 17.0.9(rxjs@7.8.1)(zone.js@0.14.2)
       '@ngxs/store': 3.8.2(@angular/core@17.0.9)(rxjs@7.8.1)

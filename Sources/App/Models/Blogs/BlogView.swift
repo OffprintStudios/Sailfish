@@ -4,7 +4,7 @@ import SQLKit
 
 final class BlogView: Model, Content {
     static let schema = "blog_view"
-    
+
     @ID(custom: FieldKeys.id, generatedBy: .user)
     var id: String?
 
@@ -25,6 +25,15 @@ final class BlogView: Model, Content {
 
     @Field(key: FieldKeys.views)
     var views: Int64
+
+    @Field(key: FieldKeys.likes)
+    var likes: Int64
+
+    @Field(key: FieldKeys.dislikes)
+    var dislikes: Int64
+
+    @Field(key: FieldKeys.favorites)
+    var favorites: Int64
 
     @OptionalField(key: FieldKeys.editedOn)
     var editedOn: Date?

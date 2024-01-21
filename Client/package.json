@@ -25,6 +25,7 @@
     "@ng-icons/lucide": "^26.3.0",
     "@ng-icons/remixicon": "^26.3.0",
     "@ngxs-labs/dispatch-decorator": "^5.0.0",
+    "@ngxs-labs/select-snapshot": "^5.0.0",
     "@ngxs/storage-plugin": "^3.8.2",
     "@ngxs/store": "^3.8.2",
     "express": "^4.18.2",

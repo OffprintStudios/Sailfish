@@ -32,6 +32,11 @@ export class AuthState {
         return state.currProfile;
     }
 
+    @Selector()
+    static token(state: AuthModel): string | undefined {
+        return state.token;
+    }
+
     constructor(private readonly auth: AuthService) {}
 
     @Action(AuthActions.LogIn)
