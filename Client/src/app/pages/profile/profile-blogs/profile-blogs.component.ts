@@ -1,7 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, Input, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, of, map } from 'rxjs';
-import { Profile } from '$models/accounts';
+import { Paginated } from '$models/util';
+import { Blog } from '$models/blogs';
+import { ProfileService } from '$util/services/profile';
 
 @Component({
     selector: 'app-profile-blogs',
@@ -11,10 +12,18 @@ import { Profile } from '$models/accounts';
     styleUrl: './profile-blogs.component.css'
 })
 export class ProfileBlogsComponent implements OnInit {
-    private readonly route: ActivatedRoute = inject(ActivatedRoute);
-    profile$: Observable<Profile | null> = of(null);
+    private readonly route = inject(ActivatedRoute);
+    private readonly profileService = inject(ProfileService);
+    profileId = signal<string>('');
+    blogs = signal<Paginated<Blog>>({items: [], metadata: {page: 1, per: 15, total: 0}});
+
+    @Input()
+    set id(profileId: string) {
+        this.profileId.set(profileId);
+    }
 
     ngOnInit() {
-        this.profile$ = this.route.data.pipe(map(({profile}) => profile));
+        console.log(this.profileId());
+        //this.profileService.fetchBlogs(this.profileId())
     }
 }
