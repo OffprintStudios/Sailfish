@@ -3,13 +3,7 @@
     *ngIf="profile$ | async as profile"
 >
     <div
-        class="relative w-full"
-        [ngClass]="{
-            'h-[14rem]': profile.bannerArt,
-            'md:h-[28rem]': profile.bannerArt,
-            'h-[10rem]': !profile.bannerArt,
-            'md:h-[24rem]': !profile.bannerArt,
-        }"
+        class="relative w-full h-[10rem] md:h-[24rem]"
         style="background: rgb(var(--accent));"
     >
         @if (profile.bannerArt) {
