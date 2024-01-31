@@ -45,9 +45,6 @@ import { SearchMenuComponent } from "$ui/nav/search-menu/search-menu.component";
             lucideArrowRightLeft,
         }),
     ],
-    host: {
-        "(window:scroll)": "onScroll()",
-    },
     templateUrl: "./navbar.component.html",
     styleUrl: "./navbar.component.css",
 })
@@ -55,17 +52,5 @@ export class NavbarComponent {
     @Select(AuthState) auth$!: Observable<AuthModel>;
     @Select(AuthState.currProfile) currProfile$!: Observable<Profile>;
     @Select(AuthState.isAuthenticated) isAuthenticated$!: Observable<boolean>;
-    offsetPercent = 0.15;
     route = inject(Router);
-
-    onScroll() {
-        let offset = window.scrollY / 422;
-        if (offset >= 0.15 && offset <= 0.8) {
-            this.offsetPercent = offset;
-        } else if (offset < 0.15) {
-            this.offsetPercent = 0.15;
-        } else {
-            this.offsetPercent = 0.8;
-        }
-    }
 }

@@ -1,12 +1,12 @@
 div.navbar-container {
-    @apply fixed top-0 w-full h-[55px] md:h-[65px] z-50 drop-shadow-2xl border-b border-white border-opacity-25 backdrop-blur-lg;
-    background-color: rgba(var(--accent), var(--color-opacity));
+    @apply sticky top-0 w-full h-[55px] md:h-[65px] z-50 drop-shadow-2xl border-b border-white border-opacity-25 backdrop-blur-lg;
+    background-color: rgb(var(--accent));
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 div.navbar-container.not-home {
     @apply border-b-transparent;
-    background-color: rgba(var(--accent), 0.80);
+    /* background-color: rgba(var(--accent), 0.80);*/
 }
 
 button.navbar-button, a.navbar-button {
