@@ -15,12 +15,13 @@ import { ProfileFollowersComponent } from "$pages/profile/profile-followers/prof
 import { ProfileFollowingComponent } from "$pages/profile/profile-following/profile-following.component";
 import { ProfileResolver } from "$util/services/profile";
 import { ProfileShelvesComponent } from "$pages/profile/profile-shelves/profile-shelves.component";
+import { AuthComponent } from '$pages/auth/auth.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
     {path: 'explore', component: ExploreComponent},
     {
-        path: 'auth', children: [
+        path: 'auth', component: AuthComponent, children: [
             {path: 'log-in', component: LogInComponent},
             {path: 'sign-up', component: SignUpComponent},
             {path: 'switch-profile', component: SwitchProfileComponent, canActivate: [authGuard]},

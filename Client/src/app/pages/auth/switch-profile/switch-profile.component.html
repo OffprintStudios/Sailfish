@@ -1,87 +1,82 @@
-<div
-    class="flex flex-col items-center justify-center w-full h-[calc(100svh-55px)] md:h-[calc(100svh-65px)]  bg-cover bg-center"
-    style="background-image: url('/assets/images/mountains.jpg')"
->
-    <div class="bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur-lg md:rounded-xl max-w-xl p-4 md:p-12 w-full h-full md:h-fit overflow-y-scroll">
-        @if (showCreateProfileForm) {
-            <div class="flex flex-col items-center justify-center">
-                <h1 class="text-3xl">Create a Profile</h1>
-                <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold text-center" style="font-family: var(--header-text);">
-                    You can fuss with the details later
-                </span>
-                <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-                    <app-text-field
-                        [id]="'username'"
-                        [label]="'Username'"
-                        [type]="'text'"
-                        [placeholder]="'Somebody New'"
-                        [formControlName]="'username'"
-                        [required]="true"
-                    />
-                    <div class="my-2"><!--spacer--></div>
-                    <app-text-area
-                        [id]="'bio'"
-                        [label]="'bio'"
-                        [placeholder]="'Just another new face at the bar'"
-                        [formControlName]="'bio'"
-                    />
-                    <div class="border-b-2 border-dotted rounded-xl border-zinc-500 dark:border-zinc-400 my-4"><!--spacer--></div>
-                    <app-button
-                        [id]="'add-profile'"
-                        [title]="'Add Profile'"
-                        [type]="'submit'"
-                        [kind]="'primary'"
-                        [fullWidth]="true"
+<div class="bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur-lg md:rounded-xl max-w-xl p-4 md:p-12 w-full h-full md:h-fit overflow-y-scroll">
+    @if (showCreateProfileForm) {
+        <div class="flex flex-col items-center justify-center">
+            <h1 class="text-3xl">Create a Profile</h1>
+            <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold text-center" style="font-family: var(--header-text);">
+                You can fuss with the details later
+            </span>
+            <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+                <app-text-field
+                    [id]="'username'"
+                    [label]="'Username'"
+                    [type]="'text'"
+                    [placeholder]="'Somebody New'"
+                    [formControlName]="'username'"
+                    [required]="true"
+                />
+                <div class="my-2"><!--spacer--></div>
+                <app-text-area
+                    [id]="'bio'"
+                    [label]="'bio'"
+                    [placeholder]="'Just another new face at the bar'"
+                    [formControlName]="'bio'"
+                />
+                <div class="border-b-2 border-dotted rounded-xl border-zinc-500 dark:border-zinc-400 my-4"><!--spacer--></div>
+                <app-button
+                    [id]="'add-profile'"
+                    [title]="'Add Profile'"
+                    [type]="'submit'"
+                    [kind]="'primary'"
+                    [fullWidth]="true"
+                >
+                    <span class="button-icon"><ng-icon name="remixAddLine" /></span>
+                    <span class="button-text">Add Profile</span>
+                </app-button>
+                <div class="my-2"><!--spacer--></div>
+                <app-button
+                    [id]="'cancel-action'"
+                    [title]="'Cancel'"
+                    [type]="'button'"
+                    [fullWidth]="true"
+                    (click)="showCreateProfileForm = false"
+                >
+                    <span class="button-icon"><ng-icon name="remixCloseLine" /></span>
+                    <span class="button-text">Cancel</span>
+                </app-button>
+            </form>
+        </div>
+    } @else {
+        <div class="flex flex-col items-center justify-center">
+            <h1 class="text-3xl">Select a Profile</h1>
+            <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold text-center pb-8" style="font-family: var(--header-text);">
+                {{ (profiles$ | async)?.length }} out of 3
+            </span>
+            <div class="flex items-center justify-center flex-wrap">
+                @for (profile of profiles$ | async; track profile.id) {
+                    <button
+                        class="flex flex-col items-center rounded-xl p-4 mx-2 w-[120px] h-[150px] hover:bg-zinc-300 dark:hover:bg-zinc-600 transition"
+                        (click)="selectProfile(profile.id)"
                     >
-                        <span class="button-icon"><ng-icon name="remixAddLine" /></span>
-                        <span class="button-text">Add Profile</span>
-                    </app-button>
-                    <div class="my-2"><!--spacer--></div>
-                    <app-button
-                        [id]="'cancel-action'"
-                        [title]="'Cancel'"
-                        [type]="'button'"
-                        [fullWidth]="true"
-                        (click)="showCreateProfileForm = false"
+                        <img class="rounded-full border-2 object-cover" [ngSrc]="profile.avatar" width="75" height="75" />
+                        <span class="pt-3 all-small-caps font-bold text-lg truncate max-w-[80px]">
+                            {{ profile.username }}
+                        </span>
+                    </button>
+                }
+                @if ((profiles$ | async)!.length < 3) {
+                    <button
+                        class="flex flex-col items-center rounded-xl p-4 mx-2 w-[120px] h-[150px] hover:bg-zinc-300 dark:hover:bg-zinc-600 transition"
+                        (click)="showCreateProfileForm = true"
                     >
-                        <span class="button-icon"><ng-icon name="remixCloseLine" /></span>
-                        <span class="button-text">Cancel</span>
-                    </app-button>
-                </form>
+                        <div class="flex flex-col items-center justify-center w-[75px] h-[75px] rounded-full border-2 border-dotted">
+                            <ng-icon name="remixAddLine" size="28px" />
+                        </div>
+                        <span class="pt-3 all-small-caps font-bold text-lg">
+                            Add New
+                        </span>
+                    </button>
+                }
             </div>
-        } @else {
-            <div class="flex flex-col items-center justify-center">
-                <h1 class="text-3xl">Select a Profile</h1>
-                <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold text-center pb-8" style="font-family: var(--header-text);">
-                    {{ (profiles$ | async)?.length }} out of 3
-                </span>
-                <div class="flex items-center justify-center flex-wrap">
-                    @for (profile of profiles$ | async; track profile.id) {
-                        <button
-                            class="flex flex-col items-center rounded-xl p-4 mx-2 w-[120px] h-[150px] hover:bg-zinc-300 dark:hover:bg-zinc-600 transition"
-                            (click)="selectProfile(profile.id)"
-                        >
-                            <img class="rounded-full border-2 object-cover" [ngSrc]="profile.avatar" width="75" height="75" />
-                            <span class="pt-3 all-small-caps font-bold text-lg truncate max-w-[80px]">
-                                {{ profile.username }}
-                            </span>
-                        </button>
-                    }
-                    @if ((profiles$ | async)!.length < 3) {
-                        <button
-                            class="flex flex-col items-center rounded-xl p-4 mx-2 w-[120px] h-[150px] hover:bg-zinc-300 dark:hover:bg-zinc-600 transition"
-                            (click)="showCreateProfileForm = true"
-                        >
-                            <div class="flex flex-col items-center justify-center w-[75px] h-[75px] rounded-full border-2 border-dotted">
-                                <ng-icon name="remixAddLine" size="28px" />
-                            </div>
-                            <span class="pt-3 all-small-caps font-bold text-lg">
-                                Add New
-                            </span>
-                        </button>
-                    }
-                </div>
-            </div>
-        }
-    </div>
+        </div>
+    }
 </div>
