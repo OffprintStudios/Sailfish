@@ -4,8 +4,5 @@ export enum Roles {
     workApprover = "WorkApprover",
     chatModerator = "ChatModerator",
     contributor = "Contributor",
-    venti = "Ventí",
-    grande = "Grandé",
-    tall = "Tall",
     user = "User",
 }
