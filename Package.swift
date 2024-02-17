@@ -8,13 +8,13 @@ let package = Package(
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.83.6"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.92.3"),
         // 🗄 An ORM for SQL and NoSQL databases.
-        .package(url: "https://github.com/vapor/fluent.git", from: "4.8.0"),
+        .package(url: "https://github.com/vapor/fluent.git", from: "4.9.0"),
         // 🐘 Fluent driver for Postgres.
-        .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.7.2"),
+        .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.8.0"),
         // 🍃 An expressive, performant, and extensible templating language built for Swift.
-        .package(url: "https://github.com/vapor/leaf.git", from: "4.2.4"),
+        .package(url: "https://github.com/vapor/leaf.git", from: "4.3.0"),
         // Vapor JWT package
         .package(url: "https://github.com/vapor/jwt.git", from: "4.2.2"),
         // Argon2 password hasher
@@ -24,15 +24,13 @@ let package = Package(
         // NanoID generation
         .package(url: "https://github.com/OffprintStudios/NanoID.git", from: "1.0.0"),
         // SwiftSoup HTML sanitization
-        .package(url: "https://github.com/scinfu/SwiftSoup.git", from: "2.6.1"),
+        .package(url: "https://github.com/scinfu/SwiftSoup.git", from: "2.7.1"),
         // Soto AWS library
         .package(url: "https://github.com/soto-project/soto.git", from: "6.8.0"),
         // Vapor SendGrid package
-        .package(url: "https://github.com/vapor-community/sendgrid.git", from: "4.0.0"),
-        // Vapor OAuth
-        .package(url: "https://github.com/brokenhandsio/vapor-oauth", branch: "main"),
+        .package(url: "https://github.com/vapor-community/sendgrid.git", from: "5.0.0"),
         // Vapor Redis
-        .package(url: "https://github.com/vapor/redis.git", from: "4.0.0")
+        .package(url: "https://github.com/vapor/redis.git", from: "4.10.0")
     ],
     targets: [
         .executableTarget(
@@ -49,7 +47,6 @@ let package = Package(
                 .product(name: "SwiftSoup", package: "SwiftSoup"),
                 .product(name: "SotoS3", package: "soto"),
                 .product(name: "SendGrid", package: "sendgrid"),
-                .product(name: "OAuth", package: "vapor-oauth"),
                 .product(name: "Redis", package: "redis")
             ]
         ),

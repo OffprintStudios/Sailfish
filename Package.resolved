@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/leaf.git",
       "state" : {
-        "revision" : "6fe0e843c6599f5189e45c7b08739ebc5c410c3b",
-        "version" : "4.2.4"
+        "revision" : "0be8765af9991823c854d97faa4a97db1cfa2643",
+        "version" : "4.3.0"
       }
     },
     {
@@ -185,8 +185,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor-community/sendgrid.git",
       "state" : {
-        "revision" : "c744bc4398bd8dec50e3a6cfb0cdeca1aa853c07",
-        "version" : "4.0.0"
+        "revision" : "d74f13ef312dff95df1a336244066174a40e9a31",
+        "version" : "5.0.0"
       }
     },
     {
@@ -194,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor-community/sendgrid-kit.git",
       "state" : {
-        "revision" : "2da9f9558c690af07219b1e63f126105b747fec8",
-        "version" : "1.1.0"
+        "revision" : "9619411220e0ea8d8f8916c27b1282aed1caf51d",
+        "version" : "2.0.2"
       }
     },
     {
@@ -347,8 +347,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/scinfu/SwiftSoup.git",
       "state" : {
-        "revision" : "f83c097597094a04124eb6e0d1e894d24129af87",
-        "version" : "2.7.0"
+        "revision" : "1d39e56d364cba79ce43b341f9661b534cccb18d",
+        "version" : "2.7.1"
       }
     },
     {
@@ -365,17 +365,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/vapor.git",
       "state" : {
-        "revision" : "0680f9f6bfab7100cd585b3186740ee7860c983e",
-        "version" : "4.91.1"
-      }
-    },
-    {
-      "identity" : "vapor-oauth",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/brokenhandsio/vapor-oauth",
-      "state" : {
-        "branch" : "main",
-        "revision" : "383ada97220f3b922c447432af9d7a32d35f0e96"
+        "revision" : "9da9d14f43bc1b32b384f0b4eb231b8a5a851dee",
+        "version" : "4.92.3"
       }
     },
     {
