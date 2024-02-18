@@ -1,1 +1,3 @@
-<p>profile-blogs works!</p>
+@if (profile$ | async; as profile) {
+    <app-blogs-list [profileId]="profile.id" [profileName]="profile.username" />
+}

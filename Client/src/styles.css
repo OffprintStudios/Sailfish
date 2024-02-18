@@ -64,6 +64,16 @@ h1, h2, h3, h4, h5, h6 {
     font-family: var(--header-text);
 }
 
+div.empty {
+    @apply flex flex-col items-center justify-center my-12 w-11/12 mx-auto max-w-[32rem];
+    h3 {
+        @apply font-bold text-3xl text-center;
+    }
+    p {
+        @apply mt-4 text-center;
+    }
+}
+
 /* Themes */
 
 .crimson {

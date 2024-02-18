@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output } from "@angular/core";
 import { NgIconComponent, provideIcons } from "@ng-icons/core";
-import { AsyncPipe, NgOptimizedImage, NgIf } from "@angular/common";
+import { AsyncPipe, NgOptimizedImage } from "@angular/common";
 import {
     remixArrowDownSLine,
     remixArrowLeftRightLine,
@@ -19,13 +19,13 @@ import { Select, Store } from "@ngxs/store";
 import { AuthActions, AuthState } from "$state/auth";
 import { Observable, take } from "rxjs";
 import { Profile } from "$models/accounts";
-import { Router, RouterLink } from "@angular/router";
+import { RouterLink } from "@angular/router";
 import { SlugifyPipe } from "$util/pipes";
 
 @Component({
     selector: "app-main-panel",
     standalone: true,
-    imports: [NgIconComponent, NgOptimizedImage, AsyncPipe, NgIf, RouterLink, SlugifyPipe],
+    imports: [NgIconComponent, NgOptimizedImage, AsyncPipe, RouterLink, SlugifyPipe],
     viewProviders: [
         provideIcons({
             remixQuillPenLine,

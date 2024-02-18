@@ -16,9 +16,10 @@ import { ProfileFollowingComponent } from "$pages/profile/profile-following/prof
 import { ProfileResolver } from "$util/services/profile";
 import { ProfileShelvesComponent } from "$pages/profile/profile-shelves/profile-shelves.component";
 import { AuthComponent } from '$pages/auth/auth.component';
+import { CreateBlogComponent } from '$pages/profile/profile-blogs/create-blog/create-blog.component';
+import { NotFoundComponent } from '$pages/errors/not-found/not-found.component';
 
 export const routes: Routes = [
-    {path: '', component: HomeComponent},
     {path: 'explore', component: ExploreComponent},
     {
         path: 'auth', component: AuthComponent, children: [
@@ -29,14 +30,30 @@ export const routes: Routes = [
         ]
     },
     {
+        path: 'profile/:id', component: ProfileComponent, resolve: {profile: ProfileResolver}, children: [
+            {path: '', component: ProfileHomeComponent},
+            {path: 'works', component: ProfileWorksComponent},
+            {path: 'blogs', component: ProfileBlogsComponent, children: [
+                {path: 'create', component: CreateBlogComponent, canActivate: [authGuard]}
+            ]},
+            {path: 'shelves', component: ProfileShelvesComponent},
+            {path: 'followers', component: ProfileFollowersComponent},
+            {path: 'following', component: ProfileFollowingComponent},
+        ],
+    },
+    {
         path: 'profile/:id/:username', component: ProfileComponent, resolve: {profile: ProfileResolver}, children: [
             {path: '', component: ProfileHomeComponent},
             {path: 'works', component: ProfileWorksComponent},
-            {path: 'blogs', component: ProfileBlogsComponent},
+            {path: 'blogs', component: ProfileBlogsComponent, children: [
+                {path: 'create', component: CreateBlogComponent, canActivate: [authGuard]}
+            ]},
             {path: 'shelves', component: ProfileShelvesComponent},
             {path: 'followers', component: ProfileFollowersComponent},
             {path: 'following', component: ProfileFollowingComponent},
         ],
     },
     {path: 'settings', component: SettingsComponent},
+    {path: '', component: HomeComponent},
+    {path: '**', component: NotFoundComponent},
 ];
