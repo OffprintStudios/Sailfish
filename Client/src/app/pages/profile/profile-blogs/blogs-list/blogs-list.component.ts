@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, inject } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { remixAddLine, remixSearchEyeLine, remixFilter2Line } from '@ng-icons/remixicon';
 import { ButtonComponent } from '$ui/util';
@@ -6,15 +6,15 @@ import { ViewSelectSnapshot } from '@ngxs-labs/select-snapshot';
 import { AuthState } from '$state/auth';
 import { Profile } from '$models/accounts';
 import { Router } from '@angular/router';
-import { SlugifyPipe } from '$util/pipes';
 import { Paginated } from '$models/util';
 import { Blog } from '$models/blogs';
 import { BlogsService } from '$util/services/blogs';
+import { slugify } from '$util/functions';
 
 @Component({
   selector: 'app-blogs-list',
   standalone: true,
-  imports: [ButtonComponent, NgIconComponent, SlugifyPipe],
+  imports: [ButtonComponent, NgIconComponent],
   viewProviders: [provideIcons({ remixAddLine, remixSearchEyeLine, remixFilter2Line })],
   templateUrl: './blogs-list.component.html',
   styleUrl: './blogs-list.component.css',
@@ -45,5 +45,9 @@ export class BlogsListComponent implements OnChanges {
                 this.blogs = results;
             });
         }
+    }
+
+    goToCreatePage() {
+        this.router.navigate(['/profile', this.profileId, slugify(this.profileName), 'blogs', 'create']);
     }
 }
