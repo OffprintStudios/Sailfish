@@ -1,7 +1,0 @@
-.text-field {
-    @apply transition w-full rounded-xl border-2 border-x-transparent border-t-transparent focus:ring-0;
-}
-
-.text-field:focus {
-    border-bottom-color: rgb(var(--accent));
-}

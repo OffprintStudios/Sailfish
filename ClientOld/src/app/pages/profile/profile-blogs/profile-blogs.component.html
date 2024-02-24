@@ -1,7 +1,0 @@
-@if (profile$ | async; as profile) {
-    @if (router.url.includes('create') && (currProfile$ | async) && (currProfile$ | async)?.id === profile.id) {
-        <router-outlet />
-    } @else {
-        <app-blogs-list [profileId]="profile.id" [profileName]="profile.username" />
-    }
-}

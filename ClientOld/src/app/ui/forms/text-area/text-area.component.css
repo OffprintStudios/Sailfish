@@ -1,7 +1,0 @@
-.text-area {
-    @apply transition w-full rounded-xl border-2 border-x-transparent border-t-transparent focus:ring-0 h-[125px];
-}
-
-.text-area:focus {
-    border-bottom-color: rgb(var(--accent));
-}
