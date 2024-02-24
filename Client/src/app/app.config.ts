@@ -1,7 +1,6 @@
 import { ApplicationConfig, importProvidersFrom, isDevMode } from '@angular/core';
 import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
 import { provideHttpClient, withFetch } from "@angular/common/http";
-
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { NgxsModule } from "@ngxs/store";
@@ -12,6 +11,7 @@ import { provideToastr } from "ngx-toastr";
 import { AppState } from "$state/app";
 import { NgxsDispatchPluginModule } from "@ngxs-labs/dispatch-decorator";
 import { NgxsSelectSnapshotModule } from "@ngxs-labs/select-snapshot";
+import { NgxTiptapModule } from "ngx-tiptap";
 
 export const appConfig: ApplicationConfig = {
     providers: [
