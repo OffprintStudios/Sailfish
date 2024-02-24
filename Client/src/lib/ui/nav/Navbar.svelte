@@ -1,3 +1,7 @@
+<script lang="ts">
+    import { RiLoginCircleLine } from "svelte-remixicon";
+</script>
+
 <div class="navbar-container">
     <nav class="flex items-center max-w-[90rem] w-full md:w-11/12 pl-4 pr-2 md:px-0 mx-auto h-full">
         <div class="flex items-center w-1/3 text-white">
@@ -33,8 +37,8 @@
                     <span class="link-text">Log In</span>
                 </a>
             }-->
-            <a class="navbar-button" href="/auth/log-in">
-                <span class="icon"><ng-icon name="lucideLogIn" size="18px" /></span>
+            <a class="navbar-button" href="/log-in">
+                <span class="icon"><RiLoginCircleLine size="20px" /></span>
                 <span class="link-text">Log In</span>
             </a>
         </div>
@@ -59,10 +63,6 @@
                 @apply relative;
             }
 
-            & > span.icon {
-                @apply top-1;
-            }
-
             & > span.text {
                 @apply top-0.5 ml-1.5 hidden lg:block;
             }
@@ -73,7 +73,7 @@
         }
 
         a.navbar-button {
-            @apply flex px-3 py-1;
+            @apply flex text-base px-3 py-2;
 
             & > span.link-text {
                 @apply hidden md:block all-small-caps font-bold tracking-wider ml-1.5;

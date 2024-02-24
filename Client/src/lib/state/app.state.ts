@@ -3,10 +3,10 @@ import { ModeSwitch, RatingsFilter, Themes } from "$lib/models/util";
 import { writable } from "svelte/store";
 
 interface AppState {
-    theme: Themes,
-    mode: ModeSwitch,
-    showNsfw: boolean,
-    filter: RatingsFilter,
+    theme: Themes;
+    mode: ModeSwitch;
+    showNsfw: boolean;
+    filter: RatingsFilter;
 }
 
 const defaultAppState: AppState = {

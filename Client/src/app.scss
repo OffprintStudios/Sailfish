@@ -1,4 +1,112 @@
 /* Write your global styles here, in SCSS syntax. Variables and mixins from the src/variables.scss file are available here without importing */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Josefin+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Slab:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    /* Text */
+    --body-text: 'Inter', sans-serif;
+    --header-text: 'Josefin Sans', sans-serif;
+    --body-text-serif: 'Josefin Slab', serif;
+    --section-text: 'Inter', sans-serif;
+
+    /* Element Style */
+    --color-opacity: 1;
+}
+
+html {
+    @apply transition-all;
+}
+
+body, body.light {
+    @apply transition-all;
+    /* Light Mode settings */
+    --background: rgb(251, 251, 251);
+    --nav-background: rgb(236, 236, 236);
+    --dropshadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    --text-color: rgb(0, 0, 0);
+    --borders: rgb(128, 128, 128);
+    --code-background: rgb(211, 211, 211);
+    --placeholder: rgba(127, 127, 127, 0.6);
+    --select-bg: rgba(212, 212, 216, 1);
+}
+
+body.dark {
+    @apply transition-all;
+    /* Dark Mode settings */
+    --background: rgb(39, 39, 39);
+    --nav-background: rgb(47, 46, 46);
+    --dropshadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    --text-color: rgb(245, 245, 245);
+    --borders: rgb(255, 255, 255);
+    --code-background: rgb(58, 58, 58);
+    --placeholder: rgba(127, 127, 127, 0.6);
+    --select-bg: rgba(63, 63, 70, 1);
+}
+
+body {
+    position: relative;
+    color: var(--text-color);
+    margin: 0;
+    box-sizing: border-box;
+    font-size: 16px;
+    font-family: var(--body-text);
+    background: var(--background);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    @apply leading-normal relative top-0.5 font-medium;
+    color: rgb(var(--accent));
+    font-family: var(--header-text);
+}
+
+div.empty {
+    @apply flex flex-col items-center justify-center my-12 w-11/12 mx-auto max-w-[32rem];
+    h3 {
+        @apply font-bold text-3xl text-center;
+    }
+    p {
+        @apply mt-4 text-center;
+    }
+}
+
+/* Themes */
+
+.crimson {
+    --accent: 205, 86, 84;
+    --accent-dark: 133, 56, 54;
+    --accent-light: 221, 142, 142;
+    @apply transition-all;
+}
+
+.aqua {
+    --accent: 98, 150, 209;
+    --accent-dark: 64, 98, 136;
+    --accent-light: 152, 187, 224;
+    @apply transition-all;
+}
+
+.royal {
+    --accent: 145, 82, 169;
+    --accent-dark: 95, 53, 110;
+    --accent-light: 183, 142, 198;
+    @apply transition-all;
+}
+
+.autumn {
+    --accent: 204, 118, 60;
+    --accent-dark: 133, 77, 38;
+    --accent-light: 222, 165, 123;
+    @apply transition-all;
+}
+
+.field {
+    --accent: 79, 126, 53;
+    --accent-dark: 50, 82, 34;
+    --accent-light: 137, 171, 121;
+    @apply transition-all;
+}

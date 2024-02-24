@@ -15,30 +15,30 @@ public func configure(_ app: Application) async throws {
 
     app.logger.notice("Starting Sailfish API...")
     app.routes.defaultMaxBodySize = "3mb"
-    
+
     // Setting port
     let port = Int(Environment.get("PORT") ?? "8080")!
     app.http.server.configuration.port = port
-    
+
     // Setting up JWT signing
     app.logger.notice("Assigning secret key...")
     app.jwt.signers.use(.hs256(key: Environment.get("JWT_SECRET") ?? "aSecret"))
-    
+
     // Setting up database connection
     app.logger.notice("Setting up database connection...")
     if let databaseUrl = Environment.get("DATABASE_URL") {
         var tlsConfig: TLSConfiguration = .makeClientConfiguration()
         tlsConfig.certificateVerification = .none
         let nioSSLContext = try NIOSSLContext(configuration: tlsConfig)
-        
+
         var postgresConfig = try SQLPostgresConfiguration(url: databaseUrl)
         postgresConfig.coreConfiguration.tls = .prefer(nioSSLContext)
-        
+
         app.databases.use(.postgres(configuration: postgresConfig, connectionPoolTimeout: .seconds(30)), as: .psql)
     } else {
         try app.databases.use(.postgres(url: "postgresql://postgres@localhost/sailfish_neo", connectionPoolTimeout: .seconds(30)), as: .psql)
     }
-    
+
     // Adding migrations
     app.logger.notice("Adding migrations...")
     app.migrations.add([
@@ -59,9 +59,9 @@ public func configure(_ app: Application) async throws {
         CommentVote.Create(),
         BlogComment.Create(),
     ])
-    
+
     try await app.autoMigrate()
-    
+
     // Adding model middleware
     app.logger.notice("Adding model middleware...")
     app.databases.middleware.use(Account.Middleware(), on: .psql)
@@ -82,15 +82,15 @@ public func configure(_ app: Application) async throws {
     // Adding Jobs
     app.logger.notice("Adding jobs...")
     // TODO: add queue jobs
-    
+
     // CORS configuration
     app.logger.notice("Assigning CORS configuration...")
     let corsConfig = CORSMiddleware.Configuration(
         allowedOrigin: .any([
             "http://localhost:3000",
             "http://127.0.0.1:3000",
-            "http://localhost:4200",
-            "http://127.0.0.1:4200",
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
             "https://offprint.net",
             "https://www.offprint.net",
             "https://staging.offprint.net",
@@ -110,7 +110,7 @@ public func configure(_ app: Application) async throws {
     )
     let cors = CORSMiddleware(configuration: corsConfig)
     app.middleware.use(cors, at: .beginning)
-    
+
     // Configuring AWS
     app.logger.notice("Configuring AWS...")
     app.aws.client = AWSClient(
@@ -120,7 +120,7 @@ public func configure(_ app: Application) async throws {
         ),
         httpClientProvider: .createNew
     )
-    
+
     // Configuring SendGrid
     app.logger.notice("Configuring SendGrid...")
     app.sendgrid.initialize()
@@ -128,13 +128,13 @@ public func configure(_ app: Application) async throws {
     // Acknowledging routes
     app.logger.notice("Acknowledging routes...")
     try routes(app)
-    
+
     // Print all routes to console
     for route in app.routes.all {
         let path = route.path.map { String($0.description) }
         app.logger.info("Route acknowledged: /\(path.joined(separator: "/")) [\(route.method.rawValue)]")
     }
-    
+
     // Restarting any available queues
     app.logger.notice("Restarting any available queues...")
     // TODO: restart queues
