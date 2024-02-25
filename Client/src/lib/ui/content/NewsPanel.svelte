@@ -1,0 +1,51 @@
+<script lang="ts">
+    import { RiNewspaperLine, RiArrowRightSLine } from "svelte-remixicon";
+</script>
+
+<div class="w-full">
+    <div class="flex items-center mx-4 md:mx-0 mb-2">
+        <RiNewspaperLine size="30px" />
+        <h3 class="text-2xl text-black dark:text-white ml-2">News & Updates</h3>
+        <div class="flex-1"><!--spacer--></div>
+        <span class="all-small-caps text-xl font-bold tracking-wide relative -top-[0.075rem]">More</span>
+        <RiArrowRightSLine size="30px" />
+    </div>
+    <div class="grid grid-cols-1 grid-rows-6 md:grid-rows-3 md:grid-cols-2 gap-4 bg-zinc-200 dark:bg-zinc-700 md:rounded-xl p-4 mb-8">
+        <div class="flex flex-col row-span-3 rounded-xl overflow-hidden hover:bg-zinc-300 dark:hover:bg-zinc-600 transition group">
+            <div class="w-full h-[170px]">
+                <img src="https://images.offprint.net/cover-pics/2ieX51ucz-f6097ebd-2107-486d-9958-e80123439d69.jpg" class="object-cover w-full h-full rounded-b-xl group-hover:rounded-b-none" />
+            </div>
+            <div class="flex flex-col mt-4 ml-2.5">
+                <h5 class="text-black dark:text-white text-2xl">Offprint Presents: Some Other Thing</h5>
+                <span class="text-zinc-400" style="font-family: var(--header-text);">by Figments • Oct 7, 2023</span>
+            </div>
+        </div>
+        <div class="flex items-center rounded-xl overflow-hidden hover:bg-zinc-300 dark:hover:bg-zinc-600 transition group">
+            <div class="w-[100px] h-[75px]">
+                <img src="https://images.offprint.net/cover-pics/2ieX51ucz-f6097ebd-2107-486d-9958-e80123439d69.jpg" class="object-cover w-full h-full rounded-r-xl group-hover:rounded-r-none" />
+            </div>
+            <div class="flex flex-col ml-2.5">
+                <h5 class="text-black dark:text-white text-xl">Offprint Presents: Some Other Thing</h5>
+                <span class="text-zinc-400" style="font-family: var(--header-text);">by Figments • Oct 7, 2023</span>
+            </div>
+        </div>
+        <div class="flex items-center rounded-xl overflow-hidden hover:bg-zinc-300 dark:hover:bg-zinc-600 transition group">
+            <div class="w-[100px] h-[75px]">
+                <img src="https://images.offprint.net/cover-pics/2ieX51ucz-f6097ebd-2107-486d-9958-e80123439d69.jpg" class="object-cover w-full h-full rounded-r-xl group-hover:rounded-r-none" />
+            </div>
+            <div class="flex flex-col ml-2.5">
+                <h5 class="text-black dark:text-white text-xl">Offprint Presents: Some Other Thing</h5>
+                <span class="text-zinc-400" style="font-family: var(--header-text);">by Figments • Oct 7, 2023</span>
+            </div>
+        </div>
+        <div class="flex items-center rounded-xl overflow-hidden hover:bg-zinc-300 dark:hover:bg-zinc-600 transition group">
+            <div class="w-[100px] h-[75px]">
+                <img src="https://images.offprint.net/cover-pics/2ieX51ucz-f6097ebd-2107-486d-9958-e80123439d69.jpg" class="object-cover w-full h-full rounded-r-xl group-hover:rounded-r-none" />
+            </div>
+            <div class="flex flex-col ml-2.5">
+                <h5 class="text-black dark:text-white text-xl">Offprint Presents: Some Other Thing</h5>
+                <span class="text-zinc-400" style="font-family: var(--header-text);">by Figments • Oct 7, 2023</span>
+            </div>
+        </div>
+    </div>
+</div>
