@@ -1,18 +1,19 @@
 <script lang="ts">
-    export let id: string;
+    export let name: string;
     export let label: string;
     export let placeholder = "Enter text here";
     export let errorMessage: string | undefined = undefined;
     export let required = false;
-    export let value: string;
+    export let value: string | null;
 </script>
 
 <div>
-    <label for={id} class="all-small-caps font-bold tracking-wide relative left-2 select-none">
+    <label for={name} class="all-small-caps font-bold tracking-wide relative left-2 select-none">
         {label}<span class="text-red-600 text-xl relative top-0.5 ml-1">{required ? '*' : ''}</span>
     </label>
     <textarea
-        {id}
+        id={name}
+        {name}
         {placeholder}
         {required}
         bind:value

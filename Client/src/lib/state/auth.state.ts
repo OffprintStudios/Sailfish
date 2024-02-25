@@ -5,14 +5,14 @@ import type { Account, Profile } from "$lib/models/accounts";
 interface AuthState {
     account?: Account;
     token?: string;
-    profiles?: Profile[];
+    profiles: Profile[];
     currProfile?: Profile;
 }
 
 const defaultAuthState: AuthState = {
     account: undefined,
     token: undefined,
-    profiles: undefined,
+    profiles: [],
     currProfile: undefined,
 }
 
