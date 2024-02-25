@@ -4,18 +4,24 @@
     import { onMount } from "svelte";
     import { auth } from "$lib/state/auth.state";
     import { RiUserAddLine, RiUserForbidLine } from "svelte-remixicon";
+	import type { ActionData } from "./$types";
+    import toast from "svelte-french-toast";
+	import { enhance } from "$app/forms";
 
+    export let form: ActionData;
     let showUnavailableActionPrompt = false;
-
-    let emailValue: string;
-    let passwordValue: string;
-    let repeastPasswordValue: string;
 
     onMount(() => {
         if ($auth.account) {
             showUnavailableActionPrompt = true;
         }
     });
+
+    $: {
+        if (form?.error) {
+            toast.error(form!.error.message, { duration: 5000 });
+        }
+    }
 </script>
 
 <div class="bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur-lg md:rounded-xl max-w-md p-6 md:p-12 w-full h-full md:h-fit overflow-y-scroll">
@@ -37,46 +43,56 @@
                 Let's get started, shall we?
             </span>
         </div>
-        <form class="flex flex-col">
+        <form
+            class="flex flex-col"
+            method="post"
+            use:enhance
+        >
             <TextField
-                id="email"
+                name="email"
                 label="Email Address"
                 type="email"
                 placeholder="somebody@example.net"
                 required
                 autocomplete="email"
-                bind:value={emailValue}
+                value={null}
             />
             <div class="my-1"></div>
             <TextField
-                id="password"
+                name="password"
                 label="Password"
                 type="password"
                 placeholder="••••••••••"
                 required
                 autocomplete="new-password"
-                bind:value={passwordValue}
+                value={null}
             />
             <div class="my-1"></div>
             <TextField
-                id="repeat-password"
+                name="repeat-password"
                 label="Repeat Password"
                 type="password"
                 placeholder="••••••••••"
                 required
                 autocomplete="new-password"
-                bind:value={repeastPasswordValue}
+                value={null}
             />
             <label class="flex mt-4 mb-2">
                 <input
+                    id="age-check"
+                    name="age-check"
                     type="checkbox"
+                    required
                     class="rounded bg-zinc-500 w-[18px] h-[18px] relative top-[0.075rem] border-0 mr-2 transition checked:bg-blue-500/75"
                 />
                 <span class="text-sm align-top select-none">I am 13 years of age or older</span>
             </label>
             <label class="flex mt-2 mb-4">
                 <input
+                    id="terms-agree"
+                    name="terms-agree"
                     type="checkbox"
+                    required
                     class="rounded bg-zinc-500 w-[18px] h-[18px] relative top-[0.075rem] border-0 mr-2 transition checked:bg-blue-500/75"
                 />
                 <!--TODO: replace these with real links-->

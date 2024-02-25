@@ -4,7 +4,7 @@
 </script>
 
 <div
-    class="flex flex-col items-center justify-center w-full h-screen bg-cover bg-center relative"
+    class="flex flex-col items-center justify-center w-full h-screen bg-cover bg-center relative z-0"
     style="background-image: url('/images/mountains.jpg')"
 >
     <div class="absolute top-4 left-4 hidden md:block">

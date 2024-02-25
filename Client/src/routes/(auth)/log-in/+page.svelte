@@ -1,20 +1,35 @@
 <script lang="ts">
+    import type { ActionData } from "./$types";
     import { TextField } from "$lib/ui/forms";
     import { Button } from "$lib/ui/util";
 	import { onMount } from "svelte";
     import { RiLoginCircleLine, RiUserForbidLine } from "svelte-remixicon";
     import { auth } from "$lib/state/auth.state";
+	import { enhance } from "$app/forms";
+    import toast from "svelte-french-toast";
+	import { goto } from "$app/navigation";
 
+    export let form: ActionData;
     let showUnavailableActionPrompt = false;
-
-    let emailValue: string;
-    let passwordValue: string;
 
     onMount(() => {
         if ($auth.account) {
             showUnavailableActionPrompt = true;
         }
     });
+
+    $: {
+        if (form?.error) {
+            toast.error(form!.error.message, { duration: 5000 });
+        } else if (form?.account) {
+            const account = form!.account;
+
+            $auth.account = account;
+            $auth.token = account.token;
+
+            goto("/switch-profile");
+        }
+    }
 </script>
 
 <div class="bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur-lg md:rounded-xl max-w-md p-6 md:p-12 w-full h-full md:h-fit">
@@ -36,23 +51,29 @@
                 We're so glad you're here.
             </span>
         </div>
-        <form class="flex flex-col">
+        <form
+            class="flex flex-col"
+            method="post"
+            use:enhance
+        >
             <TextField
-                id="email"
+                name="email"
                 label="Email Address"
                 type="email"
                 placeholder="somebody@example.net"
                 autocomplete="email"
-                bind:value={emailValue}
+                required
+                value={null}
             />
             <div class="my-1.5"></div>
             <TextField
-                id="password"
+                name="password"
                 label="Password"
                 type="password"
                 placeholder="•••••••••••"
                 autocomplete="current-password"
-                bind:value={passwordValue}
+                required
+                value={null}
             />
             <a class="text-zinc-500 dark:text-zinc-400 text-sm pt-2 hover:underline" href="/forgot-password">Forgot your password?</a>
             <div class="my-3"></div>
