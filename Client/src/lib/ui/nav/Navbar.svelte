@@ -4,6 +4,7 @@
     import { auth } from "$lib/state/auth.state";
     import { page } from "$app/stores";
 	import SearchMenu from "./SearchMenu.svelte";
+	import Guide from "./guide/Guide.svelte";
 </script>
 
 <div class="navbar-container">
@@ -28,11 +29,7 @@
                         <span class="icon"><Library size="24" strokeWidth="2.5" /></span>
                         <span class="text">12</span>
                     </button>
-                    <button
-                        class="overflow-hidden rounded-full border ml-1 mr-2 md:mr-0"
-                    >
-                        <img src="{$auth.currProfile.avatar}" class="w-[35px] h-[35px]" alt="Your avatar"/>
-                    </button>
+                    <Guide />
                 {:else}
                     <a class="navbar-button" href="/switch-profile">
                         <span class="icon"><RiArrowLeftRightLine size="20px" /></span>

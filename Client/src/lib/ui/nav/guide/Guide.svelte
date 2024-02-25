@@ -16,7 +16,7 @@
 		if (button) {
 			computePosition(button, dropdown, {
 				placement: "bottom-end",
-				middleware: [offset({ mainAxis: 16 }), flip(), shift()]
+				middleware: [offset({ mainAxis: 5 }), flip(), shift()]
 			})
 				.then(({ x, y }) => {
 					Object.assign(dropdown.style, {
