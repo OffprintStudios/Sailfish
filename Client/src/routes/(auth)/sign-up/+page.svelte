@@ -123,7 +123,8 @@
                     class="rounded bg-zinc-500 w-[18px] h-[18px] relative top-[0.075rem] border-0 mr-2 transition checked:bg-blue-500/75"
                 />
                 <!--TODO: replace these with real links-->
-                <span class="text-sm align-top select-none">I agree to the Terms of Service, Privacy Policy, and Offprint Constitution</span>
+                <span class="text-sm align-top select-none">
+                    I agree to the <a href="/docs/terms-of-service">Terms of Service</a>, <a href="/docs/privacy-policy">Privacy Policy</a>, and <a href="/docs/constitution">Offprint Constitution</a></span>
             </label>
             <Button
                 id="sign-up"

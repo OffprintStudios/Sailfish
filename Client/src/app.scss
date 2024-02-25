@@ -160,3 +160,35 @@ div.guide-dropdown {
 div.guide-dropdown > * {
     grid-area: 1 / 1 ;
 }
+
+/* Sections, blog bodies, authors notes, and long descriptions.
+ * These go in the main stylesheet because section bodies have
+ * no view encapsulation, and can be (and are) affected by global
+ * styles. Therefore, these must also be global styles.
+ * If we can find a way to have an element with directly-set
+ * innerHtml AND view encapsulation, we can move all this back down to the
+ * component level.
+*/
+div.comment-body,
+div.section-body,
+div.blog-body,
+div.authors-note,
+div.html-description,
+section,
+article {
+  @include content-body();
+}
+
+.dark {
+  div.comment-body,
+  div.section-body,
+  div.blog-body,
+  div.authors-note,
+  div.html-description,
+  section,
+  article {
+    blockquote {
+      @apply bg-zinc-600;
+    }
+  }
+}

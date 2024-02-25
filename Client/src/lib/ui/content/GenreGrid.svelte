@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RiEmotionLaughLine, RiSwordLine, RiMoonFoggyLine, RiFilePaper2Line, RiDoorClosedLine, RiMagicLine, RiGhost2Line, RiSearch2Line, RiHeartsLine, RiEmotionSadLine, RiAliensLine, RiHome3Line, RiMeteorLine, RiSpyLine, RiSkullLine } from "svelte-remixicon";
+	import { RiEmotionLaughLine, RiSwordLine, RiMoonFoggyLine, RiFilePaper2Line, RiDoorClosedLine, RiMagicLine, RiGhost2Line, RiSearch2Line, RiHeartsLine, RiEmotionSadLine, RiAliensLine, RiHome3Line, RiMeteorLine, RiSpyLine, RiSkullLine, RiBox2Line } from "svelte-remixicon";
 
     const genres = [
         { id: 1, name: 'Action/Adventure', icon: RiSwordLine },
@@ -22,7 +22,7 @@
 
 <div>
     <div class="flex items-center mb-3 mx-4 md:mx-0">
-        <ng-icon name="remixBox2Line" size="30px" />
+        <RiBox2Line size="30px" />
         <h3 class="text-2xl text-black dark:text-white mx-2">Genres</h3>
         <div class="flex-1"><!--spacer--></div>
     </div>

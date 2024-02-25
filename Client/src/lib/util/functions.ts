@@ -1,4 +1,5 @@
 import { Roles } from "$lib/models/accounts";
+import toast from "svelte-french-toast";
 import slug from "slug";
 import numbro from "numbro";
 
@@ -49,4 +50,10 @@ export function abbreviate(value: number): string {
     } else {
         return numbro(value).format({ average: true, totalLength: 2 });
     }
+}
+
+export async function copyToClipboard(text: string) {
+	await navigator.clipboard.writeText(text).then(() => {
+		toast.success('Copied!');
+	});
 }
