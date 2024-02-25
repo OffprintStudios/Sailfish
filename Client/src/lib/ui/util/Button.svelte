@@ -1,12 +1,16 @@
 <script lang="ts">
+	import { RiLoader5Line } from "svelte-remixicon";
+
     export let id: string;
     export let title: string;
     export let type: "button" | "submit" | "reset" = "button";
     export let kind: "primary" | "normal" = "normal";
     export let active = false;
     export let loading = false;
+    export let loadingText = "";
     export let disabled = false;
     export let fullWidth = false;
+    export let thisButton: HTMLButtonElement | null = null;
 </script>
 
 <button
@@ -19,8 +23,14 @@
     class:w-full={fullWidth}
     disabled={disabled || loading}
     on:click
+    bind:this={thisButton}
 >
-    <slot />
+    {#if loading}
+        <RiLoader5Line class="button-icon animate-spin" />
+        <span class="button-text">{loadingText}</span>
+    {:else}
+        <slot />
+    {/if}
 </button>
 
 <style lang="scss">
