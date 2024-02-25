@@ -30,14 +30,13 @@ app.subscribe((value) => {
 
 export function setTheme(newTheme: Themes): void {
     app.update((state) => {
-        const oldTheme = state.theme;
+        const themes = Object.keys(Themes);
+        document.body.classList.remove(...themes);
         state.theme = newTheme;
-        const hasNewTheme = document.documentElement.classList.replace(oldTheme, state.theme);
-        if (hasNewTheme) {
-            const themeColor = document.querySelector("meta[name='theme-color']");
-            const accentColor = getComputedStyle(document.documentElement).getPropertyValue("--accent");
-            themeColor?.setAttribute("content", `rgba(${accentColor})`);
-        }
+        document.body.classList.add(state.theme);
+        const themeColor = document.querySelector("meta[name='theme-color']");
+        const accentColor = getComputedStyle(document.body).getPropertyValue("--accent");
+        themeColor?.setAttribute("content", `rgba(${accentColor})`);
         return state;
     });
 }

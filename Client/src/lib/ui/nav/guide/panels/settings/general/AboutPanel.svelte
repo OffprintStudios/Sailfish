@@ -26,7 +26,7 @@
 
 <div class="guide-nav bg-zinc-200 dark:bg-zinc-700">
 	<Button id="back-button" title="Go Back" on:click={popPanel}>
-		<span class="button-icon"><RiArrowLeftSLine class="button-icon" /></span>
+		<span class="button-icon"><RiArrowLeftSLine /></span>
 		<span class="button-text">Settings</span>
 	</Button>
 </div>

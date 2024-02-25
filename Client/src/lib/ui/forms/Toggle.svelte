@@ -9,12 +9,12 @@
         <input
             {id}
             {required}
-            bind:value
+            bind:checked={value}
             type="checkbox"
         />
         <span class="slider"><!--slider--></span>
     </label>
-    <span class="relative top-[0.075rem]"><ng-content /></span>
+    <span class="relative top-[0.075rem]"><slot /></span>
 </div>
 
 <style lang="scss">
