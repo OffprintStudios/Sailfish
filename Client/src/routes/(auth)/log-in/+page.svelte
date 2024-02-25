@@ -32,6 +32,33 @@
     }
 </script>
 
+<svelte:head>
+	<title>Log In &mdash; Offprint</title>
+	<!-- Primary Meta Tags -->
+	<meta name="title" content="Offprint" />
+	<meta name="description" content="For The Stories Left Untold" />
+
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://offprint.cafe/" />
+	<meta property="og:title" content="Offprint" />
+	<meta
+		property="og:description"
+		content="For The Stories Left Untold"
+	/>
+	<meta property="og:image" content="/images/offprint_icon.png" />
+
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary_large_image" />
+	<meta property="twitter:url" content="https://offprint.cafe/" />
+	<meta property="twitter:title" content="Offprint" />
+	<meta
+		property="twitter:description"
+		content="For The Stories Left Untold"
+	/>
+	<meta property="twitter:image" content="/images/offprint_icon.png" />
+</svelte:head>
+
 <div class="bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur-lg md:rounded-xl max-w-md p-6 md:p-12 w-full h-full md:h-fit">
     {#if showUnavailableActionPrompt}
         <div class="flex flex-col items-center justify-center">
