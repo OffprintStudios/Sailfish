@@ -3,6 +3,7 @@
     export let label: string;
     export let type: "text" | "email" | "password" = "text";
     export let placeholder: string = 'Enter text here';
+    export let hint: string | undefined = undefined;
     export let errorMessage: string | undefined = undefined;
     export let autocomplete: string = 'off';
     export let required: boolean = false;
@@ -10,8 +11,12 @@
 </script>
 
 <div>
-    <label for={name} class="all-small-caps font-bold tracking-wide relative left-2 select-none">
-        {label}<span class="text-red-600 text-xl relative top-0.5 ml-1">{required ? '*' : ''}</span>
+    <label for={name} class="flex items-center all-small-caps font-bold tracking-wide relative left-2 select-none">
+        {label}<span class="text-red-600 text-xl relative top-0.5 ml-1">*{required ? '*' : ''}</span>
+        {#if hint}
+            <span class="flex-1"><!--spacer--></span>
+            <span class="italic text-zinc-500 dark:text-zinc-400 relative right-4">{hint}</span>
+        {/if}
     </label>
     <input
         id={name}

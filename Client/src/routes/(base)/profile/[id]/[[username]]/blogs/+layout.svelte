@@ -6,7 +6,6 @@
 	import { RiAddLine, RiArrowLeftSLine, RiFilter2Line, RiSearchEyeLine } from "svelte-remixicon";
 	import LinkBlock from "$lib/ui/util/LinkBlock.svelte";
 	import { page } from "$app/stores";
-	import { goto } from "$app/navigation";
 
     export let data: PageData;
 </script>
@@ -71,10 +70,19 @@
             </LinkBlock>
         {/if}
     {:else}
-        <LinkBlock id="back-button" title="Go Back" href="/profile/{data.id}/{slugify(data.username)}/blogs">
-            <span class="link-icon"><RiArrowLeftSLine /></span>
-            <span class="link-text">Back</span>
-        </LinkBlock>
+        <div class="w-1/3 flex items-center">
+            <LinkBlock id="back-button" title="Go Back" href="/profile/{data.id}/{slugify(data.username)}/blogs">
+                <span class="link-icon"><RiArrowLeftSLine /></span>
+                <span class="link-text">Back</span>
+            </LinkBlock>
+            <div class="flex-1"><!--spacer--></div>
+        </div>
+        <div class="w-1/3 text-center">
+            <h3 class="text-2xl">Create a New Blog</h3>
+        </div>
+        <div class="w-1/3">
+            <!--space left intentionally blank-->
+        </div>
     {/if}
 </div>
 
