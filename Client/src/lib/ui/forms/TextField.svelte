@@ -12,7 +12,7 @@
 
 <div>
     <label for={name} class="flex items-center all-small-caps font-bold tracking-wide relative left-2 select-none">
-        {label}<span class="text-red-600 text-xl relative top-0.5 ml-1">*{required ? '*' : ''}</span>
+        {label}<span class="text-red-600 text-xl relative top-0.5 ml-1">{required ? '*' : ''}</span>
         {#if hint}
             <span class="flex-1"><!--spacer--></span>
             <span class="italic text-zinc-500 dark:text-zinc-400 relative right-4">{hint}</span>

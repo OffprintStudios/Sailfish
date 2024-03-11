@@ -6,6 +6,7 @@
 	import { abbreviate, localeDate, pluralize, slugify } from "$lib/util/functions";
     import { BookCopy, LibrarySquare } from "lucide-svelte";
 	import RoleBadge from "$lib/ui/util/RoleBadge.svelte";
+	import { slide } from "svelte/transition";
 
     export let data: PageData;
 
@@ -41,14 +42,14 @@
 </svelte:head>
 
 <div class="w-full">
-    <div class="relative w-full h-[10rem] md:h-[24rem]" style="background: rgb(var(--accent-dark));">
+    <div class="relative w-full h-[10rem] md:h-[20rem]" style="background: rgb(var(--accent-dark));">
         {#if data.bannerArt}
             <img src={data.bannerArt} class="object-cover w-full h-full" alt="{data.username}'s Banner Art" />
         {/if}
     </div>
 
     <!--Mobile header-->
-    <div class="flex items-end relative z-10 px-4 md:hidden bg-zinc-200 dark:bg-zinc-700 max-h-[62.5px]">
+    <div class="flex items-end relative z-10 px-4 md:hidden bg-zinc-200/50 dark:bg-zinc-700/50 backdrop-blur-lg max-h-[62.5px]">
         <div class="w-[125px] h-[125px] rounded-full overflow-hidden border-4 border-zinc-300 dark:border-zinc-600">
             <img src={data.avatar} class="w-full h-full object-cover" alt="{data.username}'s Avatar" />
         </div>
@@ -65,7 +66,7 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-4 md:gap-4 max-w-7xl md:w-11/12 mx-auto">
-        <div class="flex flex-col bg-zinc-200 dark:bg-zinc-700 md:rounded-xl px-4 pt-2 md:py-4 relative md:bottom-24 col-span-1" style="box-shadow: var(--dropshadow);">
+        <div class="flex flex-col bg-zinc-200/50 dark:bg-zinc-700/50 md:rounded-xl px-4 pt-2 md:py-4 relative md:bottom-24 col-span-1 backdrop-blur-lg border-b md:border border-zinc-600/25 dark:border-zinc-300/25" style="box-shadow: var(--dropshadow);">
             <div class="self-center hidden md:block max-w-[260px] max-h-[260px] rounded-full overflow-hidden border-4 border-zinc-300 dark:border-zinc-600 mb-4">
                 <img src="{data.avatar}" class="w-full h-full object-cover" alt="{data.username}'s Avatar">
             </div>
@@ -87,7 +88,7 @@
             <div class="my-2"><!--spacer--></div>
             <span class="text-sm">{data.bio}</span>
             <div class="hidden md:block my-2"><!--spacer--></div>
-            <div class="hidden md:flex items-center w-full bg-zinc-300 dark:bg-zinc-600 rounded-xl overflow-hidden">
+            <div class="hidden md:flex items-center w-full bg-zinc-300/50 dark:bg-zinc-600/50 backdrop-blur-sm rounded-xl overflow-hidden">
                 <button class="card-button big" id="follow-button" title="Follow {data.username}">
                     <span class="button-icon"><RiUserFollowLine /></span>
                     <span class="button-text">Follow</span>
@@ -101,7 +102,7 @@
                 </button>
             </div>
             {#if isOptionsMenuOpen}
-                <div class="mt-2 rounded-xl overflow-hidden bg-zinc-300 dark:bg-zinc-600">
+                <div class="mt-2 rounded-xl overflow-hidden bg-zinc-300/50 dark:bg-zinc-600/50 backdrop-blur-sm" transition:slide>
                     <button class="card-button full top" id="send-message-button" title="Send a message to {data.username}">
                         <span class="button-icon"><RiSendPlaneLine /></span>
                         <span class="button-text">Send Message</span>

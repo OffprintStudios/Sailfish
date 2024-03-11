@@ -4,24 +4,17 @@
 	import { guide, popPanel } from "../../guide.state";
 	import { auth } from "$lib/state/auth.state";
 	import toast from "svelte-french-toast";
+	import { goto } from "$app/navigation";
 
 	async function logOut() {
-		const response = await fetch(`/api/auth/log-out`, {
-			method: "POST"
-		});
-		if (response.status === 200) {
-			toast.success("See you later!");
-			$auth.account = undefined;
-			$auth.currProfile = undefined;
-			$auth.profiles = [];
-			$auth.token = undefined;
-			//$activity.markAsRead = [];
-			//$activity.count = 0;
-			$guide.open = false;
-			$guide.routing = [];
-		} else {
-			toast.error(`Something went wrong! Try again in a little bit.`);
-		}
+        toast.success("See you later!");
+        $auth.account = undefined;
+        $auth.currProfile = undefined;
+        $auth.profiles = [];
+        $auth.token = undefined;
+        $guide.open = false;
+        $guide.routing = [];
+        await goto("/");
 	}
 </script>
 
