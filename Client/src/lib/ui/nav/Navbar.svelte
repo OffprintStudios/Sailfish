@@ -82,7 +82,7 @@
         }
 
         button.navbar-button, a.navbar-button {
-            @apply hidden md:flex items-center text-white mx-0.5 px-2 py-2 rounded-xl transition;
+            @apply hidden md:flex items-center text-white mx-0.5 px-2 py-2 firefox:text-sm rounded-xl transition;
 
             & > span {
                 @apply relative;
@@ -106,7 +106,7 @@
         }
 
         a.page-link {
-            @apply hidden md:block relative top-0.5 text-white ml-4 all-small-caps text-lg border-b-2 border-transparent transition font-semibold;
+            @apply hidden md:block relative top-0.5 text-white ml-4 all-small-caps text-lg firefox:text-base border-b-2 border-transparent transition font-semibold;
             font-family: var(--header-text);
 
             &.active {

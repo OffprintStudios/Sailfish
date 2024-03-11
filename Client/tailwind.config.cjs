@@ -13,6 +13,9 @@ const config = {
         require('@tailwindcss/forms'),
         require('@tailwindcss/typography'),
         require('tailwindcss-opentype'),
+        function({ addVariant }) {
+            addVariant('firefox', ':-moz-any(&)')
+        }
     ]
 };
 

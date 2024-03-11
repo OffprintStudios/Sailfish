@@ -83,4 +83,8 @@
             @apply text-sm font-medium;
         }
     }
+
+    :-moz-any(.btn) {
+        @apply text-sm;
+    }
 </style>
