@@ -26,7 +26,7 @@
         {autocomplete}
         {required}
         bind:value
-        class="text-field border-zinc-400 dark:border-zinc-500 bg-zinc-300 dark:bg-zinc-600"
+        class="text-field border-zinc-400 dark:border-zinc-500 bg-zinc-300/50 dark:bg-zinc-600/50 backdrop-blur-lg"
     />
     {#if errorMessage}
     <div class="flex pt-1">

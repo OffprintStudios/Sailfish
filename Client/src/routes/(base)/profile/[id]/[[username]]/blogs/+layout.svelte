@@ -38,7 +38,7 @@
 	<meta property="twitter:image" content={data.avatar} />
 </svelte:head>
 
-<div class="flex items-center">
+<div class="flex items-center h-[58px] bg-zinc-200/50 p-2 dark:bg-zinc-700/50 backdrop-blur-lg rounded-b-xl border border-zinc-600/25 dark:border-zinc-300/25" style="box-shadow: var(--dropshadow);">
     {#if $page.url.pathname === `/profile/${data.id}/${slugify(data.username)}/blogs`}
         <div class="flex items-center rounded-xl overflow-hidden max-w-[255px] h-[40px] bg-zinc-200 dark:bg-zinc-700">
             <input
@@ -46,9 +46,9 @@
                 title="Search Blogs"
                 type="text"
                 placeholder="Search..."
-                class="bg-transparent border-0 focus:ring-0 w-full h-full"
+                class="bg-zinc-300/25 dark:bg-zinc-600/25 backdrop-blur-lg border-0 focus:ring-0 w-full h-full"
             />
-            <button class="h-full px-3 hover:bg-zinc-300 dark:hover:bg-zinc-600">
+            <button class="h-full px-3 bg-zinc-300/25 dark:bg-zinc-600/25 backdrop-blur-lg hover:bg-zinc-300 dark:hover:bg-zinc-600 transition">
                 <span class="relative"><RiSearchEyeLine size="20px" /></span>
             </button>
         </div>
@@ -70,18 +70,12 @@
             </LinkBlock>
         {/if}
     {:else}
-        <div class="w-1/3 flex items-center">
+        <div class="flex items-center">
             <LinkBlock id="back-button" title="Go Back" href="/profile/{data.id}/{slugify(data.username)}/blogs">
                 <span class="link-icon"><RiArrowLeftSLine /></span>
                 <span class="link-text">Back</span>
             </LinkBlock>
             <div class="flex-1"><!--spacer--></div>
-        </div>
-        <div class="w-1/3 text-center">
-            <h3 class="text-2xl">Create a New Blog</h3>
-        </div>
-        <div class="w-1/3">
-            <!--space left intentionally blank-->
         </div>
     {/if}
 </div>

@@ -66,7 +66,7 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-4 md:gap-4 max-w-7xl md:w-11/12 mx-auto">
-        <div class="flex flex-col bg-zinc-200/50 dark:bg-zinc-700/50 md:rounded-xl px-4 pt-2 md:py-4 relative md:bottom-24 col-span-1 backdrop-blur-lg border-b md:border border-zinc-600/25 dark:border-zinc-300/25" style="box-shadow: var(--dropshadow);">
+        <div class="flex flex-col bg-zinc-200/50 dark:bg-zinc-700/50 md:h-fit md:rounded-xl px-4 pt-2 md:py-4 relative md:bottom-24 col-span-1 backdrop-blur-lg border-b md:border border-zinc-600/25 dark:border-zinc-300/25" style="box-shadow: var(--dropshadow);">
             <div class="self-center hidden md:block max-w-[260px] max-h-[260px] rounded-full overflow-hidden border-4 border-zinc-300 dark:border-zinc-600 mb-4">
                 <img src="{data.avatar}" class="w-full h-full object-cover" alt="{data.username}'s Avatar">
             </div>
@@ -142,7 +142,7 @@
             </div>
         </div>
         <div class="my-6 col-span-3">
-            <div class="hidden md:flex items-center justify-center w-full md:pb-2 mb-4 border-b border-zinc-300/50 dark:border-zinc-600/50">
+            <div class="hidden md:flex items-center justify-center w-full py-2 bg-zinc-200/50 dark:bg-zinc-700/50 backdrop-blur-lg rounded-xl rounded-b-none border-b-0 border border-zinc-600/25 dark:border-zinc-300/25" style="box-shadow: var(--dropshadow);">
                 <a class="nav-link" class:active={$page.url.pathname === `/profile/${data.id}/${slugify(data.username)}`} href="/profile/{data.id}/{slugify(data.username)}">
                     <span class="nav-link-icon"><RiHome6Line size="20px" /></span>
                     <span>Home</span>
@@ -173,7 +173,7 @@
     }
 
     a.nav-link.active, a.nav-link:hover {
-        @apply bg-zinc-300/50 dark:bg-zinc-700/50;
+        @apply bg-zinc-300/50 dark:bg-zinc-600/50 backdrop-blur-sm;
     }
 
     a.nav-link > span.nav-link-icon {

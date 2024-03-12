@@ -153,7 +153,7 @@
 {/if}
 <div
 	id="offprint-editor"
-	class="w-full flex flex-col rounded-b-lg bg-zinc-300 dark:bg-zinc-600"
+	class="w-full flex flex-col rounded-b-lg bg-zinc-300/50 dark:bg-zinc-600/50 backdrop-blur-lg"
 	class:rounded-t-lg={!hasHeader}
 >
 	{#if $editor}
