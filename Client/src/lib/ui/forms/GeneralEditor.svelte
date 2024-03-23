@@ -153,7 +153,7 @@
 {/if}
 <div
 	id="offprint-editor"
-	class="w-full flex flex-col rounded-b-lg bg-zinc-300/50 dark:bg-zinc-600/50 backdrop-blur-lg"
+	class="w-full flex flex-col rounded-xl bg-zinc-300/50 dark:bg-zinc-600/50 backdrop-blur-lg"
 	class:rounded-t-lg={!hasHeader}
 >
 	{#if $editor}
@@ -454,7 +454,7 @@
 
 <style lang="scss">
 	div.editor-bar {
-		@apply flex items-center p-1 relative flex-wrap;
+		@apply flex items-center p-1 rounded-t-xl relative flex-wrap;
 	}
 	div.bubble-bar {
 		@apply rounded-lg max-w-[18rem] transition transform;
