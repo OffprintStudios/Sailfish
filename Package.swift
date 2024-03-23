@@ -8,7 +8,7 @@ let package = Package(
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.92.3"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.92.5"),
         // 🗄 An ORM for SQL and NoSQL databases.
         .package(url: "https://github.com/vapor/fluent.git", from: "4.9.0"),
         // 🐘 Fluent driver for Postgres.
@@ -24,7 +24,7 @@ let package = Package(
         // NanoID generation
         .package(url: "https://github.com/OffprintStudios/NanoID.git", from: "1.0.0"),
         // SwiftSoup HTML sanitization
-        .package(url: "https://github.com/scinfu/SwiftSoup.git", from: "2.7.1"),
+        .package(url: "https://github.com/scinfu/SwiftSoup.git", from: "2.7.2"),
         // Soto AWS library
         .package(url: "https://github.com/soto-project/soto.git", from: "6.8.0"),
         // Vapor SendGrid package
