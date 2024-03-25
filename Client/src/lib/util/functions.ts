@@ -178,3 +178,8 @@ export function localeDate(value: Date | string, format: dateFormat = 'short'): 
 		return date.toLocaleDateString(undefined, options);
 	}
 }
+
+export function throwError(msg: string): never {
+    toast.error(msg);
+    throw new Error(msg);
+}
