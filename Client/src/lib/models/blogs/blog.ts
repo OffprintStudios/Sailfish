@@ -4,7 +4,7 @@ export interface Blog {
     readonly id: string;
     readonly author: {
         readonly id: string;
-        readonly username: string;
+        readonly name: string;
         readonly avatar: string;
     };
     title: string;

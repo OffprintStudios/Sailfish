@@ -6,6 +6,7 @@
 	import type { Paginated } from "$lib/models/util";
 	import type { Blog } from "$lib/models/blogs";
 	import { onMount } from "svelte";
+	import { BlogCard } from "$lib/ui/content";
 
     export let data: PageData;
     let loading = false;
@@ -55,14 +56,18 @@
         <h3>Loading...</h3>
     </div>
 {:else}
-    {#each blogs.items as blog}
-        hi
-    {:else}
+    {#if blogs.items.length === 0}
         <div class="empty">
             <h3>Nothing to see here</h3>
             <p>Check back later to see if they added anything!</p>
         </div>
-    {/each}
+    {:else}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 my-6">
+            {#each blogs.items as blog}
+                <BlogCard {blog} width="auto" />
+            {/each}
+        </div>
+    {/if}
 {/if}
 
 
