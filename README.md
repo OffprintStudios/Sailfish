@@ -17,7 +17,7 @@ Make sure you have the latest NodeJS version installed and ready to go. Addition
 
 ### API
 
-The Sailfish API requires **Swift 5.9** at a minimum, but please install the latest version for your platform if it's higher than that. Official builds are available on [The Swift Project's homepage](https://swift.org/) for Windows, Linux, and macOS. You might also prefer running via `docker-compose up`, which should get you a full development environment equivalent to what we run on the production and staging servers. 
+The Sailfish API requires **Swift 5.10** at a minimum, but please install the latest version for your platform if it's higher than that. Official builds are available on [The Swift Project's homepage](https://swift.org/) for Windows, Linux, and macOS. You might also prefer running via `docker-compose up`, which should get you a full development environment equivalent to what we run on the production and staging servers. 
 
 Additionally, make sure you have the latest **PostgreSQL** and **Redis** versions installed. Check out `sample.env` to set up your environment variables in your own `.env` file. If you want to test out image uploading functionality (we use DigitalOcean Spaces at present), also fill out the `DIGITALOCEAN_SPACES_*` variables, although the server should work fine without those (you just won't be able to upload images). Additionally, if you don't need to test email functionality, just supply `SENDGRID_API_KEY` with a dummy value.
 
