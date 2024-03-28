@@ -48,17 +48,21 @@ let package = Package(
                 .product(name: "SotoS3", package: "soto"),
                 .product(name: "SendGrid", package: "sendgrid"),
                 .product(name: "Redis", package: "redis")
-            ]
+            ],
+            swiftSettings: swiftSettings
         ),
-        .testTarget(name: "AppTests", dependencies: [
-            .target(name: "App"),
-            .product(name: "XCTVapor", package: "vapor"),
-
-            // Workaround for https://github.com/apple/swift-package-manager/issues/6940
-            .product(name: "Vapor", package: "vapor"),
-            .product(name: "Fluent", package: "Fluent"),
-            .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
-            .product(name: "Leaf", package: "leaf"),
-        ])
+        .testTarget(
+            name: "AppTests",
+            dependencies: [
+                .target(name: "App"),
+                .product(name: "XCTVapor", package: "vapor"),
+            ],
+            swiftSettings: swiftSettings
+        )
     ]
 )
+
+var swiftSettings: [SwiftSetting] { [
+    .enableUpcomingFeature("DisableOutwardActorInference"),
+    .enableExperimentalFeature("StrictConcurrency")
+] }
