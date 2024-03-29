@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { app, setFilter, setShowNsfw } from "$lib/state/app.state";
+	import { app, setFilter, setShowNsfw, setUnblurNsfw } from "$lib/state/app.state";
     import { RatingsFilter } from "$lib/models/util";
 	import { popPanel } from "../../../guide.state";
 	import { Button } from "$lib/ui/util";
@@ -23,8 +23,6 @@
 		enableExplicit = true;
 	}
 	$: {
-        console.log(`Enable Mature: ${enableMature}`);
-        console.log(`Enable Explicit: ${enableExplicit}`);
         setFilter(enableMature, enableExplicit);
     }
 </script>
@@ -55,3 +53,10 @@
 		</Button>
 	{/if}
 </div>
+
+{#if $app.showNsfw}
+    <h5 class="guide-section-header">BLOG BLUR</h5>
+    <div class="guide-section p-2.5 items-center justify-center bg-zinc-300 dark:bg-zinc-600" style="margin-top: 0.125rem;">
+        <Toggle id="toggle-blur" bind:value={$app.unblurNsfw}>Unblur NSFW</Toggle>
+    </div>
+{/if}

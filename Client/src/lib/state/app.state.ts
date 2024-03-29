@@ -6,6 +6,7 @@ interface AppState {
     theme: Themes;
     mode: ModeSwitch;
     showNsfw: boolean;
+    unblurNsfw: boolean;
     filter: RatingsFilter;
 }
 
@@ -13,6 +14,7 @@ const defaultAppState: AppState = {
     theme: Themes.crimson,
     mode: ModeSwitch.system,
     showNsfw: false,
+    unblurNsfw: false,
     filter: RatingsFilter.restricted,
 };
 
@@ -63,6 +65,13 @@ export function setShowNsfw(): void {
     app.update((state) => ({
         ...state,
         showNsfw: !state.showNsfw,
+    }));
+}
+
+export function setUnblurNsfw(): void {
+    app.update((state) => ({
+        ...state,
+        unblurNsfw: !state.unblurNsfw,
     }));
 }
 
