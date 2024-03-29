@@ -29,6 +29,14 @@
       }
     }
 
+    p {
+        @apply mb-2;
+    }
+
+    p:last-child {
+        @apply mb-0;
+    }
+
     // CKEditor-generated image styles
     .image {
       display: table;
