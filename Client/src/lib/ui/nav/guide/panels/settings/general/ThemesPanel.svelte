@@ -2,8 +2,8 @@
     import { RiArrowLeftSLine, RiCheckLine, RiComputerFill, RiComputerLine, RiMoonFill, RiMoonLine, RiSunFill, RiSunLine } from "svelte-remixicon";
     import { Button } from "$lib/ui/util";
     import { popPanel } from "$lib/ui/nav/guide/guide.state";
-    import { app, setMode, setTheme } from "$lib/state/app.state";
-    import { ModeSwitch, Themes } from "$lib/models/util";
+    import { app, setMode, setPattern, setTheme } from "$lib/state/app.state";
+    import { ModeSwitch, Patterns, Themes } from "$lib/models/util";
 	import { capitalize } from "$lib/util/functions";
 
     const themes = Object.keys(Themes);
@@ -83,6 +83,53 @@
             <span>Lights Off</span>
         </button>
 	</div>
+</div>
+<h5 class="guide-section-header">Pattern</h5>
+<div class="guide-section bg-zinc-300 dark:bg-zinc-600" style="margin-top: 0.125rem;">
+    <div class="grid grid-cols-2 gap-4 p-4">
+        <button
+            title="Lines"
+            class="border-2 border-zinc-400 dark:border-white rounded-xl h-[75px]"
+            style="background-image: {Patterns.lines}"
+            style:background-color={$app.pattern === Patterns.lines ? 'rgb(--var(--accent));' : ''}
+            on:click={() => setPattern(Patterns.lines)}
+        ></button>
+        <button
+            title="Dots"
+            class="border-2 border-zinc-400 dark:border-white rounded-xl h-[75px]"
+            style="background-image: {Patterns.dots}"
+            style:background-color={$app.pattern === Patterns.dots ? 'rgb(--var(--accent));' : ''}
+            on:click={() => setPattern(Patterns.dots)}
+        ></button>
+        <button
+            title="Autumn"
+            class="border-2 border-zinc-400 dark:border-white rounded-xl h-[75px]"
+            style="background-image: {Patterns.autumn}"
+            style:background-color={$app.pattern === Patterns.autumn ? 'rgb(--var(--accent));' : ''}
+            on:click={() => setPattern(Patterns.autumn)}
+        ></button>
+        <button
+            title="Leaves"
+            class="border-2 border-zinc-400 dark:border-white rounded-xl h-[75px]"
+            style="background-image: {Patterns.leaves}"
+            style:background-color={$app.pattern === Patterns.leaves ? 'rgb(--var(--accent));' : ''}
+            on:click={() => setPattern(Patterns.leaves)}
+        ></button>
+        <button
+            title="Motion"
+            class="border-2 border-zinc-400 dark:border-white rounded-xl h-[75px]"
+            style="background-image: {Patterns.motion}"
+            style:background-color={$app.pattern === Patterns.motion ? 'rgb(--var(--accent));' : ''}
+            on:click={() => setPattern(Patterns.motion)}
+        ></button>
+        <button
+            title="Topography"
+            class="border-2 border-zinc-400 dark:border-white rounded-xl h-[75px]"
+            style="background-image: {Patterns.topography}"
+            style:background-color={$app.pattern === Patterns.topography ? 'rgb(--var(--accent));' : ''}
+            on:click={() => setPattern(Patterns.topography)}
+        ></button>
+    </div>
 </div>
 
 <style lang="scss">

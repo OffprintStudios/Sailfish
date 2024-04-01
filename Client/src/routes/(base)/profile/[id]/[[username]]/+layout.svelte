@@ -142,7 +142,12 @@
             </div>
         </div>
         <div class="my-6 col-span-3">
-            <div class="hidden md:flex items-center justify-center w-full py-2 bg-zinc-200/50 dark:bg-zinc-700/50 backdrop-blur-lg rounded-xl rounded-b-none border-b-0 border border-zinc-600/25 dark:border-zinc-300/25" style="box-shadow: var(--dropshadow);">
+            <div
+                class="hidden md:flex items-center justify-center w-full py-2 bg-zinc-200/50 dark:bg-zinc-700/50 backdrop-blur-lg rounded-xl border border-zinc-600/25 dark:border-zinc-300/25 transition"
+                class:rounded-b-none={$page.url.pathname.includes("/works") || $page.url.pathname.includes("/blogs")}
+                class:border-b-0={$page.url.pathname.includes("/works") || $page.url.pathname.includes("/blogs")}
+                style="box-shadow: var(--dropshadow);"
+            >
                 <a class="nav-link" class:active={$page.url.pathname === `/profile/${data.id}/${slugify(data.username)}`} href="/profile/{data.id}/{slugify(data.username)}">
                     <span class="nav-link-icon"><RiHome6Line size="20px" /></span>
                     <span>Home</span>

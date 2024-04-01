@@ -1,5 +1,5 @@
 import { browser } from "$app/environment";
-import { ModeSwitch, RatingsFilter, Themes } from "$lib/models/util";
+import { ListType, ModeSwitch, Patterns, RatingsFilter, Themes } from "$lib/models/util";
 import { writable } from "svelte/store";
 
 interface AppState {
@@ -8,6 +8,9 @@ interface AppState {
     showNsfw: boolean;
     unblurNsfw: boolean;
     filter: RatingsFilter;
+    blogListType: ListType;
+    workListType: ListType;
+    pattern: Patterns;
 }
 
 const defaultAppState: AppState = {
@@ -16,6 +19,9 @@ const defaultAppState: AppState = {
     showNsfw: false,
     unblurNsfw: false,
     filter: RatingsFilter.restricted,
+    blogListType: ListType.grid,
+    workListType: ListType.grid,
+    pattern: Patterns.lines,
 };
 
 const initialAppState: AppState = browser
@@ -39,6 +45,14 @@ export function setTheme(newTheme: Themes): void {
         const themeColor = document.querySelector("meta[name='theme-color']");
         const accentColor = getComputedStyle(document.body).getPropertyValue("--accent");
         themeColor?.setAttribute("content", `rgba(${accentColor})`);
+        return state;
+    });
+}
+
+export function setPattern(newPattern: Patterns): void {
+    app.update((state) => {
+        state.pattern = newPattern;
+        document.documentElement.style.setProperty("--pattern", state.pattern);
         return state;
     });
 }

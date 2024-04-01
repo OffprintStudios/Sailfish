@@ -41,7 +41,7 @@
         font-family: var(--body-text);
 
         &:hover {
-            @apply text-white no-underline bg-zinc-500/50;
+            @apply text-white no-underline bg-zinc-500/25;
         }
 
         &:active {

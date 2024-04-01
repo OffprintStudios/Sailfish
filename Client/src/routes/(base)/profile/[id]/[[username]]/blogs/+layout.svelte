@@ -3,9 +3,11 @@
     import { slugify } from "$lib/util/functions";
     import { Button } from "$lib/ui/util";
     import { auth } from "$lib/state/auth.state";
-	import { RiAddLine, RiArrowLeftSLine, RiFilter2Line, RiSearchEyeLine } from "svelte-remixicon";
+	import { RiAddLine, RiArrowLeftSLine, RiFilter2Line, RiLayoutGridFill, RiListCheck2, RiSearchEyeLine } from "svelte-remixicon";
 	import LinkBlock from "$lib/ui/util/LinkBlock.svelte";
 	import { page } from "$app/stores";
+	import { app } from "$lib/state/app.state";
+	import { ListType } from "$lib/models/util";
 
     export let data: PageData;
 </script>
@@ -53,6 +55,16 @@
             </button>
         </div>
         <div class="flex-1"><!--spacer--></div>
+        <div class="flex items-center rounded-lg">
+            <Button id="grid-view" title="Grid View" on:click={() => $app.blogListType = ListType.grid} active={$app.blogListType === ListType.grid}>
+                <span class="button-icon no-text"><RiLayoutGridFill /></span>
+            </Button>
+            <div class="mx-0.5"><!--spacer--></div>
+            <Button id="list-view" title="List View" on:click={() => $app.blogListType = ListType.list} active={$app.blogListType === ListType.list}>
+                <span class="button-icon no-text"><RiListCheck2 /></span>
+            </Button>
+        </div>
+        <div class="mx-1 text-2xl text-zinc-400 dark:text-zinc-500 relative top-[0.075rem]">|</div>
         <Button id="filter-button" title="Filter">
             <span class="button-icon"><RiFilter2Line /></span>
             <span class="button-text">Filter</span>

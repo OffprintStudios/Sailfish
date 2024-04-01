@@ -27,6 +27,9 @@
         const themeColor = document.querySelector("meta[name='theme-color']");
         const accentColor = getComputedStyle(document.body).getPropertyValue("--accent");
         themeColor?.setAttribute("content", `rgba(${accentColor})`);
+
+        /* Pattern */
+        document.documentElement.style.setProperty("--pattern", $app.pattern);
     });
 </script>
 

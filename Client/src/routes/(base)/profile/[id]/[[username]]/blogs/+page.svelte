@@ -3,10 +3,12 @@
     import { auth } from "$lib/state/auth.state";
     import axios from "axios";
 	import { BASE_URL } from "$lib/http";
-	import type { Paginated } from "$lib/models/util";
+	import { ListType, type Paginated } from "$lib/models/util";
 	import type { Blog } from "$lib/models/blogs";
 	import { onMount } from "svelte";
 	import { BlogCard } from "$lib/ui/content";
+	import { app } from "$lib/state/app.state";
+	import BlogListItem from "$lib/ui/content/BlogListItem.svelte";
 
     export let data: PageData;
     let loading = false;
@@ -62,11 +64,20 @@
             <p>Check back later to see if they added anything!</p>
         </div>
     {:else}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 my-6">
-            {#each blogs.items as blog}
-                <BlogCard {blog} width="auto" />
-            {/each}
-        </div>
+        {#if $app.blogListType === ListType.grid}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 my-6">
+                {#each blogs.items as blog}
+                    <BlogCard {blog} width="auto" />
+                {/each}
+            </div>
+        {:else}
+            <div class="w-full my-6 bg-zinc-200/50 dark:bg-zinc-700/50 backdrop-blur border border-zinc-600/25 dark:border-zinc-300/25 rounded-xl" style="box-shadow: var(--dropshadow);">
+                {#each blogs.items as blog}
+                    <BlogListItem {blog} />
+                {/each}
+            </div>
+        {/if}
+
     {/if}
 {/if}
 

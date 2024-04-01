@@ -465,14 +465,14 @@
 	:global(.dark button) {
 		&:hover,
 		&.active {
-			@apply bg-zinc-500 bg-opacity-75;
+			@apply bg-zinc-500 bg-opacity-60;
 		}
 	}
 	button {
 		@apply p-2 rounded-lg transition transform flex items-center;
 		&:hover,
 		&.active {
-			@apply bg-zinc-400 bg-opacity-75;
+			@apply bg-zinc-400 bg-opacity-60;
 		}
 	}
 	input[type="color"].color-picker {

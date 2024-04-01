@@ -17,7 +17,7 @@ export interface Blog {
     favorites: number;
     readonly editedOn?: Date;
     readonly listed?: boolean;
-    readonly publishedOn?: boolean;
+    readonly publishedOn?: Date;
     readonly createdAt: Date;
     readonly updatedAt: Date;
 }
