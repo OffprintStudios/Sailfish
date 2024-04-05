@@ -141,7 +141,7 @@
                 </a>
             </div>
         </div>
-        <div class="my-6 col-span-3">
+        <div class="mb-6 md:my-6 col-span-3">
             <div
                 class="hidden md:flex items-center justify-center w-full py-2 bg-zinc-200/50 dark:bg-zinc-700/50 backdrop-blur-lg rounded-xl border border-zinc-600/25 dark:border-zinc-300/25 transition"
                 class:rounded-b-none={$page.url.pathname.includes("/works") || $page.url.pathname.includes("/blogs")}
@@ -165,7 +165,7 @@
                     <span>Shelves</span>
                 </a>
             </div>
-            <div class="w-11/12 mx-auto md:w-full">
+            <div class="w-full mx-auto">
                 <slot />
             </div>
         </div>

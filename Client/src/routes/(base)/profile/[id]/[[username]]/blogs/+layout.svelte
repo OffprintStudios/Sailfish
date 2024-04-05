@@ -40,7 +40,7 @@
 	<meta property="twitter:image" content={data.avatar} />
 </svelte:head>
 
-<div class="flex items-center h-[58px] bg-zinc-200/50 p-2 dark:bg-zinc-700/50 backdrop-blur-lg rounded-b-xl border border-zinc-600/25 dark:border-zinc-300/25" style="box-shadow: var(--dropshadow);">
+<div class="flex items-center h-[58px] bg-zinc-200/50 px-4 py-2 md:p-2 dark:bg-zinc-700/50 backdrop-blur-lg md:rounded-b-xl border-b md:border border-zinc-600/25 dark:border-zinc-300/25" style="box-shadow: var(--dropshadow);">
     {#if $page.url.pathname === `/profile/${data.id}/${slugify(data.username)}/blogs`}
         <div class="flex items-center rounded-xl overflow-hidden max-w-[255px] h-[40px] bg-zinc-200 dark:bg-zinc-700">
             <input
@@ -55,7 +55,7 @@
             </button>
         </div>
         <div class="flex-1"><!--spacer--></div>
-        <div class="flex items-center rounded-lg">
+        <div class="hidden md:flex items-center rounded-lg">
             <Button id="grid-view" title="Grid View" on:click={() => $app.blogListType = ListType.grid} active={$app.blogListType === ListType.grid}>
                 <span class="button-icon no-text"><RiLayoutGridFill /></span>
             </Button>
@@ -64,11 +64,13 @@
                 <span class="button-icon no-text"><RiListCheck2 /></span>
             </Button>
         </div>
-        <div class="mx-1 text-2xl text-zinc-400 dark:text-zinc-500 relative top-[0.075rem]">|</div>
-        <Button id="filter-button" title="Filter">
-            <span class="button-icon"><RiFilter2Line /></span>
-            <span class="button-text">Filter</span>
-        </Button>
+        <div class="hidden md:block mx-1 text-2xl text-zinc-400 dark:text-zinc-500 relative top-[0.075rem]">|</div>
+        <div class="hidden md:block">
+            <Button id="filter-button" title="Filter">
+                <span class="button-icon"><RiFilter2Line /></span>
+                <span class="button-text">Filter</span>
+            </Button>
+        </div>
         {#if $auth.currProfile && $auth.currProfile.id === data.id}
             <div class="mx-0.5"><!--spacer--></div>
             <LinkBlock
@@ -92,4 +94,6 @@
     {/if}
 </div>
 
-<slot />
+<div class="w-11/12 mx-auto md:w-full">
+    <slot />
+</div>

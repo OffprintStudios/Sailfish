@@ -16,7 +16,7 @@
 
 <div
     title="{blog.title}"
-    class="flex flex-col relative min-h-[256px] max-h-[256px] rounded-xl overflow-hidden bg-zinc-200/50 dark:bg-zinc-700/50 backdrop-blur border border-zinc-600/25 dark:border-zinc-300/25 hover:bg-zinc-300/50 dark:hover:bg-zinc-600/50 transition"
+    class="flex flex-col relative min-h-[200px] max-h-[200px] md:min-h-[256px] md:max-h-[256px] rounded-xl overflow-hidden bg-zinc-200/50 dark:bg-zinc-700/50 backdrop-blur border border-zinc-600/25 dark:border-zinc-300/25 hover:bg-zinc-300/50 dark:hover:bg-zinc-600/50 transition"
     style="box-shadow: var(--dropshadow);"
     style:width={width === 'auto' ? '100%' : width}
 >
@@ -81,13 +81,13 @@
         </div>
     {/if}
     <div
-        class="blog-body text-sm px-6 py-8 h-[calc(256px-60px)] z-0 relative blur transition"
+        class="blog-body text-sm px-6 py-8 h-[calc(200px-50px)] md:h-[calc(256px-60px)] z-0 relative blur transition"
         class:blur={((blog.rating === ContentRating.mature || blog.rating === ContentRating.explicit) && !$app.unblurNsfw) || moreOptionsOpen}
     >
         {@html blog.body}
     </div>
     <div
-        class="flex items-center w-full relative z-[1] h-[60px] transition"
+        class="flex items-center w-full relative z-[1] h-[50px] md:h-[60px] transition"
         class:blur={moreOptionsOpen}
         style="background: rgb(var(--accent));"
     >
@@ -95,8 +95,8 @@
             <img src={blog.author.avatar} class="object-cover w-full h-full" alt="{blog.author.name}'s Avatar" title="{blog.author.name}'s Avatar" />
         </div>
         <div class="flex flex-col w-full">
-            <h3 class="text-xl text-white relative top-1 max-w-[350px] truncate">{blog.title}</h3>
-            <div class="flex items-center w-full relative -top-1 font-bold text-white/50 all-small-caps tracking-wide pr-3">
+            <h3 class="text-lg md:text-xl text-white relative top-1.5 md:top-1 line-clamp-1">{blog.title}</h3>
+            <div class="flex items-center w-full relative -top-1.5 md:-top-1 font-bold text-white/50 all-small-caps tracking-wide pr-3">
                 <span class="text-lg hidden lg:block">
                     {#if blog.publishedOn}
                         {localeDate(blog.publishedOn, "longDate")}
@@ -105,18 +105,18 @@
                     {/if}
                 </span>
                 <span class="hidden lg:block flex-1"><!--spacer--></span>
-                <div class="flex items-center text-lg" title="Upvotes">
-                    <span class="relative top-[0.075rem]"><RiArrowUpSLine /></span>
+                <div class="flex items-center md:text-lg" title="Upvotes">
+                    <span class="relative top-0.5 md:top-[0.075rem]"><RiArrowUpSLine /></span>
                     <span>{abbreviate(blog.likes)}</span>
                 </div>
                 <div class="mr-1 text-xl"><!--spacer--></div>
-                <div class="flex items-center text-lg" title="Downvotes">
-                    <span class="relative top-[0.075rem]"><RiArrowDownSLine /></span>
+                <div class="flex items-center md:text-lg" title="Downvotes">
+                    <span class="relative top-0.5 md:top-[0.075rem]"><RiArrowDownSLine /></span>
                     <span>{abbreviate(blog.dislikes)}</span>
                 </div>
                 <div class="mx-1 text-xl"><!--spacer--></div>
-                <div class="flex items-center text-lg" title="Comments">
-                    <span class="relative top-[0.075rem] mr-1"><RiDiscussLine size="14px" /></span>
+                <div class="flex items-center md:text-lg" title="Comments">
+                    <span class="relative top-0.5 md:top-[0.075rem] mr-1"><RiDiscussLine size="14px" /></span>
                     <!--TODO: update with dynamic comment number-->
                     <span>{abbreviate(0)}</span>
                 </div>
@@ -127,7 +127,7 @@
 
 <style lang="scss">
     div.avatar-box {
-        @apply max-w-[75px] max-h-[75px] min-w-[75px] min-h-[75px] z-10 mx-2 rounded-full bottom-2 overflow-hidden relative border-8;
+        @apply max-w-[50px] max-h-[50px] min-w-[50px] min-h-[50px] md:max-w-[75px] md:max-h-[75px] md:min-w-[75px] md:min-h-[75px] z-10 mx-2 rounded-full bottom-1 md:bottom-2 overflow-hidden relative border-4 md:border-8;
         border-color: rgb(var(--accent));
     }
 </style>

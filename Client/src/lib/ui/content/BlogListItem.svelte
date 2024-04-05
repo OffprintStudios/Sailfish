@@ -4,6 +4,7 @@
 	import { BookCheck, BookDashed } from "lucide-svelte";
     import { ContentRating } from "$lib/models/util";
     import { RiArrowUpSLine, RiArrowDownSLine, RiDiscussLine, RiEditCircleLine, RiDeleteBin2Line } from "svelte-remixicon";
+	import { auth } from "$lib/state/auth.state";
 
     export let blog: Blog;
 </script>
@@ -13,20 +14,15 @@
         class="absolute top-0 right-0 left-0 bottom-0 z-[2]"
         href="/profile/{blog.author.id}/{slugify(blog.author.name)}/blog/{blog.id}/{slugify(blog.title)}"
     ><!--intentionally left blank--></a>
-    <!--<div>
-        {#if blog.publishedOn}
-            <button class="p-1"><BookCheck size="42" /></button>
-        {:else}
-            <button class="p-2 mr-2 rounded-lg transition"><BookDashed size="42" /></button>
-        {/if}
-    </div>-->
-    <button class="hidden md:flex flex-col items-center justify-center relative mr-2 z-[3] h-[67px] w-[67px] rounded-full transition" title="Publish {blog.title}">
-        {#if blog.publishedOn}
-            <span class="relative"><BookCheck size="28" /></span>
-        {:else}
-            <span class="relative"><BookDashed size="28" /></span>
-        {/if}
-    </button>
+    {#if $auth.currProfile && $auth.currProfile.id === blog.author.id}
+        <button class="hidden md:flex flex-col items-center justify-center relative mr-2 z-[3] h-[67px] w-[67px] rounded-full transition" title="Publish {blog.title}">
+            {#if blog.publishedOn}
+                <span class="relative"><BookCheck size="28" /></span>
+            {:else}
+                <span class="relative"><BookDashed size="28" /></span>
+            {/if}
+        </button>
+    {/if}
     <div class="flex-1">
         <h3 class="text-2xl relative max-w-[610px] truncate top-1">{blog.title}</h3>
         <div class="flex items-center relative -top-1 all-small-caps font-bold tracking-wide text-lg text-zinc-500 dark:text-zinc-400">
@@ -65,11 +61,13 @@
     >
         {blog.rating}
     </div>
-    <button class="hidden md:flex flex-col items-center justify-center relative z-[3] h-[67px] w-[67px] rounded-full transition" title="Edit {blog.title}">
-        <span class="relative"><RiEditCircleLine size="28px" /></span>
-    </button>
-    <div class="hidden md:block mx-0.5"><!--spacer--></div>
-    <button class="hidden md:flex flex-col items-center justify-center relative z-[3] h-[67px] w-[67px] rounded-full transition hover:bg-red-500 hover:dark:bg-red-500 hover:text-white" title="Delete {blog.title}">
-        <span class="relative"><RiDeleteBin2Line size="28px" /></span>
-    </button>
+    {#if $auth.currProfile && $auth.currProfile.id === blog.author.id}
+        <button class="hidden md:flex flex-col items-center justify-center relative z-[3] h-[67px] w-[67px] rounded-full transition" title="Edit {blog.title}">
+            <span class="relative"><RiEditCircleLine size="28px" /></span>
+        </button>
+        <div class="hidden md:block mx-0.5"><!--spacer--></div>
+        <button class="hidden md:flex flex-col items-center justify-center relative z-[3] h-[67px] w-[67px] rounded-full transition hover:bg-red-500 hover:dark:bg-red-500 hover:text-white" title="Delete {blog.title}">
+            <span class="relative"><RiDeleteBin2Line size="28px" /></span>
+        </button>
+    {/if}
 </div>
