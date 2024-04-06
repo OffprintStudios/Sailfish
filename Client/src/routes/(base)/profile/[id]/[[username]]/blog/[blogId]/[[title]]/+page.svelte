@@ -5,6 +5,7 @@
     import type { PageData } from "./$types";
 	import { Button } from "$lib/ui/util";
     import { BookCheck } from "lucide-svelte";
+	import { auth } from "$lib/state/auth.state";
 
     export let data: PageData;
 </script>
@@ -13,7 +14,7 @@
     <div class="relative border-b border-zinc-600/25 dark:border-zinc-300/25">
         <div class="px-4 pt-4 pb-4" style="background: rgb(var(--accent));">
             <div
-                class="absolute top-2 right-2 all-small-caps text-white text-lg tracking-wide px-4 rounded-lg font-bold"
+                class="absolute top-2 right-2 all-small-caps text-white border border-white md:text-lg tracking-wide px-2 md:px-4 rounded-lg font-bold"
                 class:bg-green-700={data.blog.rating === ContentRating.everyone}
                 class:bg-yellow-600={data.blog.rating === ContentRating.teen}
                 class:bg-orange-600={data.blog.rating === ContentRating.mature}
@@ -23,7 +24,7 @@
                 <span class="relative top-[0.075rem]">{data.blog.rating}</span>
             </div>
             <div class="w-full">
-                <h1 class="relative text-4xl text-white max-w-[850px]">{data.blog.title}</h1>
+                <h1 class="relative text-3xl md:text-4xl text-white max-w-[300px] md:max-w-[850px]">{data.blog.title}</h1>
             </div>
             <div class="flex items-center w-full all-small-caps text-xl font-bold text-white/75" style="font-family: var(--header-text);">
                 <span>
@@ -52,23 +53,27 @@
             </div>
         </div>
         <div class="flex items-center p-2 border-t border-white/50" style="background: rgb(var(--accent));">
-            <Button id="edit-button" title="Edit">
-                <span class="button-icon"><RiEditCircleLine /></span>
-                <span class="button-text">Edit</span>
-            </Button>
-            <div class="mx-0.5"><!--spacer--></div>
-            <Button id="publish-button" title="Publish">
-                <span class="button-icon"><BookCheck size="18" /></span>
-                <span class="button-text">Publish</span>
-            </Button>
-            <div class="flex-1"><!--spacer--></div>
-            <Button id="delete-button" title="Delete">
-                <span class="button-icon"><RiDeleteBin2Line /></span>
-                <span class="button-text">Delete</span>
-            </Button>
+            {#if $auth.currProfile && $auth.currProfile.id === data.blog.author.id}
+                <Button id="edit-button" title="Edit">
+                    <span class="button-icon"><RiEditCircleLine /></span>
+                    <span class="button-text">Edit</span>
+                </Button>
+                <div class="mx-0.5"><!--spacer--></div>
+                <Button id="publish-button" title="Publish">
+                    <span class="button-icon"><BookCheck size="18" /></span>
+                    <span class="button-text">Publish</span>
+                </Button>
+                <div class="flex-1"><!--spacer--></div>
+                <Button id="delete-button" title="Delete">
+                    <span class="button-icon"><RiDeleteBin2Line /></span>
+                    <span class="button-text">Delete</span>
+                </Button>
+            {:else}
+                not this author
+            {/if}
         </div>
     </div>
-    <div class="blog-body px-20 py-12">
+    <div class="blog-body px-6 py-5 md:px-20 md:py-12">
         {@html data.blog.body}
     </div>
 </div>
