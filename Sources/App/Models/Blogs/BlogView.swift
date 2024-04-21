@@ -53,6 +53,9 @@ final class BlogView: Model, Content {
     @Timestamp(key: FieldKeys.updatedAt, on: .update)
     var updatedAt: Date?
 
+    @Timestamp(key: FieldKeys.deletedAt, on: .delete)
+    var deletedAt: Date?
+
     init() { }
 }
 
@@ -93,7 +96,8 @@ extension BlogView {
                            info.listed AS \(raw: FieldKeys.listed.description),
                            info.published_on AS \(raw: FieldKeys.publishedOn.description),
                            blog.created_at AS \(raw: FieldKeys.createdAt.description),
-                           blog.updated_at AS \(raw: FieldKeys.updatedAt.description)
+                           blog.updated_at AS \(raw: FieldKeys.updatedAt.description),
+                           blog.deleted_at AS \(raw: FieldKeys.deletedAt.description)
                     FROM blogs blog
                     LEFT JOIN profiles profile ON blog.author_id = profile.id
                     LEFT JOIN published_blogs info ON info.blog_id = blog.id
@@ -132,5 +136,6 @@ extension BlogView {
         static let publishedOn: FieldKey = "published_on"
         static let createdAt: FieldKey = "created_at"
         static let updatedAt: FieldKey = "updated_at"
+        static let deletedAt: FieldKey = "deleted_at"
     }
 }

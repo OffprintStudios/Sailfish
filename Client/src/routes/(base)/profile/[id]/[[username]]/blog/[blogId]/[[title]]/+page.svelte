@@ -1,16 +1,40 @@
 <script lang="ts">
-	import { localeDate, abbreviate } from "$lib/util/functions";
-    import { RiDiscussLine, RiEditCircleLine, RiDeleteBin2Line, RiThumbUpLine, RiThumbDownLine, RiHeartsLine, RiHeartAdd2Line, RiAlarmWarningLine } from "svelte-remixicon";
+	import { localeDate, abbreviate, slugify } from "$lib/util/functions";
+    import { RiDiscussLine, RiEditCircleLine, RiDeleteBin2Line, RiThumbUpLine, RiThumbDownLine, RiHeartsLine, RiHeartAdd2Line, RiAlarmWarningLine, RiCloseLine, RiCheckLine } from "svelte-remixicon";
     import { ContentRating, ListingStatus } from "$lib/models/util";
     import type { PageData } from "./$types";
 	import { Button, Dialog } from "$lib/ui/util";
     import { BookCheck, BookHeart, BookLock, BookOpen, BookOpenCheck, Unlink } from "lucide-svelte";
 	import { auth } from "$lib/state/auth.state";
+    import { fetchWithTimeoutAndRetry } from "svelte-legos";
+	import { BASE_URL } from "$lib/http";
+	import { goto } from "$app/navigation";
+	import toast from "svelte-french-toast";
 
     export let data: PageData;
 
     let publishDialog: HTMLDialogElement;
     let deleteDialog: HTMLDialogElement;
+    let loadingPublish = false;
+    let loadingDelete = false;
+
+    async function publishBlog() {}
+
+    async function deleteBlog() {
+        loadingDelete = true;
+        const response = await fetchWithTimeoutAndRetry(`${BASE_URL}/blogs/${data.blog.id}/delete?profileId=${$auth.currProfile!.id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${$auth.token!}`
+            }
+        })
+        if (response.ok) {
+            await goto(`/profile/${data.id}/${slugify(data.username)}/blogs`);
+        } else {
+            toast.error(`Something went wrong! Try again in a little bit.`);
+        }
+        loadingDelete = false;
+    }
 </script>
 
 <div class="w-full">
@@ -123,5 +147,18 @@
 </Dialog>
 
 <Dialog id="delete-dialog" title="Delete" bind:dialog={deleteDialog}>
-    hi hello how are you
+    <div>
+        <p class="text-center w-full">Are you sure you want to delete this blog?<br />This action is irreversible.</p>
+        <div class="flex items-center justify-center mt-6">
+            <Button id="accept-button-delete" title="Accept" on:click={deleteBlog} loading={loadingDelete} loadingText="Deleting...">
+                <span class="button-icon"><RiCheckLine /></span>
+                <span class="button-text">Yes</span>
+            </Button>
+            <div class="mx-1"></div>
+            <Button id="cancel-button-delete" title="Cancel" kind="primary" disabled={loadingDelete} on:click={() => deleteDialog.close()}>
+                <span class="button-icon"><RiCloseLine /></span>
+                <span class="button-text">No</span>
+            </Button>
+        </div>
+    </div>
 </Dialog>
