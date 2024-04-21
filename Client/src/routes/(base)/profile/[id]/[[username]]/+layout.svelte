@@ -1,12 +1,13 @@
 <script lang="ts">
     import type { PageData } from "./$types";
-    import { Button } from "$lib/ui/util";
+    import { Button, LinkBlock } from "$lib/ui/util";
     import { page } from "$app/stores";
-	import { RiAlarmWarningLine, RiArrowDownSLine, RiArrowUpSLine, RiCake2Line, RiCupLine, RiHome6Line, RiMore2Fill, RiSendPlaneLine, RiUserFollowLine } from "svelte-remixicon";
+	import { RiAlarmWarningLine, RiArrowDownSLine, RiArrowUpSLine, RiCake2Line, RiCupLine, RiHome6Line, RiMore2Fill, RiSendPlaneLine, RiSettings5Line, RiUserFollowLine } from "svelte-remixicon";
 	import { abbreviate, localeDate, pluralize, slugify } from "$lib/util/functions";
     import { BookCopy, LibrarySquare } from "lucide-svelte";
 	import RoleBadge from "$lib/ui/util/RoleBadge.svelte";
 	import { slide } from "svelte/transition";
+    import { auth } from "$lib/state/auth.state";
 
     export let data: PageData;
 
@@ -55,13 +56,19 @@
         </div>
         <div class="flex-1"><!--spacer--></div>
         <div class="flex items-center bg-zinc-200 dark:bg-zinc-600 p-1 rounded-xl">
-            <Button id="follow-button-mobile" title="Follow {data.username}">
-                <span class="button-icon no-text"><RiUserFollowLine size="18px" /></span>
-            </Button>
-            <div class="mx-0.5"><!--spacer--></div>
-            <Button id="more-options-button-mobile" title="More Options">
-                <span class="button-icon no-text"><RiMore2Fill size="18px" /></span>
-            </Button>
+            {#if $auth.currProfile && $auth.currProfile.id === data.id}
+                <LinkBlock id="settings-button-mobile" title="Settings" href="/profile/{data.id}/{slugify(data.username)}/settings">
+                    <span class="link-icon no-text"><RiSettings5Line size="18px" /></span>
+                </LinkBlock>
+            {:else}
+                <Button id="follow-button-mobile" title="Follow {data.username}">
+                    <span class="button-icon no-text"><RiUserFollowLine size="18px" /></span>
+                </Button>
+                <div class="mx-0.5"><!--spacer--></div>
+                <Button id="more-options-button-mobile" title="More Options">
+                    <span class="button-icon no-text"><RiMore2Fill size="18px" /></span>
+                </Button>
+            {/if}
         </div>
     </div>
 
@@ -88,30 +95,39 @@
             <div class="my-2"><!--spacer--></div>
             <span class="text-sm">{data.bio}</span>
             <div class="hidden md:block my-2"><!--spacer--></div>
-            <div class="hidden md:flex items-center w-full bg-zinc-300/50 dark:bg-zinc-600/50 backdrop-blur-sm rounded-xl overflow-hidden">
-                <button class="card-button big" id="follow-button" title="Follow {data.username}">
-                    <span class="button-icon"><RiUserFollowLine /></span>
-                    <span class="button-text">Follow</span>
-                </button>
-                <button class="card-button small" id="more-options-button" title="More Options" on:click={() => isOptionsMenuOpen = !isOptionsMenuOpen}>
-                    {#if isOptionsMenuOpen}
-                        <span class="button-icon no-text"><RiArrowUpSLine /></span>
-                    {:else}
-                        <span class="button-icon no-text"><RiArrowDownSLine /></span>
-                    {/if}
-                </button>
-            </div>
-            {#if isOptionsMenuOpen}
-                <div class="mt-2 rounded-xl overflow-hidden bg-zinc-300/50 dark:bg-zinc-600/50 backdrop-blur-sm" transition:slide>
-                    <button class="card-button full top" id="send-message-button" title="Send a message to {data.username}">
-                        <span class="button-icon"><RiSendPlaneLine /></span>
-                        <span class="button-text">Send Message</span>
+            {#if $auth.currProfile && $auth.currProfile.id === data.id}
+                <div class="hidden md:flex items-center w-full bg-zinc-300/50 dark:bg-zinc-600/50 backdrop-blur-sm rounded-xl overflow-hidden">
+                    <a class="card-button w-full justify-center border-r-0" id="settings-button" title="Profile Settings" href="/profile/{data.id}/{slugify(data.username)}/settings">
+                        <span class="button-icon mr-2"><RiSettings5Line /></span>
+                        <span class="button-text">Settings</span>
+                    </a>
+                </div>
+            {:else}
+                <div class="hidden md:flex items-center w-full bg-zinc-300/50 dark:bg-zinc-600/50 backdrop-blur-sm rounded-xl overflow-hidden">
+                    <button class="card-button big" id="follow-button" title="Follow {data.username}">
+                        <span class="button-icon"><RiUserFollowLine /></span>
+                        <span class="button-text">Follow</span>
                     </button>
-                    <button class="card-button full" id="report-user-button" title="Report {data.username}">
-                        <span class="button-icon"><RiAlarmWarningLine /></span>
-                        <span class="button-text">Report</span>
+                    <button class="card-button small" id="more-options-button" title="More Options" on:click={() => isOptionsMenuOpen = !isOptionsMenuOpen}>
+                        {#if isOptionsMenuOpen}
+                            <span class="button-icon no-text"><RiArrowUpSLine /></span>
+                        {:else}
+                            <span class="button-icon no-text"><RiArrowDownSLine /></span>
+                        {/if}
                     </button>
                 </div>
+                {#if isOptionsMenuOpen}
+                    <div class="mt-2 rounded-xl overflow-hidden bg-zinc-300/50 dark:bg-zinc-600/50 backdrop-blur-sm" transition:slide>
+                        <button class="card-button full top" id="send-message-button" title="Send a message to {data.username}">
+                            <span class="button-icon"><RiSendPlaneLine /></span>
+                            <span class="button-text">Send Message</span>
+                        </button>
+                        <button class="card-button full" id="report-user-button" title="Report {data.username}">
+                            <span class="button-icon"><RiAlarmWarningLine /></span>
+                            <span class="button-text">Report</span>
+                        </button>
+                    </div>
+                {/if}
             {/if}
             <div class="hidden md:block my-2"><!--spacer--></div>
             <div class="md:flex items-center text-sm hidden">
@@ -193,16 +209,16 @@
         @apply border-zinc-700 dark:border-zinc-300;
     }
 
-    button.card-button {
-        @apply flex items-center py-2 px-3.5 all-small-caps font-bold text-lg tracking-wide first:border-r border-zinc-400 dark:border-zinc-500 transition;
+    button.card-button, a.card-button {
+        @apply flex items-center py-2 px-3.5 all-small-caps font-bold text-lg tracking-wide transition;
     }
 
-    button.card-button:hover {
+    button.card-button:hover, a.card-button:hover {
         @apply bg-zinc-400/50 dark:bg-zinc-500/25;
     }
 
     button.card-button.big {
-        @apply w-5/6 justify-center;
+        @apply w-5/6 justify-center border-r border-zinc-400 dark:border-zinc-500;
     }
 
     button.card-button.small {

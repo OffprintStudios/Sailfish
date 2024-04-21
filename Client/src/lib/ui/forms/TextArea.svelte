@@ -17,7 +17,7 @@
         {placeholder}
         {required}
         bind:value
-        class="text-area border-zinc-400 dark:border-zinc-500 bg-zinc-300 dark:bg-zinc-600 resize-none"
+        class="text-area border-zinc-400 h-[100px] dark:border-zinc-500 bg-zinc-300/50 dark:bg-zinc-600/50 backdrop-blur-lg resize-none"
     ></textarea>
     {#if errorMessage}
     <div class="flex pt-1">
@@ -26,3 +26,14 @@
     </div>
     {/if}
 </div>
+
+
+<style lang="scss">
+    .text-area {
+        @apply transition w-full rounded-xl border-2 border-x-transparent border-t-transparent focus:ring-0;
+    }
+
+    .text-area:focus {
+        border-bottom-color: rgb(var(--accent));
+    }
+</style>
