@@ -47,6 +47,7 @@ public func configure(_ app: Application) async throws {
         Follower.Create(),
         ProfileView.Create(),
         ContentRating.CreateEnum(),
+        ListingStatus.CreateEnum(),
         Blog.Create(),
         FavoriteBlog.Create(),
         BlogVote.Create(),

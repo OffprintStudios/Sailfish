@@ -41,6 +41,9 @@ final class Blog: Model, Content {
     @Siblings(through: BlogComment.self, from: \.$blog, to: \.$comment)
     var comments: [Comment]
 
+    @Enum(key: FieldKeys.listingStatus)
+    var listingStatus: ListingStatus
+
     @OptionalField(key: FieldKeys.editedOn)
     var editedOn: Date?
 
@@ -60,12 +63,14 @@ final class Blog: Model, Content {
         self.title = formInfo.title
         self.body = formInfo.body
         self.rating = formInfo.rating
+        self.listingStatus = .private
     }
 }
 
 extension Blog {
     struct Create: AsyncMigration {
         func prepare(on database: Database) async throws {
+            let listingType = try await database.enum(ListingStatus.schema).read()
             let ratingType = try await database.enum(ContentRating.schema).read()
             try await database.schema(Blog.schema)
                 .field(FieldKeys.id, .string, .identifier(auto: false))
@@ -75,6 +80,7 @@ extension Blog {
                 .field(FieldKeys.rating, ratingType, .required)
                 .field(FieldKeys.words, .int64, .required, .sql(.default(0)))
                 .field(FieldKeys.views, .int64, .required, .sql(.default(0)))
+                .field(FieldKeys.listingStatus, listingType, .required)
                 .field(FieldKeys.editedOn, .datetime)
                 .field(FieldKeys.createdAt, .datetime)
                 .field(FieldKeys.updatedAt, .datetime)
@@ -125,6 +131,7 @@ extension Blog {
         static let rating: FieldKey = "rating"
         static let words: FieldKey = "words"
         static let views: FieldKey = "views"
+        static let listingStatus: FieldKey = "listing_status"
         static let editedOn: FieldKey = "edited_on"
         static let createdAt: FieldKey = "created_at"
         static let updatedAt: FieldKey = "updated_at"

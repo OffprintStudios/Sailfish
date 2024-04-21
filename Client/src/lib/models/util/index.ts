@@ -4,5 +4,6 @@ export { ModeSwitch } from './mode-switch';
 export { RatingsFilter } from './ratings-filter';
 export { ContentRating } from './content-rating';
 export { ListType } from './list-type';
+export { ListingStatus } from './listing-status';
 export type { Paginated } from './paginated';
 export * from './slogans';

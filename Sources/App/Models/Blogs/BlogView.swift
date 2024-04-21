@@ -35,6 +35,9 @@ final class BlogView: Model, Content {
     @Field(key: FieldKeys.favorites)
     var favorites: Int64
 
+    @Enum(key: FieldKeys.listingStatus)
+    var listingStatus: ListingStatus
+
     @OptionalField(key: FieldKeys.editedOn)
     var editedOn: Date?
 
@@ -85,6 +88,7 @@ extension BlogView {
                            COUNT(likes.id) AS \(raw: FieldKeys.likes.description),
                            COUNT(dislikes.id) AS \(raw: FieldKeys.dislikes.description),
                            COUNT(favorites.id) AS \(raw: FieldKeys.favorites.description),
+                           blog.listing_status AS \(raw: FieldKeys.listingStatus.description),
                            blog.edited_on AS \(raw: FieldKeys.editedOn.description),
                            info.listed AS \(raw: FieldKeys.listed.description),
                            info.published_on AS \(raw: FieldKeys.publishedOn.description),
@@ -122,6 +126,7 @@ extension BlogView {
         static let likes: FieldKey = "likes"
         static let dislikes: FieldKey = "dislikes"
         static let favorites: FieldKey = "favorites"
+        static let listingStatus: FieldKey = "listing_status"
         static let editedOn: FieldKey = "edited_on"
         static let listed: FieldKey = "listed"
         static let publishedOn: FieldKey = "published_on"

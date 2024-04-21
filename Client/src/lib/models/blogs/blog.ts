@@ -1,4 +1,4 @@
-import { ContentRating } from "$lib/models/util";
+import { ContentRating, ListingStatus } from "$lib/models/util";
 
 export interface Blog {
     readonly id: string;
@@ -15,6 +15,7 @@ export interface Blog {
     likes: number;
     dislikes: number;
     favorites: number;
+    listingStatus: ListingStatus;
     readonly editedOn?: Date;
     readonly listed?: boolean;
     readonly publishedOn?: Date;

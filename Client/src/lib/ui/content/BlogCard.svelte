@@ -25,7 +25,7 @@
         href="/profile/{blog.author.id}/{slugify(blog.author.name)}/blog/{blog.id}/{slugify(blog.title)}"
     ><!--intentionally left blank--></a>
     <div
-        class="absolute top-0 left-0 z-[1] all-small-caps text-white px-2 rounded-br-xl font-bold"
+        class="absolute top-0 right-0 z-[1] all-small-caps text-white px-2 rounded-bl-xl font-bold"
         class:bg-green-700={blog.rating === ContentRating.everyone}
         class:bg-yellow-600={blog.rating === ContentRating.teen}
         class:bg-orange-600={blog.rating === ContentRating.mature}
@@ -36,14 +36,7 @@
         {blog.rating}
     </div>
     {#if $auth.currProfile && $auth.currProfile.id === blog.author.id}
-        <div class="absolute flex items-center top-0.5 right-1.5 z-[3]">
-            <div class="mx-1" class:blur={moreOptionsOpen} title="{blog.publishedOn ? "Published" : "Draft"}">
-                {#if blog.publishedOn}
-                    <BookCheck size="22" />
-                {:else}
-                    <BookDashed size="22" />
-                {/if}
-            </div>
+        <div class="absolute flex items-center top-0.5 left-1.5 z-[3]">
             <button id="more-options-{blog.id}" title="More Options" class="rounded-xl p-0.5" on:click={() => moreOptionsOpen = !moreOptionsOpen}>
                 {#if moreOptionsOpen}
                     <span class="button-icon no-text"><RiCloseLine size="24px" /></span>
@@ -51,6 +44,15 @@
                     <span class="button-icon no-text"><RiMoreFill size="24px" /></span>
                 {/if}
             </button>
+            <div class="mx-1 flex items-center all-small-caps text-lg font-bold tracking-wide" class:blur={moreOptionsOpen} title="{blog.publishedOn ? "Published" : "Draft"}">
+                {#if blog.publishedOn}
+                    <BookCheck size="16" />
+                    <span class="ml-1 relative -top-[0.075rem]">Public</span>
+                {:else}
+                    <BookDashed size="16" />
+                    <span class="ml-1 relative -top-[0.075rem]">Draft</span>
+                {/if}
+            </div>
         </div>
     {/if}
     {#if ((blog.rating === ContentRating.mature || blog.rating === ContentRating.explicit) && !$app.unblurNsfw) && !moreOptionsOpen}
