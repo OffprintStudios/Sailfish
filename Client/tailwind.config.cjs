@@ -3,7 +3,17 @@ const config = {
 	content: ['./src/**/*.{html,js,svelte,ts,md}'],
 
 	theme: {
-		extend: {}
+		extend: {
+            animation: {
+                modalf: "modalf 0.15s ease-in-out",
+            },
+            keyframes: {
+                modalf: {
+                    "0%": { transform: "scale(0)", opacity: "0" },
+                    "100%": { transform: "scale(1)", opacity: "1" },
+                },
+            },
+        }
 	},
 
     darkMode: 'class',

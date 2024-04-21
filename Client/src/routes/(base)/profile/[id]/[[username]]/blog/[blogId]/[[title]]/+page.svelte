@@ -3,11 +3,14 @@
     import { RiDiscussLine, RiEditCircleLine, RiDeleteBin2Line, RiThumbUpLine, RiThumbDownLine, RiHeartsLine, RiHeartAdd2Line, RiAlarmWarningLine } from "svelte-remixicon";
     import { ContentRating, ListingStatus } from "$lib/models/util";
     import type { PageData } from "./$types";
-	import { Button } from "$lib/ui/util";
+	import { Button, Dialog } from "$lib/ui/util";
     import { BookCheck, BookHeart, BookLock, BookOpen, BookOpenCheck, Unlink } from "lucide-svelte";
 	import { auth } from "$lib/state/auth.state";
 
     export let data: PageData;
+
+    let publishDialog: HTMLDialogElement;
+    let deleteDialog: HTMLDialogElement;
 </script>
 
 <div class="w-full">
@@ -82,12 +85,12 @@
                 <span class="button-text hidden md:block">Edit</span>
             </Button>
             <div class="mx-0.5"></div>
-            <Button id="publish-button-button" title="Publish">
+            <Button id="publish-button-button" title="Publish" on:click={() => publishDialog.showModal()}>
                 <span class="button-icon variable-text"><BookCheck size="18" /></span>
                 <span class="button-text hidden md:block">Publish</span>
             </Button>
             <div class="flex-1"></div>
-            <Button id="delete-button" title="Delete">
+            <Button id="delete-button" title="Delete" on:click={() => deleteDialog.showModal()}>
                 <span class="button-icon variable-text"><RiDeleteBin2Line /></span>
                 <span class="button-text hidden md:block">Delete</span>
             </Button>
@@ -114,3 +117,11 @@
         {/if}
     </div>
 </div>
+
+<Dialog id="publish-dialog" title="Publish" bind:dialog={publishDialog}>
+    hi hello how are you
+</Dialog>
+
+<Dialog id="delete-dialog" title="Delete" bind:dialog={deleteDialog}>
+    hi hello how are you
+</Dialog>
