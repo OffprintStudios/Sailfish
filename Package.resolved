@@ -1,5 +1,5 @@
 {
-  "originHash" : "7acc5f8112ccc7452f41c5a272ac728a2d0201fb4575bf3f47237af25bed6704",
+  "originHash" : "64111418975a58b3eb37c7442b230793acbb23976fcdc6fb813ccaf4bf79ddfa",
   "pins" : [
     {
       "identity" : "argon2swift",
@@ -393,8 +393,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/vapor.git",
       "state" : {
-        "revision" : "71dff4f3f889553b4525b53376dcb2c5c27ad993",
-        "version" : "4.92.8"
+        "revision" : "526a000bb082a261566b6adea3c1a1ddbed98a19",
+        "version" : "4.93.0"
       }
     },
     {
