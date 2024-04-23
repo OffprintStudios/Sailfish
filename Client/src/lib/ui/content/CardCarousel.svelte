@@ -10,7 +10,7 @@
         <span class="all-small-caps text-xl font-bold tracking-wide relative -top-[0.075rem]">More</span>
         <RiArrowRightSLine size="30px" />
     </div>
-    <div class="flex items-center justify-start flex-shrink-0 w-full pb-2 px-4 md:px-0 snap-x snap-mandatory snap-always overflow-y-scroll">
+    <div class="flex items-center justify-start flex-shrink-0 w-full pb-2 px-4 md:px-0 snap-x snap-mandatory snap-always overflow-x-scroll">
         <div class="mr-2 snap-center">
             <WorkCard />
         </div>
