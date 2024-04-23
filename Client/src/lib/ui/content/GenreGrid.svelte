@@ -28,7 +28,7 @@
     </div>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-0 md:gap-2">
         {#each genres as genre}
-            <div class="flex flex-col items-center justify-center overflow-hidden px-4 py-2 border border-zinc-300 dark:border-zinc-600 odd:border-l-0 even:border-r-0 md:border-0 md:rounded-xl bg-zinc-200 dark:bg-zinc-700 h-[106px]">
+            <div class="flex flex-col items-center justify-center overflow-hidden px-4 py-2 border odd:border-l-0 even:border-r-0 md:odd:border-l md:even:border-r md:rounded-xl bg-zinc-200/50 dark:bg-zinc-700/50 backdrop-blur border-zinc-600/25 dark:border-zinc-300/25 h-[106px]" style="box-shadow: var(--dropshadow);">
                 <span class="relative top-0.5">
                     <svelte:component this={genre.icon} size="36px" />
                 </span>

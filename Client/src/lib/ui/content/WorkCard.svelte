@@ -5,7 +5,8 @@
 </script>
 
 <div
-    class="flex flex-col h-[256px] rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-700"
+    class="flex flex-col h-[256px] rounded-xl overflow-hidden bg-zinc-200/50 dark:bg-zinc-700/50 backdrop-blur border border-zinc-600/25 dark:border-zinc-300/25 hover:bg-zinc-300/50 dark:hover:bg-zinc-600/50 transition"
+    style="box-shadow: var(--dropshadow);"
     style:width={width === 'auto' ? '100%' : width}
 >
     <div class="w-full h-[5rem]" style="background-color: rgb(var(--accent));"><!--banner--></div>

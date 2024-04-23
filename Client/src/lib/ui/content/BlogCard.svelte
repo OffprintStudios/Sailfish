@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { RiArrowUpSLine, RiArrowDownSLine, RiDiscussLine, RiEyeOffLine, RiMoreFill, RiCloseLine, RiEditCircleLine, RiDeleteBin2Line } from "svelte-remixicon";
+    import { RiThumbUpLine, RiThumbDownLine, RiDiscussLine, RiEyeOffLine, RiMoreFill, RiCloseLine, RiEditCircleLine, RiDeleteBin2Line } from "svelte-remixicon";
 	import type { Blog } from "$lib/models/blogs";
 	import { abbreviate, localeDate, slugify } from "$lib/util/functions";
 	import { ContentRating } from "$lib/models/util";
@@ -108,12 +108,12 @@
                 </span>
                 <span class="hidden lg:block flex-1"><!--spacer--></span>
                 <div class="flex items-center md:text-lg" title="Upvotes">
-                    <span class="relative top-0.5 md:top-[0.075rem]"><RiArrowUpSLine /></span>
+                    <span class="relative top-0.5 md:top-[0.075rem] text-green-600"><RiThumbUpLine /></span>
                     <span>{abbreviate(blog.likes)}</span>
                 </div>
                 <div class="mr-1 text-xl"><!--spacer--></div>
                 <div class="flex items-center md:text-lg" title="Downvotes">
-                    <span class="relative top-0.5 md:top-[0.075rem]"><RiArrowDownSLine /></span>
+                    <span class="relative top-0.5 md:top-[0.075rem] text-red-600"><RiThumbDownLine /></span>
                     <span>{abbreviate(blog.dislikes)}</span>
                 </div>
                 <div class="mx-1 text-xl"><!--spacer--></div>
