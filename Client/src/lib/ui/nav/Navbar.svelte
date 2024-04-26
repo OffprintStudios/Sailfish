@@ -42,30 +42,6 @@
                     <span class="link-text">Log In</span>
                 </a>
             {/if}
-            <!--@if (isAuthenticated$ | async) {
-                @if (currProfile$ | async; as profile) {
-                    <button class="navbar-button">
-                        <span class="icon"><ng-icon name="remixInbox2Line" size="24px" /></span>
-                        <span class="text">1.2k</span>
-                    </button>
-                    <button class="navbar-button">
-                        <span class="icon"><ng-icon name="lucideLibrary" size="24px" strokeWidth="2.5" /></span>
-                        <span class="text">12</span>
-                    </button>
-                    <app-user-menu />
-                } @else {
-                    <a class="navbar-button" [routerLink]="['/auth/switch-profile']">
-                        <span class="icon"><ng-icon name="lucideArrowRightLeft" size="18px" /></span>
-                        <span class="link-text">Profiles</span>
-                    </a>
-                }
-            } @else {
-                <a class="navbar-button" [routerLink]="['/auth/log-in']">
-                    <span class="icon"><ng-icon name="lucideLogIn" size="18px" /></span>
-                    <span class="link-text">Log In</span>
-                </a>
-            }-->
-
         </div>
     </nav>
 </div>
