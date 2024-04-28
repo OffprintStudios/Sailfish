@@ -8,7 +8,7 @@ Sailfish is built entirely in Rust via the [Leptos](https://leptos.dev/) framewo
 
 ### Prerequisites
 * Rust 1.78 (nightly)
-* SurrealDB 1.4.2
+* PostgreSQL (latest)
 * Bun 1.1.5
 
 After installing the latest Rust nightly, grab the following tools:

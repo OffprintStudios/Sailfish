@@ -24,6 +24,12 @@ argon2 = { version = "0.5.3", optional = true }
 icondata_core = "0.1.0"
 rand = "0.8.5"
 serde = { version = "1.0.199", features = ["derive"] }
+sea-orm = { version = "1.0.0-rc.3", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros", "with-chrono", "with-json", "with-uuid"], optional = true }
+uuid = { version = "1.8.0", features = ["v4", "v7", "fast-rng", "macro-diagnostics"] }
+chrono = { version = "0.4.38", features = ["serde"] }
+nanoid = "0.4.0"
+dotenvy = { version = "0.15.7", optional = true }
+slug = "0.1.5"
 
 [features]
 csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
@@ -32,6 +38,8 @@ ssr = [
   "dep:actix-files",
   "dep:actix-web",
   "dep:leptos_actix",
+  "dep:sea-orm",
+  "dep:dotenvy",
   "leptos/ssr",
   "leptos_meta/ssr",
   "leptos_router/ssr",
