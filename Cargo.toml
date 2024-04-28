@@ -23,6 +23,7 @@ leptos-use = "0.10.8"
 argon2 = "0.5.3"
 icondata_core = "0.1.0"
 rand = "0.8.5"
+surrealdb = { version = "1.4.2", optional = true }
 
 [features]
 csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
@@ -31,6 +32,7 @@ ssr = [
   "dep:actix-files",
   "dep:actix-web",
   "dep:leptos_actix",
+  "dep:surrealdb",
   "leptos/ssr",
   "leptos_meta/ssr",
   "leptos_router/ssr",

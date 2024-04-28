@@ -12,7 +12,7 @@ Sailfish is built entirely in Rust via the [Leptos](https://leptos.dev/) framewo
 * Bun 1.1.5
 
 After installing the latest Rust nightly, grab the following tools:
-* `rustup toolchain add wasm32-unknown-unknown`
+* `rustup target add wasm32-unknown-unknown`
 * `cargo install cargo-leptos`
 * `cargo install trunk`
 
