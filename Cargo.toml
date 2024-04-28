@@ -23,9 +23,6 @@ leptos-use = "0.10.8"
 argon2 = "0.5.3"
 icondata_core = "0.1.0"
 rand = "0.8.5"
-edgedb-tokio = "0.5.0"
-edgedb-protocol = "0.6.0"
-edgedb-derive = "0.5.1"
 
 [features]
 csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
