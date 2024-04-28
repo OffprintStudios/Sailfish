@@ -1,0 +1,60 @@
+use leptos::*;
+use leptos_icons::*;
+use icondata_ri as remixicon;
+use crate::ui::content::work_card::{WorkCard, WorkCardWidth};
+
+#[component]
+pub fn ExplorePage() -> impl IntoView {
+    view! {
+        <div>
+            <div
+                class="sticky top-[55px] md:top-[65px] flex w-full mb-8 h-[50px] md:h-[55px] backdrop-blur-lg z-10 border-b border-opacity-25 bg-zinc-200/50 dark:bg-zinc-700/50 border-zinc-700/25 dark:border-zinc-200/25 scrollbar-none"
+                style="box-shadow: var(--dropshadow);"
+            >
+                <div
+                    class="flex justify-start md:justify-center w-full max-w-7xl mx-auto overflow-y-scroll flex-shrink-0"
+                    style="scrollbar-width: none; -ms-overflow-style: none;"
+                >
+                    <div class="flex flex-shrink-0 items-center justify-center px-3 h-full all-small-caps font-bold tracking-wider text-lg border-r last:border-r-0 border-zinc-700/25 dark:border-zinc-200/25">
+                        <span class="relative top-0.5 mr-1">
+                            <Icon icon=remixicon::RiAppsSystemLine />
+                        </span>
+                        <span>"All Works"</span>
+                    </div>
+                    <div class="flex flex-shrink-0 items-center justify-center px-3 h-full all-small-caps font-bold tracking-wider text-lg border-r last:border-r-0 border-zinc-700/25 dark:border-zinc-200/25">
+                        <span class="relative top-0.5 mr-1">
+                            <Icon icon=remixicon::RiLoader2SystemLine />
+                        </span>
+                        <span>"Newest"</span>
+                    </div>
+                    <div class="flex flex-shrink-0 items-center justify-center px-3 h-full all-small-caps font-bold tracking-wider text-lg border-r last:border-r-0 border-zinc-700/25 dark:border-zinc-200/25">
+                        <span class="relative top-0.5 mr-1">
+                            <Icon icon=remixicon::RiBox2OthersLine />
+                        </span>
+                        <span>"All Genres"</span>
+                    </div>
+                    <div class="flex flex-shrink-0 items-center justify-center px-3 h-full all-small-caps font-bold tracking-wider text-lg border-r last:border-r-0 border-zinc-700/25 dark:border-zinc-200/25">
+                        <span class="relative top-0.5 mr-1">
+                            <Icon icon=remixicon::RiShining2WeatherLine />
+                        </span>
+                        <span>"All Ratings"</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 w-11/12 mx-auto max-w-7xl mb-8">
+                <WorkCard width=WorkCardWidth::Auto />
+                <WorkCard width=WorkCardWidth::Auto />
+                <WorkCard width=WorkCardWidth::Auto />
+                <WorkCard width=WorkCardWidth::Auto />
+                <WorkCard width=WorkCardWidth::Auto />
+                <WorkCard width=WorkCardWidth::Auto />
+                <WorkCard width=WorkCardWidth::Auto />
+                <WorkCard width=WorkCardWidth::Auto />
+                <WorkCard width=WorkCardWidth::Auto />
+                <WorkCard width=WorkCardWidth::Auto />
+                <WorkCard width=WorkCardWidth::Auto />
+                <WorkCard width=WorkCardWidth::Auto />
+            </div>
+        </div>
+    }
+}
