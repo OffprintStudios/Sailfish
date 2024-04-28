@@ -3,8 +3,8 @@ use leptos_router::*;
 use leptos_icons::*;
 // use icondata_lu as lucide;
 use icondata_ri as remixicon;
-use crate::ui::nav::search_menu::SearchMenu;
-use crate::ui::util::modal::Modal;
+use super::search_menu::SearchMenu;
+use crate::ui::util::Modal;
 
 #[component]
 pub fn Navbar() -> impl IntoView {

@@ -1,1 +1,3 @@
-pub mod slogans;
+mod slogans;
+
+pub use slogans::{DEFAULT_SLOGANS, EASTER_SLOGANS, HALLOWEEN_SLOGANS, HOLIDAY_SLOGANS};

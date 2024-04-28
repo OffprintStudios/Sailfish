@@ -2,11 +2,8 @@ use leptos::*;
 use leptos_router::*;
 use leptos_icons::*;
 use icondata_ri as remixicon;
-use crate::ui::nav::navbar::Navbar;
-use crate::ui::content::jumbotron::Jumbotron;
-use crate::ui::content::card_carousel::CardCarousel;
-use crate::ui::content::news_panel::NewsPanel;
-use crate::ui::content::genre_grid::GenreGrid;
+use crate::ui::nav::Navbar;
+use crate::ui::content::{Jumbotron, CardCarousel, NewsPanel, GenreGrid};
 
 pub mod explore;
 pub mod auth;

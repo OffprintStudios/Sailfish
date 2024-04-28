@@ -2,8 +2,8 @@ use leptos::*;
 use leptos_router::*;
 use leptos_icons::*;
 use icondata_ri as remixicon;
-use crate::ui::forms::text_field::{TextField, TextFieldType};
-use crate::ui::util::button::{Button, KindOfButton, TypeOfButton};
+use crate::ui::forms::{TextField, TextFieldType};
+use crate::ui::util::{Button, KindOfButton, TypeOfButton};
 
 #[server(LogInForm)]
 pub async fn log_in(email: String, password: String) -> Result<(), ServerFnError> {

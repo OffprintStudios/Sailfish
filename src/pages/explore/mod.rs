@@ -11,7 +11,7 @@ pub use fandom_feed::FandomFeed;
 use leptos::*;
 use leptos_icons::*;
 use icondata_ri as remixicon;
-use crate::ui::content::work_card::{WorkCard, WorkCardWidth};
+use crate::ui::content::{WorkCard, WorkCardWidth};
 
 #[component]
 pub fn ExplorePage() -> impl IntoView {

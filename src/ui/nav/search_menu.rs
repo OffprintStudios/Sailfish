@@ -1,8 +1,8 @@
-use leptos::*;
+ use leptos::*;
 use leptos_icons::*;
 use icondata_ri as remixicon;
 use rand::seq::SliceRandom;
-use crate::models::util::slogans::DEFAULT_SLOGANS;
+use crate::models::util::DEFAULT_SLOGANS;
 
 #[component]
 pub fn SearchMenu() -> impl IntoView {
