@@ -1,3 +1,13 @@
+mod news_feed;
+mod news_post;
+mod genre_feed;
+mod fandom_feed;
+
+pub use news_feed::NewsFeed;
+pub use news_post::NewsPost;
+pub use genre_feed::GenreFeed;
+pub use fandom_feed::FandomFeed;
+
 use leptos::*;
 use leptos_icons::*;
 use icondata_ri as remixicon;

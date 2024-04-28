@@ -2,11 +2,8 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 use crate::pages::{HomeLayout, HomePage};
-use crate::pages::explore::ExplorePage;
-use crate::pages::auth::AuthLayout;
-use crate::pages::auth::log_in::LogIn;
-use crate::pages::auth::sign_up::SignUp;
-use crate::pages::auth::check_email::CheckEmail;
+use crate::pages::auth::{AuthLayout, LogIn, SignUp, CheckEmail};
+use crate::pages::explore::{ExplorePage, NewsFeed, NewsPost, FandomFeed, GenreFeed};
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -28,6 +25,11 @@ pub fn App() -> impl IntoView {
                     <Route path="/" view=HomeLayout>
                         <Route path="" view=HomePage />
                         <Route path="explore" view=ExplorePage />
+                        <Route path="news" view=NewsFeed />
+                        <Route path="post/:id" view=NewsPost />
+                        <Route path="post/:id/:title" view=NewsPost />
+                        <Route path="genre/:id" view=GenreFeed />
+                        <Route path="fandom/:id" view=FandomFeed />
                     </Route>
                     <Route path="auth" view=AuthLayout>
                         <Route path="log-in" view=LogIn />

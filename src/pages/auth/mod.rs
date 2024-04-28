@@ -1,8 +1,12 @@
-pub mod log_in;
-pub mod sign_up;
-pub mod check_email;
-pub mod forgot_password;
-pub mod switch_profile;
+mod log_in;
+mod sign_up;
+mod check_email;
+mod forgot_password;
+mod switch_profile;
+
+pub use log_in::LogIn;
+pub use sign_up::SignUp;
+pub use check_email::CheckEmail;
 
 use leptos::*;
 use leptos_router::*;
