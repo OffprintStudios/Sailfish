@@ -31,12 +31,12 @@ pub fn Button(
         TypeOfButton::Submit => "submit",
         TypeOfButton::Reset => "reset",
     };
-    
+
     let primary = match kind {
         KindOfButton::Primary => true,
         KindOfButton::Normal => false
     };
-    
+
     view! {
         <button
             id=id

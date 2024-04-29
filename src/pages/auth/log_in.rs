@@ -8,7 +8,7 @@ use crate::ui::util::{Button, KindOfButton, TypeOfButton};
 #[server(LogInForm)]
 pub async fn log_in(email: String, password: String) -> Result<(), ServerFnError> {
     // todo: actually implement this
-    
+
     println!("Email: {:1}", email);
     println!("Password: {:1}", password);
 

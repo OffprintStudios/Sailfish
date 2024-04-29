@@ -25,4 +25,4 @@ Next, make sure you create a `.env` file at the root of the project containing t
 
 ## Contributing
 
-We will (eventually) have Contribution guidelines written up! If instead you want to talk about Offprint with a growing community of authors and readers, check out [our Discord server](https://discord.gg/9cnSwfn)!
+We will (eventually) have Contribution guidelines written up! If i

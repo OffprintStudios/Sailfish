@@ -1,8 +1,8 @@
-mod jumbotron;
-mod work_card;
 mod card_carousel;
 mod genre_grid;
+mod jumbotron;
 mod news_panel;
+mod work_card;
 
 pub use jumbotron::Jumbotron;
 pub use work_card::{WorkCard, WorkCardWidth};

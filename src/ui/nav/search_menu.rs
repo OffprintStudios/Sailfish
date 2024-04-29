@@ -1,4 +1,4 @@
- use leptos::*;
+use leptos::*;
 use leptos_icons::*;
 use icondata_ri as remixicon;
 use rand::seq::SliceRandom;

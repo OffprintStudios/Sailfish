@@ -15,7 +15,7 @@ pub fn WorkCard(
         WorkCardWidth::Default => "360px",
         WorkCardWidth::Auto => "100%"
     };
-    
+
     view! {
         <div
             class="flex flex-col h-[256px] rounded-xl overflow-hidden bg-zinc-200/50 dark:bg-zinc-700/50 backdrop-blur border border-zinc-600/25 dark:border-zinc-300/25 hover:bg-zinc-300/50 dark:hover:bg-zinc-600/50 transition"

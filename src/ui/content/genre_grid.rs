@@ -21,7 +21,7 @@ pub fn GenreGrid() -> impl IntoView {
     genres.push(("Speculative Fiction", remixicon::RiMeteorWeatherLine));
     genres.push(("Thriller", remixicon::RiSpyUserFacesLine));
     genres.push(("Tragedy", remixicon::RiSkullUserFacesLine));
-    
+
     view! {
         <div>
             <div class="flex items-center mb-3 mx-4 md:mx-0">

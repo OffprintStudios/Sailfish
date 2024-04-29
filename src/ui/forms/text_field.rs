@@ -24,7 +24,7 @@ pub fn TextField(
         TextFieldType::Email => "email",
         TextFieldType::Password => "password",
     };
-    
+
     view! {
         <div>
             <label for=&name class="flex items-center all-small-caps font-bold tracking-wide relative left-2 select-none">
