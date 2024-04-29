@@ -15,6 +15,7 @@ After installing the latest Rust nightly and cloning this repo, grab the followi
 * `rustup target add wasm32-unknown-unknown`
 * `cargo install cargo-leptos`
 * `cargo install trunk`
+* `cargo install sea-orm-cli`
 
 Next, make sure you create a `.env` file at the root of the project containing the following variables:
 * `DATABASE_URL=postgresql://<username>:<password>@localhost:5432/<database name>`
