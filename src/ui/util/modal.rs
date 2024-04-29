@@ -30,7 +30,7 @@ pub fn Modal(
     view! {
         <dialog
             id=id
-            class="block backdrop:bg-zinc-900/50 backdrop:backdrop-blur-lg open:backdrop:animate-[modal-show_200ms_ease_normal] bg-transparent rounded-xl"
+            class="backdrop:bg-zinc-900/50 backdrop:backdrop-blur-lg open:backdrop:animate-[modal-show_200ms_ease_normal] bg-transparent rounded-xl"
             style="box-shadow: var(--dropshadow)"
             on:close=move |_| set_open.set(false)
             _ref=dialog_ref

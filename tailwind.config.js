@@ -20,7 +20,7 @@ module.exports = {
                 "small-shadow": "0 0 5px rgba(0, 0, 0, 0.5)"
             },
             animation: {
-                modalf: "modalf 250ms ease-in-out",
+                modalf: "modalf 150ms ease-in-out",
             },
             keyframes: {
                 modalf: {
