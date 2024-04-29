@@ -1,13 +1,27 @@
 #[cfg(feature = "ssr")]
+use sea_orm::{Database, DatabaseConnection};
+
+#[cfg(feature = "ssr")]
+#[derive(Debug, Clone)]
+struct AppState {
+    db: DatabaseConnection,
+}
+
+#[cfg(feature = "ssr")]
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    use std::env;
     use actix_files::Files;
     use actix_web::*;
     use leptos::*;
     use leptos_actix::{generate_route_list, LeptosRoutes};
     use sailfish::app::*;
     
-    dotenvy::dotenv().expect(".env was not set!");
+    dotenvy::dotenv().ok();
+    let db_url = env::var("DATABASE_URL").expect("DATABASE_URL is not set in .env file!");
+    let conn = Database::connect(&db_url).await.unwrap();
+    
+    let state = AppState { db: conn };
 
     let conf = get_configuration(None).await.unwrap();
     let addr = conf.leptos_options.site_addr;
@@ -24,6 +38,7 @@ async fn main() -> std::io::Result<()> {
             .service(Files::new("/pkg", format!("{site_root}/pkg")))
             // serve other assets from the `assets` directory
             .service(Files::new("/assets", site_root))
+            .app_data(web::Data::new(state.clone()))
             // serve the favicon from /favicon.ico
             .service(favicon)
             .leptos_routes(leptos_options.to_owned(), routes.to_owned(), App)
