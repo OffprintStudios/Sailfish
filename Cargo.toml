@@ -46,8 +46,6 @@ sea-orm = { version = "0.12", features = [
 ], optional = true }
 migration = { path = "migration", optional = true }
 cfg-if = "1.0.0"
-surrealdb = { version = "1.4.2", features = ["protocol-http", "sql2"], optional = true }
-surrealdb-migrations = { version = "1.4.0", optional = true }
 
 [features]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
@@ -59,8 +57,6 @@ ssr = [
     "dep:migration",
     "dep:sea-orm",
     "dep:leptos_axum",
-    "dep:surrealdb",
-    "dep:surrealdb-migrations",
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",
