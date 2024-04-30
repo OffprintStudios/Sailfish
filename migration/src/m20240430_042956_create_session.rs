@@ -13,6 +13,10 @@ impl MigrationTrait for Migration {
                 .if_not_exists()
                 .col(ColumnDef::new(Session::Id).uuid().not_null().primary_key())
                 .col(ColumnDef::new(Session::AccountId).uuid().not_null())
+                .col(ColumnDef::new(Session::IpAddr).string())
+                .col(ColumnDef::new(Session::Browser).string())
+                .col(ColumnDef::new(Session::Os).string())
+                .col(ColumnDef::new(Session::Device).string())
                 .col(ColumnDef::new(Session::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
                 .col(ColumnDef::new(Session::Expiration).timestamp_with_time_zone().not_null())
                 .foreign_key(
@@ -36,6 +40,11 @@ pub enum Session {
     Table,
     Id,
     AccountId,
+    IpAddr,
+    Browser,
+    #[sea_orm(iden = "os")]
+    Os,
+    Device,
     CreatedAt,
     Expiration,
 }
