@@ -4,8 +4,6 @@ cfg_if::cfg_if! {
         use leptos::*;
         use leptos_axum::{generate_route_list, LeptosRoutes};
         use leptos::{provide_context, get_configuration};
-        use sea_orm::Database;
-        use migration::{Migrator, MigratorTrait};
         use sailfish::app::*;
         use sailfish::state::AppState;
         use sailfish::fileserv::file_and_error_handler;
@@ -26,11 +24,9 @@ cfg_if::cfg_if! {
             
             // Start a connection to the database
             let db_url = std::env::var("DATABASE_URL").expect("DATABASE_URL not set in .env file!");
-            let conn = Database::connect(&db_url).await.expect("Connection to database failed!");
-            Migrator::up(&conn, None).await.expect("Migrations did not succeed!");
             
             let app_state = AppState {
-                database: conn,
+                database: Some(db_url),
             };
         
             // Build Sailfish with routes and context
