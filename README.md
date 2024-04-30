@@ -9,13 +9,17 @@ Sailfish is built entirely in Rust via the [Leptos](https://leptos.dev/) framewo
 ### Prerequisites
 * Rust 1.78 (nightly)
 * PostgreSQL 16.1.2
+* Diesel CLI
 * Bun 1.1.5
 
 After installing the latest Rust nightly and cloning this repo, grab the following tools:
+* `rustup toolchain install nightly`
 * `rustup target add wasm32-unknown-unknown`
 * `cargo install cargo-leptos`
 * `cargo install trunk`
-* `cargo install sea-orm-cli`
+* `cargo install diesel_cli --no-default-features --features postgres`
+
+Note that with `diesel_cli`, you _must_ have `libpq` available on your system. Check out the official PostgreSQL documentation to figure out how you can install it.
 
 Next, make sure you create a `.env` file at the root of the project containing the following variables:
 * `DATABASE_URL=postgresql://<username>:<password>@localhost:5432/<database name>`
