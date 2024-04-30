@@ -46,6 +46,7 @@ sea-orm = { version = "0.12", features = [
 ], optional = true }
 migration = { path = "migration", optional = true }
 cfg-if = "1.0.0"
+axum-login = { version = "0.15.1", optional = true }
 
 [features]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
@@ -57,6 +58,7 @@ ssr = [
     "dep:migration",
     "dep:sea-orm",
     "dep:leptos_axum",
+    "dep:axum-login",
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",
