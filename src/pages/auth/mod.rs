@@ -18,7 +18,7 @@ pub fn AuthLayout() -> impl IntoView {
     view! {
         <div
             class="flex flex-col items-center justify-center w-full h-screen bg-cover bg-center relative z-0"
-            style="background-image: url('/assets/images/mountains.jpg')"
+            style="background-image: url('/images/mountains.jpg')"
         >
             <div class="absolute top-4 left-4 hidden md:block">
                 <A href="/">
