@@ -16,7 +16,7 @@ leptos = { version = "0.6", features = ["nightly"] }
 leptos_axum = { version = "0.6", optional = true }
 leptos_meta = { version = "0.6", features = ["nightly"] }
 leptos_router = { version = "0.6", features = ["nightly"] }
-tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"], optional = true }
 tower = { version = "0.4", optional = true }
 tower-http = { version = "0.5", features = ["fs"], optional = true }
 wasm-bindgen = "=0.2.92"
@@ -46,6 +46,8 @@ sea-orm = { version = "0.12", features = [
 ], optional = true }
 migration = { path = "migration", optional = true }
 cfg-if = "1.0.0"
+surrealdb = { version = "1.4.2", features = ["protocol-http", "sql2"], optional = true }
+surrealdb-migrations = { version = "1.4.0", optional = true }
 
 [features]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
@@ -57,6 +59,8 @@ ssr = [
     "dep:migration",
     "dep:sea-orm",
     "dep:leptos_axum",
+    "dep:surrealdb",
+    "dep:surrealdb-migrations",
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",
