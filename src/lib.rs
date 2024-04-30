@@ -6,7 +6,7 @@ pub mod models;
 pub mod pages;
 
 #[cfg(feature = "ssr")]
-pub mod entities;
+pub mod server;
 
 #[cfg(feature = "ssr")]
 pub mod fileserv;
