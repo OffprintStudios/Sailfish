@@ -2,23 +2,6 @@
 
 use sea_orm::entity::prelude::*;
 
-#[derive(EnumIter, DeriveActiveEnum, Debug, Clone, PartialEq, Eq)]
-#[sea_orm(rs_type = "String", db_type = "String(Some(32))")]
-pub enum Roles {
-    #[sea_orm(string_value = "Admin")]
-    Admin,
-    #[sea_orm(string_value = "Moderator")]
-    Moderator,
-    #[sea_orm(string_value = "WorkApprover")]
-    WorkApprover,
-    #[sea_orm(string_value = "ChatModerator")]
-    ChatModerator,
-    #[sea_orm(string_value = "Contributor")]
-    Contributor,
-    #[sea_orm(string_value = "User")]
-    User,
-}
-
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
 #[sea_orm(table_name = "accounts")]
 pub struct Model {
@@ -38,3 +21,20 @@ pub struct Model {
 pub enum Relation {}
 
 impl ActiveModelBehavior for ActiveModel {}
+
+#[derive(EnumIter, DeriveActiveEnum, Debug, Clone, PartialEq, Eq)]
+#[sea_orm(rs_type = "String", db_type = "String(Some(32))")]
+pub enum Roles {
+    #[sea_orm(string_value = "Admin")]
+    Admin,
+    #[sea_orm(string_value = "Moderator")]
+    Moderator,
+    #[sea_orm(string_value = "WorkApprover")]
+    WorkApprover,
+    #[sea_orm(string_value = "ChatModerator")]
+    ChatModerator,
+    #[sea_orm(string_value = "Contributor")]
+    Contributor,
+    #[sea_orm(string_value = "User")]
+    User,
+}
