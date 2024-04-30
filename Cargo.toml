@@ -35,6 +35,8 @@ dotenvy = "0.15.7"
 slug = "0.1.5"
 cfg-if = "1.0.0"
 axum-login = { version = "0.15.1", optional = true }
+diesel = { version = "2.1.6", optional = true }
+diesel-async = { version = "0.4.1", features = ["postgres", "deadpool"], optional = true }
 
 [features]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
@@ -44,6 +46,8 @@ ssr = [
     "dep:tower",
     "dep:tower-http",
     "dep:leptos_axum",
+    "dep:diesel",
+    "dep:diesel-async",
     "dep:axum-login",
     "leptos/ssr",
     "leptos_meta/ssr",
