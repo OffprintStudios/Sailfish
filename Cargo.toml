@@ -35,8 +35,9 @@ dotenvy = "0.15.7"
 slug = "0.1.5"
 cfg-if = "1.0.0"
 axum-login = { version = "0.15.1", optional = true }
-diesel = { version = "2.1.6", optional = true }
-diesel-async = { version = "0.4.1", features = ["postgres", "deadpool"], optional = true }
+edgedb-tokio = { version = "0.5.0", features = [], optional = true }
+edgedb-protocol = { version = "0.6.0", features = ["all-types"], optional = true }
+edgedb-derive = { version = "0.5.1", optional = true }
 
 [features]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
@@ -46,8 +47,9 @@ ssr = [
     "dep:tower",
     "dep:tower-http",
     "dep:leptos_axum",
-    "dep:diesel",
-    "dep:diesel-async",
+    "dep:edgedb-tokio",
+    "dep:edgedb-protocol",
+    "dep:edgedb-derive",
     "dep:axum-login",
     "leptos/ssr",
     "leptos_meta/ssr",

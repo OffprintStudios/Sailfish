@@ -23,10 +23,10 @@ cfg_if::cfg_if! {
             let routes = generate_route_list(App);
             
             // Start a connection to the database
-            let db_url = std::env::var("DATABASE_URL").expect("DATABASE_URL not set in .env file!");
+            let client = edgedb_tokio::create_client().await.expect("Could not establish connection to database!");
             
             let app_state = AppState {
-                database: Some(db_url),
+                database: client,
             };
         
             // Build Sailfish with routes and context
