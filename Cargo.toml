@@ -3,6 +3,9 @@ name = "sailfish"
 version = "0.1.0"
 edition = "2021"
 
+[workspace]
+members = [".", "migration"]
+
 [lib]
 crate-type = ["cdylib", "rlib"]
 
@@ -35,6 +38,8 @@ dotenvy = "0.15.7"
 slug = "0.1.5"
 cfg-if = "1.0.0"
 axum-login = { version = "0.15.1", optional = true }
+sea-orm = { version = "0.12.15", features = ["sqlx-postgres", "runtime-tokio-rustls", "with-chrono", "with-json", "with-uuid", "macros"], optional = true }
+migration = { path = "migration", optional = true }
 
 [features]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
@@ -45,6 +50,8 @@ ssr = [
     "dep:tower-http",
     "dep:leptos_axum",
     "dep:axum-login",
+    "dep:sea-orm",
+    "dep:migration",
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",

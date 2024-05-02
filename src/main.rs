@@ -5,8 +5,10 @@ cfg_if::cfg_if! {
         use leptos_axum::{generate_route_list, LeptosRoutes};
         use leptos::{provide_context, get_configuration};
         use sailfish::app::*;
+        use sailfish::server::db::connect_to_db;
         use sailfish::state::AppState;
         use sailfish::fileserv::file_and_error_handler;
+        use migration::{Migrator, MigratorTrait};
         
         #[tokio::main]
         async fn main() {
@@ -21,13 +23,17 @@ cfg_if::cfg_if! {
             let leptos_options = conf.leptos_options;
             let addr = leptos_options.site_addr;
             let routes = generate_route_list(App);
+            
+            let conn = connect_to_db().await;
+            Migrator::up(&conn, None).await.expect("Could not run migrations!");
+            let app_state = AppState { database: conn };
         
             // Build Sailfish with routes and context
             let app = Router::new()
                 .leptos_routes_with_context(
                     &leptos_options,
                     routes,
-                    move || provide_context(Some("hello")),
+                    move || provide_context(app_state.clone()),
                     App,
                 )
                 .fallback(file_and_error_handler)

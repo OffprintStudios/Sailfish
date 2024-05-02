@@ -7,13 +7,45 @@ use crate::ui::util::{Button, KindOfButton, TypeOfButton};
 
 #[server(SignUpForm)]
 pub async fn sign_up(email: String, password: String, repeat_password: String, age_check: Option<String>, terms_agree: Option<String>) -> Result<(), ServerFnError> {
-    // todo: actually implement this
+    use argon2::Argon2;
+    use argon2::password_hash::{rand_core::OsRng, PasswordHasher, SaltString};
+    use sea_orm::ActiveValue::Set;
+    use sea_orm::ActiveModelTrait;
+    use sea_orm::ActiveEnum;
+    use crate::state::AppState;
+    use crate::server::db::entities::*;
 
-    println!("Email: {:1}", email);
-    println!("Password: {:1}", password);
-    println!("Repeat Password: {:1}", repeat_password);
-    println!("Age Check: {:1}", age_check.is_some());
-    println!("Terms Agree: {:1}", terms_agree.is_some());
+    if password != repeat_password {
+        return Err(ServerFnError::ServerError("Your passwords don't match!".to_string()));
+    }
+
+    if age_check.is_some_and(|val| val != "on") {
+        // WHY IS THE CHECKBOX VALUE "ON" OR "OFF" I DON'T UNDERSTAND JUST USE A FUCKING BOOLEAN
+        return Err(ServerFnError::ServerError("You must be 13 years of age or older to access Offprint.".to_string()));
+    }
+
+    if terms_agree.is_some_and(|val| val != "on") {
+        return Err(ServerFnError::ServerError("You must agree to the Terms of Service, Privacy Policy, and Offprint Constitution before joining.".to_string()));
+    }
+
+    let state = expect_context::<AppState>();
+    let argon2 = Argon2::default();
+    let salt = SaltString::generate(&mut OsRng);
+    let password_hash = match argon2.hash_password(password.as_bytes(), &salt) {
+        Ok(hash) => hash.to_string(),
+        Err(_) => return Err(ServerFnError::ServerError("Unable to hash password!".to_string()))
+    };
+
+    let account = account::ActiveModel {
+        email: Set(email.to_owned()),
+        password: Set(password_hash.to_owned()),
+        roles: Set(vec![roles::Roles::User.to_value()]),
+        terms_agree: Set(true),
+        email_confirmed: Set(false),
+        ..Default::default()
+    };
+
+    let _result = account.insert(&state.database).await?;
 
     Ok(())
 }

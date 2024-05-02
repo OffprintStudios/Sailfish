@@ -1,10 +1,11 @@
 cfg_if::cfg_if! {
     if #[cfg(feature = "ssr")] {
         use axum::extract::FromRef;
+        use sea_orm::DatabaseConnection;
         
-        #[derive(FromRef, Clone)]
+        #[derive(FromRef, Debug, Clone)]
         pub struct AppState {
-            pub database: Option<String>,
+            pub database: DatabaseConnection,
         }
     }
 }
