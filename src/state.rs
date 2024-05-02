@@ -1,11 +1,10 @@
 cfg_if::cfg_if! {
     if #[cfg(feature = "ssr")] {
         use axum::extract::FromRef;
-        use edgedb_tokio::Client;
-
-        #[derive(FromRef, Debug, Clone)]
+        
+        #[derive(FromRef, Clone)]
         pub struct AppState {
-            pub database: Client,
+            pub database: Option<String>,
         }
     }
 }

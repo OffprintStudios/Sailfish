@@ -21,20 +21,13 @@ cfg_if::cfg_if! {
             let leptos_options = conf.leptos_options;
             let addr = leptos_options.site_addr;
             let routes = generate_route_list(App);
-            
-            // Start a connection to the database
-            let client = edgedb_tokio::create_client().await.expect("Could not establish connection to database!");
-            
-            let app_state = AppState {
-                database: client,
-            };
         
             // Build Sailfish with routes and context
             let app = Router::new()
                 .leptos_routes_with_context(
                     &leptos_options,
                     routes,
-                    move || provide_context(app_state.clone()),
+                    move || provide_context(Some("hello")),
                     App,
                 )
                 .fallback(file_and_error_handler)
