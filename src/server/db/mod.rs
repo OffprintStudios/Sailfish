@@ -1,4 +1,5 @@
 pub mod entities;
+pub mod util;
 
 use std::env;
 use sea_orm::{DatabaseConnection, Database, ConnectOptions};
