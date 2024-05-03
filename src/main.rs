@@ -6,7 +6,7 @@ cfg_if::cfg_if! {
         use leptos::{provide_context, get_configuration};
         use sailfish::app::*;
         use sailfish::server::db::connect_to_db;
-        use sailfish::state::AppState;
+        use sailfish::state::SailfishState;
         use sailfish::fileserv::file_and_error_handler;
         use migration::{Migrator, MigratorTrait};
         
@@ -26,18 +26,24 @@ cfg_if::cfg_if! {
             
             let conn = connect_to_db().await;
             Migrator::up(&conn, None).await.expect("Could not run migrations!");
-            let app_state = AppState { database: conn };
+            let sailfish_state = SailfishState {
+                db: conn,
+                leptos_options,
+            };
         
             // Build Sailfish with routes and context
             let app = Router::new()
                 .leptos_routes_with_context(
-                    &leptos_options,
+                    &sailfish_state,
                     routes,
-                    move || provide_context(app_state.clone()),
+                    {
+                        let app_state = sailfish_state.clone();
+                        move || provide_context(app_state.clone())
+                    },
                     App,
                 )
                 .fallback(file_and_error_handler)
-                .with_state(leptos_options);
+                .with_state(sailfish_state);
         
             let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
             logging::log!("listening on http://{}", &addr);

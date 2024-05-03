@@ -7,13 +7,8 @@ use crate::ui::util::{Button, KindOfButton, TypeOfButton};
 
 #[server(SignUpForm)]
 pub async fn sign_up(email: String, password: String, repeat_password: String, age_check: Option<String>, terms_agree: Option<String>) -> Result<(), ServerFnError> {
-    use argon2::Argon2;
-    use argon2::password_hash::{rand_core::OsRng, PasswordHasher, SaltString};
-    use sea_orm::ActiveValue::Set;
-    use sea_orm::ActiveModelTrait;
-    use sea_orm::ActiveEnum;
-    use crate::state::AppState;
-    use crate::server::db::entities::*;
+    use crate::state::SailfishState;
+    use crate::server::auth::sign_up;
 
     if password != repeat_password {
         return Err(ServerFnError::ServerError("Your passwords don't match!".to_string()));
@@ -28,26 +23,11 @@ pub async fn sign_up(email: String, password: String, repeat_password: String, a
         return Err(ServerFnError::ServerError("You must agree to the Terms of Service, Privacy Policy, and Offprint Constitution before joining.".to_string()));
     }
 
-    let state = expect_context::<AppState>();
-    let argon2 = Argon2::default();
-    let salt = SaltString::generate(&mut OsRng);
-    let password_hash = match argon2.hash_password(password.as_bytes(), &salt) {
-        Ok(hash) => hash.to_string(),
-        Err(_) => return Err(ServerFnError::ServerError("Unable to hash password!".to_string()))
-    };
-
-    let account = account::ActiveModel {
-        email: Set(email.to_owned()),
-        password: Set(password_hash.to_owned()),
-        roles: Set(vec![roles::Roles::User.to_value()]),
-        terms_agree: Set(true),
-        email_confirmed: Set(false),
-        ..Default::default()
-    };
-
-    let _result = account.insert(&state.database).await?;
-
-    Ok(())
+    let state = expect_context::<SailfishState>();
+    match sign_up(&state.db, email, password).await {
+        Ok(()) => Ok(()),
+        Err(e) => Err(e),
+    }
 }
 
 #[component]
@@ -55,6 +35,13 @@ pub fn SignUp() -> impl IntoView {
     let sign_up = create_server_action::<SignUpForm>();
     let value = sign_up.value();
     let _has_error = move || value.with(|val| matches!(val, Some(Err(_))));
+    
+    let on_submit = move |ev| {
+        let data = SignUpForm::from_event(&ev);
+        if data.is_err() || data.unwrap().email.is_empty() {
+            ev.prevent_default();
+        }
+    };
 
     view! {
         <div class="bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur-lg border border-zinc-300/25 dark:border-zinc-600/25 md:rounded-xl max-w-md p-6 md:p-12 w-full h-full md:h-fit overflow-y-scroll scrollbar-none" style="box-shadow: var(--dropshadow);">
