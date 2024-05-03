@@ -2,7 +2,7 @@ use leptos::*;
 use leptos_router::*;
 use leptos_icons::*;
 use icondata_ri as remixicon;
-use crate::ui::nav::Navbar;
+use crate::ui::nav::{Navbar, Footer};
 use crate::ui::content::{Jumbotron, CardCarousel, NewsPanel, GenreGrid};
 
 pub mod explore;
@@ -13,6 +13,7 @@ pub fn HomeLayout() -> impl IntoView {
     view! {
         <Navbar />
         <Outlet />
+        <Footer />
     }
 }
 
