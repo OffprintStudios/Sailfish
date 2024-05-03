@@ -1,13 +1,9 @@
-#![feature(trivial_bounds)]
-
 pub mod app;
 pub mod error_template;
+pub mod state;
 pub mod ui;
 pub mod models;
 pub mod pages;
-
-#[cfg(feature = "ssr")]
-pub mod state;
 
 #[cfg(feature = "ssr")]
 pub mod server;
