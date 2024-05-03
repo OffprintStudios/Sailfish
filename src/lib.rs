@@ -1,6 +1,5 @@
 pub mod app;
 pub mod error_template;
-pub mod state;
 pub mod ui;
 pub mod models;
 pub mod pages;

@@ -1,14 +1,20 @@
 cfg_if::cfg_if! {
     if #[cfg(feature = "ssr")] {
+        use std::sync::Arc;
         use axum::{Router};
+        use axum::extract::FromRef;
         use leptos::*;
         use leptos_axum::{generate_route_list, LeptosRoutes};
         use leptos::{provide_context, get_configuration};
         use sailfish::app::*;
-        use sailfish::server::db::connect_to_db;
-        use sailfish::state::AppState;
         use sailfish::fileserv::file_and_error_handler;
-        use migration::{Migrator, MigratorTrait};
+        use sailfish::server::db::{Pool, connect_to_db};
+
+        #[derive(FromRef, Clone)]
+        pub struct SailfishState {
+            pub db: Arc<Pool>,
+            pub leptos_options: LeptosOptions,
+        }
         
         #[tokio::main]
         async fn main() {
@@ -24,20 +30,24 @@ cfg_if::cfg_if! {
             let addr = leptos_options.site_addr;
             let routes = generate_route_list(App);
             
-            let conn = connect_to_db().await;
-            Migrator::up(&conn, None).await.expect("Could not run migrations!");
-            let app_state = AppState { database: conn };
+            let sailfish_state = SailfishState {
+                db: Arc::new(connect_to_db().await),
+                leptos_options,
+            };
         
             // Build Sailfish with routes and context
             let app = Router::new()
                 .leptos_routes_with_context(
-                    &leptos_options,
+                    &sailfish_state,
                     routes,
-                    move || provide_context(app_state.clone()),
+                    {
+                        let app_state = sailfish_state.clone();
+                        move || provide_context(app_state.clone())
+                    },
                     App,
                 )
                 .fallback(file_and_error_handler)
-                .with_state(leptos_options);
+                .with_state(sailfish_state);
         
             let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
             logging::log!("listening on http://{}", &addr);

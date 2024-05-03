@@ -7,7 +7,7 @@ use crate::ui::util::{Button, KindOfButton, TypeOfButton};
 
 #[server(SignUpForm)]
 pub async fn sign_up(email: String, password: String, repeat_password: String, age_check: Option<String>, terms_agree: Option<String>) -> Result<(), ServerFnError> {
-    use argon2::Argon2;
+    /*use argon2::Argon2;
     use argon2::password_hash::{rand_core::OsRng, PasswordHasher, SaltString};
     use sea_orm::ActiveValue::Set;
     use sea_orm::ActiveModelTrait;
@@ -45,7 +45,7 @@ pub async fn sign_up(email: String, password: String, repeat_password: String, a
         ..Default::default()
     };
 
-    let _result = account.insert(&state.database).await?;
+    let _result = account.insert(&state.database).await?;*/
 
     Ok(())
 }

@@ -3,9 +3,6 @@ name = "sailfish"
 version = "0.1.0"
 edition = "2021"
 
-[workspace]
-members = [".", "migration"]
-
 [lib]
 crate-type = ["cdylib", "rlib"]
 
@@ -31,15 +28,15 @@ leptos-use = { version = "0.10.9" }
 argon2 = "0.5.3"
 serde = { version = "1.0.199", features = ["derive"] }
 rand = "0.8.5"
-uuid = { version = "1.8.0", features = ["v4", "v7", "fast-rng", "macro-diagnostics"] }
+uuid = { version = "1.8.0", features = ["v4", "v7", "fast-rng", "macro-diagnostics", "serde"] }
 chrono = { version = "0.4.38", features = ["serde"] }
 nanoid = "0.4.0"
 dotenvy = "0.15.7"
 slug = "0.1.5"
 cfg-if = "1.0.0"
-axum-login = { version = "0.15.1", optional = true }
-sea-orm = { version = "0.12.15", features = ["sqlx-postgres", "runtime-tokio-rustls", "with-chrono", "with-json", "with-uuid", "macros"], optional = true }
-migration = { path = "migration", optional = true }
+diesel = { version = "2.1.6", optional = true }
+diesel-async = { version = "0.4.1", features = ["postgres", "bb8"], optional = true }
+bb8 = { version = "0.8.3", optional = true }
 
 [features]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
@@ -49,9 +46,9 @@ ssr = [
     "dep:tower",
     "dep:tower-http",
     "dep:leptos_axum",
-    "dep:axum-login",
-    "dep:sea-orm",
-    "dep:migration",
+    "dep:diesel",
+    "dep:diesel-async",
+    "dep:bb8",
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",
