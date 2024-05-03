@@ -7,10 +7,15 @@ use crate::ui::util::{Button, KindOfButton, TypeOfButton};
 
 #[server(LogInForm)]
 pub async fn log_in(email: String, password: String) -> Result<(), ServerFnError> {
-    // todo: actually implement this
+    use std::net::SocketAddr;
+    use leptos_axum::extract;
+    use axum::extract::ConnectInfo;
+    use crate::state::SailfishState;
+    use crate::server::auth::log_in;
+    use crate::server::extractors::ExtractUserAgent;
 
-    println!("Email: {:1}", email);
-    println!("Password: {:1}", password);
+    let state = expect_context::<SailfishState>();
+    let (ip_addr, user_agent): (ConnectInfo<SocketAddr>, ExtractUserAgent) = extract().await?;
 
     Ok(())
 }

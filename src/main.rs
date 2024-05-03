@@ -1,5 +1,6 @@
 cfg_if::cfg_if! {
     if #[cfg(feature = "ssr")] {
+        use std::net::SocketAddr;
         use axum::{Router};
         use leptos::*;
         use leptos_axum::{generate_route_list, LeptosRoutes};
@@ -47,7 +48,7 @@ cfg_if::cfg_if! {
         
             let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
             logging::log!("listening on http://{}", &addr);
-            axum::serve(listener, app.into_make_service())
+            axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
                 .await
                 .unwrap();
         }
