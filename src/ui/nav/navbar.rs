@@ -36,7 +36,7 @@ pub fn Navbar() -> impl IntoView {
                     <div class="flex-1"></div>
                     <A
                         class="flex items-center text-white px-3 py-2 firefox:text-sm rounded-xl transition hover:bg-zinc-300/25 hover:backdrop-blur"
-                        href="/auth/log-in"
+                        href="/log-in"
                     >
                         <span class="relative"><Icon icon=remixicon::RiLoginCircleSystemLine width="20px" height="20px" /></span>
                         <span class="hidden md:block all-small-caps font-bold tracking-wider ml-1.5">"Log In"</span>

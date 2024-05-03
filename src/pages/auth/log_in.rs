@@ -59,7 +59,7 @@ pub fn LogIn() -> impl IntoView {
                     <span class="button-icon"><Icon icon=remixicon::RiLoginCircleSystemLine /></span>
                     <span class="button-text">"Log In"</span>
                 </Button>
-                <A class="text-center w-full pt-4 text-zinc-500 dark:text-zinc-400 text-sm hover:underline" href="/auth/sign-up">
+                <A class="text-center w-full pt-4 text-zinc-500 dark:text-zinc-400 text-sm hover:underline" href="/sign-up">
                     Looking to join? Sign up today!
                 </A>
             </ActionForm>

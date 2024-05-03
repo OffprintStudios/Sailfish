@@ -40,7 +40,7 @@ pub fn App() -> impl IntoView {
                         <Route path="genre/:id" view=GenreFeed />
                         <Route path="fandom/:id" view=FandomFeed />
                     </Route>
-                    <Route path="auth" view=AuthLayout>
+                    <Route path="/" view=AuthLayout>
                         <Route path="log-in" view=LogIn />
                         <Route path="sign-up" view=SignUp />
                         <Route path="check-email" view=CheckEmail />
