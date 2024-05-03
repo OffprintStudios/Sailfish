@@ -39,7 +39,7 @@ pub fn TextField(
                 placeholder=placeholder
                 autocomplete=autocomplete
                 required=required
-                class="transition w-full rounded-xl border-2 border-x-transparent border-t-transparent focus:border-x-transparent focus:border-t-transparent focus:ring-0 border-zinc-400 dark:border-zinc-500 bg-zinc-300/50 dark:bg-zinc-600/50 backdrop-blur-lg focus:border-b-accent"
+                class="transition w-full rounded-xl border-2 border-x-transparent border-t-transparent focus:border-x-transparent focus:border-t-transparent focus:ring-0 border-zinc-400 dark:border-b-zinc-500 bg-zinc-300/50 dark:bg-zinc-600/50 backdrop-blur-lg focus:border-b-accent dark:focus:border-b-accent"
             />
             <div class="flex pt-1">
                 <span class="flex-1"></span>

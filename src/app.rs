@@ -18,6 +18,8 @@ pub fn App() -> impl IntoView {
 
         // sets the document title
         <Title text="Offprint"/>
+        
+        <Body class="dark crimson" />
 
         // content for this welcome page
         <Router fallback=|| {
@@ -27,7 +29,7 @@ pub fn App() -> impl IntoView {
                 <ErrorTemplate outside_errors/>
             }
         }>
-            <main class="crimson">
+            <main>
                 <Routes>
                     <Route path="/" view=HomeLayout>
                         <Route path="" view=HomePage />
