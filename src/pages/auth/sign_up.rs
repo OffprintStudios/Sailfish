@@ -7,26 +7,26 @@ use crate::ui::util::{Button, KindOfButton, TypeOfButton};
 
 #[server(SignUpForm)]
 pub async fn sign_up(email: String, password: String, repeat_password: String, age_check: Option<String>, terms_agree: Option<String>) -> Result<(), ServerFnError> {
-    /*use argon2::Argon2;
-    use argon2::password_hash::{rand_core::OsRng, PasswordHasher, SaltString};
-    use sea_orm::ActiveValue::Set;
-    use sea_orm::ActiveModelTrait;
-    use sea_orm::ActiveEnum;
-    use crate::state::AppState;
-    use crate::server::db::entities::*;
+    use crate::server::auth::sign_up;
+    use crate::state::SailfishState;
 
     if password != repeat_password {
-        return Err(ServerFnError::ServerError("Your passwords don't match!".to_string()));
+        return Err(ServerFnError::new("Your passwords don't match!"));
     }
-
+    
     if age_check.is_some_and(|val| val != "on") {
         // WHY IS THE CHECKBOX VALUE "ON" OR "OFF" I DON'T UNDERSTAND JUST USE A FUCKING BOOLEAN
-        return Err(ServerFnError::ServerError("You must be 13 years of age or older to access Offprint.".to_string()));
+        return Err(ServerFnError::new("You must be 13 years of age or older to access Offprint."));
     }
 
     if terms_agree.is_some_and(|val| val != "on") {
-        return Err(ServerFnError::ServerError("You must agree to the Terms of Service, Privacy Policy, and Offprint Constitution before joining.".to_string()));
+        // AAAAAAAAAAAAAAAAA
+        return Err(ServerFnError::new("You must agree to the Terms of Service, Privacy Policy, and Offprint Constitution before joining."));
     }
+    
+    let state = expect_context::<SailfishState>();
+
+    /*
 
     let state = expect_context::<AppState>();
     let argon2 = Argon2::default();

@@ -2,19 +2,13 @@ cfg_if::cfg_if! {
     if #[cfg(feature = "ssr")] {
         use std::sync::Arc;
         use axum::{Router};
-        use axum::extract::FromRef;
         use leptos::*;
         use leptos_axum::{generate_route_list, LeptosRoutes};
         use leptos::{provide_context, get_configuration};
         use sailfish::app::*;
         use sailfish::fileserv::file_and_error_handler;
-        use sailfish::server::db::{Pool, connect_to_db};
-
-        #[derive(FromRef, Clone)]
-        pub struct SailfishState {
-            pub db: Arc<Pool>,
-            pub leptos_options: LeptosOptions,
-        }
+        use sailfish::server::db::connect_to_db;
+        use sailfish::state::SailfishState;
         
         #[tokio::main]
         async fn main() {
