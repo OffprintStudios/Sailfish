@@ -97,7 +97,7 @@ pub fn SignUp() -> impl IntoView {
                         class="rounded bg-zinc-500 w-[18px] h-[18px] relative top-[0.075rem] border-0 mr-2 transition checked:bg-blue-500/75"
                     />
                     <span class="text-sm align-top select-none">
-                        I agree to the <A class="text-accent hover:underline" href="/docs/terms-of-service">Terms of Service</A>, <A class="text-accent hover:underline" href="/docs/privacy-policy">Privacy Policy</A>, and <A class="text-accent hover:underline" href="/docs/constitution">Offprint Constitution</A>
+                        I agree to the <A class="text-accent hover:underline" href="/docfiles/terms-of-service">Terms of Service</A>, <A class="text-accent hover:underline" href="/docfiles/privacy-policy">Privacy Policy</A>, and <A class="text-accent hover:underline" href="/docfiles/constitution">Offprint Constitution</A>
                     </span>
                 </label>
                 <Button

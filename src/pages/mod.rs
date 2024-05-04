@@ -7,6 +7,7 @@ use crate::ui::content::{Jumbotron, CardCarousel, NewsPanel, GenreGrid};
 
 pub mod explore;
 pub mod auth;
+pub mod docs;
 
 #[component]
 pub fn HomeLayout() -> impl IntoView {
