@@ -37,12 +37,12 @@ nanoid = "0.4.0"
 dotenvy = "0.15.7"
 slug = "0.1.5"
 cfg-if = "1.0.0"
-axum-login = { version = "0.15.1", optional = true }
 sea-orm = { version = "0.12.15", features = ["sqlx-postgres", "runtime-tokio-rustls", "with-chrono", "with-json", "with-uuid", "macros"], optional = true }
 migration = { path = "migration", optional = true }
 ammonia = { version = "4.0.0", optional = true }
 pulldown-cmark = { version = "0.10.3", optional = true }
 maplit = { version = "1.0.2", optional = true }
+axum-extra = { version = "0.9.3", features = ["typed-header", "cookie", "cookie-signed", "cookie-private", "cookie-key-expansion"], optional = true }
 
 [features]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
@@ -52,12 +52,12 @@ ssr = [
     "dep:tower",
     "dep:tower-http",
     "dep:leptos_axum",
-    "dep:axum-login",
     "dep:sea-orm",
     "dep:migration",
     "dep:ammonia",
     "dep:pulldown-cmark",
     "dep:maplit",
+    "dep:axum-extra",
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",
