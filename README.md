@@ -21,7 +21,7 @@ After installing the latest Rust nightly and cloning this repo, grab the followi
 To install SurrealDB, head over to their website ([surrealdb.com](https://surrealdb.com/)) to get started. We also recommend installing Surrealist to visually manage your local database instance. Afterwards, run the following command to start your local SurrealDB development server in the project's `/temp` directory:
 
 ```bash
-surreal start --log trace --user root --pass root file:./temp/sailfish
+surreal start --log trace --user root --pass root file:./temp/sailfish.db
 ```
 
 *NOTE*: Please do not modify `.gitignore` to include your local database in our repository! That database is your own personal local instance, not anyone else's.
