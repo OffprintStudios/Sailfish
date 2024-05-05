@@ -9,7 +9,7 @@ Sailfish is built entirely in Rust via the [Leptos](https://leptos.dev/) framewo
 ### Prerequisites
 * Rust 1.78 (nightly)
 * PostgreSQL 16.1.2
-* EdgeDB 5.0
+* SurrealDB 1.4.2
 * Bun 1.1.5
 
 After installing the latest Rust nightly and cloning this repo, grab the following tools:
@@ -18,7 +18,13 @@ After installing the latest Rust nightly and cloning this repo, grab the followi
 * `cargo install cargo-leptos`
 * `cargo install trunk`
 
-For EdgeDB, just follow the instructions at [their website](https://edgedb.com/) to install the database and CLI, then run `edgedb watch` to generate the schema. You can use the built-in web UI (via `edgedb ui`) to inspect everything.
+To install SurrealDB, head over to their website ([surrealdb.com](https://surrealdb.com/)) to get started. We also recommend installing Surrealist to visually manage your local database instance. Afterwards, run the following command to start your local SurrealDB development server in the project's `/temp` directory:
+
+```bash
+surreal start --log trace --user root --pass root file:./temp/sailfish
+```
+
+*NOTE*: Please do not modify `.gitignore` to include your local database in our repository! That database is your own personal local instance, not anyone else's.
 
 ## TODO: finish the rest of the README
 

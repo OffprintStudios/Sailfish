@@ -6,6 +6,10 @@ cfg_if::cfg_if! {
         use leptos_axum::{generate_route_list, LeptosRoutes};
         use leptos::{provide_context, get_configuration};
         use axum_extra::extract::cookie::Key;
+        use surrealdb::Surreal;
+        use surrealdb::engine::remote::http::Http;
+        use surrealdb::opt::auth::Root;
+        use surrealdb_migrations::MigrationRunner;
         use sailfish::app::*;
         use sailfish::server::db::connect_to_db;
         use sailfish::state::SailfishState;
@@ -25,6 +29,19 @@ cfg_if::cfg_if! {
             let leptos_options = conf.leptos_options;
             let addr = leptos_options.site_addr;
             let routes = generate_route_list(App);
+            
+            let db = Surreal::new::<Http>("localhost:8000")
+                .await
+                .expect("Could not establish connection to SurrealDB!");
+            
+            db.signin(Root { username: "root", password: "root" }).await.expect("Could not sign in as root user!");
+            
+            db.use_ns("sailfish").use_db("main").await.expect("Could not set namespace or database!");
+            
+            MigrationRunner::new(&db)
+                .up()
+                .await
+                .expect("Failed to apply migrations!");
             
             let conn = connect_to_db().await;
             Migrator::up(&conn, None).await.expect("Could not run migrations!");
