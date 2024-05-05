@@ -24,4 +24,4 @@ db.sqlite
 .vscode
 .idea
 
-temp/*
+temp/
