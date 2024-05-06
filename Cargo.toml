@@ -3,9 +3,6 @@ name = "sailfish"
 version = "0.1.0"
 edition = "2021"
 
-[workspace]
-members = [".", "migration"]
-
 [lib]
 crate-type = ["cdylib", "rlib"]
 
@@ -37,13 +34,11 @@ nanoid = "0.4.0"
 dotenvy = "0.15.7"
 slug = "0.1.5"
 cfg-if = "1.0.0"
-sea-orm = { version = "0.12.15", features = ["sqlx-postgres", "runtime-tokio-rustls", "with-chrono", "with-json", "with-uuid", "macros"], optional = true }
-migration = { path = "migration", optional = true }
 ammonia = { version = "4.0.0", optional = true }
 pulldown-cmark = { version = "0.10.3", optional = true }
 maplit = { version = "1.0.2", optional = true }
 axum-extra = { version = "0.9.3", features = ["typed-header", "cookie", "cookie-signed", "cookie-private", "cookie-key-expansion"], optional = true }
-surrealdb = { version = "1.4.2", features = ["kv-rocksdb"], optional = true }
+surrealdb = { version = "1.4.2", features = ["kv-rocksdb", "arbitrary"], optional = true }
 surrealdb-migrations = { version = "1.4.1", optional = true }
 
 [features]
@@ -54,8 +49,6 @@ ssr = [
     "dep:tower",
     "dep:tower-http",
     "dep:leptos_axum",
-    "dep:sea-orm",
-    "dep:migration",
     "dep:ammonia",
     "dep:pulldown-cmark",
     "dep:maplit",

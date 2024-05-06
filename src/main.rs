@@ -8,10 +8,9 @@ cfg_if::cfg_if! {
         use axum_extra::extract::cookie::Key;
         use surrealdb_migrations::MigrationRunner;
         use sailfish::app::*;
-        use sailfish::server::db::{connect_to_db, connect_to_surreal};
+        use sailfish::server::db::connect_to_db;
         use sailfish::state::SailfishState;
         use sailfish::fileserv::file_and_error_handler;
-        use migration::{Migrator, MigratorTrait};
         
         #[tokio::main]
         async fn main() {
@@ -27,21 +26,18 @@ cfg_if::cfg_if! {
             let addr = leptos_options.site_addr;
             let routes = generate_route_list(App);
 
-            let db = connect_to_surreal().await;
+            let db = connect_to_db().await;
 
             MigrationRunner::new(&db)
                 .up()
                 .await
                 .expect("Failed to apply migrations!");
             
-            let conn = connect_to_db().await;
-            Migrator::up(&conn, None).await.expect("Could not run migrations!");
-            
             let secret_key = std::env::var("SECRET_KEY")
                 .expect("Could not find SECRET_KEY! Are you sure you configured your environment correctly?");
             
             let sailfish_state = SailfishState {
-                db: conn,
+                db,
                 key: Key::from(secret_key.as_bytes()),
                 leptos_options,
             };

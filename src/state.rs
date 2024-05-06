@@ -3,12 +3,13 @@ use axum::async_trait;
 use axum::extract::{FromRef, FromRequestParts};
 use axum_extra::extract::cookie::Key;
 use http::request::Parts;
-use sea_orm::DatabaseConnection;
 use leptos::LeptosOptions;
+use surrealdb::engine::remote::http::Client;
+use surrealdb::Surreal;
 
 #[derive(FromRef, Debug, Clone)]
 pub struct SailfishState {
-    pub db: DatabaseConnection,
+    pub db: Surreal<Client>,
     pub key: Key,
     pub leptos_options: LeptosOptions,
 }

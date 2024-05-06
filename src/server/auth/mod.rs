@@ -2,7 +2,6 @@ mod sign_up;
 mod log_in;
 mod reset_password;
 mod verify_email;
-mod create_session;
 
 pub use sign_up::sign_up;
 pub use log_in::log_in;
@@ -20,13 +19,11 @@ use axum::{
 };
 use axum::extract::FromRef;
 use axum_extra::extract::cookie::PrivateCookieJar;
-use sea_orm::EntityTrait;
-use uuid::Uuid;
-use crate::server::db::entities::prelude::{Account, Session};
-use crate::server::db::entities::account::Model as AccountModel;
+use surrealdb::opt::auth::Jwt;
+use crate::server::db::models::accounts::Account;
 use crate::state::SailfishState;
 
-pub struct AuthSession(AccountModel);
+pub struct AuthSession(Account);
 
 #[async_trait]
 impl<S> FromRequestParts<S> for AuthSession where SailfishState: FromRef<S>, S: Send + Sync  {
@@ -38,7 +35,7 @@ impl<S> FromRequestParts<S> for AuthSession where SailfishState: FromRef<S>, S: 
             Err(err) => match err {}
         };
 
-        let session_id = match jar.get("session_token") {
+        let session_token = match jar.get("session_token") {
             Some(token) => token.value().to_string(),
             None => return Err((StatusCode::UNAUTHORIZED, "You're not allowed to do that!"))
         };
@@ -47,26 +44,9 @@ impl<S> FromRequestParts<S> for AuthSession where SailfishState: FromRef<S>, S: 
             Ok(s) => s,
             Err(_) => return Err((StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong!"))
         };
-
-        let existing_session = match Session::find_by_id(Uuid::parse_str(&session_id).expect("Something went wrong!"))
-            .one(&state.db)
-            .await {
-            Ok(val) => val,
-            Err(_) => return Err((StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong!"))
-        };
-
-        if let Some(session) = existing_session {
-            let account = match Account::find_by_id(session.account_id.clone()).one(&state.db).await {
-                Ok(acc) => acc,
-                Err(_) => return Err((StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong!"))
-            };
-
-            match account {
-                Some(acc) => Ok(AuthSession(acc)),
-                None => Err((StatusCode::UNAUTHORIZED, "You're not allowed to do that!"))
-            }
-        } else {
-            Err((StatusCode::UNAUTHORIZED, "You're not allowed to do that!"))
-        }
+        
+        //let auth = &state.db.query("$auth").await
+        
+        todo!()
     }
 }
