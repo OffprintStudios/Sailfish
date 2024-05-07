@@ -19,8 +19,8 @@ use axum::{
 };
 use axum::extract::FromRef;
 use axum_extra::extract::cookie::PrivateCookieJar;
-use surrealdb::opt::auth::Jwt;
-use crate::server::db::models::accounts::Account;
+use uuid::Uuid;
+use crate::server::db::models::accounts::{Account, Session};
 use crate::state::SailfishState;
 
 pub struct AuthSession(Account);
@@ -36,8 +36,13 @@ impl<S> FromRequestParts<S> for AuthSession where SailfishState: FromRef<S>, S: 
         };
 
         let session_token = match jar.get("session_token") {
-            Some(token) => token.value().to_string(),
+            Some(token) => token.clone(),
             None => return Err((StatusCode::UNAUTHORIZED, "You're not allowed to do that!"))
+        };
+        
+        let session_id = match Uuid::parse_str(session_token.value()) {
+            Ok(id) => id,
+            Err(_) => return Err((StatusCode::UNAUTHORIZED, "You're not allowed to do that!"))
         };
 
         let state = match parts.extract_with_state::<SailfishState, _>(state).await {
@@ -45,8 +50,14 @@ impl<S> FromRequestParts<S> for AuthSession where SailfishState: FromRef<S>, S: 
             Err(_) => return Err((StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong!"))
         };
         
-        //let auth = &state.db.query("$auth").await
+        let account_id = match Session::verify_session(&state.db, session_id).await {
+            Ok(a) => a,
+            Err(_) => return Err((StatusCode::UNAUTHORIZED, "You're not allowed to do that!"))
+        };
         
-        todo!()
+        match Account::fetch_by_id(account_id, &state.db).await {
+            Ok(acc) => Ok(AuthSession(acc)),
+            Err(_) => Err((StatusCode::UNAUTHORIZED, "You're not allowed to do that!"))
+        }
     }
 }

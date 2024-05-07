@@ -1,26 +1,16 @@
 use leptos::ServerFnError;
-use argon2::{Argon2, PasswordHasher};
-use surrealdb::Surreal;
-use surrealdb::sql::Thing;
-use surrealdb::engine::remote::http::Client;
-use ammonia::clean;
-use argon2::password_hash::rand_core::OsRng;
-use argon2::password_hash::SaltString;
-use crate::server::db::models::accounts::{Account, AccountForm};
+use sqlx::{Pool, Postgres};
+use crate::server::db::models::accounts::Account;
 
-pub async fn sign_up(db: &Surreal<Client>, email: String, password: String) -> Result<(), ServerFnError> {
-    let new_email = clean(&email);
-    let argon2 = Argon2::default();
-    let salt = SaltString::generate(&mut OsRng);
-    let hashed_password = argon2.hash_password(clean(&password).as_bytes(), &salt)?.to_string();
+pub async fn sign_up(db: &Pool<Postgres>, email: String, password: String) -> Result<(), ServerFnError> {
+    let result = match Account::new(db, email, password).await {
+        Ok(res) => res,
+        Err(e) => return Err(ServerFnError::new(&e.name))
+    };
     
-    let new_account = db.create::<Account>("accounts")
-        .content(AccountForm {
-            email: new_email,
-            password: hashed_password,
-            terms_agree: true,
-        })
-        .await?;
-    
-    todo!()
+    if result > 0 {
+        Ok(())
+    } else {
+        Err(ServerFnError::new("Could not create your account!"))
+    }
 }

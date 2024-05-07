@@ -4,12 +4,11 @@ use axum::extract::{FromRef, FromRequestParts};
 use axum_extra::extract::cookie::Key;
 use http::request::Parts;
 use leptos::LeptosOptions;
-use surrealdb::engine::remote::http::Client;
-use surrealdb::Surreal;
+use sqlx::{Pool, Postgres};
 
 #[derive(FromRef, Debug, Clone)]
 pub struct SailfishState {
-    pub db: Surreal<Client>,
+    pub db: Pool<Postgres>,
     pub key: Key,
     pub leptos_options: LeptosOptions,
 }

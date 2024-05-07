@@ -6,7 +6,6 @@ cfg_if::cfg_if! {
         use leptos_axum::{generate_route_list, LeptosRoutes};
         use leptos::{provide_context, get_configuration};
         use axum_extra::extract::cookie::Key;
-        use surrealdb_migrations::MigrationRunner;
         use sailfish::app::*;
         use sailfish::server::db::connect_to_db;
         use sailfish::state::SailfishState;
@@ -28,10 +27,10 @@ cfg_if::cfg_if! {
 
             let db = connect_to_db().await;
 
-            MigrationRunner::new(&db)
-                .up()
+            sqlx::migrate!()
+                .run(&db)
                 .await
-                .expect("Failed to apply migrations!");
+                .expect("Could not run migrations!");
             
             let secret_key = std::env::var("SECRET_KEY")
                 .expect("Could not find SECRET_KEY! Are you sure you configured your environment correctly?");
