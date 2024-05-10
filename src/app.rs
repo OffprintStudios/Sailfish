@@ -2,10 +2,10 @@ use crate::error_template::{AppError, ErrorTemplate};
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
-use crate::pages::{HomeLayout, HomePage};
-use crate::pages::auth::{AuthLayout, LogIn, SignUp, CheckEmail};
-use crate::pages::docs::*;
-use crate::pages::explore::{ExplorePage, NewsFeed, NewsPost, FandomFeed, GenreFeed};
+use crate::client::pages::{DefaultLayout, Home};
+use crate::client::pages::explore::{Explore, NewsFeed, NewsPost, GenreFeed, FandomFeed};
+use crate::client::pages::docs::{DocsLayout, About, Constitution, Omnibus, PrivacyPolicy, TermsOfService};
+use crate::client::pages::auth::{AuthLayout, LogIn, SignUp, CheckEmail};
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -13,6 +13,8 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
+
+
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet
         <Stylesheet id="leptos" href="/pkg/sailfish.css"/>
@@ -29,23 +31,24 @@ pub fn App() -> impl IntoView {
             view! {
                 <ErrorTemplate outside_errors/>
             }
+            .into_view()
         }>
             <main>
                 <Routes>
-                    <Route path="/" view=HomeLayout>
-                        <Route path="" view=HomePage />
-                        <Route path="explore" view=ExplorePage />
+                    <Route path="/" view=DefaultLayout>
+                        <Route path="" view=Home />
+                        <Route path="explore" view=Explore />
                         <Route path="news" view=NewsFeed />
                         <Route path="post/:id" view=NewsPost />
                         <Route path="post/:id/:title" view=NewsPost />
                         <Route path="genre/:id" view=GenreFeed />
                         <Route path="fandom/:id" view=FandomFeed />
-                        <Route path="/docs" view=DocsLayout>
-                            <Route path="about" view=AboutPage ssr=SsrMode::Async />
-                            <Route path="constitution" view=ConstitutionPage ssr=SsrMode::Async />
-                            <Route path="omnibus" view=OmnibusPage ssr=SsrMode::Async />
-                            <Route path="privacy-policy" view=PrivacyPolicyPage ssr=SsrMode::Async />
-                            <Route path="terms-of-service" view=TermsOfServicePage ssr=SsrMode::Async />
+                        <Route path="docs" view=DocsLayout>
+                            <Route path="about" view=About ssr=SsrMode::Async />
+                            <Route path="constitution" view=Constitution ssr=SsrMode::Async />
+                            <Route path="omnibus" view=Omnibus ssr=SsrMode::Async />
+                            <Route path="privacy-policy" view=PrivacyPolicy ssr=SsrMode::Async />
+                            <Route path="terms-of-service" view=TermsOfService ssr=SsrMode::Async />
                         </Route>
                     </Route>
                     <Route path="/" view=AuthLayout>

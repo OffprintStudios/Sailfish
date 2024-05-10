@@ -29,4 +29,4 @@ surreal start --log trace --user root --pass root file:./temp/sailfish.db
 
 ## Contributing
 
-We will (eventually) have Contribution guidelines written up! If i
+We will (eventually) have Contribution guidelines written up!
