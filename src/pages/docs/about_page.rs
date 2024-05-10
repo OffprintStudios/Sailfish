@@ -20,7 +20,7 @@ pub async fn get_about_page() -> Result<String, ServerFnError> {
     };
 
     // Converting it from Markdown to HTML
-    let mut md_parse = Parser::new_ext(&page_data, Options::empty());
+    let md_parse = Parser::new_ext(&page_data, Options::empty());
     let mut unsafe_html = String::new();
     push_html(&mut unsafe_html, md_parse);
 
