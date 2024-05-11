@@ -8,6 +8,7 @@ mod switch_profile;
 pub use log_in::LogIn;
 pub use sign_up::SignUp;
 pub use check_email::CheckEmail;
+pub use switch_profile::SwitchProfile;
 
 use leptos::*;
 use leptos_router::*;

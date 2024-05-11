@@ -8,7 +8,7 @@ use crate::client::ui::util::{Button, KindOfButton, MetaTagOptions, MetaTags, Ty
 #[server(LogInForm)]
 pub async fn log_in(email: String, password: String, remember_me: Option<String>) -> Result<(), ServerFnError> {
     use std::ops::Add;
-    use leptos_axum::extract;
+    use leptos_axum::{extract, redirect};
     use tower_cookies::{Cookies, Cookie};
     use tower_cookies::cookie::time::{OffsetDateTime, Duration};
     use tower_cookies::cookie::SameSite;
@@ -37,6 +37,8 @@ pub async fn log_in(email: String, password: String, remember_me: Option<String>
         .build();
 
     cookies.add(session_token);
+    
+    redirect("/switch-profile");
 
     Ok(())
 }
