@@ -24,7 +24,7 @@ leptos_icons = "0.3.0"
 icondata_core = "0.1.0"
 icondata_ri = "0.0.10"
 icondata_lu = "0.0.10"
-leptos-use = "0.10.9"
+leptos-use = { version = "0.10.10", features = ["serde"] }
 argon2 = { version = "0.5.3", optional = true }
 serde = { version = "1.0.201", features = ["derive"] }
 uuid = { version = "1.8.0", features = ["v4", "v7", "fast-rng", "macro-diagnostics", "serde"] }

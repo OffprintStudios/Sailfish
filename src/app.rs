@@ -2,13 +2,34 @@ use crate::error_template::{AppError, ErrorTemplate};
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
+use leptos_use::storage::use_local_storage;
+use leptos_use::use_preferred_dark;
+use leptos_use::utils::JsonCodec;
+use crate::client::state::AppState;
 use crate::client::pages::{DefaultLayout, Home};
 use crate::client::pages::explore::{Explore, NewsFeed, NewsPost, GenreFeed, FandomFeed};
 use crate::client::pages::docs::{DocsLayout, About, Constitution, Omnibus, PrivacyPolicy, TermsOfService};
 use crate::client::pages::auth::{AuthLayout, LogIn, SignUp, CheckEmail};
+use crate::client::util::modes::Mode;
 
 #[component]
 pub fn App() -> impl IntoView {
+    let (app, _, _) = use_local_storage::<AppState, JsonCodec>("app");
+    let is_preferred_dark = use_preferred_dark();
+    
+    let classes = move || {
+        let state = app.get();
+        let preferred_dark = is_preferred_dark.get();
+        if state.mode == Mode::System {
+            match preferred_dark {
+                true => format!("{} {}", Mode::Dark.to_string(), state.theme.to_string()),
+                false => format!("{} {}", Mode::Light.to_string(), state.theme.to_string()),
+            }
+        } else {
+            format!("{} {}", state.mode.to_string(), state.theme.to_string())
+        }
+    };
+    
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
 
@@ -22,7 +43,7 @@ pub fn App() -> impl IntoView {
         // sets the document title
         <Title text="Offprint"/>
         
-        <Body class="dark crimson" />
+        <Body class=move || classes() />
 
         // content for this welcome page
         <Router fallback=|| {
