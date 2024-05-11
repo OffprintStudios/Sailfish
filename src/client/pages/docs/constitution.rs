@@ -35,8 +35,19 @@ pub async fn get_constitution_page() -> Result<String, ServerFnError> {
 #[component]
 pub fn Constitution() -> impl IntoView {
     use leptos::Await;
+    use crate::client::ui::util::{MetaTags, MetaTagOptions};
 
+    let meta_options = MetaTagOptions {
+        url: "https://offprint.cafe/docs/constitution".to_string(),
+        title: "Constitution — Offprint".to_string(),
+        author_url: None,
+        description: "The Offprint Constitution".to_string(),
+        image_url: "/images/beatriz.png".to_string(),
+    };
+    
     view! {
+        <MetaTags options=meta_options />
+        
         <Await future=|| get_constitution_page() let:data>
             <div inner_html=data.clone().unwrap()></div>
         </Await>

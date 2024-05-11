@@ -12,10 +12,21 @@ use leptos::*;
 use leptos_icons::*;
 use icondata_ri as remixicon;
 use crate::client::ui::content::{WorkCard, WorkCardWidth};
+use crate::client::ui::util::{MetaTagOptions, MetaTags};
 
 #[component]
 pub fn Explore() -> impl IntoView {
+    let meta_options = MetaTagOptions {
+        url: "https://offprint.cafe/explore".to_string(),
+        title: "Explore — Offprint".to_string(),
+        author_url: None,
+        description: "For The Stories Left Untold".to_string(),
+        image_url: "/images/beatriz.png".to_string(),
+    };
+    
     view! {
+        <MetaTags options=meta_options />
+        
         <div>
             <div
                 class="sticky top-[55px] md:top-[65px] flex w-full mb-8 h-[50px] md:h-[55px] backdrop-blur-lg z-10 border-b border-opacity-25 bg-zinc-200/50 dark:bg-zinc-700/50 border-zinc-700/25 dark:border-zinc-200/25 scrollbar-none"

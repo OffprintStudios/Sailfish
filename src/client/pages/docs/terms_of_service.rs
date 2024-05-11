@@ -35,8 +35,19 @@ pub async fn get_terms_of_service_page() -> Result<String, ServerFnError> {
 #[component]
 pub fn TermsOfService() -> impl IntoView {
     use leptos::Await;
+    use crate::client::ui::util::{MetaTags, MetaTagOptions};
+
+    let meta_options = MetaTagOptions {
+        url: "https://offprint.cafe/docs/terms-of-service".to_string(),
+        title: "Terms of Service — Offprint".to_string(),
+        author_url: None,
+        description: "Our Terms of Service".to_string(),
+        image_url: "/images/beatriz.png".to_string(),
+    };
 
     view! {
+        <MetaTags options=meta_options />
+        
         <Await future=|| get_terms_of_service_page() let:data>
             <div inner_html=data.clone().unwrap()></div>
         </Await>

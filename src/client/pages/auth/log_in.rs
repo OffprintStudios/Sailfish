@@ -3,7 +3,7 @@ use leptos_router::*;
 use leptos_icons::*;
 use icondata_ri as remixicon;
 use crate::client::ui::forms::{TextField, TextFieldType};
-use crate::client::ui::util::{Button, KindOfButton, TypeOfButton};
+use crate::client::ui::util::{Button, KindOfButton, MetaTagOptions, MetaTags, TypeOfButton};
 
 #[server(LogInForm)]
 pub async fn log_in(email: String, password: String, remember_me: Option<String>) -> Result<(), ServerFnError> {
@@ -43,11 +43,21 @@ pub async fn log_in(email: String, password: String, remember_me: Option<String>
 
 #[component]
 pub fn LogIn() -> impl IntoView {
+    let meta_options = MetaTagOptions {
+        url: "https://offprint.cafe/log-in".to_string(),
+        title: "Log In — Offprint".to_string(),
+        author_url: None,
+        description: "For The Stories Left Untold".to_string(),
+        image_url: "/images/beatriz.png".to_string(),
+    };
+    
     let log_in = create_server_action::<LogInForm>();
     let value = log_in.value();
     let _has_error = move || value.with(|val| matches!(val, Some(Err(_))));
 
     view! {
+        <MetaTags options=meta_options />
+        
         <div class="bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur-lg border border-zinc-300/25 dark:border-zinc-600/25 md:rounded-xl max-w-md p-6 md:p-12 w-full h-full md:h-fit" style="box-shadow: var(--dropshadow);">
             <div class="flex flex-col items-center justify-center pb-4">
                 <h1 class="text-3xl">Welcome back!</h1>

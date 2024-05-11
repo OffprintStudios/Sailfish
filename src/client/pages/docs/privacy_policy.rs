@@ -35,8 +35,19 @@ pub async fn get_privacy_policy_page() -> Result<String, ServerFnError> {
 #[component]
 pub fn PrivacyPolicy() -> impl IntoView {
     use leptos::Await;
+    use crate::client::ui::util::{MetaTags, MetaTagOptions};
+
+    let meta_options = MetaTagOptions {
+        url: "https://offprint.cafe/docs/privacy-policy".to_string(),
+        title: "Privacy Policy — Offprint".to_string(),
+        author_url: None,
+        description: "Our Privacy Policy".to_string(),
+        image_url: "/images/beatriz.png".to_string(),
+    };
 
     view! {
+        <MetaTags options=meta_options />
+        
         <Await future=|| get_privacy_policy_page() let:data>
             <div inner_html=data.clone().unwrap()></div>
         </Await>

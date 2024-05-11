@@ -3,7 +3,7 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 use leptos_use::storage::use_local_storage;
-use leptos_use::use_preferred_dark;
+use leptos_use::{use_css_var, use_preferred_dark};
 use leptos_use::utils::JsonCodec;
 use crate::client::state::AppState;
 use crate::client::pages::{DefaultLayout, Home};
@@ -16,7 +16,8 @@ use crate::client::util::modes::Mode;
 pub fn App() -> impl IntoView {
     let (app, _, _) = use_local_storage::<AppState, JsonCodec>("app");
     let is_preferred_dark = use_preferred_dark();
-    
+    let (accent, _) = use_css_var("--accent");
+
     let classes = move || {
         let state = app.get();
         let preferred_dark = is_preferred_dark.get();
@@ -29,12 +30,12 @@ pub fn App() -> impl IntoView {
             format!("{} {}", state.mode.to_string(), state.theme.to_string())
         }
     };
-    
+
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
 
     view! {
-
+        <Html class=move || classes() />
 
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet
@@ -43,7 +44,7 @@ pub fn App() -> impl IntoView {
         // sets the document title
         <Title text="Offprint"/>
         
-        <Body class=move || classes() />
+        <Meta name="theme-color" content=move || format!("rgb({})", accent.get()) />
 
         // content for this welcome page
         <Router fallback=|| {
