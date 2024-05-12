@@ -9,7 +9,7 @@ use crate::client::state::AppState;
 use crate::client::pages::{DefaultLayout, Home};
 use crate::client::pages::explore::{Explore, NewsFeed, NewsPost, GenreFeed, FandomFeed};
 use crate::client::pages::docs::{DocsLayout, About, Constitution, Omnibus, PrivacyPolicy, TermsOfService};
-use crate::client::pages::auth::{AuthLayout, LogIn, SignUp, CheckEmail};
+use crate::client::pages::auth::{AuthLayout, LogIn, SignUp, CheckEmail, SwitchProfile};
 use crate::client::util::modes::Mode;
 
 #[component]
@@ -23,11 +23,11 @@ pub fn App() -> impl IntoView {
         let preferred_dark = is_preferred_dark.get();
         if state.mode == Mode::System {
             match preferred_dark {
-                true => format!("{} {}", Mode::Dark.to_string(), state.theme.to_string()),
-                false => format!("{} {}", Mode::Light.to_string(), state.theme.to_string()),
+                true => format!("{} {}", Mode::Dark, state.theme),
+                false => format!("{} {}", Mode::Light, state.theme),
             }
         } else {
-            format!("{} {}", state.mode.to_string(), state.theme.to_string())
+            format!("{} {}", state.mode, state.theme)
         }
     };
 
@@ -77,6 +77,7 @@ pub fn App() -> impl IntoView {
                         <Route path="log-in" view=LogIn />
                         <Route path="sign-up" view=SignUp />
                         <Route path="check-email" view=CheckEmail />
+                        <Route path="switch-profile" view=SwitchProfile />
                     </Route>
                 </Routes>
             </main>
