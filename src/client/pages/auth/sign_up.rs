@@ -6,7 +6,13 @@ use crate::client::ui::forms::{TextField, TextFieldType};
 use crate::client::ui::util::{Button, MetaTags, MetaTagOptions, KindOfButton, TypeOfButton};
 
 #[server(SignUpForm)]
-pub async fn sign_up(email: String, password: String, repeat_password: String, age_check: Option<String>, terms_agree: Option<String>) -> Result<(), ServerFnError> {
+pub async fn sign_up(
+    email: String, 
+    password: String, 
+    repeat_password: String, 
+    age_check: Option<String>, 
+    terms_agree: Option<String>,
+) -> Result<(), ServerFnError> {
     use crate::server::util::state::SailfishState;
     use crate::server::api::auth::sign_up;
     
