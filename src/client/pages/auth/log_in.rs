@@ -86,7 +86,7 @@ pub fn LogIn() -> impl IntoView {
                     required=true
                 />
                 <A class="text-zinc-500 dark:text-zinc-400 text-sm pt-2 hover:underline" href="/auth/forgot-password">Forgot your password?</A>
-                <label class="flex mt-2 mb-4">
+                <label class="flex mt-4">
                     <input
                         id="remember-me"
                         name="remember_me"

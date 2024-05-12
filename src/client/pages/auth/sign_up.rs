@@ -7,10 +7,10 @@ use crate::client::ui::util::{Button, MetaTags, MetaTagOptions, KindOfButton, Ty
 
 #[server(SignUpForm)]
 pub async fn sign_up(
-    email: String, 
-    password: String, 
-    repeat_password: String, 
-    age_check: Option<String>, 
+    email: String,
+    password: String,
+    repeat_password: String,
+    age_check: Option<String>,
     terms_agree: Option<String>,
 ) -> Result<(), ServerFnError> {
     use crate::server::util::state::SailfishState;
@@ -52,13 +52,6 @@ pub fn SignUp() -> impl IntoView {
     let sign_up = create_server_action::<SignUpForm>();
     let value = sign_up.value();
     let _has_error = move || value.with(|val| matches!(val, Some(Err(_))));
-
-    let _on_submit = move |ev| {
-        let data = SignUpForm::from_event(&ev);
-        if data.is_err() || data.unwrap().email.is_empty() {
-            ev.prevent_default();
-        }
-    };
 
     view! {
         <MetaTags options=meta_options />
