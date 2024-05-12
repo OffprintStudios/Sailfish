@@ -23,7 +23,7 @@ pub struct Account {
 
 impl Account {
     /// Create a new account in the database, hashing the password with Argon2 in the process. Returns the number of rows affected if successful.
-    pub async fn new(email: String, password: String, db: &Pool<Postgres>) -> Result<u64, ApiError> {
+    pub async fn new(email: String, password: String, db: &Pool<Postgres>) -> Result<Self, ApiError> {
         let clean_email = clean(&email);
         let clean_password = clean(&password);
 
@@ -36,14 +36,26 @@ impl Account {
             }
         }).await??;
 
-        let rows_affected = sqlx::query!(
-            r#"INSERT INTO accounts (email, password, terms_agree) VALUES ($1, $2, $3);"#,
+        let new_account: Self = sqlx::query_as!(
+            Self,
+            r#"
+                INSERT INTO accounts (email, password, terms_agree) VALUES ($1, $2, $3)
+                    RETURNING
+                        id,
+                        email,
+                        password,
+                        roles as "roles: Vec<Role>",
+                        terms_agree,
+                        email_confirmed,
+                        created_at,
+                        updated_at;
+            "#,
             clean_email,
             hash_result,
             true
-        ).execute(db).await?.rows_affected();
+        ).fetch_one(db).await?;
 
-        Ok(rows_affected)
+        Ok(new_account)
     }
 
     /// Verifies that the provided credentials match an associated account, returning that `Account` if successful.

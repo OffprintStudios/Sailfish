@@ -1,6 +1,11 @@
+#![feature(try_trait_v2)]
+#![feature(never_type)]
+
 pub mod app;
 pub mod error_template;
 pub mod client;
+
+pub mod shared;
 
 #[cfg(feature = "ssr")]
 pub mod server;
