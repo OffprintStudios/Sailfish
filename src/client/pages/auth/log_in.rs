@@ -33,7 +33,7 @@ pub struct LogInForm {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Error)]
-pub enum LogInErrors {
+pub enum LogInError {
     #[error("You cannot log in until your email's been confirmed!")]
     EmailNotConfirmed,
     #[error("The email/password combination you entered does not exist. Are you sure you got them right?")]
@@ -43,7 +43,7 @@ pub enum LogInErrors {
 }
 
 #[server]
-pub async fn log_in_route(form_info: LogInForm) -> Result<(), ServerFnError> {
+pub async fn log_in_submit(form_info: LogInForm) -> Result<(), ServerFnError> {
     let key = KEY.get().unwrap();
     let state = expect_context::<SailfishState>();
     let cookies = extract::<Cookies>().await?.private(key);
@@ -51,11 +51,11 @@ pub async fn log_in_route(form_info: LogInForm) -> Result<(), ServerFnError> {
 
     let account = match Account::verify_credentials(form_info.email, form_info.password, &state.db).await {
         Ok(val) => val,
-        Err(_) => return Err(ServerFnError::new(LogInErrors::CredentialsInvalid))
+        Err(_) => return Err(ServerFnError::new(LogInError::CredentialsInvalid))
     };
 
     if !account.email_confirmed {
-        return Err(ServerFnError::new(LogInErrors::EmailNotConfirmed));
+        return Err(ServerFnError::new(LogInError::EmailNotConfirmed));
     }
 
     let token_offset = match persist_session {
@@ -69,7 +69,7 @@ pub async fn log_in_route(form_info: LogInForm) -> Result<(), ServerFnError> {
         &state.db
     ).await {
         Ok(session) => session,
-        Err(_) => return Err(ServerFnError::new(LogInErrors::ServerError))
+        Err(_) => return Err(ServerFnError::new(LogInError::ServerError))
     };
 
     let session_token = Cookie::build(("session_token", session_id.to_string()))
@@ -97,7 +97,7 @@ pub fn LogIn() -> impl IntoView {
         image_url: "/images/beatriz.png".to_string(),
     };
 
-    let submit = Action::<LogInRoute, _>::server();
+    let submit = Action::<LogInSubmit, _>::server();
     let value = submit.value();
     let has_error = move || value.with(|val| matches!(val, Some(Err(_))));
     let error = move || value.with(|val| {
@@ -105,11 +105,11 @@ pub fn LogIn() -> impl IntoView {
         match some {
             Some(v) => {
                 match v {
-                    Ok(()) => LogInErrors::ServerError.to_string(),
+                    Ok(()) => LogInError::ServerError.to_string(),
                     Err(e) => e.to_string().split_off(30),
                 }
             },
-            None => LogInErrors::ServerError.to_string(),
+            None => LogInError::ServerError.to_string(),
         }
     });
 

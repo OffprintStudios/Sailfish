@@ -81,7 +81,7 @@ pub fn App() -> impl IntoView {
                         <Route path="log-in" view=LogIn />
                         <Route path="sign-up" view=SignUp />
                         <Route path="check-email" view=CheckEmail />
-                        <Route path="switch-profile" view=SwitchProfile />
+                        <Route path="switch-profile" view=SwitchProfile ssr=SsrMode::Async />
                     </Route>
                 </Routes>
             </main>

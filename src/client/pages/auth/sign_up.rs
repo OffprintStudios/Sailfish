@@ -30,7 +30,7 @@ pub struct SignUpForm {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Error)]
-pub enum SignUpErrors {
+pub enum SignUpError {
     #[error("Your passwords don't match! Check to make sure you've entered them correctly.")]
     PasswordsDontMatch,
     #[error("You must be 13 years of age or older to join Offprint.")]
@@ -44,24 +44,24 @@ pub enum SignUpErrors {
 }
 
 #[server]
-pub async fn sign_up_route(form_info: SignUpForm) -> Result<(), ServerFnError> {
+pub async fn sign_up_submit(form_info: SignUpForm) -> Result<(), ServerFnError> {
     if form_info.password != form_info.repeat_password {
-        return Err(ServerFnError::new(SignUpErrors::PasswordsDontMatch));
+        return Err(ServerFnError::new(SignUpError::PasswordsDontMatch));
     }
 
     if form_info.age_check.is_some_and(|val| val != "on") {
         // WHY IS THE CHECKBOX VALUE "ON" OR "OFF" I DON'T UNDERSTAND JUST USE A FUCKING BOOLEAN
-        return Err(ServerFnError::new(SignUpErrors::AgeCheckFail));
+        return Err(ServerFnError::new(SignUpError::AgeCheckFail));
     }
 
     if form_info.terms_agree.is_some_and(|val| val != "on") {
-        return Err(ServerFnError::new(SignUpErrors::TermsAgreeFail));
+        return Err(ServerFnError::new(SignUpError::TermsAgreeFail));
     }
 
     let state = expect_context::<SailfishState>();
 
     if Account::fetch_by_email(form_info.email.clone(), &state.db).await?.is_some() {
-        return Err(ServerFnError::new(SignUpErrors::Conflict));
+        return Err(ServerFnError::new(SignUpError::Conflict));
     }
 
     let _ = Account::new(form_info.email, form_info.password, &state.db).await?;
@@ -80,7 +80,7 @@ pub fn SignUp() -> impl IntoView {
         image_url: "/images/beatriz.png".to_string(),
     };
     
-    let submit = Action::<SignUpRoute, _>::server();
+    let submit = Action::<SignUpSubmit, _>::server();
     let value = submit.value();
     let has_error = move || value.with(|val| matches!(val, Some(Err(_))));
     let error = move || value.with(|val| {
@@ -88,11 +88,11 @@ pub fn SignUp() -> impl IntoView {
         match some {
             Some(v) => {
                 match v {
-                    Ok(()) => SignUpErrors::ServerError.to_string(),
+                    Ok(()) => SignUpError::ServerError.to_string(),
                     Err(e) => e.to_string().split_off(30),
                 }
             },
-            None => SignUpErrors::ServerError.to_string(),
+            None => SignUpError::ServerError.to_string(),
         }
     });
 
