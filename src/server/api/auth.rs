@@ -1,7 +1,3 @@
-mod create_profile;
-
-pub use create_profile::create_profile;
-
 use uuid::Uuid;
 use leptos::ServerFnError;
 use sqlx::{Pool, Postgres};
@@ -18,9 +14,9 @@ pub async fn authorize<'a>(cookies: PrivateCookies<'a>, db: &Pool<Postgres>) -> 
 
     let session_id = Uuid::parse_str(session_token.value())
         .map_err(|_| ServerFnError::new(unauthorized_msg))?;
-    
+
     let account_id = Session::verify_session(session_id, db).await?;
-    
+
     if let Some(account) = Account::fetch_by_id(account_id, db).await? {
         Ok(account)
     } else {
@@ -33,6 +29,6 @@ pub async fn authorize_with_profile<'a>(cookies: PrivateCookies<'a>, profile_id:
 
     let account = authorize(cookies, db).await?;
     let profile = Profile::check_owned(profile_id, account.id, db).await?;
-    
+
     Ok((account, profile))
 }
