@@ -124,7 +124,7 @@ pub fn LogIn() -> impl IntoView {
                 </span>
             </div>
             <Show when=has_error>
-                <div class="text-sm flex flex-col bg-red-600/25 border border-red-600/75 rounded-xl py-2 px-4 mb-4">
+                <div class="text-sm flex flex-col bg-red-600/25 border border-red-600/75 rounded-xl p-4 mb-4">
                     <div class="flex items-center mb-1">
                         <span class="mr-1"><Icon icon=remixicon::RiInformationSystemLine width="20px" height="20px" /></span>
                         <span class="font-bold">"Head's Up!"</span>
