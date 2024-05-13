@@ -2,56 +2,99 @@ use leptos::*;
 use leptos_router::*;
 use leptos_icons::*;
 use icondata_ri as remixicon;
+use serde::{Deserialize, Serialize};
+use thiserror::Error;
+use garde::Validate;
 use crate::client::ui::forms::{TextField, TextFieldType};
 use crate::client::ui::util::{Button, MetaTags, MetaTagOptions, KindOfButton, TypeOfButton};
 
-#[server(SignUpForm)]
-pub async fn sign_up(
+cfg_if::cfg_if! {
+    if #[cfg(feature = "ssr")] {
+        use crate::server::util::state::SailfishState;
+        use crate::server::db::accounts::Account;
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Validate)]
+pub struct SignUpForm {
+    #[garde(email)]
     email: String,
+    #[garde(length(min=3))]
     password: String,
+    #[garde(length(min=3))]
     repeat_password: String,
+    #[garde(skip)]
     age_check: Option<String>,
+    #[garde(skip)]
     terms_agree: Option<String>,
-) -> Result<(), ServerFnError> {
-    use crate::server::util::state::SailfishState;
-    use crate::server::api::auth::sign_up;
-    
-    if password != repeat_password {
-        return Err(ServerFnError::ServerError("Your passwords don't match!".to_string()));
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Error)]
+pub enum SignUpErrors {
+    #[error("Your passwords don't match! Check to make sure you've entered them correctly.")]
+    PasswordsDontMatch,
+    #[error("You must be 13 years of age or older to join Offprint.")]
+    AgeCheckFail,
+    #[error("You must agree to the Terms of Service, Privacy Policy, and Offprint Constitution before joining Offprint.")]
+    TermsAgreeFail,
+    #[error("An account with this email address already exists!")]
+    Conflict,
+    #[error("An unknown error has occurred.")]
+    ServerError,
+}
+
+#[server]
+pub async fn sign_up_route(form_info: SignUpForm) -> Result<(), ServerFnError> {
+    if form_info.password != form_info.repeat_password {
+        return Err(ServerFnError::new(SignUpErrors::PasswordsDontMatch));
     }
 
-    if age_check.is_some_and(|val| val != "on") {
+    if form_info.age_check.is_some_and(|val| val != "on") {
         // WHY IS THE CHECKBOX VALUE "ON" OR "OFF" I DON'T UNDERSTAND JUST USE A FUCKING BOOLEAN
-        return Err(ServerFnError::ServerError("You must be 13 years of age or older to access Offprint.".to_string()));
+        return Err(ServerFnError::new(SignUpErrors::AgeCheckFail));
     }
 
-    if terms_agree.is_some_and(|val| val != "on") {
-        return Err(ServerFnError::ServerError("You must agree to the Terms of Service, Privacy Policy, and Offprint Constitution before joining.".to_string()));
+    if form_info.terms_agree.is_some_and(|val| val != "on") {
+        return Err(ServerFnError::new(SignUpErrors::TermsAgreeFail));
     }
 
     let state = expect_context::<SailfishState>();
-    match sign_up(email, password, &state.db).await {
-        Ok(()) =>  {
-            leptos_axum::redirect("/check-email");
-            Ok(())
-        },
-        Err(e) => Err(e),
+
+    if Account::fetch_by_email(form_info.email.clone(), &state.db).await?.is_some() {
+        return Err(ServerFnError::new(SignUpErrors::Conflict));
     }
+
+    let _ = Account::new(form_info.email, form_info.password, &state.db).await?;
+
+    leptos_axum::redirect("/check-email");
+    Ok(())
 }
 
 #[component]
 pub fn SignUp() -> impl IntoView {
     let meta_options = MetaTagOptions {
         url: "https://offprint.cafe/sign-up".to_string(),
-        title: "Log In — Offprint".to_string(),
+        title: "Sign Up — Offprint".to_string(),
         author_url: None,
         description: "For The Stories Left Untold".to_string(),
         image_url: "/images/beatriz.png".to_string(),
     };
     
-    let sign_up = create_server_action::<SignUpForm>();
-    let value = sign_up.value();
-    let _has_error = move || value.with(|val| matches!(val, Some(Err(_))));
+    let submit = Action::<SignUpRoute, _>::server();
+    let value = submit.value();
+    let has_error = move || value.with(|val| matches!(val, Some(Err(_))));
+    let error = move || value.with(|val| {
+        let some = val.to_owned();
+        match some {
+            Some(v) => {
+                match v {
+                    Ok(()) => SignUpErrors::ServerError.to_string(),
+                    Err(e) => e.to_string().split_off(30),
+                }
+            },
+            None => SignUpErrors::ServerError.to_string(),
+        }
+    });
 
     view! {
         <MetaTags options=meta_options />
@@ -63,9 +106,18 @@ pub fn SignUp() -> impl IntoView {
                     "Let's get started, shall we?"
                 </span>
             </div>
-            <ActionForm class="flex flex-col" action=sign_up>
+            <Show when=has_error>
+                <div class="text-sm flex flex-col bg-red-600/25 border border-red-600/75 rounded-xl py-2 px-4 mb-4">
+                    <div class="flex items-center mb-1">
+                        <span class="mr-1"><Icon icon=remixicon::RiInformationSystemLine width="20px" height="20px" /></span>
+                        <span class="font-bold">"Head's Up!"</span>
+                    </div>
+                    <span>{error()}</span>
+                </div>
+            </Show>
+            <ActionForm class="flex flex-col" action=submit>
                 <TextField
-                    name="email".to_string()
+                    name="form_info[email]".to_string()
                     label="Email Address".to_string()
                     kind=TextFieldType::Email
                     placeholder="somebody@example.net".to_string()
@@ -74,7 +126,7 @@ pub fn SignUp() -> impl IntoView {
                 />
                 <div class="my-1"></div>
                 <TextField
-                    name="password".to_string()
+                    name="form_info[password]".to_string()
                     label="Password".to_string()
                     kind=TextFieldType::Password
                     placeholder="••••••••••".to_string()
@@ -83,7 +135,7 @@ pub fn SignUp() -> impl IntoView {
                 />
                 <div class="my-1"></div>
                 <TextField
-                    name="repeat_password".to_string()
+                    name="form_info[repeat_password]".to_string()
                     label="Repeat Password".to_string()
                     kind=TextFieldType::Password
                     placeholder="••••••••••".to_string()
@@ -93,7 +145,7 @@ pub fn SignUp() -> impl IntoView {
                 <label class="flex mt-4 mb-2">
                     <input
                         id="age-check"
-                        name="age_check"
+                        name="form_info[age_check]"
                         type="checkbox"
                         required
                         class="rounded bg-zinc-500 w-[18px] h-[18px] relative top-[0.075rem] border-0 mr-2 transition checked:bg-blue-500/75"
@@ -103,7 +155,7 @@ pub fn SignUp() -> impl IntoView {
                 <label class="flex mt-2 mb-4">
                     <input
                         id="terms-agree"
-                        name="terms_agree"
+                        name="form_info[terms_agree]"
                         type="checkbox"
                         required
                         class="rounded bg-zinc-500 w-[18px] h-[18px] relative top-[0.075rem] border-0 mr-2 transition checked:bg-blue-500/75"

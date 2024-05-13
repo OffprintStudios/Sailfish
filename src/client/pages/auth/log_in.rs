@@ -2,29 +2,74 @@ use leptos::*;
 use leptos_router::*;
 use leptos_icons::*;
 use icondata_ri as remixicon;
+use serde::{Deserialize, Serialize};
+use garde::Validate;
+use thiserror::Error;
 use crate::client::ui::forms::{TextField, TextFieldType};
 use crate::client::ui::util::{Button, KindOfButton, MetaTagOptions, MetaTags, TypeOfButton};
 
-#[server(LogInForm)]
-pub async fn log_in(email: String, password: String, remember_me: Option<String>) -> Result<(), ServerFnError> {
-    use std::ops::Add;
-    use leptos_axum::{extract, redirect};
-    use tower_cookies::{Cookies, Cookie};
-    use tower_cookies::cookie::time::{OffsetDateTime, Duration};
-    use tower_cookies::cookie::SameSite;
-    use crate::server::util::constants::{KEY, MAX_SESSION_DURATION, MIN_SESSION_DURATION};
-    use crate::server::util::state::SailfishState;
-    use crate::server::api::auth::log_in;
+cfg_if::cfg_if! {
+    if #[cfg(feature = "ssr")] {
+        use std::ops::Add;
+        use chrono::Utc;
+        use leptos_axum::{extract, redirect};
+        use tower_cookies::{Cookies, Cookie};
+        use tower_cookies::cookie::time::{OffsetDateTime, Duration};
+        use tower_cookies::cookie::SameSite;
+        use crate::server::util::constants::{KEY, MAX_SESSION_DURATION, MIN_SESSION_DURATION};
+        use crate::server::util::state::SailfishState;
+        use crate::server::db::accounts::{Account, Session};
+    }
+}
 
+#[derive(Debug, Clone, Serialize, Deserialize, Validate)]
+pub struct LogInForm {
+    #[garde(email)]
+    email: String,
+    #[garde(length(min=3))]
+    password: String,
+    #[garde(skip)]
+    remember_me: Option<String>
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Error)]
+pub enum LogInErrors {
+    #[error("You cannot log in until your email's been confirmed!")]
+    EmailNotConfirmed,
+    #[error("The email/password combination you entered does not exist. Are you sure you got them right?")]
+    CredentialsInvalid,
+    #[error("An unknown error has occurred.")]
+    ServerError,
+}
+
+#[server]
+pub async fn log_in_route(form_info: LogInForm) -> Result<(), ServerFnError> {
     let key = KEY.get().unwrap();
     let state = expect_context::<SailfishState>();
     let cookies = extract::<Cookies>().await?.private(key);
-    let persist_session = remember_me.is_some_and(|v| v == "on");
+    let persist_session = form_info.remember_me.is_some_and(|v| v == "on");
 
-    let session_id = log_in(email, password, persist_session, &state.db).await?;
+    let account = match Account::verify_credentials(form_info.email, form_info.password, &state.db).await {
+        Ok(val) => val,
+        Err(_) => return Err(ServerFnError::new(LogInErrors::CredentialsInvalid))
+    };
+
+    if !account.email_confirmed {
+        return Err(ServerFnError::new(LogInErrors::EmailNotConfirmed));
+    }
+
     let token_offset = match persist_session {
         true => MAX_SESSION_DURATION,
         false => MIN_SESSION_DURATION,
+    };
+
+    let session_id = match Session::start(
+        account.id,
+        Utc::now() + chrono::Duration::seconds(token_offset),
+        &state.db
+    ).await {
+        Ok(session) => session,
+        Err(_) => return Err(ServerFnError::new(LogInErrors::ServerError))
     };
 
     let session_token = Cookie::build(("session_token", session_id.to_string()))
@@ -39,7 +84,6 @@ pub async fn log_in(email: String, password: String, remember_me: Option<String>
     cookies.add(session_token);
     
     redirect("/switch-profile");
-
     Ok(())
 }
 
@@ -52,10 +96,22 @@ pub fn LogIn() -> impl IntoView {
         description: "For The Stories Left Untold".to_string(),
         image_url: "/images/beatriz.png".to_string(),
     };
-    
-    let log_in = create_server_action::<LogInForm>();
-    let value = log_in.value();
-    let _has_error = move || value.with(|val| matches!(val, Some(Err(_))));
+
+    let submit = Action::<LogInRoute, _>::server();
+    let value = submit.value();
+    let has_error = move || value.with(|val| matches!(val, Some(Err(_))));
+    let error = move || value.with(|val| {
+        let some = val.to_owned();
+        match some {
+            Some(v) => {
+                match v {
+                    Ok(()) => LogInErrors::ServerError.to_string(),
+                    Err(e) => e.to_string().split_off(30),
+                }
+            },
+            None => LogInErrors::ServerError.to_string(),
+        }
+    });
 
     view! {
         <MetaTags options=meta_options />
@@ -67,9 +123,18 @@ pub fn LogIn() -> impl IntoView {
                     "We're so glad you're here."
                 </span>
             </div>
-            <ActionForm class="flex flex-col" action=log_in>
+            <Show when=has_error>
+                <div class="text-sm flex flex-col bg-red-600/25 border border-red-600/75 rounded-xl py-2 px-4 mb-4">
+                    <div class="flex items-center mb-1">
+                        <span class="mr-1"><Icon icon=remixicon::RiInformationSystemLine width="20px" height="20px" /></span>
+                        <span class="font-bold">"Head's Up!"</span>
+                    </div>
+                    <span>{error()}</span>
+                </div>
+            </Show>
+            <ActionForm class="flex flex-col" action=submit>
                 <TextField
-                    name="email".to_string()
+                    name="form_info[email]".to_string()
                     label="Email Address".to_string()
                     kind=TextFieldType::Email
                     placeholder="somebody@example.net".to_string()
@@ -78,7 +143,7 @@ pub fn LogIn() -> impl IntoView {
                 />
                 <div class="my-1.5"></div>
                 <TextField
-                    name="password".to_string()
+                    name="form_info[password]".to_string()
                     label="Password".to_string()
                     kind=TextFieldType::Password
                     placeholder="••••••••••".to_string()
@@ -89,7 +154,7 @@ pub fn LogIn() -> impl IntoView {
                 <label class="flex mt-4">
                     <input
                         id="remember-me"
-                        name="remember_me"
+                        name="form_info[remember_me]"
                         type="checkbox"
                         class="rounded bg-zinc-500 w-[18px] h-[18px] relative top-[0.075rem] border-0 mr-2 transition checked:bg-blue-500/75"
                     />

@@ -39,6 +39,8 @@ maplit = { version = "1.0.2", optional = true }
 sqlx = { version = "0.7.4", features = ["runtime-tokio", "tls-rustls", "postgres", "macros", "migrate", "uuid", "chrono", "json"], optional = true }
 rand = "0.8.5"
 tower-cookies = { version = "0.10.0", features = ["private"], optional = true }
+garde = { version = "0.18.0", features = ["derive", "url", "email", "regex"] }
+#leptoaster = "0.1.8"
 
 [features]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]

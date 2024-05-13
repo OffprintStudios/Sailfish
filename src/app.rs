@@ -5,6 +5,7 @@ use leptos_router::*;
 use leptos_use::storage::use_local_storage;
 use leptos_use::{use_css_var, use_preferred_dark};
 use leptos_use::utils::JsonCodec;
+// use leptoaster::{Toaster, provide_toaster};
 use crate::client::state::AppState;
 use crate::client::pages::{DefaultLayout, Home};
 use crate::client::pages::explore::{Explore, NewsFeed, NewsPost, GenreFeed, FandomFeed};
@@ -14,6 +15,8 @@ use crate::client::util::modes::Mode;
 
 #[component]
 pub fn App() -> impl IntoView {
+    // provide_toaster();
+
     let (app, _, _) = use_local_storage::<AppState, JsonCodec>("app");
     let is_preferred_dark = use_preferred_dark();
     let (accent, _) = use_css_var("--accent");
@@ -35,7 +38,7 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
-        <Html class=move || classes() />
+        <Html class=classes />
 
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet
@@ -43,8 +46,10 @@ pub fn App() -> impl IntoView {
 
         // sets the document title
         <Title text="Offprint"/>
-        
+
         <Meta name="theme-color" content=move || format!("rgb({})", accent.get()) />
+
+        // <Toaster stacked=true />
 
         // content for this welcome page
         <Router fallback=|| {
@@ -53,7 +58,6 @@ pub fn App() -> impl IntoView {
             view! {
                 <ErrorTemplate outside_errors/>
             }
-            .into_view()
         }>
             <main>
                 <Routes>

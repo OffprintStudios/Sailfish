@@ -1,9 +1,5 @@
-mod log_in;
-mod sign_up;
 mod create_profile;
 
-pub use sign_up::sign_up;
-pub use log_in::log_in;
 pub use create_profile::create_profile;
 
 use uuid::Uuid;
