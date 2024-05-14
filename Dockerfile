@@ -12,16 +12,13 @@ RUN npm install -g sass
 
 RUN curl --proto '=https' --tlsv1.2 -LsSf https://github.com/leptos-rs/cargo-leptos/releases/latest/download/cargo-leptos-installer.sh | sh
 
-# Install Bun
-RUN curl -fsSL https://bun.sh/install | bash
-
 # Add the WASM target
 RUN rustup target add wasm32-unknown-unknown
 
 WORKDIR /work
 COPY . .
 
-RUN ~/.bun/bin/bun install
+RUN npm install
 RUN cargo leptos build --release -vv
 
 FROM rustlang/rust:nightly-alpine as runner
