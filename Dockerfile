@@ -35,8 +35,7 @@ WORKDIR /app
 COPY . .
 
 # Setting up NodeJS
-RUN apt-get update && apt-get -y install curl gnupg
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | sh
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 RUN nvm install 20
 RUN node -v
 RUN npm -v
