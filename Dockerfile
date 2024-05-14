@@ -5,6 +5,8 @@
 # Get started with a build env with Rust nightly
 FROM rustlang/rust:nightly-bullseye as builder
 
+SHELL ["/bin/bash", "-c"]
+
 # Get DATABASE_URL from args
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
