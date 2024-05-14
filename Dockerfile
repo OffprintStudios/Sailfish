@@ -36,6 +36,7 @@ COPY . .
 
 # Setting up NodeJS
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+RUN source ~/.nvm/nvm.sh
 RUN nvm install 20
 RUN node -v
 RUN npm -v
