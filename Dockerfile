@@ -19,11 +19,10 @@ RUN cp cargo-binstall /usr/local/cargo/bin
 
 # Install cargo-leptos
 RUN cargo binstall cargo-leptos -y
-RUN source /root/.bashrc
-
 
 # Install Bun
 RUN curl -fsSL https://bun.sh/install | bash
+RUN source /root/.bashrc
 
 # Add the WASM target
 RUN rustup target add wasm32-unknown-unknown
