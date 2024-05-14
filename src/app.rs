@@ -70,11 +70,11 @@ pub fn App() -> impl IntoView {
                         <Route path="genre/:id" view=GenreFeed />
                         <Route path="fandom/:id" view=FandomFeed />
                         <Route path="docs" view=DocsLayout>
-                            <Route path="about" view=About ssr=SsrMode::Async />
-                            <Route path="constitution" view=Constitution ssr=SsrMode::Async />
-                            <Route path="omnibus" view=Omnibus ssr=SsrMode::Async />
-                            <Route path="privacy-policy" view=PrivacyPolicy ssr=SsrMode::Async />
-                            <Route path="terms-of-service" view=TermsOfService ssr=SsrMode::Async />
+                            <Route path="about" view=About />
+                            <Route path="constitution" view=Constitution />
+                            <Route path="omnibus" view=Omnibus />
+                            <Route path="privacy-policy" view=PrivacyPolicy />
+                            <Route path="terms-of-service" view=TermsOfService />
                         </Route>
                     </Route>
                     <Route path="/" view=AuthLayout>

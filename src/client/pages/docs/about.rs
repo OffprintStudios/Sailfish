@@ -1,42 +1,9 @@
 use leptos::*;
-
-#[server]
-pub async fn get_about_page() -> Result<String, ServerFnError> {
-    use std::fs::read_to_string;
-    use std::path::Path;
-    use ammonia::Builder;
-    use pulldown_cmark::{Parser, Options, html::push_html};
-    use maplit::hashset;
-
-    // Getting the page file
-    let curr_dir = match std::env::current_dir() {
-        Ok(val) => val,
-        Err(_) => return Err(ServerFnError::new("something went wrong!"))
-    };
-    let path_url = format!("{}/public/docfiles/about.md", curr_dir.to_str().unwrap());
-    let page_data = match read_to_string(Path::new(path_url.clone().as_str())) {
-        Ok(val) => val,
-        Err(_) => return Err(ServerFnError::new("something went wrong!"))
-    };
-
-    // Converting it from Markdown to HTML
-    let md_parse = Parser::new_ext(&page_data, Options::empty());
-    let mut unsafe_html = String::new();
-    push_html(&mut unsafe_html, md_parse);
-
-    // Finally, sanitize the remaining output and return
-    let safe_html = Builder::default()
-        .generic_attributes(hashset!["class"])
-        .clean(&*unsafe_html)
-        .to_string();
-    Ok(safe_html)
-}
+use pulldown_cmark::{Parser, html::push_html};
+use crate::client::ui::util::{MetaTags, MetaTagOptions};
 
 #[component]
 pub fn About() -> impl IntoView {
-    use leptos::Await;
-    use crate::client::ui::util::{MetaTags, MetaTagOptions};
-
     let meta_options = MetaTagOptions {
         url: "https://offprint.cafe/docs/about".to_string(),
         title: "About — Offprint".to_string(),
@@ -44,12 +11,30 @@ pub fn About() -> impl IntoView {
         description: "About Offprint".to_string(),
         image_url: "/images/beatriz.png".to_string(),
     };
+    
+    let to_parse = r#"
+<div class="text-center">
+    <h1 class="flex flex-col">
+        <span>What is Offprint?</span>
+        <span class="text-lg text-zinc-600 dark:text-zinc-300">Who are we? Who are you? Who are any of us?</span>
+        <span class="text-base text-zinc-600 dark:text-zinc-300 italic">Edited February 25, 2024</span>
+    </h1>
+</div>
+
+Offprint is a community-focused writing site for fanfiction, original stories, and blog posts. Our goal is to provide a place where authors can form communities for their readers, promote themselves, and collaborate with other authors. We are constantly building up features to encourage this, and quickly respond to user feedback.
+
+Offprint aims to be a safe and welcoming space, and as such is committed to excluding exceptionally harmful content and users.
+
+Offprint is built on open source software, hosted on Github, and welcomes contributions. The site is funded entirely by donations, and there are no advertisements.
+    "#;
+    
+    let parser = Parser::new(to_parse);
+    let mut parsed_str = String::new();
+    push_html(&mut parsed_str, parser);
 
     view! {
         <MetaTags options=meta_options />
         
-        <Await future=|| get_about_page() let:data>
-            <div inner_html=data.clone().unwrap()></div>
-        </Await>
+        <div inner_html=parsed_str></div>
     }
 }
