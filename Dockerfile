@@ -17,6 +17,9 @@ RUN cp cargo-binstall /usr/local/cargo/bin
 # Install cargo-leptos
 RUN cargo binstall cargo-leptos -y
 
+# Get all NPM dependencies
+RUN npm install
+
 # Add the WASM target
 RUN rustup target add wasm32-unknown-unknown
 
