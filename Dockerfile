@@ -48,14 +48,11 @@ RUN cargo leptos build --release -vv
 
 FROM debian:bookworm-slim as runtime
 WORKDIR /app
-# RUN apt-get update -y \
-#   && apt-get install -y --no-install-recommends openssl libssl-dev ca-certificates \
-#   && apt-get autoremove -y \
-#   && apt-get clean -y \
-#   && rm -rf /var/lib/apt/lists/*
-
 RUN apt-get update -y \
-    && apt-get install -y openssl libssl-dev ca-certificates
+  && apt-get install -y --no-install-recommends openssl libssl1.1 ca-certificates \
+  && apt-get autoremove -y \
+  && apt-get clean -y \
+  && rm -rf /var/lib/apt/lists/*
 
 # -- NB: update binary name from "leptos_start" to match your app name in Cargo.toml --
 # Copy the server binary to the /app directory
