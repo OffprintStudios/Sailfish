@@ -5,6 +5,8 @@
 # Get started with a build env with Rust nightly
 FROM rustlang/rust:nightly-alpine as builder
 
+ARG DATABASE_URL
+
 RUN apk update && \
     apk add --no-cache bash curl npm libc-dev binaryen
 
