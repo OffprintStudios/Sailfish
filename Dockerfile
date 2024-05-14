@@ -17,7 +17,7 @@ RUN npm install -g sass
 RUN curl --proto '=https' --tlsv1.2 -LsSf https://github.com/leptos-rs/cargo-leptos/releases/latest/download/cargo-leptos-installer.sh | sh
 
 # Install SQLX CLI
-RUN cargo install sqlx-cli --no-default-features --features rustls,postgres
+RUN cargo install sqlx-cli --no-default-features --features native-tls,postgres
 
 # Add the WASM target
 RUN rustup target add wasm32-unknown-unknown
