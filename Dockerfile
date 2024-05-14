@@ -18,7 +18,8 @@ RUN cp cargo-binstall /usr/local/cargo/bin
 RUN cargo binstall cargo-leptos -y
 
 # Get all NPM dependencies
-RUN npm install
+RUN curl -fsSL https://bun.sh/install | bash
+RUN bun install
 
 # Add the WASM target
 RUN rustup target add wasm32-unknown-unknown
