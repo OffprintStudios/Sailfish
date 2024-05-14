@@ -25,7 +25,8 @@ RUN cargo binstall cargo-leptos -y
 
 # Install NodeJS
 RUN apt-get update -y
-RUN apt-get install nodejs -y
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+RUN apt-get install -y nodejs
 
 # Install sqlx-cli
 RUN cargo install sqlx-cli --no-default-features --features native-tls,postgres
