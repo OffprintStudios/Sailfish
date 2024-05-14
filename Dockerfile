@@ -56,7 +56,7 @@ RUN apt-get update -y \
 
 # -- NB: update binary name from "leptos_start" to match your app name in Cargo.toml --
 # Copy the server binary to the /app directory
-COPY --from=builder /app/target/release/leptos_start /app/
+COPY --from=builder /app/target/release/sailfish /app/
 
 # /target/site contains our JS/WASM/CSS, etc.
 COPY --from=builder /app/target/site /app/site
