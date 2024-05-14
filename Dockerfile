@@ -19,6 +19,7 @@ RUN cargo binstall cargo-leptos -y
 
 # Get all NPM dependencies
 RUN curl -fsSL https://bun.sh/install | bash
+RUN source /root/.bashrc
 RUN bun install
 
 # Add the WASM target
