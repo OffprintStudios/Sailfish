@@ -5,6 +5,9 @@
 # Get started with a build env with Rust nightly
 FROM rustlang/rust:nightly-bullseye as builder
 
+# Set default shell
+SHELL ["/bin/bash", "-c"]
+
 # If you’re using stable, use this instead
 # FROM rust:1.74-bullseye as builder
 
@@ -16,6 +19,8 @@ RUN cp cargo-binstall /usr/local/cargo/bin
 
 # Install cargo-leptos
 RUN cargo binstall cargo-leptos -y
+RUN source /root/.bashrc
+
 
 # Install Bun
 RUN curl -fsSL https://bun.sh/install | bash
