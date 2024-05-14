@@ -13,14 +13,6 @@ pub fn Constitution() -> impl IntoView {
     };
     
     let to_parse = r#"
-<div class="text-center">
-    <h1 class="flex flex-col">
-        <span>The Offprint Constitution</span>
-        <span class="text-lg text-zinc-600 dark:text-zinc-300">Community Rules & Etiquette</span>
-        <span class="text-base text-zinc-600 dark:text-zinc-300 italic">Edited February 25, 2024</span>
-    </h1>
-</div>
-
 Hello! Whether you’re here because you’re about to sign up for your own Offprint account, or you just want to check back and reference our rules and regulations, welcome! This Constitution represents a **living document** of the Rules of Engagement for Offprint and the Offprint Café. As such, **everything in this document is subject to change** over the course of time. Please bear that in mind while reading.
 
 To consolidate as much important information as possible, this document is broken up into four different sections:
@@ -103,6 +95,14 @@ Our chief moderation tool within the Offprint Café is a bot called @Bernard. It
     
     view! {
         <MetaTags options=meta_options />
+        
+        <div class="text-center">
+            <h1 class="flex flex-col">
+                <span>"The Offprint Constitution"</span>
+                <span class="text-lg text-zinc-600 dark:text-zinc-300">"Community Rules & Etiquette"</span>
+                <span class="text-base text-zinc-600 dark:text-zinc-300 italic">"Edited February 25, 2024"</span>
+            </h1>
+        </div>
         
         <div inner_html=parsed_str></div>
     }

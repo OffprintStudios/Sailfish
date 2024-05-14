@@ -13,14 +13,6 @@ pub fn PrivacyPolicy() -> impl IntoView {
     };
     
     let to_parse = r#"
-<div class="text-center">
-    <h1 class="flex flex-col">
-        <span>Privacy Policy</span>
-        <span class="text-lg text-zinc-600 dark:text-zinc-300">How we handle your privacy concerns</span>
-        <span class="text-base text-zinc-600 dark:text-zinc-300 italic">Edited February 25, 2024</span>
-    </h1>
-</div>
-
 Your privacy is important to us. It is Offprint Studios' policy to respect your privacy regarding any information we may collect from you across our website, https://offprint.net, and other sites we own and operate.
 
 ## 1. Information We Collect
@@ -158,6 +150,14 @@ Although some cookies can be blocked with little impact on your experience of a 
 
     view! {
         <MetaTags options=meta_options />
+        
+        <div class="text-center">
+            <h1 class="flex flex-col">
+                <span>"Privacy Policy"</span>
+                <span class="text-lg text-zinc-600 dark:text-zinc-300">"How we handle your privacy concerns"</span>
+                <span class="text-base text-zinc-600 dark:text-zinc-300 italic">"Edited February 25, 2024"</span>
+            </h1>
+        </div>
         
         <div inner_html=parsed_str></div>
     }

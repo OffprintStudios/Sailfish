@@ -13,14 +13,6 @@ pub fn Omnibus() -> impl IntoView {
     };
     
     let to_parse = r#"
-<div class="text-center">
-    <h1 class="flex flex-col">
-        <span>The Offprint Omnibus</span>
-        <span class="text-lg text-zinc-600 dark:text-zinc-300">The do's and don't's of posting</span>
-        <span class="text-base text-zinc-600 dark:text-zinc-300 italic">Edited February 25, 2024</span>
-    </h1>
-</div>
-
 This Omnibus is intended to act as a set of guidelines and rules to help guide both site users and staff on what content Offprint allows, and with which ratings, warnings, and licensing.
 
 Please note that while there is and will always be some leeway in regards to these rules, intentionally trying to skirt or work around any restrictions is not allowed.
@@ -174,6 +166,14 @@ Use of Generative AI, Machine Learning Algorithms, or similar within your works 
 
     view! {
         <MetaTags options=meta_options />
+        
+        <div class="text-center">
+            <h1 class="flex flex-col">
+                <span>"The Offprint Omnibus"</span>
+                <span class="text-lg text-zinc-600 dark:text-zinc-300">"The do's and don't's of posting"</span>
+                <span class="text-base text-zinc-600 dark:text-zinc-300 italic">"Edited February 25, 2024"</span>
+            </h1>
+        </div>
         
         <div inner_html=parsed_str></div>
     }

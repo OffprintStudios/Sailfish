@@ -13,14 +13,6 @@ pub fn TermsOfService() -> impl IntoView {
     };
     
     let to_parse = r#"
-<div class="text-center">
-    <h1 class="flex flex-col">
-        <span>Terms of Service</span>
-        <span class="text-lg text-zinc-600 dark:text-zinc-300">Platform concerns</span>
-        <span class="text-base text-zinc-600 dark:text-zinc-300 italic">Edited February 25, 2024</span>
-    </h1>
-</div>
-
 ## 1. Terms
 
 By accessing the website at https://offprint.cafe, you are agreeing to be bound by these terms of service, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws. If you do not agree with any of these terms, you are prohibited from using or accessing this site. The materials contained in this website are protected by applicable copyright and trademark law.
@@ -68,6 +60,14 @@ These terms and conditions are governed by and construed in accordance with the 
 
     view! {
         <MetaTags options=meta_options />
+        
+        <div class="text-center">
+            <h1 class="flex flex-col">
+                <span>"Terms of Service"</span>
+                <span class="text-lg text-zinc-600 dark:text-zinc-300">"Platform Concerns"</span>
+                <span class="text-base text-zinc-600 dark:text-zinc-300 italic">"Edited February 25, 2024"</span>
+            </h1>
+        </div>
         
         <div inner_html=parsed_str></div>
     }
