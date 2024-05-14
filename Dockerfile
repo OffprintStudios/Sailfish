@@ -20,6 +20,12 @@ RUN cp cargo-binstall /usr/local/cargo/bin
 # Install cargo-leptos
 RUN cargo binstall cargo-leptos -y
 
+# Install Node
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+RUN nvm install 20
+RUN node -v
+RUN npm -v
+
 # Install Bun
 RUN curl -fsSL https://bun.sh/install | bash
 
