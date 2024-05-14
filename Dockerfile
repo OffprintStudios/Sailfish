@@ -17,10 +17,8 @@ RUN cp cargo-binstall /usr/local/cargo/bin
 # Install cargo-leptos
 RUN cargo binstall cargo-leptos -y
 
-# Get all NPM dependencies
+# Install Bun
 RUN curl -fsSL https://bun.sh/install | bash
-RUN source /root/.bashrc
-RUN bun install
 
 # Add the WASM target
 RUN rustup target add wasm32-unknown-unknown
@@ -31,6 +29,7 @@ WORKDIR /app
 COPY . .
 
 # Build the app
+RUN bun install
 RUN cargo leptos build --release -vv
 
 FROM debian:bookworm-slim as runtime
