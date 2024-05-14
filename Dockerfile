@@ -72,4 +72,4 @@ EXPOSE 8080
 
 # -- NB: update binary name from "leptos_start" to match your app name in Cargo.toml --
 # Run the server
-CMD ["/app/leptos_start"]
+CMD ["/app/sailfish"]
