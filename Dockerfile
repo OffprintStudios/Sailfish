@@ -35,13 +35,8 @@ WORKDIR /app
 COPY . .
 
 # Setting up NodeJS
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-RUN source ~/.nvm/nvm.sh
-RUN nvm install 20
-RUN node -v
-RUN npm -v
-
-RUN npm install
+RUN curl -fsSL https://bun.sh/install | bash
+RUN ~/.bun/bin/bun install
 
 # Build the app
 RUN sqlx migrate run
