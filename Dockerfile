@@ -26,6 +26,7 @@ WORKDIR /work
 COPY . .
 
 RUN npm install
+RUN sqlx migrate run
 RUN cargo leptos build --release -vv
 
 FROM rustlang/rust:nightly-alpine as runner
