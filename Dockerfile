@@ -23,6 +23,13 @@ RUN cp cargo-binstall /usr/local/cargo/bin
 # Install cargo-leptos
 RUN cargo binstall cargo-leptos -y
 
+# Install Bun
+RUN curl -fsSL https://bun.sh/install | bash
+
+# Install NodeJS
+RUN apt-get update -y
+RUN apt install nodejs -y
+
 # Install sqlx-cli
 RUN cargo install sqlx-cli --no-default-features --features native-tls,postgres
 
@@ -34,8 +41,7 @@ RUN mkdir -p /app
 WORKDIR /app
 COPY . .
 
-# Setting up NodeJS
-RUN curl -fsSL https://bun.sh/install | bash
+# Installing JS dependencies
 RUN ~/.bun/bin/bun install
 
 # Build the app
