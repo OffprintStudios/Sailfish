@@ -4,14 +4,20 @@ use thiserror::Error;
 
 #[derive(Clone, Debug, Error)]
 pub enum AppError {
-    #[error("Not Found")]
+    #[error("The page you're looking for ain't around here")]
     NotFound,
+    #[error("You don't have permission to do that")]
+    Unauthorized,
+    #[error("Where were you even going, anyway?")]
+    Forbidden,
 }
 
 impl AppError {
     pub fn status_code(&self) -> StatusCode {
         match self {
             AppError::NotFound => StatusCode::NOT_FOUND,
+            AppError::Unauthorized => StatusCode::UNAUTHORIZED,
+            AppError::Forbidden => StatusCode::FORBIDDEN,
         }
     }
 }
@@ -52,21 +58,29 @@ pub fn ErrorTemplate(
     }
 
     view! {
-        <h1>{if errors.len() > 1 {"Errors"} else {"Error"}}</h1>
-        <For
-            // a function that returns the items we're iterating over; a signal is fine
-            each= move || {errors.clone().into_iter().enumerate()}
-            // a unique key for each item as a reference
-            key=|(index, _error)| *index
-            // renders each item to a view
-            children=move |error| {
-                let error_string = error.1.to_string();
-                let error_code= error.1.status_code();
-                view! {
-                    <h2>{error_code.to_string()}</h2>
-                    <p>"Error: " {error_string}</p>
-                }
-            }
-        />
+        <div
+            class="flex flex-col items-center justify-center w-full h-[100svh] bg-cover bg-center relative z-0"
+            style="background-image: url('/images/backpacker.jpg')"
+        >
+            <div class="bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur-lg border border-zinc-300/25 dark:border-zinc-600/25 md:rounded-xl max-w-md p-6 md:p-12 w-full h-full md:h-fit" style="box-shadow: var(--dropshadow);">
+                <For
+                    // a function that returns the items we're iterating over; a signal is fine
+                    each= move || {errors.clone().into_iter().enumerate()}
+                    // a unique key for each item as a reference
+                    key=|(index, _error)| *index
+                    // renders each item to a view
+                    children=move |error| {
+                        let error_string = error.1.to_string();
+                        let error_code= error.1.status_code();
+                        view! {
+                            <div class="flex flex-col items-center justify-center pb-4">
+                                <h1 class="text-3xl">{error_code.to_string()}</h1>
+                            </div>
+                            <p>{error_string}</p>
+                        }
+                    }
+                />
+            </div>
+        </div>
     }
 }

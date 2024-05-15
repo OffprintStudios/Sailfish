@@ -10,7 +10,7 @@ use crate::client::state::AppState;
 use crate::client::pages::{DefaultLayout, Home};
 use crate::client::pages::explore::{Explore, NewsFeed, NewsPost, GenreFeed, FandomFeed};
 use crate::client::pages::docs::{DocsLayout, About, Constitution, Omnibus, PrivacyPolicy, TermsOfService};
-use crate::client::pages::auth::{AuthLayout, LogIn, SignUp, CheckEmail, SwitchProfile};
+use crate::client::pages::auth::AuthRoutes;
 use crate::client::util::modes::Mode;
 
 #[component]
@@ -77,12 +77,7 @@ pub fn App() -> impl IntoView {
                             <Route path="terms-of-service" view=TermsOfService />
                         </Route>
                     </Route>
-                    <Route path="/" view=AuthLayout>
-                        <Route path="log-in" view=LogIn />
-                        <Route path="sign-up" view=SignUp />
-                        <Route path="check-email" view=CheckEmail />
-                        <Route path="switch-profile" view=SwitchProfile ssr=SsrMode::Async />
-                    </Route>
+                    <AuthRoutes />
                 </Routes>
             </main>
         </Router>

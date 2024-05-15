@@ -1,6 +1,4 @@
 use leptos::*;
-use leptos_icons::*;
-use icondata_ri as remixicon;
 use serde::{Serialize, Deserialize};
 use thiserror::Error;
 use crate::client::models::accounts::ProfileModel;
@@ -32,8 +30,11 @@ pub async fn load_profiles() -> Result<Vec<ProfileModel>, ServerFnError> {
     let cookies = extract::<Cookies>().await?.private(key);
     
     let account = match authorize(cookies, &state.db).await {
-        Ok(acc) => acc,
-        Err(_) => return Err(ServerFnError::new(LoadProfileError::AuthFail))
+        Some(acc) => acc,
+        None => {
+            leptos_axum::redirect("/");
+            return Err(ServerFnError::new(LoadProfileError::AuthFail));
+        }
     };
     
     let profiles = match Profile::fetch_owned(account.id, &state.db).await {
@@ -59,41 +60,42 @@ pub fn SwitchProfile() -> impl IntoView {
         image_url: "/images/beatriz.png".to_string(),
     };
 
+    let (profiles, _) = create_signal::<Vec<ProfileModel>>(vec![]);
+
+    let profiles_data = create_blocking_resource(profiles, |_| async move {
+        load_profiles().await
+    });
+
     view! {
         <MetaTags options=meta_options />
 
         <div class="bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur-lg border border-zinc-300/25 dark:border-zinc-600/25 md:rounded-xl max-w-md p-6 md:p-12 w-full h-full md:h-fit" style="box-shadow: var(--dropshadow);">
-            <Await future=load_profiles let:data>
-                <ErrorBoundary fallback=move |errors| {
-                    view! {
-                        <div class="text-sm flex flex-col bg-red-600/25 border border-red-600/75 rounded-xl p-4 mb-4">
-                            <div class="flex items-center mb-1">
-                                <span class="mr-1"><Icon icon=remixicon::RiInformationSystemLine width="20px" height="20px" /></span>
-                                <span class="font-bold">"Head's Up!"</span>
-                            </div>
-                            <span>
-                                {move || errors.get()
-                                    .into_iter()
-                                    .map(|(_, e)| view! { <li>{e.to_string()}</li> })
-                                    .collect_view()
-                                }
-                            </span>
-                        </div>
-                    }       
-                }>
-                    <div class="flex flex-col items-center justify-center pb-4">
-                        <h1 class="text-3xl">"Select a Profile"</h1>
-                        <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold" style="font-family: var(--header-text);">
-                            "Who's gonna be with us today?"
-                        </span>
+            <Suspense
+                fallback=move || view! { <p>Loading</p> }
+            >
+                <div class="flex flex-col items-center justify-center pb-4">
+                    <h1 class="text-3xl">"Select a Profile"</h1>
+                    <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold" style="font-family: var(--header-text);">
+                        "Who's gonna be with us today?"
+                    </span>
+                    <div>
+                    {move || match profiles_data.get() {
+                        Some(v) => {
+                            match v {
+                                Ok(p) => format!("{}", p.len()),
+                                Err(e) => e.to_string()
+                            }
+                        },
+                        None => "Nothing found".to_string()
+                    }}
                     </div>
-                    <div class="flex items-center justify-center w-full">
-                        <div>"hello"</div>
-                        <div>"hello"</div>
-                        <div>"hello"</div>
-                    </div>
-                </ErrorBoundary>
-            </Await>
+                </div>
+                <div class="flex items-center justify-center w-full">
+                    <div>"hello"</div>
+                    <div>"hello"</div>
+                    <div>"hello"</div>
+                </div>
+            </Suspense>
         </div>
     }
 }

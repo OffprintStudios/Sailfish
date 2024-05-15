@@ -116,7 +116,7 @@ pub fn LogIn() -> impl IntoView {
     view! {
         <MetaTags options=meta_options />
         
-        <div class="bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur-lg border border-zinc-300/25 dark:border-zinc-600/25 md:rounded-xl max-w-md p-6 md:p-12 w-full h-full md:h-fit" style="box-shadow: var(--dropshadow);">
+        <div class="flex flex-col items-center justify-center md:justify-normal bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur-lg border border-zinc-300/25 dark:border-zinc-600/25 md:rounded-xl max-w-md p-6 md:p-12 w-full h-full md:h-fit relative" style="box-shadow: var(--dropshadow);">
             <div class="flex flex-col items-center justify-center pb-4">
                 <h1 class="text-3xl">Welcome back!</h1>
                 <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold" style="font-family: var(--header-text);">
@@ -132,7 +132,7 @@ pub fn LogIn() -> impl IntoView {
                     <span>{error()}</span>
                 </div>
             </Show>
-            <ActionForm class="flex flex-col" action=submit>
+            <ActionForm class="flex flex-col w-full" action=submit>
                 <TextField
                     name="form_info[email]".to_string()
                     label="Email Address".to_string()
