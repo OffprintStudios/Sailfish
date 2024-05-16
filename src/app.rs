@@ -8,8 +8,9 @@ use leptos_use::utils::JsonCodec;
 // use leptoaster::{Toaster, provide_toaster};
 use crate::client::state::AppState;
 use crate::client::pages::{DefaultLayout, Home};
-use crate::client::pages::explore::{Explore, NewsFeed, NewsPost, GenreFeed, FandomFeed};
-use crate::client::pages::docs::{DocsLayout, About, Constitution, Omnibus, PrivacyPolicy, TermsOfService};
+use crate::client::pages::explore::ExploreRoutes;
+use crate::client::pages::social::SocialRoutes;
+use crate::client::pages::docs::DocsRoutes;
 use crate::client::pages::auth::AuthRoutes;
 use crate::client::util::modes::Mode;
 
@@ -63,19 +64,9 @@ pub fn App() -> impl IntoView {
                 <Routes>
                     <Route path="/" view=DefaultLayout>
                         <Route path="" view=Home />
-                        <Route path="explore" view=Explore />
-                        <Route path="news" view=NewsFeed />
-                        <Route path="post/:id" view=NewsPost />
-                        <Route path="post/:id/:title" view=NewsPost />
-                        <Route path="genre/:id" view=GenreFeed />
-                        <Route path="fandom/:id" view=FandomFeed />
-                        <Route path="docs" view=DocsLayout>
-                            <Route path="about" view=About />
-                            <Route path="constitution" view=Constitution />
-                            <Route path="omnibus" view=Omnibus />
-                            <Route path="privacy-policy" view=PrivacyPolicy />
-                            <Route path="terms-of-service" view=TermsOfService />
-                        </Route>
+                        <ExploreRoutes />
+                        <SocialRoutes />
+                        <DocsRoutes />
                     </Route>
                     <AuthRoutes />
                 </Routes>

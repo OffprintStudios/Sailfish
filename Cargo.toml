@@ -40,6 +40,7 @@ sqlx = { version = "0.7.4", features = ["runtime-tokio", "tls-native-tls", "post
 rand = "0.8.5"
 tower-cookies = { version = "0.10.0", features = ["private"], optional = true }
 garde = { version = "0.18.0", features = ["derive", "url", "email", "regex"] }
+lettre = { version = "0.11.7", features = ["tokio1-native-tls"], optional = true }
 #leptoaster = "0.1.8"
 
 [features]
@@ -56,6 +57,7 @@ ssr = [
     "dep:maplit",
     "dep:sqlx",
     "dep:tower-cookies",
+    "dep:lettre",
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",

@@ -4,6 +4,7 @@ mod check_email;
 mod forgot_password;
 mod reset_password;
 mod switch_profile;
+mod create_profile;
 
 pub use log_in::LogIn;
 pub use sign_up::SignUp;

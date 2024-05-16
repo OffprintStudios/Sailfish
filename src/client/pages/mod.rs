@@ -2,6 +2,7 @@ mod home;
 pub mod explore;
 pub mod docs;
 pub mod auth;
+pub mod social;
 
 pub use home::Home;
 
