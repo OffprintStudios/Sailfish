@@ -25,7 +25,7 @@ pub fn AuthRoutes() -> impl IntoView {
             <Route path="sign-up" view=SignUp />
             <Route path="check-email" view=CheckEmail />
             <Route path="switch-profile" view=SwitchProfile ssr=SsrMode::PartiallyBlocked />
-            <Route path="create-profile" view=CreateProfile />
+            <Route path="create-profile" view=CreateProfile ssr=SsrMode::PartiallyBlocked />
         </Route>
     }
 }

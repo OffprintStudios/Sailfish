@@ -6,6 +6,7 @@ use garde::Validate;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use crate::client::ui::forms::{TextField, TextFieldType, TextArea};
+use crate::client::ui::util::{MetaTagOptions, MetaTags};
 
 cfg_if::cfg_if! {
     if #[cfg(feature = "ssr")] {
@@ -34,6 +35,21 @@ pub enum CreateProfileError {
     UsernameTaken,
     #[error("An unknown error has occurred.")]
     ServerError,
+}
+
+#[server]
+pub async fn check_auth() -> Result<(), ServerFnError> {
+    let key = KEY.get().unwrap();
+    let state = expect_context::<SailfishState>();
+    let cookies = extract::<Cookies>().await?.private(key);
+
+    match authorize(cookies, &state.db).await {
+        Some(_) => Ok(()),
+        None => {
+            leptos_axum::redirect("/");
+            Err(ServerFnError::new(CreateProfileError::AuthFail))
+        }
+    }
 }
 
 #[server]
@@ -70,6 +86,14 @@ pub async fn create_profile_submit(form_info: ProfileForm) -> Result<(), ServerF
 
 #[component]
 pub fn CreateProfile() -> impl IntoView {
+    let meta_options = MetaTagOptions {
+        url: "https://offprint.cafe/create-profile".to_string(),
+        title: "Create Profile — Offprint".to_string(),
+        author_url: None,
+        description: "For The Stories Left Untold".to_string(),
+        image_url: "/images/beatriz.png".to_string(),
+    };
+    
     let submit = Action::<CreateProfileSubmit, _>::server();
     let value = submit.value();
     let has_error = move || value.with(|val| matches!(val, Some(Err(_))));
@@ -87,38 +111,47 @@ pub fn CreateProfile() -> impl IntoView {
     });
     
     view! {
+        <MetaTags options=meta_options />
+        
         <div class="flex flex-col items-center justify-center md:justify-normal bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur-lg border border-zinc-300/25 dark:border-zinc-600/25 md:rounded-xl max-w-md p-6 md:p-12 w-full h-full md:h-fit relative" style="box-shadow: var(--dropshadow);">
-            <div class="flex flex-col items-center justify-center pb-4">
-                <h1 class="text-3xl">"Create a Profile"</h1>
-                <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold" style="font-family: var(--header-text);">
-                    "Let's make a whole new you"
-                </span>
-            </div>
-            <Show when=has_error>
-                <div class="text-sm flex flex-col bg-red-600/25 border border-red-600/75 rounded-xl p-4 mb-4">
-                    <div class="flex items-center mb-1">
-                        <span class="mr-1"><Icon icon=remixicon::RiInformationSystemLine width="20px" height="20px" /></span>
-                        <span class="font-bold">"Head's Up!"</span>
-                    </div>
-                    <span>{error()}</span>
+            <Await
+                future=check_auth
+                blocking=true
+                let:_data
+            >
+                <div class="flex flex-col items-center justify-center pb-4">
+                    <h1 class="text-3xl">"Create a Profile"</h1>
+                    <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold" style="font-family: var(--header-text);">
+                        "Let's make a whole new you"
+                    </span>
                 </div>
-            </Show>
-            <ActionForm class="flex flex-col w-full" action=submit>
-                <TextField
-                    name="form_info[username]".to_string()
-                    label="Username".to_string()
-                    kind=TextFieldType::Text
-                    placeholder="SomeoneSpecial".to_string()
-                    autocomplete="username".to_string()
-                    required=true
-                />
-                <div class="my-1.5" />
-                <TextArea
-                    name="form_info[bio]".to_string()
-                    label="Bio (Optional)".to_string()
-                    placeholder="Just Another Friendly Face In The Crowd".to_string()
-                />
-            </ActionForm>
+                
+                <Show when=has_error>
+                    <div class="text-sm flex flex-col bg-red-600/25 border border-red-600/75 rounded-xl p-4 mb-4">
+                        <div class="flex items-center mb-1">
+                            <span class="mr-1"><Icon icon=remixicon::RiInformationSystemLine width="20px" height="20px" /></span>
+                            <span class="font-bold">"Head's Up!"</span>
+                        </div>
+                        <span>{error()}</span>
+                    </div>
+                </Show>
+                <ActionForm class="flex flex-col w-full" action=submit>
+                    <TextField
+                        name="form_info[username]".to_string()
+                        label="Username".to_string()
+                        kind=TextFieldType::Text
+                        placeholder="SomeoneSpecial".to_string()
+                        autocomplete="username".to_string()
+                        required=true
+                    />
+                    <div class="my-1.5" />
+                    <TextArea
+                        name="form_info[bio]".to_string()
+                        label="Bio (Optional)".to_string()
+                        placeholder="Just Another Friendly Face In The Crowd".to_string()
+                    />
+                </ActionForm>
+            </Await>
         </div>
     }
 }
