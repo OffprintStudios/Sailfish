@@ -10,6 +10,7 @@ pub use log_in::LogIn;
 pub use sign_up::SignUp;
 pub use check_email::CheckEmail;
 pub use switch_profile::SwitchProfile;
+pub use create_profile::CreateProfile;
 
 use leptos::*;
 use leptos_router::*;
@@ -24,6 +25,7 @@ pub fn AuthRoutes() -> impl IntoView {
             <Route path="sign-up" view=SignUp />
             <Route path="check-email" view=CheckEmail />
             <Route path="switch-profile" view=SwitchProfile ssr=SsrMode::PartiallyBlocked />
+            <Route path="create-profile" view=CreateProfile />
         </Route>
     }
 }

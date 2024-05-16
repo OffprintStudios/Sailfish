@@ -5,17 +5,31 @@ use icondata_ri as remixicon;
 use garde::Validate;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-use crate::client::ui::forms::{TextField, TextFieldType};
-use crate::client::pages::auth::log_in::LogInError;
+use crate::client::ui::forms::{TextField, TextFieldType, TextArea};
+
+cfg_if::cfg_if! {
+    if #[cfg(feature = "ssr")] {
+        use leptos_axum::extract;
+        use tower_cookies::Cookies;
+        use crate::server::api::auth::authorize;
+        use crate::server::db::accounts::Profile;
+        use crate::server::util::constants::KEY;
+        use crate::server::util::state::SailfishState;
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, Validate)]
 pub struct ProfileForm {
     #[garde(length(min=3, max=48))]
     pub username: String,
+    #[garde(length(max=240))]
+    pub bio: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Error)]
 pub enum CreateProfileError {
+    #[error("You don't have permission to view this page.")]
+    AuthFail,
     #[error("This username is already taken.")]
     UsernameTaken,
     #[error("An unknown error has occurred.")]
@@ -24,7 +38,34 @@ pub enum CreateProfileError {
 
 #[server]
 pub async fn create_profile_submit(form_info: ProfileForm) -> Result<(), ServerFnError> {
-    todo!()
+    let key = KEY.get().unwrap();
+    let state = expect_context::<SailfishState>();
+    let cookies = extract::<Cookies>().await?.private(key);
+    
+    let account = match authorize(cookies, &state.db).await {
+        Some(account) => account,
+        None => {
+            leptos_axum::redirect("/");
+            return Err(ServerFnError::new(CreateProfileError::AuthFail));
+        }
+    };
+    
+    let fresh_username = match Profile::is_username_taken(form_info.username.clone(), &state.db).await {
+        Ok(v) => !v,
+        Err(_) => return Err(ServerFnError::new(CreateProfileError::ServerError))
+    };
+    
+    if !fresh_username {
+        return Err(ServerFnError::new(CreateProfileError::UsernameTaken));
+    }
+    
+    match Profile::new(account.id, form_info.username, form_info.bio, &state.db).await {
+        Ok(_) => {
+            leptos_axum::redirect("/switch-profile");
+            Ok(())
+        },
+        Err(_) => Err(ServerFnError::new(CreateProfileError::ServerError))
+    }
 }
 
 #[component]
@@ -37,11 +78,11 @@ pub fn CreateProfile() -> impl IntoView {
         match some {
             Some(v) => {
                 match v {
-                    Ok(()) => LogInError::ServerError.to_string(),
+                    Ok(()) => CreateProfileError::ServerError.to_string(),
                     Err(e) => e.to_string().split_off(30),
                 }
             },
-            None => LogInError::ServerError.to_string(),
+            None => CreateProfileError::ServerError.to_string(),
         }
     });
     
@@ -70,6 +111,12 @@ pub fn CreateProfile() -> impl IntoView {
                     placeholder="SomeoneSpecial".to_string()
                     autocomplete="username".to_string()
                     required=true
+                />
+                <div class="my-1.5" />
+                <TextArea
+                    name="form_info[bio]".to_string()
+                    label="Bio (Optional)".to_string()
+                    placeholder="Just Another Friendly Face In The Crowd".to_string()
                 />
             </ActionForm>
         </div>

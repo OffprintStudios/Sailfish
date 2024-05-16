@@ -65,6 +65,17 @@ impl Profile {
         Ok(result)
     }
     
+    /// Checks to see if any usernames exist which match `potential_username`.
+    pub async fn is_username_taken(potential_username: String, db: &Pool<Postgres>) -> Result<bool, ApiError> {
+        let result: Vec<Self> = sqlx::query_as!(
+            Self,
+            r#"SELECT * FROM profiles WHERE username = $1"#,
+            potential_username,
+        ).fetch_all(db).await?;
+        
+        Ok(result.len() > 0)
+    }
+    
     /// Fetches a single profile based on its ID.
     pub async fn fetch_one(profile_id: String, db: &Pool<Postgres>) -> Result<Self, ApiError> {
         let result: Self = sqlx::query_as!(
