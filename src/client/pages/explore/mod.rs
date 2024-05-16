@@ -15,18 +15,6 @@ use icondata_ri as remixicon;
 use crate::client::ui::content::{WorkCard, WorkCardWidth};
 use crate::client::ui::util::{MetaTagOptions, MetaTags};
 
-#[component(transparent)]
-pub fn ExploreRoutes() -> impl IntoView {
-    view! {
-        <Route path="explore" view=Explore />
-        <Route path="news" view=NewsFeed />
-        <Route path="post/:id" view=NewsPost />
-        <Route path="post/:id/:title" view=NewsPost />
-        <Route path="genre/:id" view=GenreFeed />
-        <Route path="fandom/:id" view=FandomFeed />
-    }
-}
-
 #[component]
 pub fn Explore() -> impl IntoView {
     let meta_options = MetaTagOptions {

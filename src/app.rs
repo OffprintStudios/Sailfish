@@ -8,7 +8,7 @@ use leptos_use::utils::JsonCodec;
 // use leptoaster::{Toaster, provide_toaster};
 use crate::client::state::AppState;
 use crate::client::pages::{DefaultLayout, Home};
-use crate::client::pages::explore::ExploreRoutes;
+use crate::client::pages::explore::{Explore, NewsPost, NewsFeed, GenreFeed, FandomFeed};
 use crate::client::pages::social::SocialRoutes;
 use crate::client::pages::docs::DocsRoutes;
 use crate::client::pages::auth::AuthRoutes;
@@ -64,7 +64,12 @@ pub fn App() -> impl IntoView {
                 <Routes>
                     <Route path="/" view=DefaultLayout>
                         <Route path="" view=Home />
-                        <ExploreRoutes />
+                        <Route path="explore" view=Explore />
+                        <Route path="news" view=NewsFeed />
+                        <Route path="post/:id" view=NewsPost />
+                        <Route path="post/:id/:title" view=NewsPost />
+                        <Route path="genre/:id" view=GenreFeed />
+                        <Route path="fandom/:id" view=FandomFeed />
                         <SocialRoutes />
                         <DocsRoutes />
                     </Route>
