@@ -16,4 +16,9 @@
         "strings": true
     },
     "css.validate": false,
+    "rust-analyzer.check.command": "clippy",
+    "rust-analyzer.check.extraArgs": [
+        "--features ssr"
+    ],
+    "rust-analyzer.checkOnSave": true,
 }

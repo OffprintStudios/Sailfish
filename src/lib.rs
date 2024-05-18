@@ -1,22 +1,23 @@
-#![feature(try_trait_v2)]
-#![feature(never_type)]
-
-pub mod app;
+pub mod sailfish;
 pub mod error_template;
-pub mod client;
+pub mod models;
+pub mod pages;
+pub mod state;
+pub mod ui;
+pub mod util;
 
-pub mod shared;
-
-#[cfg(feature = "ssr")]
-pub mod server;
-
-#[cfg(feature = "ssr")]
-pub mod fileserv;
+cfg_if::cfg_if! {
+    if #[cfg(feature = "ssr")] {
+        pub mod fileserv;
+        pub mod database;
+        pub mod constants;
+    }
+}
 
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]
 pub fn hydrate() {
-    use crate::app::*;
+    use crate::sailfish::*;
     console_error_panic_hook::set_once();
-    leptos::mount_to_body(App);
+    leptos::mount_to_body(Sailfish);
 }

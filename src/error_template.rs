@@ -1,23 +1,54 @@
 use http::status::StatusCode;
 use leptos::*;
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
+use strum::EnumString;
 
-#[derive(Clone, Debug, Error)]
-pub enum AppError {
-    #[error("The page you're looking for ain't around here")]
+#[derive(Clone, Debug, Error, EnumString, Serialize, Deserialize)]
+pub enum SailfishError {
+    #[error("The page you're looking for ain't 'round here, friend")]
     NotFound,
-    #[error("You don't have permission to do that")]
+    #[error("You shouldn't toy with fate like that")]
     Unauthorized,
-    #[error("Where were you even going, anyway?")]
+    #[error("The ancient ways shall remain unknown to you, traveler")]
     Forbidden,
+    #[error("Look, this page isn't a bug—it's a feature")]
+    ServerError,
 }
 
-impl AppError {
+impl SailfishError {
     pub fn status_code(&self) -> StatusCode {
         match self {
-            AppError::NotFound => StatusCode::NOT_FOUND,
-            AppError::Unauthorized => StatusCode::UNAUTHORIZED,
-            AppError::Forbidden => StatusCode::FORBIDDEN,
+            SailfishError::NotFound => StatusCode::NOT_FOUND,
+            SailfishError::Unauthorized => StatusCode::UNAUTHORIZED,
+            SailfishError::Forbidden => StatusCode::FORBIDDEN,
+            SailfishError::ServerError => StatusCode::INTERNAL_SERVER_ERROR,
+        }
+    }
+}
+
+cfg_if::cfg_if! {
+    if #[cfg(feature = "ssr")] {
+        use sqlx::Error as SqlxError;
+        use argon2::password_hash::Error as PasswordHashError;
+        use tokio::task::JoinError;
+        
+        impl From<SqlxError> for SailfishError {
+            fn from(_: SqlxError) -> Self {
+                Self::ServerError
+            }
+        }
+        
+        impl From<PasswordHashError> for SailfishError {
+            fn from(_: PasswordHashError) -> Self {
+                Self::ServerError
+            }
+        }
+        
+        impl From<JoinError> for SailfishError {
+            fn from(_: JoinError) -> Self {
+                Self::ServerError
+            }
         }
     }
 }
@@ -40,11 +71,17 @@ pub fn ErrorTemplate(
     let errors = errors.get_untracked();
 
     // Downcast lets us take a type that implements `std::error::Error`
-    let errors: Vec<AppError> = errors
+    let errors: Vec<SailfishError> = errors
         .into_iter()
-        .filter_map(|(_k, v)| v.downcast_ref::<AppError>().cloned())
+        .filter_map(|(_k, v)| {
+            let err = v.downcast_ref::<ServerFnError<SailfishError>>().cloned();
+            if let Some(ServerFnError::WrappedServerError(e)) = err {
+                Some(e)
+            } else {
+                None
+            }
+        })
         .collect();
-    println!("Errors: {errors:#?}");
 
     // Only the response code for the first error is actually sent from the server
     // this may be customized by the specific application
@@ -76,7 +113,7 @@ pub fn ErrorTemplate(
                             <div class="flex flex-col items-center justify-center pb-4">
                                 <h1 class="text-3xl">{error_code.to_string()}</h1>
                             </div>
-                            <p>{error_string}</p>
+                            <p class="text-center">{error_string}</p>
                         }
                     }
                 />

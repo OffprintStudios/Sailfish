@@ -1,17 +1,15 @@
 #[cfg(feature = "ssr")]
 #[tokio::main]
 async fn main() {
-    use std::net::SocketAddr;
     use axum::Router;
     use leptos::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
     use tower_cookies::{CookieManagerLayer, Key};
-    use sailfish::app::*;
-    use sailfish::server::db::connect_to_db;
+    use sailfish::sailfish::{Sailfish, SailfishState};
+    use sailfish::database::connect_to_db;
+    use sailfish::constants::SECRET_KEY;
     use sailfish::fileserv::file_and_error_handler;
-    use sailfish::server::util::state::SailfishState;
-    use sailfish::server::util::constants::KEY;
-    
+
     dotenvy::dotenv().ok();
 
     // Setting get_configuration(None) means we'll be using cargo-leptos's env values
@@ -22,7 +20,7 @@ async fn main() {
     let conf = get_configuration(None).await.unwrap();
     let leptos_options = conf.leptos_options;
     let addr = leptos_options.site_addr;
-    let routes = generate_route_list(App);
+    let routes = generate_route_list(Sailfish);
     
     let db = connect_to_db().await;
     sqlx::migrate!()
@@ -32,14 +30,13 @@ async fn main() {
     
     let secret_key = std::env::var("SECRET_KEY")
         .expect("Could not find SECRET_KEY! Are you sure your environment is configured correctly?");
-    KEY.set(Key::from(secret_key.as_bytes())).ok();
+    SECRET_KEY.set(Key::from(secret_key.as_bytes())).ok();
     
     let sailfish_state = SailfishState {
         db,
         leptos_options,
     };
-
-    // build our application with a route
+    
     let app = Router::new()
         .leptos_routes_with_context(
             &sailfish_state,
@@ -48,7 +45,7 @@ async fn main() {
                 let app_state = sailfish_state.clone();
                 move || provide_context(app_state.clone())
             },
-            App,
+            Sailfish,
         )
         .fallback(file_and_error_handler)
         .with_state(sailfish_state)
@@ -56,7 +53,7 @@ async fn main() {
 
     let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
     logging::log!("listening on http://{}", &addr);
-    axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
+    axum::serve(listener, app.into_make_service())
         .await
         .unwrap();
 }

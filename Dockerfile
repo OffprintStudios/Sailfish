@@ -1,7 +1,3 @@
-# ===============================
-# Build Image
-# ===============================
-
 # Get started with a build env with Rust nightly
 FROM rustlang/rust:nightly-bullseye as builder
 
