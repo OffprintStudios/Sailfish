@@ -76,10 +76,12 @@ cfg_if::cfg_if! {
         use http::request::Parts;
         use leptos::LeptosOptions;
         use sqlx::{Pool, Postgres};
+        use resend_rs::Client;
 
         #[derive(Debug, Clone, FromRef)]
         pub struct SailfishState {
             pub db: Pool<Postgres>,
+            pub email: Client,
             pub leptos_options: LeptosOptions,
         }
 

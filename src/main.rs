@@ -5,6 +5,7 @@ async fn main() {
     use leptos::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
     use tower_cookies::{CookieManagerLayer, Key};
+    use resend_rs::Client;
     use sailfish::sailfish::{Sailfish, SailfishState};
     use sailfish::database::connect_to_db;
     use sailfish::constants::SECRET_KEY;
@@ -34,6 +35,7 @@ async fn main() {
     
     let sailfish_state = SailfishState {
         db,
+        email: Client::default(),
         leptos_options,
     };
     
