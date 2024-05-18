@@ -3,7 +3,7 @@ use resend_rs::types::SendEmail;
 
 /// Sends an account confirmation email
 pub async fn send_confirmation(email_address: String, token: String, client: &Client) -> Result<()> {
-    let base_url = std::env::var("BASE_URL")
+    let base_url = std::env::var("SITE_BASE_URL")
         .expect("No BASE_URL set! Are you sure the environment is configured correctly?");
     
     let from = "Beatriz <beatriz@offprint.net>";
@@ -37,7 +37,7 @@ pub async fn send_confirmation(email_address: String, token: String, client: &Cl
 
 /// Sends a password reset email
 pub async fn send_password_reset(email_address: String, token: String, client: &Client) -> Result<()> {
-    let base_url = std::env::var("BASE_URL")
+    let base_url = std::env::var("SITE_BASE_URL")
         .expect("No BASE_URL set! Are you sure the environment is configured correctly?");
     
     let from = "Beatriz <beatriz@offprint.net>";
