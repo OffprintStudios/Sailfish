@@ -50,6 +50,8 @@ maplit = { version = "1.0.2", optional = true }
 garde = { version = "0.18.0", features = ["derive", "url", "email", "regex"] }
 strum = { version = "0.26.2", features = ["derive"] }
 lettre = { version = "0.11.7", features = ["serde", "tokio1-native-tls"], optional = true }
+apalis = { version = "0.5.1", features = ["redis", "uuid", "cron", "retry", "timeout", "limit", "filter", "layers"], optional = true }
+anyhow = "1.0.86"
 
 [features]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
@@ -67,6 +69,7 @@ ssr = [
     "dep:pulldown-cmark",
     "dep:maplit",
     "dep:lettre",
+    "dep:apalis",
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",
@@ -96,7 +99,7 @@ site-pkg-dir = "pkg"
 # [Optional] The source CSS file. If it ends with .sass or .scss then it will be compiled by dart-sass into CSS. The CSS is optimized by Lightning CSS before being written to <site-root>/<site-pkg>/app.css
 style-file = "style/main.scss"
 # Assets source dir. All files found here will be copied and synchronized to site-root.
-# The assets-dir cannot have a sub directory with the same name/path as site-pkg-dir.
+# The assets-dir cannot have a subdirectory with the same name/path as site-pkg-dir.
 #
 # Optional. Env: LEPTOS_ASSETS_DIR.
 assets-dir = "public"

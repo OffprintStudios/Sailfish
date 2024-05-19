@@ -76,12 +76,10 @@ cfg_if::cfg_if! {
         use http::request::Parts;
         use leptos::LeptosOptions;
         use sqlx::{Pool, Postgres};
-        use lettre::{AsyncSmtpTransport, Tokio1Executor};
 
         #[derive(Debug, Clone, FromRef)]
         pub struct SailfishState {
             pub db: Pool<Postgres>,
-            pub mailer: Option<AsyncSmtpTransport<Tokio1Executor>>,
             pub leptos_options: LeptosOptions,
         }
 

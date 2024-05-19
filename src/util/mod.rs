@@ -2,4 +2,4 @@
 pub mod auth;
 
 #[cfg(feature = "ssr")]
-pub mod mail;
+pub mod queue;
