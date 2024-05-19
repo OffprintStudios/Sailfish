@@ -23,4 +23,4 @@ For installing PostgreSQL, please follow your platform's instructions to do so.
 
 ## Contributing
 
-We will (eventually) have Contribution guidelines written up!
+We will (eventually) have Contribution guidelines written up, so check back later!
