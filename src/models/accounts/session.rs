@@ -30,15 +30,15 @@ impl Session {
 
     /// Verifies an active session via database lookup and returns the corresponding account ID.
     pub async fn verify_session(session_id: Uuid, db: &Pool<Postgres>) -> Result<Uuid, SailfishError> {
-        let session: Self = match sqlx::query_as!(
-            Self,
-            r#"SELECT * FROM sessions WHERE id = $1;"#,
+        let session: Uuid = match sqlx::query!(
+            r#"SELECT account_id FROM sessions WHERE id = $1 AND expires_on > $2;"#,
             session_id,
+            Utc::now(),
         ).fetch_one(db).await {
-            Ok(s) => s,
+            Ok(s) => s.account_id,
             Err(_) => return Err(SailfishError::Unauthorized)
         };
 
-        Ok(session.account_id)
+        Ok(session)
     }
 }

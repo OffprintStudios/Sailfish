@@ -5,9 +5,9 @@ async fn main() {
     use leptos::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
     use tower_cookies::{CookieManagerLayer, Key};
-    use resend_rs::Client;
     use sailfish::sailfish::{Sailfish, SailfishState};
     use sailfish::database::connect_to_db;
+    use sailfish::mailer::configure_mailer;
     use sailfish::constants::SECRET_KEY;
     use sailfish::fileserv::file_and_error_handler;
 
@@ -33,9 +33,15 @@ async fn main() {
         .expect("Could not find SECRET_KEY! Are you sure your environment is configured correctly?");
     SECRET_KEY.set(Key::from(secret_key.as_bytes())).ok();
     
+    let mailer = configure_mailer().await;
+    
+    if mailer.is_none() {
+        logging::log!("Mailer has not been configured! Disabling...");
+    }
+    
     let sailfish_state = SailfishState {
         db,
-        email: Client::default(),
+        mailer,
         leptos_options,
     };
     

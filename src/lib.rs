@@ -11,6 +11,7 @@ cfg_if::cfg_if! {
         pub mod fileserv;
         pub mod database;
         pub mod constants;
+        pub mod mailer;
     }
 }
 

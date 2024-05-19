@@ -40,8 +40,10 @@ pub enum SignUpError {
 
 #[server]
 pub async fn sign_up_submit(form_info: SignUpForm) -> Result<(), ServerFnError> {
+    use chrono::{Utc, Duration};
     use crate::sailfish::SailfishState;
-    use crate::models::accounts::Account;
+    use crate::util::mail::send_confirmation;
+    use crate::models::accounts::{Account, ConfirmationCode};
     
     if form_info.password != form_info.repeat_password {
         return Err(ServerFnError::new(SignUpError::PasswordsDontMatch));
@@ -62,11 +64,22 @@ pub async fn sign_up_submit(form_info: SignUpForm) -> Result<(), ServerFnError> 
         return Err(ServerFnError::new(SignUpError::Conflict));
     }
 
-    let _ = Account::new(form_info.email, form_info.password, &state.db).await?;
+    let account = Account::new(form_info.email, form_info.password, &state.db).await?;
+    let code = ConfirmationCode::new(account.id, Utc::now() + Duration::seconds(3600), &state.db).await?;
     
-    leptos_axum::redirect("/check-email");
-    
-    Ok(())
+    if let Some(mailer) = state.mailer {
+        match send_confirmation(account.email, code.token, &mailer).await {
+            Ok(()) => {
+                leptos_axum::redirect("/check-email");
+                Ok(())
+            },
+            Err(_) => Err(ServerFnError::new(SignUpError::ServerError))
+        }
+    } else {
+        logging::log!("Mailer has not been set up! You'll have to manually set the `email_confirmed` flag in your database to log in.");
+        leptos_axum::redirect("/check-email");
+        Ok(())
+    }
 }
 
 #[component]
