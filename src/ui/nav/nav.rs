@@ -32,10 +32,10 @@ pub fn Nav() -> impl IntoView {
                 <div class="w-1/3 flex items-center" style="font-family: var(--header-text);">
                     <div class="flex-1"></div>
                     <A
-                        class="flex md:hidden items-center text-white px-3 py-2 firefox:text-sm rounded-xl transition hover:bg-zinc-300/25 hover:backdrop-blur"
+                        class="flex lg:hidden items-center text-white px-3 py-2 firefox:text-sm rounded-xl transition hover:bg-zinc-300/25 hover:backdrop-blur"
                         href="/search"
                     >
-                        <span class="relative"><Icon icon=remixicon::RiLoginCircleSystemLine width="20px" height="20px" /></span>
+                        <span class="relative"><Icon icon=remixicon::RiSearchEyeSystemLine width="20px" height="20px" /></span>
                     </A>
                     <div class="mx-0.5">/* spacer */</div>
                     <A
