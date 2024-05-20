@@ -8,9 +8,9 @@ pub fn NewsPanel() -> impl IntoView {
         <div class="w-full">
             <div class="flex items-center mx-4 md:mx-0 mb-2">
                 <Icon icon=remixicon::RiNewspaperDocumentLine width="30px" height="30px" />
-                <h3 class="text-2xl text-black dark:text-white ml-2">"News & Updates"</h3>
+                <h3 class="text-xl md:text-2xl text-black dark:text-white ml-2">"News & Updates"</h3>
                 <div class="flex-1">/* spacer */</div>
-                <span class="all-small-caps text-xl font-bold tracking-wide relative -top-[0.075rem]">"More"</span>
+                <span class="all-small-caps text-lg md:text-xl font-bold tracking-wide relative -top-[0.075rem]">"More"</span>
                 <Icon icon=remixicon::RiArrowRightSArrowsLine width="30px" height="30px" />
             </div>
             <div class="grid grid-cols-1 grid-rows-6 md:grid-rows-3 md:grid-cols-2 gap-4 bg-zinc-200/50 dark:bg-zinc-700/50 backdrop-blur border border-zinc-600/25 dark:border-zinc-300/25 md:rounded-xl p-4 mb-8" style="box-shadow: var(--dropshadow);">

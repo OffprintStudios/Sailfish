@@ -3,6 +3,7 @@ pub mod explore;
 pub mod social;
 pub mod docs;
 pub mod auth;
+pub mod search;
 
 pub use home::Home;
 

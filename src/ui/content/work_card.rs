@@ -18,24 +18,24 @@ pub fn WorkCard(
 
     view! {
         <div
-            class="flex flex-col h-[256px] rounded-xl overflow-hidden bg-zinc-200/50 dark:bg-zinc-700/50 backdrop-blur border border-zinc-600/25 dark:border-zinc-300/25 hover:bg-zinc-300/50 dark:hover:bg-zinc-600/50 transition"
+            class="flex flex-col md:h-[256px] rounded-xl overflow-hidden bg-zinc-200/50 dark:bg-zinc-700/50 backdrop-blur border border-zinc-600/25 dark:border-zinc-300/25 hover:bg-zinc-300/50 dark:hover:bg-zinc-600/50 transition"
             style="box-shadow: var(--dropshadow);"
             style:width=w
         >
-            <div class="w-full h-[5rem] bg-accent">/* banner */</div>
+            <div class="w-full h-[4rem] md:h-[5rem] bg-accent">/* banner */</div>
             <div class="flex items-center px-4 pt-2">
                 <div class="flex flex-col">
                     <span class="all-small-caps font-semibold">SPECULATIVE FICTION</span>
-                    <h3 class="text-xl line-clamp-1 text-black dark:text-white">Roquelle Pellegnon, Mad Peer Reviewer</h3>
+                    <h3 class="text-lg md:text-xl line-clamp-1 text-black dark:text-white">Roquelle Pellegnon, Mad Peer Reviewer</h3>
                     <span class="text-zinc-400 font-header">by baxil</span>
                 </div>
             </div>
-            <div class=" px-4 pb-4 pt-2 text-sm italic h-[56px]">
+            <div class=" px-4 pb-4 pt-2 text-sm italic h-[56px] hidden md:block">
                 <p class="line-clamp-2">
                     "It's time for Madame Pellegnon to put the science in Mad Science, and teach a peer some lessons about real scientific discovery."
                 </p>
             </div>
-            <div class="flex items-center px-4 pt-2">
+            <div class="flex items-center px-4 pt-2 pb-2 md:pb-0">
                 <div class="flex items-center text-sm text-green-600 font-bold">
                     <Icon icon=remixicon::RiThumbUpSystemLine />
                     <span class="ml-0.5">0</span>

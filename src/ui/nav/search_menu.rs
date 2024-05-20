@@ -11,7 +11,7 @@ pub fn SearchMenu() -> impl IntoView {
     view! {
         <div class="w-full relative">
             <button
-                class="hidden md:flex w-11/12 h-[36px] mx-auto items-center justify-center rounded-xl border-2 border-x-transparent border-t-transparent border-zinc-300 bg-zinc-300/40 backdrop-blur py-1 text-white transition firefox:bg-accent-light hover:firefox:bg-accent-light/75"
+                class="hidden lg:flex w-11/12 h-[36px] mx-auto items-center justify-center rounded-xl border-2 border-x-transparent border-t-transparent border-zinc-300 bg-zinc-300/40 backdrop-blur py-1 text-white transition firefox:bg-accent-light hover:firefox:bg-accent-light/75"
             >
                 <span class="mr-2 relative"><Icon icon=remixicon::RiSearchEyeSystemLine width="18px" height="18px" /></span>
                 <span class="text-xs">{*currSlogan}</span>
