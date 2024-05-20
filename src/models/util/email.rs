@@ -23,31 +23,31 @@ impl Job for Email {
     const NAME: &'static str = "apalis::Email";
 }
 
-impl Email {    
+impl Email {
     pub async fn send_mail(job: Email) {
         leptos::logging::log!("Attempting to send email to {}", job.to.clone());
-        
+
         let base_url = std::env::var("SITE_BASE_URL")
             .expect("SITE_BASE_URL not set!");
-        
+
         let smtp_host = std::env::var("SMTP_HOST")
             .expect("SMTP_HOST not set!");
-        
+
         let smtp_port = std::env::var("SMTP_PORT")
             .expect("SMTP_PORT not set!")
             .parse::<u16>()
             .expect("SMTP_PORT must be an unsigned 16-bit integer!");
-        
+
         let smtp_username = std::env::var("SMTP_USERNAME")
             .expect("SMTP_USERNAME not set!");
-        
+
         let smtp_password = std::env::var("SMTP_PASSWORD")
             .expect("SMTP_PASSWORD not set!");
-        
+
         let message = match job.kind {
             EmailKind::ConfirmEmail => {
                 let token = job.token.expect("Token cannot be None.");
-                
+
                 leptos::ssr::render_to_string(move || leptos::view! {
                     <div>
                         <h1>"Welcome to Offprint!"</h1>
@@ -66,7 +66,7 @@ impl Email {
             },
             EmailKind::PasswordReset => {
                 let token = job.token.expect("Token cannot be None.");
-                
+
                 leptos::ssr::render_to_string(move || leptos::view! {
                     <div>
                         <h1>"Reset your Offprint password"</h1>
@@ -81,7 +81,7 @@ impl Email {
                 }).into_owned()
             }
         };
-        
+
         let email = Message::builder()
             .from(job.from.parse().unwrap())
             .to(job.to.parse().unwrap())
@@ -89,15 +89,15 @@ impl Email {
             .header(ContentType::TEXT_HTML)
             .body(message)
             .expect("Could not build message!");
-        
+
         let credentials = Credentials::new(smtp_username, smtp_password);
-        
+
         let mailer = match SmtpTransport::relay(&smtp_host) {
             Ok(mailer) => mailer.port(smtp_port).credentials(credentials).build(),
             Err(_) => return
         };
-        
-        _ = tokio::task::spawn_blocking(move || { 
+
+        _ = tokio::task::spawn_blocking(move || {
             match mailer.send(&email) {
                 Ok(_) => Ok(()),
                 Err(e) => Err(e)

@@ -21,7 +21,8 @@ pub fn Nav() -> impl IntoView {
                         "Explore"
                     </A>
                     <a
-                        class="hidden md:block relative top-0.5 text-white ml-4 all-small-caps text-lg firefox:text-base border-b-2 border-transparent transition font-semibold font-header"
+                        class="hidden md:block relative top-0.5 text-white ml-4 all-small-caps text-lg firefox:text-base border-b-2 border-transparent [&[aria-current=page]]:border-zinc-300/75 transition font-semibold font-header"
+                        href="/social"
                     >
                         "Social"
                     </a>

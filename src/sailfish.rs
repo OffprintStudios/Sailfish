@@ -9,6 +9,7 @@ use crate::models::util::BrightnessMode;
 use crate::pages::{BaseLayout, Home};
 use crate::pages::explore::Explore;
 use crate::pages::search::Search;
+use crate::pages::social::Social;
 use crate::pages::docs::DocsRoutes;
 use crate::pages::auth::AuthRoutes;
 use crate::state::AppState;
@@ -61,6 +62,7 @@ pub fn Sailfish() -> impl IntoView {
                     <Route path="/" view=BaseLayout>
                         <Route path="" view=Home />
                         <Route path="explore" view=Explore />
+                        <Route path="social" view=Social />
                         <Route path="search" view=Search />
                         <DocsRoutes />
                     </Route>

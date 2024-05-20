@@ -1,6 +1,12 @@
 use leptos::*;
+use leptos_router::*;
+use leptos_icons::*;
+use icondata_ri as remixicon;
+use leptos_use::storage::use_local_storage;
+use leptos_use::utils::JsonCodec;
 use crate::models::accounts::Profile;
 use crate::error_template::{SailfishError, ErrorTemplate};
+use crate::state::AuthState;
 use crate::ui::util::{MetaTags, MetaTagOptions};
 
 #[server]
@@ -55,11 +61,47 @@ pub fn SwitchProfile() -> impl IntoView {
                                     "Who's gonna be with us today?"
                                 </span>
                             </div>
-                            <div>{profiles.map(|p| p.len())}</div>
                             <div class="flex items-center justify-center w-full">
-                                <div>"hello"</div>
-                                <div>"hello"</div>
-                                <div>"hello"</div>
+                                {profiles.map(|p| {
+                                    let (_, set_auth, _) = use_local_storage::<AuthState, JsonCodec>("auth");
+                                    let profiles = p.clone();
+
+                                    view! {
+                                        <For
+                                            each=move || profiles.clone()
+                                            key=|profile| profile.id.clone()
+                                            children=move |profile: Profile| {
+                                                let to_set = profile.clone();
+                                                view! {
+                                                    <button
+                                                        class="flex flex-col items-center rounded-xl p-4 mx-2 w-[180px] h-[210px] hover:bg-zinc-300 dark:hover:bg-zinc-600 transition"
+                                                        on:click=move |_| set_auth(AuthState { current_profile: Some(to_set.clone()) })
+                                                    >
+                                                        <img class="rounded-full border-2 object-cover w-[75px] h-[75px]" src=&profile.avatar alt=format!("{}'s Avatar", &profile.username) />
+                                                        <span class="pt-3 all-small-caps font-bold text-2xl truncate max-w-[120px]">
+                                                            {&profile.username}
+                                                        </span>
+                                                    </button>
+                                                }
+                                            }
+                                        />
+                                        <Show
+                                            when=move || { p.len() < 3 }
+                                        >
+                                            <A
+                                                class="flex flex-col items-center rounded-xl p-4 mx-2 w-[180px] h-[210px] hover:bg-zinc-300 dark:hover:bg-zinc-600 transition"
+                                                href="/create-profile"
+                                            >
+                                                <div class="flex flex-col items-center justify-center w-[125px] h-[125px] rounded-full border-2 border-dotted">
+                                                    <Icon icon=remixicon::RiAddSystemLine width="28px" height="28px" />
+                                                </div>
+                                                <span class="pt-3 all-small-caps font-bold text-2xl">
+                                                    "Add New"
+                                                </span>
+                                            </A>
+                                        </Show>
+                                    }
+                                })}
                             </div>
                         </div>
                     </ErrorBoundary>

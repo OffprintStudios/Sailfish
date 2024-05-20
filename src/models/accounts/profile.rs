@@ -5,7 +5,7 @@ use uuid::Uuid;
 #[cfg(feature = "ssr")]
 use crate::error_template::SailfishError;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "ssr", derive(sqlx::FromRow))]
 pub struct Profile {
     pub id: String,
