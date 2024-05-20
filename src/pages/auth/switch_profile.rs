@@ -93,7 +93,7 @@ pub fn SwitchProfile() -> impl IntoView {
                                                 href="/create-profile"
                                             >
                                                 <div class="flex flex-col items-center justify-center w-[125px] h-[125px] rounded-full border-2 border-dotted">
-                                                    <Icon icon=remixicon::RiAddSystemLine width="28px" height="28px" />
+                                                    <Icon icon=remixicon::RiAddSystemLine width="48px" height="48px" />
                                                 </div>
                                                 <span class="pt-3 all-small-caps font-bold text-2xl">
                                                     "Add New"
