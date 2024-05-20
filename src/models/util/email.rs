@@ -1,4 +1,3 @@
-use std::fmt::Formatter;
 use serde::{Deserialize, Serialize};
 use apalis::prelude::*;
 use lettre::{SmtpTransport, Transport, Message};
@@ -18,12 +17,6 @@ pub struct Email {
 pub enum EmailKind {
     ConfirmEmail,
     PasswordReset,
-}
-
-#[derive(Debug)]
-pub enum EmailError {
-    NoStorage,
-    SomeError(&'static str),
 }
 
 impl Job for Email {
@@ -110,11 +103,5 @@ impl Email {
                 Err(e) => Err(e)
             }
         }).await.expect("Something went wrong!");
-    }
-}
-
-impl std::fmt::Display for EmailError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{self:?}")
     }
 }

@@ -126,4 +126,17 @@ impl Account {
             id
         ).fetch_optional(db).await.ok()?
     }
+
+    /// Marks an account as confirmed
+    pub async fn confirm(&self, db: &Pool<Postgres>) -> Result<(), SailfishError> {
+        _ = sqlx::query!(
+            r#"
+                UPDATE accounts SET email_confirmed = $1 WHERE id = $2;
+            "#,
+            true,
+            self.id,
+        ).execute(db).await?;
+
+        Ok(())
+    }
 }
