@@ -2,6 +2,7 @@ use leptos::*;
 use leptos_router::*;
 use leptos_icons::*;
 use icondata_ri as remixicon;
+use icondata_lu as lucide;
 use crate::error_template::SailfishError;
 use crate::ui::util::{MetaTags, MetaTagOptions};
 
@@ -78,7 +79,7 @@ pub fn ConfirmEmail() -> impl IntoView {
                                     <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold text-center pb-8 font-header">
                                         "You're all set to log on in."
                                     </span>
-                                    <span><Icon icon=remixicon::RiCheckboxCircleSystemFill width="150px" height="150px" class="text-green-500" /></span>
+                                    <span><Icon icon=lucide::LuCheckCircle width="150px" height="150px" class="text-green-500" /></span>
                                     <A class="text-center w-full pt-4 text-zinc-500 dark:text-zinc-400 text-sm hover:underline" href="/log-in">
                                         "Ready to get started?"
                                     </A>

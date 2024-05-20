@@ -20,7 +20,7 @@ pub struct LogInForm {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Error)]
 pub enum LogInError {
-    #[error("You can't log in until your email's been confirmed, come on now.")]
+    #[error("You can't log in until your email's been confirmed, so we sent you a new confirmation code. Remember to check your inbox!")]
     EmailNotConfirmed,
     #[error("Doesn't look like you're on the list. Are you sure all your info's good?")]
     CredentialsInvalid,
@@ -31,14 +31,17 @@ pub enum LogInError {
 #[server]
 pub async fn log_in_submit(form_info: LogInForm) -> Result<(), ServerFnError> {
     use std::ops::Add;
-    use chrono::Utc;
+    use apalis::prelude::Storage;
+    use apalis::redis::RedisStorage;
+    use axum::Extension;
     use leptos_axum::{extract, redirect};
     use tower_cookies::{Cookies, Cookie};
     use tower_cookies::cookie::time::{OffsetDateTime, Duration};
     use tower_cookies::cookie::SameSite;
     use crate::constants::{SECRET_KEY, MIN_SESSION_DURATION, MAX_SESSION_DURATION};
     use crate::sailfish::SailfishState;
-    use crate::models::accounts::{Account, Session};
+    use crate::models::accounts::{Account, Session, ConfirmationCode};
+    use crate::models::util::{Email, EmailKind};
 
     let key = SECRET_KEY.get().unwrap();
     let state = expect_context::<SailfishState>();
@@ -51,7 +54,23 @@ pub async fn log_in_submit(form_info: LogInForm) -> Result<(), ServerFnError> {
     };
 
     if !account.email_confirmed {
-        return Err(ServerFnError::new(LogInError::EmailNotConfirmed));
+        let Extension(mut queue) = extract::<Extension<RedisStorage<Email>>>().await?;
+        let code = ConfirmationCode::new(account.id, chrono::Utc::now() + chrono::Duration::seconds(3600), &state.db).await?;
+
+        let new_email = Email {
+            kind: EmailKind::ConfirmEmail,
+            from: "Beatriz <beatriz@offprint.cafe>".to_string(),
+            to: account.email.clone(),
+            subject: "Welcome to Offprint!".to_string(),
+            token: Some(code.token)
+        };
+
+        let job = queue.push(new_email).await;
+        
+        match job {
+            Ok(_) => return Err(ServerFnError::new(LogInError::EmailNotConfirmed)),
+            Err(_) => return Err(ServerFnError::new(LogInError::ServerError))
+        }
     }
 
     let token_offset = match persist_session {
@@ -61,7 +80,7 @@ pub async fn log_in_submit(form_info: LogInForm) -> Result<(), ServerFnError> {
 
     let session_id = match Session::start(
         account.id,
-        Utc::now() + chrono::Duration::seconds(token_offset),
+        chrono::Utc::now() + chrono::Duration::seconds(token_offset),
         &state.db
     ).await {
         Ok(session) => session,
