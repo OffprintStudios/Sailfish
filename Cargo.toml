@@ -41,7 +41,7 @@ leptos-use = { version = "0.10.10", features = ["serde"] }
 argon2 = { version = "0.5.3", optional = true }
 serde = { version = "1.0.201", features = ["derive"] }
 uuid = { version = "1.8.0", features = ["v4", "v7", "fast-rng", "macro-diagnostics", "serde"] }
-chrono = { version = "0.4.38", features = ["serde"] }
+chrono = { version = "0.4.38", features = ["serde", "wasmbind"] }
 nanoid = "0.4.0"
 rand = "0.8.5"
 ammonia = { version = "4.0.0", optional = true }
