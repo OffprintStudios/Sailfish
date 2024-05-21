@@ -77,7 +77,7 @@ pub fn SwitchProfile() -> impl IntoView {
                                                         class="flex flex-col items-center rounded-xl p-4 mx-2 w-[180px] h-[210px] hover:bg-zinc-300 dark:hover:bg-zinc-600 transition"
                                                         on:click=move |_| set_auth(AuthState { current_profile: Some(to_set.clone()) })
                                                     >
-                                                        <img class="rounded-full border-2 object-cover w-[75px] h-[75px]" src=&profile.avatar alt=format!("{}'s Avatar", &profile.username) />
+                                                        <img class="rounded-full border-2 object-cover w-[125px] h-[125px]" src=&profile.avatar alt=format!("{}'s Avatar", &profile.username) />
                                                         <span class="pt-3 all-small-caps font-bold text-2xl truncate max-w-[120px]">
                                                             {&profile.username}
                                                         </span>

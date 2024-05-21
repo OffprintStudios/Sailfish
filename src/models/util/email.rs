@@ -25,8 +25,6 @@ impl Job for Email {
 
 impl Email {
     pub async fn send_mail(job: Email) {
-        leptos::logging::log!("Attempting to send email to {}", job.to.clone());
-
         let base_url = std::env::var("SITE_BASE_URL")
             .expect("SITE_BASE_URL not set!");
 

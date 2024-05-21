@@ -1,10 +1,13 @@
 use garde::Validate;
 use leptos::*;
 use leptos_router::*;
+use leptos_icons::*;
+use icondata_ri as remixicon;
 use serde::{Deserialize, Serialize};
-use crate::error_template::{ErrorTemplate, SailfishError};
-use crate::ui::util::{MetaTags, MetaTagOptions};
+use crate::error_template::{ErrorTemplate};
+use crate::ui::util::{MetaTags, MetaTagOptions, Button, KindOfButton, TypeOfButton};
 use crate::ui::forms::{TextField, TextFieldType, TextArea};
+use crate::util::auth::verify_access;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Validate)]
 pub struct CreateProfileForm {
@@ -12,19 +15,6 @@ pub struct CreateProfileForm {
     username: String,
     #[garde(ascii, length(min=3, max=240))]
     bio: Option<String>,
-}
-
-#[server]
-pub async fn verify_access() -> Result<(), ServerFnError<SailfishError>> {
-    use crate::sailfish::SailfishState;
-    use crate::util::auth::authorize;
-    
-    let state = expect_context::<SailfishState>();
-
-    match authorize(&state.db).await {
-        Some(_) => Ok(()),
-        None => Err(ServerFnError::WrappedServerError(SailfishError::Unauthorized))
-    }
 }
 
 #[server]
@@ -70,15 +60,45 @@ pub fn CreateProfile() -> impl IntoView {
                                         </span>
                                     </div>
                                     <ActionForm class="flex flex-col w-full" action=submit>
+                                        <div class="flex items-center justify-center w-full mb-4">
+                                            <img src="https://images.offprint.net/avatars/avatar.png" class="w-[150px] h-[150px] rounded-full object-cover" />
+                                        </div>
                                         <TextField
                                             name="form_info[username]".to_string()
-                                            label="Email Address".to_string()
+                                            label="Username".to_string()
                                             kind=TextFieldType::Text
                                             placeholder="Somebody New".to_string()
                                             autocomplete="username".to_string()
                                             required=true
                                         />
                                         <div class="my-1.5"></div>
+                                        <TextArea
+                                            name="form_info[bio]".to_string()
+                                            label="Bio (Optional)".to_string()
+                                            placeholder="Just Another Friendly Face In The Crowd".to_string()
+                                        />
+                                        <div class="my-3" />
+                                        <Button
+                                            id="create-profile-button".to_string()
+                                            title="Create Profile".to_string()
+                                            type_of=TypeOfButton::Submit
+                                            kind=KindOfButton::Primary
+                                            full_width=true
+                                        >
+                                            <span class="button-icon"><Icon icon=remixicon::RiUserAddUserFacesLine /></span>
+                                            <span class="button-text">"Create Profile"</span>
+                                        </Button>
+                                        <div class="my-1.5" />
+                                        <Button
+                                            id="cancel-button".to_string()
+                                            title="Cancel".to_string()
+                                            type_of=TypeOfButton::Default
+                                            kind=KindOfButton::Normal
+                                            full_width=true
+                                        >
+                                            <span class="button-icon"><Icon icon=remixicon::RiCloseSystemLine /></span>
+                                            <span class="button-text">"Cancel"</span>
+                                        </Button>
                                     </ActionForm>
                                 </div>
                             }
