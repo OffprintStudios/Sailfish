@@ -5,6 +5,7 @@ use tower_cookies::Cookies;
 use crate::constants::SECRET_KEY;
 use crate::models::accounts::{Account, Session, Profile};
 
+#[cfg(feature = "ssr")]
 pub async fn authorize(db: &Pool<Postgres>) -> Option<Account> {
     let key = SECRET_KEY.get()?;
     let cookies = extract::<Cookies>().await.ok()?.private(key);
@@ -17,6 +18,7 @@ pub async fn authorize(db: &Pool<Postgres>) -> Option<Account> {
     Account::fetch_by_id(account_id, db).await
 }
 
+#[cfg(feature = "ssr")]
 pub async fn authorize_with_profile(profile_id: String, db: &Pool<Postgres>) -> Option<(Account, Profile)> {
     let account = authorize(db).await?;
     let profile = Profile::check_owned(profile_id, account.id, db).await.ok()?;

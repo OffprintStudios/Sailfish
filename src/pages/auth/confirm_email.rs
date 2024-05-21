@@ -12,7 +12,7 @@ struct ConfirmEmailQuery {
 }
 
 #[server]
-pub async fn confirm_email(token: Option<String>) -> Result<Option<()>, ServerFnError<SailfishError>> {
+pub async fn confirm_email_address(token: Option<String>) -> Result<Option<()>, ServerFnError<SailfishError>> {
     use leptos::expect_context;
     use crate::sailfish::SailfishState;
     use crate::models::accounts::ConfirmationCode;
@@ -52,7 +52,7 @@ pub fn ConfirmEmail() -> impl IntoView {
     };
 
     let check_token = create_resource(token, |token| async move {
-        confirm_email(token).await
+        confirm_email_address(token).await
     });
 
     view! {
