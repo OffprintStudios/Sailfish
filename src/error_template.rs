@@ -14,6 +14,8 @@ pub enum SailfishError {
     Forbidden,
     #[error("Look, this page isn't a bug—it's a feature")]
     ServerError,
+    #[error("Sorry, we're taking a siesta. Be back in a bit!")]
+    ServiceUnavailable,
 }
 
 impl SailfishError {
@@ -23,6 +25,7 @@ impl SailfishError {
             SailfishError::Unauthorized => StatusCode::UNAUTHORIZED,
             SailfishError::Forbidden => StatusCode::FORBIDDEN,
             SailfishError::ServerError => StatusCode::INTERNAL_SERVER_ERROR,
+            SailfishError::ServiceUnavailable => StatusCode::SERVICE_UNAVAILABLE,
         }
     }
 }
