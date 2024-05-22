@@ -68,17 +68,18 @@ impl Profile {
 
         Ok(result)
     }
-
+    
     #[cfg(feature = "ssr")]
-    /// Checks to see if any usernames exist which match `potential_username`.
-    pub async fn is_username_taken(potential_username: String, db: &sqlx::Pool<sqlx::Postgres>) -> Result<bool, SailfishError> {
-        let result: Vec<Self> = sqlx::query_as!(
+    pub async fn fetch_by_username(username: String, db: &sqlx::Pool<sqlx::Postgres>) -> Option<Profile> {
+        use ammonia::clean;
+        
+        let result: Self = sqlx::query_as!(
             Self,
             r#"SELECT * FROM profiles WHERE username = $1"#,
-            potential_username,
-        ).fetch_all(db).await?;
+            clean(&username),
+        ).fetch_one(db).await.ok()?;
 
-        Ok(!result.is_empty())
+        Some(result)
     }
 
     #[cfg(feature = "ssr")]
