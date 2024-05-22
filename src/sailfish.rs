@@ -12,7 +12,7 @@ use crate::pages::search::Search;
 use crate::pages::social::Social;
 use crate::pages::docs::DocsRoutes;
 use crate::pages::auth::AuthRoutes;
-use crate::state::AppState;
+use crate::state::{AppState, AuthState};
 
 #[component]
 pub fn Sailfish() -> impl IntoView {
