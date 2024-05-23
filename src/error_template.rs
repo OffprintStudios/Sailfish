@@ -14,7 +14,7 @@ pub enum SailfishError {
     Forbidden,
     #[error("Look, this page isn't a bug—it's a feature")]
     ServerError,
-    #[error("Sorry, we're taking a siesta. Be back in a bit!")]
+    #[error("Cleaning the espresso machines, be back soon")]
     ServiceUnavailable,
 }
 
