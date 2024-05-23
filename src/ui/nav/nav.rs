@@ -23,7 +23,7 @@ pub fn Nav() -> impl IntoView {
         <div
             class="sticky top-0 w-full z-50 drop-shadow-2xl border-b border-white border-opacity-25 backdrop-blur-lg bg-accent shadow-small-shadow"
         >
-            <nav class="flex items-center max-w-[90rem] h-[65px] w-full md:w-11/12 pl-4 pr-2 md:px-0 mx-auto">
+            <nav class="flex items-center max-w-[90rem] h-[65px] w-full md:w-11/12 pl-4 pr-2 md:px-0 mx-auto relative">
                 <div class="flex items-center w-1/3 text-white">
                     <A href="/"><h3 class="text-2xl font-bold tracking-tighter text-white">"Offprint"</h3></A>
                     <A
@@ -42,7 +42,7 @@ pub fn Nav() -> impl IntoView {
                 <div class="w-1/3">
                     <SearchMenu />
                 </div>
-                <div class="w-1/3 flex items-center" style="font-family: var(--header-text);">
+                <div class="w-1/3 flex items-center relative" style="font-family: var(--header-text);">
                     <div class="flex-1"></div>
                     <A
                         class="flex lg:hidden items-center text-white px-3 py-2 firefox:text-sm rounded-xl transition hover:bg-zinc-300/25 hover:backdrop-blur"
