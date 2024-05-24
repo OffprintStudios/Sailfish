@@ -1,20 +1,33 @@
 use std::fmt::Formatter;
 use serde::{Serialize, Deserialize};
+use strum::EnumIter;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize, Eq, PartialEq, Hash, EnumIter)]
 pub enum BrightnessMode {
     Light,
     Dark,
     System,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize, Eq, PartialEq, Hash, EnumIter)]
 pub enum Theme {
     Crimson,
     Aqua,
     Royal,
     Autumn,
     Field,
+}
+
+impl Theme {
+    pub fn accent_color(&self) -> String {
+        match self {
+            Theme::Crimson => "205, 86, 84".to_string(),
+            Theme::Aqua => "98, 150, 209".to_string(),
+            Theme::Royal => "145, 82, 169".to_string(),
+            Theme::Autumn => "204, 118, 60".to_string(),
+            Theme::Field => "79, 126, 53".to_string(),
+        }
+    }
 }
 
 impl std::fmt::Display for BrightnessMode {

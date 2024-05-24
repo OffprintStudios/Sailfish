@@ -3,7 +3,7 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 use leptos_use::storage::use_local_storage;
-use leptos_use::{use_css_var, use_preferred_dark};
+use leptos_use::use_preferred_dark;
 use leptos_use::utils::JsonCodec;
 use crate::models::util::BrightnessMode;
 use crate::pages::{BaseLayout, Home};
@@ -12,32 +12,28 @@ use crate::pages::search::Search;
 use crate::pages::social::Social;
 use crate::pages::docs::DocsRoutes;
 use crate::pages::auth::AuthRoutes;
-use crate::state::{AppState, AuthState};
+use crate::state::AppState;
 
 #[component]
 pub fn Sailfish() -> impl IntoView {
     let (app, _, _) = use_local_storage::<AppState, JsonCodec>("app");
     let is_preferred_dark = use_preferred_dark();
-    let (accent, _) = use_css_var("--accent");
     
-    let classes = move || {
-        let state = app.get();
-        let preferred_dark = is_preferred_dark.get();
-        if state.brightness_mode == BrightnessMode::System {
-            match preferred_dark {
-                true => format!("{} {}", BrightnessMode::Dark, state.theme),
-                false => format!("{} {}", BrightnessMode::Light, state.theme),
-            }
-        } else {
-            format!("{} {}", state.brightness_mode, state.theme)
-        }
-    };
-
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
 
     view! {
-        <Html class=classes />
+        <Body class=move || {
+            let theme = app().theme;
+            if app().brightness_mode == BrightnessMode::System {
+                match is_preferred_dark() {
+                    true => format!("{} {}", BrightnessMode::Dark, theme),
+                    false => format!("{} {}", BrightnessMode::Light, theme),
+                }
+            } else {
+                format!("{} {}", app().brightness_mode, theme)
+            }
+        } />
 
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet
@@ -47,7 +43,7 @@ pub fn Sailfish() -> impl IntoView {
         <Title text="Offprint"/>
         
         // sets the theme color
-        <Meta name="theme-color" content=move || format!("rgb({})", accent.get()) />
+        <Meta name="theme-color" content=move || format!("rgb({})", app().theme.accent_color()) />
 
         // content for this welcome page
         <Router fallback=|| {
