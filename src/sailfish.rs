@@ -5,12 +5,13 @@ use leptos_router::*;
 use leptos_use::storage::use_local_storage;
 use leptos_use::use_preferred_dark;
 use leptos_use::utils::JsonCodec;
+use leptos_toaster::{Toaster, ToasterPosition};
 use crate::models::util::BrightnessMode;
 use crate::pages::{BaseLayout, Home};
 use crate::pages::explore::Explore;
 use crate::pages::search::Search;
 use crate::pages::social::Social;
-use crate::pages::docs::DocsRoutes;
+use crate::pages::settings::SettingsRoutes;
 use crate::pages::auth::AuthRoutes;
 use crate::state::AppState;
 
@@ -44,28 +45,30 @@ pub fn Sailfish() -> impl IntoView {
         
         // sets the theme color
         <Meta name="theme-color" content=move || format!("rgb({})", app().theme.accent_color()) />
-
-        // content for this welcome page
-        <Router fallback=|| {
-            let mut outside_errors = Errors::default();
-            outside_errors.insert_with_default_key(SailfishError::NotFound);
-            view! {
-                <ErrorTemplate outside_errors/>
-            }
-        }>
-            <main>
-                <Routes>
-                    <Route path="/" view=BaseLayout>
-                        <Route path="" view=Home />
-                        <Route path="explore" view=Explore />
-                        <Route path="social" view=Social />
-                        <Route path="search" view=Search />
-                        <DocsRoutes />
-                    </Route>
-                    <AuthRoutes />
-                </Routes>
-            </main>
-        </Router>
+        
+        <Toaster position=ToasterPosition::TopCenter>
+            // content for this welcome page
+            <Router fallback=|| {
+                let mut outside_errors = Errors::default();
+                outside_errors.insert_with_default_key(SailfishError::NotFound);
+                view! {
+                    <ErrorTemplate outside_errors/>
+                }
+            }>
+                <main>
+                    <Routes>
+                        <Route path="/" view=BaseLayout>
+                            <Route path="" view=Home />
+                            <Route path="explore" view=Explore />
+                            <Route path="social" view=Social />
+                            <Route path="search" view=Search />
+                        </Route>
+                        <SettingsRoutes />
+                        <AuthRoutes />
+                    </Routes>
+                </main>
+            </Router>
+        </Toaster>
     }
 }
 

@@ -15,7 +15,6 @@ use crate::models::util::{BrightnessMode, Theme};
 #[derive(Debug, Clone)]
 pub enum Panel {
     Main,
-    QuickSettings,
     LogOut,
 }
 
@@ -60,7 +59,6 @@ pub fn Guide(profile: Profile) -> impl IntoView {
         >
             {move || match curr_panel() {
                 Panel::Main => view! { <MainPanel profile=profile.clone() set_curr_panel /> },
-                Panel::QuickSettings => view! { <QuickSettingsPanel set_curr_panel /> },
                 Panel::LogOut => view! { <LogOutPanel set_curr_panel /> }
             }}
         </div>
@@ -161,11 +159,11 @@ pub fn MainPanel(profile: Profile, set_curr_panel: WriteSignal<Panel>) -> impl I
                 href="/switch-profile"
             >
                 <span class="relative mr-2">
-                    <Icon icon=remixicon::RiArrowLeftRightArrowsLine width="24px" height="24px" />
+                    <Icon icon=remixicon::RiGroupUserFacesLine width="24px" height="24px" />
                 </span>
                 <span class="flex-1 relative top-0.5">"Switch Profile"</span>
                 <span class="relative text-zinc-400 dark:text-zinc-500">
-                    <Icon icon=remixicon::RiLinksBusinessLine width="20px" height="20px" />
+                    <Icon icon=remixicon::RiArrowLeftRightArrowsLine width="20px" height="20px" />
                 </span>
             </A>
         </div>
@@ -173,18 +171,18 @@ pub fn MainPanel(profile: Profile, set_curr_panel: WriteSignal<Panel>) -> impl I
         <div
             class="flex w-full flex-col overflow-hidden rounded-xl bg-zinc-400/25 dark:bg-zinc-500/25"
         >
-            <button
-                class="flex items-center border-b border-zinc-400 px-4 py-3 transition hover:bg-zinc-300/75 dark:border-zinc-500 dark:hover:bg-zinc-600/75"
-                on:click=move |_| set_curr_panel(Panel::QuickSettings)
+            <A
+                class="flex items-center px-4 py-3 transition hover:bg-zinc-300/75 dark:hover:bg-zinc-600/75 border-b border-zinc-400 dark:border-zinc-500"
+                href="/settings/about"
             >
                 <span class="relative mr-2">
                     <Icon icon=remixicon::RiSettings6SystemLine width="24px" height="24px" />
                 </span>
-                <span class="flex-1 text-left relative top-0.5">"Quick Settings"</span>
+                <span class="flex-1 relative top-0.5">"Settings"</span>
                 <span class="relative text-zinc-400 dark:text-zinc-500">
-                    <Icon icon=remixicon::RiArrowRightSArrowsLine width="20px" height="20px" />
+                    <Icon icon=remixicon::RiLinksBusinessLine width="20px" height="20px" />
                 </span>
-            </button>
+            </A>
             <button
                 class="flex items-center px-4 py-3 transition hover:bg-zinc-300/75 dark:hover:bg-zinc-600/75"
                 on:click=move |_| set_curr_panel(Panel::LogOut)
@@ -204,7 +202,7 @@ pub fn MainPanel(profile: Profile, set_curr_panel: WriteSignal<Panel>) -> impl I
 #[component]
 pub fn QuickSettingsPanel(set_curr_panel: WriteSignal<Panel>) -> impl IntoView {
     let (app, set_app, _) = use_local_storage::<AppState, JsonCodec>("app");
-    
+
     view! {
         <div class="flex items-center mb-4">
             <Button
@@ -216,7 +214,7 @@ pub fn QuickSettingsPanel(set_curr_panel: WriteSignal<Panel>) -> impl IntoView {
                 <span class="button-text">"Back"</span>
             </Button>
         </div>
-        
+
         <h3 class="relative left-2">Color</h3>
         <div class="mb-4 flex flex-col items-center p-4 rounded-xl bg-zinc-400/25 dark:bg-zinc-500/25">
             <h3 class="all-small-caps mb-4 text-xl" style="color: var(--text-color);">
@@ -243,7 +241,7 @@ pub fn QuickSettingsPanel(set_curr_panel: WriteSignal<Panel>) -> impl IntoView {
                 </For>
             </div>
         </div>
-        
+
         <h3 class="relative left-2">Brightness</h3>
         <div class="mb-4 flex items-center justify-center p-4 rounded-xl bg-zinc-400/25 dark:bg-zinc-500/25">
             <button

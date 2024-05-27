@@ -1,9 +1,9 @@
 mod home;
 pub mod explore;
 pub mod social;
-pub mod docs;
 pub mod auth;
 pub mod search;
+pub mod settings;
 
 pub use home::Home;
 

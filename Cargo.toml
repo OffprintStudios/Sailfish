@@ -33,13 +33,13 @@ sqlx = { version = "0.7.4", features = [
 ], optional = true }
 dotenvy = { version = "0.15.7", optional = true }
 cfg-if = "1.0.0"
-leptos_icons = "0.3.0"
+leptos_icons = "0.3.1"
 icondata_core = "0.1.0"
 icondata_ri = "0.0.10"
 icondata_lu = "0.0.10"
 leptos-use = { version = "0.10.10", features = ["serde"] }
 argon2 = { version = "0.5.3", optional = true }
-serde = { version = "1.0.201", features = ["derive"] }
+serde = { version = "1.0.203", features = ["derive"] }
 uuid = { version = "1.8.0", features = ["v4", "v7", "fast-rng", "macro-diagnostics", "serde"] }
 chrono = { version = "0.4.38", features = ["serde", "wasmbind"] }
 nanoid = "0.4.0"
@@ -50,11 +50,12 @@ maplit = { version = "1.0.2", optional = true }
 garde = { version = "0.18.0", features = ["derive", "url", "email", "regex"] }
 strum = { version = "0.26.2", features = ["derive"] }
 lettre = { version = "0.11.7", features = ["serde", "tokio1-native-tls"], optional = true }
-apalis = { version = "0.5.1", features = ["redis", "uuid", "cron", "retry", "timeout", "limit", "filter", "layers"], optional = true }
+apalis = { version = "0.5.3", features = ["redis", "uuid", "cron", "retry", "timeout", "limit", "filter", "layers"], optional = true }
 anyhow = "1.0.86"
+leptos_toaster = { version = "0.1.7", features = ["builtin_toast"] }
 
 [features]
-hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
+hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate", "leptos_toaster/hydrate"]
 ssr = [
     "dep:axum",
     "dep:tokio",
@@ -74,6 +75,7 @@ ssr = [
     "leptos_meta/ssr",
     "leptos_router/ssr",
     "leptos-use/ssr",
+    "leptos_toaster/ssr",
     "dep:tracing",
 ]
 

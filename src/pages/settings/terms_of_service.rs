@@ -1,6 +1,8 @@
 use leptos::*;
+use leptos_icons::*;
+use icondata_ri as remixicon;
 use crate::error_template::{ErrorTemplate, SailfishError};
-use crate::ui::util::{MetaTagOptions, MetaTags};
+use crate::ui::util::{MetaTagOptions, MetaTags, LinkBlock};
 
 #[cfg(feature = "ssr")]
 use pulldown_cmark::{Parser, html::push_html};
@@ -59,7 +61,7 @@ These terms and conditions are governed by and construed in accordance with the 
 #[component]
 pub fn TermsOfService() -> impl IntoView {
     let meta_options = MetaTagOptions {
-        url: "https://offprint.cafe/docs/terms-of-service".to_string(),
+        url: "https://offprint.cafe/settings/about/terms-of-service".to_string(),
         title: "Terms of Service — Offprint".to_string(),
         author_url: None,
         description: "Our Terms of Service".to_string(),
@@ -83,15 +85,30 @@ pub fn TermsOfService() -> impl IntoView {
                             <ErrorTemplate outside_errors=errors />
                         }   
                     }>
-                        <div class="text-center">
-                            <h1 class="flex flex-col">
-                                <span>"Terms of Service"</span>
-                                <span class="text-lg text-zinc-600 dark:text-zinc-300">"Platform Concerns"</span>
-                                <span class="text-base text-zinc-600 dark:text-zinc-300 italic">"Edited February 25, 2024"</span>
-                            </h1>
+                        <div class="flex flex-col gap-4 p-6">
+                            <div class="flex items-center sticky top-6">
+                                <LinkBlock
+                                        id="go-back".to_string()
+                                    title="Go Back".to_string()
+                                    href="/settings/about".to_string()
+                                >
+                                    <span class="button-icon"><Icon icon=remixicon::RiArrowLeftSArrowsLine /></span>
+                                    <span class="button-text">"Back"</span>
+                                </LinkBlock>
+                            </div>
+                            <article class="prose prose-base dark:text-white dark:prose-strong:text-white dark:prose-a:text-accent mx-auto my-12 w-11/12">
+                                <div class="text-center">
+                                    <h1 class="flex flex-col">
+                                        <span>"Terms of Service"</span>
+                                        <span class="text-lg text-zinc-600 dark:text-zinc-300">"Platform Concerns"</span>
+                                        <span class="text-base text-zinc-600 dark:text-zinc-300 italic">"Edited February 25, 2024"</span>
+                                    </h1>
+                                </div>
+                                
+                                <div inner_html=page_data.unwrap_or_default()></div>
+                            </article>
                         </div>
                         
-                        <div inner_html=page_data.unwrap_or_default()></div>
                     </ErrorBoundary>
                 }
             }
