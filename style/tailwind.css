@@ -157,7 +157,7 @@ div.empty > p {
 
 /* Switch */
 .switch {
-    @apply relative inline-block w-[40px] h-[22px] bg-zinc-300 dark:bg-zinc-600 rounded-[11px] cursor-pointer select-none;
+    @apply relative inline-block w-[52px] h-[24px] bg-zinc-300 dark:bg-zinc-600 rounded-[11px] cursor-pointer select-none border border-zinc-600/25 dark:border-zinc-300/25;
     box-shadow: inset 0 0 1px 0 rgba(0, 0, 0, 0.05);
     transition: all 0.4s ease;
 }
@@ -174,11 +174,11 @@ div.empty > p {
 }
 
 .switch.active .switch-button {
-    @apply left-[20px];
+    @apply left-[30px];
 }
 
 .switch.active:active .switch-button {
-    @apply left-[14px];
+    @apply left-[24px];
 }
 
 .switch:active .switch-button {

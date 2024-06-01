@@ -1,5 +1,5 @@
+use crate::models::util::{BrightnessMode, Theme, RatingFilter};
 use serde::{Deserialize, Serialize};
-use crate::models::util::{RatingFilter, BrightnessMode, Theme};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct AppState {

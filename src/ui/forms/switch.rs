@@ -1,5 +1,5 @@
-use leptos::*;
 use leptos::ev::MouseEvent;
+use leptos::*;
 
 #[component]
 pub fn Switch(
@@ -10,6 +10,7 @@ pub fn Switch(
         let new_value = !value.get_untracked();
         value.set(new_value);
         if let Some(on_change) = on_change {
+            #[allow(unstable_name_collisions)]
             on_change.call(new_value);
         }
     };
