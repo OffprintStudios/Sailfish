@@ -83,7 +83,7 @@
             />
             <!--TODO: replace these with real links-->
             <span class="text-sm align-top select-none">
-                I agree to the <a href="/docs/terms-of-service">Terms of Service</a>, <a href="/docs/privacy-policy">Privacy Policy</a>, and <a href="/docs/constitution">Offprint Constitution</a></span>
+                I agree to the <a href="/settings/terms-of-service">Terms of Service</a>, <a href="/settings/privacy-policy">Privacy Policy</a>, and <a href="/settings/constitution">Offprint Constitution</a></span>
         </label>
         <Button
             id="sign-up"
