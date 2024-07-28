@@ -4,6 +4,7 @@
     import { app } from "$lib/state/app.state";
 	import { onMount } from "svelte";
 	import { Brightness, Theme } from "$lib/models/util";
+    import { page } from "$app/stores";
 
     onMount(() => {
         const themes = Object.keys(Theme);
@@ -51,32 +52,35 @@
             <div class="p-4">
                 <h3 class="text-xl all-small-caps relative left-3.5 tracking-wide">General</h3>
                 <a
-                    class="flex items-center px-4 py-3 transition hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 rounded-xl [&[aria-current=page]]:bg-accent [&[aria-current=page]]:text-white"
+                    class="flex items-center px-4 py-3 transition hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 rounded-xl [&[aria-current=page]]:bg-accent [&[aria-current=page]]:text-white group"
                     href="/settings"
+                    aria-current={$page.url.pathname === "/settings" ? "page" : undefined}
                 >
                     <span class="relative mr-2">
                         <IconInfoCircle size="24px" />
                     </span>
                     <span class="flex-1 relative top-0.5">About</span>
-                    <span class="relative text-zinc-400 dark:text-zinc-500">
+                    <span class="relative text-zinc-400 dark:text-zinc-500 group-[&[aria-current=page]]:text-white">
                         <IconChevronRight size="20px" />
                     </span>
                 </a>
                 <a
-                    class="flex items-center px-4 py-3 transition hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 rounded-xl [&[aria-current=page]]:bg-accent [&[aria-current=page]]:text-white"
-                    href="localization"
+                    class="flex items-center px-4 py-3 transition hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 rounded-xl [&[aria-current=page]]:bg-accent [&[aria-current=page]]:text-white group"
+                    href="/settings/localization"
+                    aria-current={$page.url.pathname === "/settings/localization" ? "page" : undefined}
                 >
                     <span class="relative mr-2">
                         <IconWorld size="24px" />
                     </span>
                     <span class="flex-1 relative top-0.5">Localization</span>
-                    <span class="relative text-zinc-400 dark:text-zinc-500">
+                    <span class="relative text-zinc-400 dark:text-zinc-500 group-[&[aria-current=page]]:text-white">
                         <IconChevronRight size="20px" />
                     </span>
                 </a>
                 <a
                     class="flex items-center px-4 py-3 transition hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 rounded-xl [&[aria-current=page]]:bg-accent [&[aria-current=page]]:text-white"
-                    href="filters"
+                    href="/settings/filters"
+                    aria-current={$page.url.pathname === "/settings/filters" ? "page" : undefined}
                 >
                     <span class="relative mr-2">
                         <IconFilter size="24px" />
@@ -88,7 +92,8 @@
                 </a>
                 <a
                     class="flex items-center px-4 py-3 transition hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 rounded-xl [&[aria-current=page]]:bg-accent [&[aria-current=page]]:text-white"
-                    href="appearance"
+                    href="/settings/appearance"
+                    aria-current={$page.url.pathname === "/settings/appearance" ? "page" : undefined}
                 >
                     <span class="relative mr-2">
                         <IconPalette size="24px" />
@@ -102,7 +107,8 @@
                 <h3 class="text-xl all-small-caps relative left-3.5 tracking-wide">Account</h3>
                 <a
                     class="flex items-center px-4 py-3 transition hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 rounded-xl [&[aria-current=page]]:bg-accent [&[aria-current=page]]:text-white"
-                    href="account-info"
+                    href="/settings/account"
+                    aria-current={$page.url.pathname === "/settings/account" ? "page" : undefined}
                 >
                     <span class="relative mr-2">
                         <IconUserCog size="24px" />
@@ -114,7 +120,8 @@
                 </a>
                 <a
                     class="flex items-center px-4 py-3 transition hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 rounded-xl [&[aria-current=page]]:bg-accent [&[aria-current=page]]:text-white"
-                    href="sessions"
+                    href="/settings/sessions"
+                    aria-current={$page.url.pathname === "/settings/sessions" ? "page" : undefined}
                 >
                     <span class="relative mr-2">
                         <IconAppWindow size="24px" />
@@ -126,7 +133,8 @@
                 </a>
                 <a
                     class="flex items-center px-4 py-3 transition hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 rounded-xl [&[aria-current=page]]:bg-accent [&[aria-current=page]]:text-white"
-                    href="security-privacy"
+                    href="/settings/security-privacy"
+                    aria-current={$page.url.pathname === "/settings/security-privacy" ? "page" : undefined}
                 >
                     <span class="relative mr-2">
                         <IconShield size="24px" />
@@ -138,7 +146,8 @@
                 </a>
                 <a
                     class="flex items-center px-4 py-3 transition hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 rounded-xl [&[aria-current=page]]:bg-accent [&[aria-current=page]]:text-white"
-                    href="connections"
+                    href="/settings/connections"
+                    aria-current={$page.url.pathname === "/settings/connections" ? "page" : undefined}
                 >
                     <span class="relative mr-2">
                         <IconCirclesRelation size="24px" />
@@ -152,7 +161,8 @@
                 <h3 class="text-xl all-small-caps relative left-3.5 tracking-wide">Profile</h3>
                 <a
                     class="flex items-center px-4 py-3 transition hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 rounded-xl [&[aria-current=page]]:bg-accent [&[aria-current=page]]:text-white"
-                    href="profiles"
+                    href="/settings/profiles"
+                    aria-current={$page.url.pathname === "/settings/profiles" ? "page" : undefined}
                 >
                     <span class="relative mr-2">
                         <IconMoodWink size="24px" />
@@ -164,7 +174,8 @@
                 </a>
                 <a
                     class="flex items-center px-4 py-3 transition hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 rounded-xl [&[aria-current=page]]:bg-accent [&[aria-current=page]]:text-white"
-                    href="notifications"
+                    href="/settings/notifications"
+                    aria-current={$page.url.pathname === "/settings/notifications" ? "page" : undefined}
                 >
                     <span class="relative mr-2">
                         <IconNotification size="24px" />
@@ -176,7 +187,8 @@
                 </a>
                 <a
                     class="flex items-center px-4 py-3 transition hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 rounded-xl [&[aria-current=page]]:bg-accent [&[aria-current=page]]:text-white"
-                    href="social"
+                    href="/settings/social"
+                    aria-current={$page.url.pathname === "/settings/social" ? "page" : undefined}
                 >
                     <span class="relative mr-2">
                         <IconSocial size="24px" />
