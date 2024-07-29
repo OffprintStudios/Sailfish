@@ -34,6 +34,12 @@ final class Account: Model, @unchecked Sendable {
     @Children(for: \.$account)
     var sessions: [Session]
 
+    @Children(for: \.$account)
+    var passwordResetCodes: [PasswordReset]
+
+    @Children(for: \.$account)
+    var confirmEmailCodes: [ConfirmEmail]
+
     @Timestamp(key: FieldKeys.createdAt, on: .create)
     var createdAt: Date?
 

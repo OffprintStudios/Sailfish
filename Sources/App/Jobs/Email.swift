@@ -6,7 +6,7 @@ import struct Smtp.EmailAddress
 
 struct EmailInfo: Codable {
     let to: String
-    let name: String
+    let name: String?
     let token: String?
     let kind: Kind
 }
@@ -57,8 +57,8 @@ struct EmailJob: AsyncJob {
         }
 
         let email = try Email(
-            from: EmailAddress(address: "no-reply@offprint.net", name: "Beatriz"),
-            to: [EmailAddress(address: payload.to, name: payload.name)],
+            from: EmailAddress(address: "no-reply@offprint.cafe", name: "Offprint Studios"),
+            to: [EmailAddress(address: payload.to, name: payload.name ?? "")],
             subject: subject,
             body: body,
             isBodyHtml: true

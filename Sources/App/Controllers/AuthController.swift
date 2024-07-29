@@ -8,7 +8,6 @@ struct AuthController: RouteCollection {
         auth.grouped(Account.authenticator()).post("log-in", use: self.logIn)
         auth.post("sign-up", use: self.signUp)
         auth.post("generate-reset", use: self.generateResetCode)
-        auth.post("generate-confirmation", use: self.generateConfirmationCode)
         auth.patch("reset-password", use: self.resetPassword)
         auth.patch("confirm-email", use: self.confirmEmail)
     }
@@ -51,6 +50,20 @@ struct AuthController: RouteCollection {
         let newAccount = Account(with: formInfo)
         try await newAccount.save(on: request.db)
 
+        let confirmationCode = ConfirmEmail(expiresOn: Date().addingTimeInterval(60 * 60)) // 1 hour as 60 seconds * 60 minutes
+        try await newAccount.$confirmEmailCodes.create(confirmationCode, on: request.db)
+
+        try await request.queue.dispatch(
+            EmailJob.self, 
+            .init(
+                to: newAccount.$email.value!,
+                name: nil, 
+                token: confirmationCode.$id.value,
+                kind: .confirmation
+            ),
+            maxRetryCount: 3
+        )
+
         return .ok
     }
 
@@ -59,9 +72,6 @@ struct AuthController: RouteCollection {
 
     @Sendable
     func resetPassword(request: Request) async throws -> String { "hello world" }
-
-    @Sendable
-    func generateConfirmationCode(request: Request) async throws -> String { "hello world" }
 
     @Sendable
     func confirmEmail(request: Request) async throws -> String { "hello world" }
