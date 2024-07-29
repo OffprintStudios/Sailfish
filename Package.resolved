@@ -1,5 +1,5 @@
 {
-  "originHash" : "b512bfd1e1b9f260f57104459318ccc1cbef06205acd8482ce152b460e950f76",
+  "originHash" : "37257fa637134a2d2da48f124fe87733d0b391f8cf22981d04da8dae8aae9074",
   "pins" : [
     {
       "identity" : "argon2swift",
@@ -152,6 +152,42 @@
       "state" : {
         "revision" : "5c268768890b062803a49f1358becc478f954265",
         "version" : "1.21.5"
+      }
+    },
+    {
+      "identity" : "queues",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor/queues.git",
+      "state" : {
+        "revision" : "15829c524480424ce29b24fc36c452b07e352124",
+        "version" : "1.15.0"
+      }
+    },
+    {
+      "identity" : "queues-redis-driver",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor/queues-redis-driver.git",
+      "state" : {
+        "revision" : "89a4350c1a6eb03b5693f481817741ff36a8cdcc",
+        "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "redis",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor/redis.git",
+      "state" : {
+        "revision" : "383ed57e5b5acd4dd447c2967aa665dc3bbe5be9",
+        "version" : "4.11.0"
+      }
+    },
+    {
+      "identity" : "redistack",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swift-server/RediStack.git",
+      "state" : {
+        "revision" : "622ce440f90d79b58e45f3a3efdd64c51d1dfd17",
+        "version" : "1.6.2"
       }
     },
     {

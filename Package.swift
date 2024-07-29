@@ -30,7 +30,9 @@ let package = Package(
         // Soto AWS library
         .package(url: "https://github.com/soto-project/soto.git", from: "7.0.0"),
         // SMTP support
-        .package(url: "https://github.com/mikroservices/smtp.git", from: "3.0.5")
+        .package(url: "https://github.com/mikroservices/smtp.git", from: "3.0.5"),
+        // Job queues
+        .package(url: "https://github.com/vapor/queues-redis-driver.git", from: "1.0.0"),
     ],
     targets: [
         .executableTarget(
@@ -48,7 +50,8 @@ let package = Package(
                 .product(name: "NanoID", package: "NanoID"),
                 .product(name: "SwiftSoup", package: "SwiftSoup"),
                 .product(name: "SotoS3", package: "soto"),
-                .product(name: "Smtp", package: "smtp")
+                .product(name: "Smtp", package: "smtp"),
+                .product(name: "QueuesRedisDriver", package: "queues-redis-driver")
             ],
             swiftSettings: swiftSettings
         ),

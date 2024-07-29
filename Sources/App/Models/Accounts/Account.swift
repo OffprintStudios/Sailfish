@@ -31,6 +31,9 @@ final class Account: Model, @unchecked Sendable {
     @Children(for: \.$account)
     var profiles: [Profile]
 
+    @Children(for: \.$account)
+    var sessions: [Session]
+
     @Timestamp(key: FieldKeys.createdAt, on: .create)
     var createdAt: Date?
 

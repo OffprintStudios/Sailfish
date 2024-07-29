@@ -5,8 +5,8 @@ struct AccountController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let accounts = routes.grouped("accounts")
         let secure = accounts.grouped(
-            SessionToken.authenticator(), 
-            SessionToken.guardMiddleware(), 
+            Session.Token.authenticator(), 
+            Session.Token.guardMiddleware(), 
             IdentityGuard(needs: [.user])
         )
 

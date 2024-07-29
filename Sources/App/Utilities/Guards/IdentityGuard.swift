@@ -6,7 +6,11 @@ struct IdentityGuard: AsyncMiddleware {
     var checkProfile: Bool
 
     func respond(to request: Request, chainingTo next: AsyncResponder) async throws -> Response {
-        let sessionToken = try request.auth.require(SessionToken.self)
+        let sessionToken = try request.auth.require(Session.Token.self)
+
+        if try await Session.query(on: request.db).filter(\.$id == sessionToken.sessionId).filter(\.$account.$id == sessionToken.accountId).first() == nil {
+            throw Abort(.unauthorized, reason: "You don't have permission to do that!")
+        }
 
         guard let account = try await Account.find(sessionToken.accountId, on: request.db) else {
             throw Abort(.internalServerError, reason: "Something went wrong validating your session!")

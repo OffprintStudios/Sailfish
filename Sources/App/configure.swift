@@ -1,6 +1,7 @@
 import NIOSSL
 import Fluent
 import FluentPostgresDriver
+import QueuesRedisDriver
 import Leaf
 import Vapor
 import JWT
@@ -38,6 +39,9 @@ public func configure(_ app: Application) async throws {
     app.migrations.add([
         Account.Create(),
         Profile.Create(),
+        Session.Create(),
+        PasswordReset.Create(),
+        ConfirmEmail.Create(),
     ])
     try await app.autoMigrate()
     
@@ -52,7 +56,15 @@ public func configure(_ app: Application) async throws {
 
     // Initializing job queues
     app.logger.notice("Initializing job queues ...")
-    // TODO: add job queues
+    let redisConfig = try RedisConfiguration(
+        url: Environment.get("REDIS_URL") ?? "redis://127.0.0.1:6379",
+        pool: RedisConfiguration.PoolOptions(connectionRetryTimeout: .minutes(1))
+    )
+    app.queues.use(.redis(redisConfig))
+
+    // Registering jobs
+    app.logger.notice("Registering jobs ...")
+    app.queues.add(EmailJob())
     
     // CORS configuration
     app.logger.notice("Initializing CORS configuration ...")
@@ -85,6 +97,7 @@ public func configure(_ app: Application) async throws {
     // Configure SMTP connection
     app.logger.notice("Configuring SMTP connection ...")
     app.smtp.configuration.hostname = Environment.get("SMTP_HOST") ?? ""
+    app.smtp.configuration.port = Int(Environment.get("SMTP_PORT") ?? "465")!
     app.smtp.configuration.signInMethod = .credentials(
         username: Environment.get("SMTP_USERNAME") ?? "",
         password: Environment.get("SMTP_PASSWORD") ?? ""
@@ -102,6 +115,6 @@ public func configure(_ app: Application) async throws {
     }
 
     // Restarting any available jobs
-    app.logger.notice("Restarting any available pending ...")
-    // TODO: restart jobs
+    app.logger.notice("Restarting any pending jobs ...")
+    try app.queues.startInProcessJobs(on: .default)
 }

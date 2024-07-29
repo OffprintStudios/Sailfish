@@ -7,6 +7,8 @@ struct AuthController: RouteCollection {
 
         auth.grouped(Account.authenticator()).post("log-in", use: self.logIn)
         auth.post("sign-up", use: self.signUp)
+        auth.post("generate-reset", use: self.generateResetCode)
+        auth.post("generate-confirmation", use: self.generateConfirmationCode)
         auth.patch("reset-password", use: self.resetPassword)
         auth.patch("confirm-email", use: self.confirmEmail)
     }
@@ -19,11 +21,14 @@ struct AuthController: RouteCollection {
         }
 
         if account.emailConfirmed {
-            guard let duration = SessionToken.SessionDuration(rawValue: rememberMe) else {
+            guard let duration = Session.Duration(rawValue: rememberMe) else {
                 throw Abort(.badRequest, reason: "Malformed duration setting.")
             }
 
-            let token = try SessionToken(for: account, duration: duration)
+            let session = Session(duration: duration)
+            try await account.$sessions.create(session, on: request.db)
+
+            let token = try Session.Token(for: account, with: session, expiration: session.$expiresOn.value!)
 
             return account.toObject(with: try request.jwt.sign(token))
         } else {
@@ -50,7 +55,13 @@ struct AuthController: RouteCollection {
     }
 
     @Sendable
+    func generateResetCode(request: Request) async throws -> String { "hello world" }
+
+    @Sendable
     func resetPassword(request: Request) async throws -> String { "hello world" }
+
+    @Sendable
+    func generateConfirmationCode(request: Request) async throws -> String { "hello world" }
 
     @Sendable
     func confirmEmail(request: Request) async throws -> String { "hello world" }
