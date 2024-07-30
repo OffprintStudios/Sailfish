@@ -98,7 +98,8 @@ extension Account {
             }
 
             model.email = try SwiftSoup.clean(model.email, .none())!
-            guard let hashedPassword = try? Argon2Swift.hashPasswordString(password: model.password, salt: Salt.newSalt(), type: Argon2Type.id) else {
+            let cleanPassword = try SwiftSoup.clean(model.password, .none())!
+            guard let hashedPassword = try? Argon2Swift.hashPasswordString(password: cleanPassword, salt: Salt.newSalt(), type: Argon2Type.id) else {
                 throw Abort(.internalServerError, reason: "Failed to create your account. Contact an administrator for assistance.")
             }
             model.password = hashedPassword.encodedString().trimmingCharacters(in: CharacterSet(charactersIn: "\0"))

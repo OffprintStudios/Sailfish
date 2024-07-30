@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { LinkBlock } from "$lib/ui/util";
-    import { IconSquareX } from "@tabler/icons-svelte";
+    import { IconX } from "@tabler/icons-svelte";
     import { app } from "$lib/state/app.state";
 	import { onMount } from "svelte";
 	import { Brightness, Theme } from "$lib/models/util";
@@ -44,7 +44,7 @@
             title="Go Back"
             href="/"
         >
-            <span class="link-icon no-text text-zinc-300"><IconSquareX size="32px" /></span>
+            <span class="link-icon no-text text-zinc-300"><IconX size="32px" /></span>
         </LinkBlock>
     </div>
 
