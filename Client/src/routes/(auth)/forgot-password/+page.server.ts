@@ -14,6 +14,6 @@ export const actions = {
             }
         });
 
-        return { message: "If the email you entered belongs to a valid Offprint account, we've sent you an email with instructions on how to reset your password." };
+        return { message: "If the email you entered belongs to a valid Offprint account, we've sent it instructions on how to reset your password." };
     }
 } satisfies Actions;
