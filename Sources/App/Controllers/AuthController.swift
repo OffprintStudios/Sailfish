@@ -137,7 +137,7 @@ struct AuthController: RouteCollection {
 
         guard let code = try await PasswordReset.query(on: request.db)
             .filter(\.$id == cleanToken)
-            .filter(\.$expiresOn < Date())
+            .filter(\.$expiresOn > Date())
             .first() else {
                 throw Abort(.badRequest, reason: "You're missing crucial information to process this request")
             }
@@ -168,9 +168,11 @@ struct AuthController: RouteCollection {
         let confirmInfo = try request.content.decode(ConfirmInfo.self)
         let cleanToken = try SwiftSoup.clean(confirmInfo.token, .none())!
 
+        print(cleanToken)
+
         guard let code = try await ConfirmEmail.query(on: request.db)
             .filter(\.$id == cleanToken)
-            .filter(\.$expiresOn < Date())
+            .filter(\.$expiresOn > Date())
             .first() else {
                 throw Abort(.badRequest, reason: "You're missing crucial information to process this request")
             }
