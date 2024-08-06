@@ -5,13 +5,22 @@
     import MainPanel from "./MainPanel.svelte";
 	import LogOutPanel from "./LogOutPanel.svelte";
 	import { fade } from "svelte/transition";
+    import { afterNavigate } from "$app/navigation";
 
     let button: HTMLButtonElement;
+    let guideMenu: HTMLDivElement;
+    let open = false;
     let offset = writable("0px");
     $: width = 0;
 
     onMount(() => {
         getOffset();
+    });
+
+    afterNavigate(() => {
+        if (guideMenu && open) {
+            guideMenu.togglePopover();
+        }
     });
 
     const getOffset = () => {
@@ -38,12 +47,11 @@
 
 <svelte:window bind:innerWidth={width} />
 
-<button class="relative mx-1 md:mr-0 transition transform hover:scale-110" bind:this={button} popovertarget="guide-menu">
-    <div class="absolute z-[2] top-0 right-0">
-        <div class="w-[13px] h-[13px] bg-rose-500 rounded-full" style="box-shadow: var(--dropshadow);">
-            <div class="w-full h-full bg-rose-500 animate-ping rounded-full" />
-        </div>
-    </div>
+<button 
+    class="relative mx-1 md:mr-0 p-2 rounded-t-lg transition transform hover:scale-110"
+    bind:this={button} 
+    popovertarget="guide-menu"
+>
     <div class="w-[40px] h-[40px] z-[1] relative rounded-full border-2 border-white overflow-hidden">
         <img src={$auth.currProfile?.avatar} class="w-full h-full object-cover" />
     </div>
@@ -54,6 +62,14 @@
     style="box-shadow: var(--dropshadow); color: var(--text-color);"
     style:left={$offset}
     popover="auto"
+    on:beforetoggle={(event) => {
+        if (event.newState === "open") {
+            open = true;
+        } else {
+            open = false;
+        }
+    }}
+    bind:this={guideMenu}
 >
     {#if currPanel === Panels.Main}
         <div in:fade>
