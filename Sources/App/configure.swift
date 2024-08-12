@@ -7,6 +7,7 @@ import Vapor
 import JWT
 import SotoS3
 import Smtp
+import Redis
 
 // configures your application
 public func configure(_ app: Application) async throws {
@@ -42,6 +43,7 @@ public func configure(_ app: Application) async throws {
         Session.Create(),
         PasswordReset.Create(),
         ConfirmEmail.Create(),
+        ContentRating.CreateEnum(),
     ])
     try await app.autoMigrate()
     
@@ -54,12 +56,13 @@ public func configure(_ app: Application) async throws {
     app.logger.notice("Registering Leaf templates ...")
     app.views.use(.leaf)
 
-    // Initializing job queues
-    app.logger.notice("Initializing job queues ...")
+    // Initializing job queues and Redis
+    app.logger.notice("Initializing job queues and Redis ...")
     let redisConfig = try RedisConfiguration(
         url: Environment.get("REDIS_URL") ?? "redis://127.0.0.1:6379",
         pool: RedisConfiguration.PoolOptions(connectionRetryTimeout: .minutes(1))
     )
+    app.redis.configuration = redisConfig
     app.queues.use(.redis(redisConfig))
 
     // Registering jobs

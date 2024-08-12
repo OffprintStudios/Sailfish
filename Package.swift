@@ -33,6 +33,8 @@ let package = Package(
         .package(url: "https://github.com/mikroservices/smtp.git", from: "3.0.5"),
         // Job queues
         .package(url: "https://github.com/vapor/queues-redis-driver.git", from: "1.0.0"),
+        // Redis
+        .package(url: "https://github.com/vapor/redis.git", from: "4.0.0")
     ],
     targets: [
         .executableTarget(
@@ -51,7 +53,8 @@ let package = Package(
                 .product(name: "SwiftSoup", package: "SwiftSoup"),
                 .product(name: "SotoS3", package: "soto"),
                 .product(name: "Smtp", package: "smtp"),
-                .product(name: "QueuesRedisDriver", package: "queues-redis-driver")
+                .product(name: "QueuesRedisDriver", package: "queues-redis-driver"),
+                .product(name: "Redis", package: "redis")
             ],
             swiftSettings: swiftSettings
         ),
