@@ -45,6 +45,15 @@ final class Work: Model, @unchecked Sendable {
     @Field(key: FieldKeys.attributions)
     var attributions: [Attribution: [String]]
 
+    @Field(key: FieldKeys.views)
+    var views: Int64
+
+    @Field(key: FieldKeys.likes)
+    var likes: Int64
+
+    @Field(key: FieldKeys.dislikes)
+    var dislikes: Int64
+
     @Timestamp(key: FieldKeys.createdAt, on: .create)
     var createdAt: Date?
 
@@ -83,10 +92,9 @@ final class Work: Model, @unchecked Sendable {
             kind: self.$kind.value!, 
             license: self.$license.value!, 
             attributions: self.$attributions.value!,
-            words: 0,
-            views: 0,
-            likes: 0,
-            dislikes: 0,
+            views: self.$views.value!,
+            likes: self.$likes.value!,
+            dislikes: self.$dislikes.value!,
             createdAt: self.$createdAt.value!,
             updatedAt: self.$updatedAt.value!
         )
@@ -131,6 +139,9 @@ extension Work {
                 .field(FieldKeys.kind, kindType, .required)
                 .field(FieldKeys.license, .string, .required)
                 .field(FieldKeys.attributions, .json, .required)
+                .field(FieldKeys.views, .int64, .required, .sql(.default(0)))
+                .field(FieldKeys.likes, .int64, .required, .sql(.default(0)))
+                .field(FieldKeys.dislikes, .int64, .required, .sql(.default(0)))
                 .field(FieldKeys.createdAt, .datetime)
                 .field(FieldKeys.updatedAt, .datetime)
                 .field(FieldKeys.deletedAt, .datetime)
@@ -258,6 +269,9 @@ extension Work {
         static let kind: FieldKey = "kind"
         static let license: FieldKey = "license"
         static let attributions: FieldKey = "attributions"
+        static let views: FieldKey = "views"
+        static let likes: FieldKey = "likes"
+        static let dislikes: FieldKey = "dislikes"
         static let createdAt: FieldKey = "created_at"
         static let updatedAt: FieldKey = "updated_at"
         static let deletedAt: FieldKey = "deleted_at"

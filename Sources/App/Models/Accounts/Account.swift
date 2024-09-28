@@ -142,8 +142,8 @@ extension Account {
 }
 
 extension Account: ModelAuthenticatable {
-    static let usernameKey = \Account.$email
-    static let passwordHashKey = \Account.$password
+    nonisolated(unsafe) static var usernameKey: KeyPath<Account, Field<String>> = \.$email
+    nonisolated(unsafe) static var passwordHashKey: KeyPath<Account, Field<String>> = \.$password
 
     func verify(password: String) throws -> Bool {
         return try Argon2Swift.verifyHashString(password: password, hash: self.password, type: .id)

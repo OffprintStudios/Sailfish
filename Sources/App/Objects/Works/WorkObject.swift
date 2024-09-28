@@ -17,7 +17,6 @@ struct WorkObject: Content {
     var kind: Work.Kind
     var license: Work.License
     var attributions: [Work.Attribution: [String]]
-    var words: Int64
     var views: Int64
     var likes: Int64
     var dislikes: Int64
@@ -41,6 +40,9 @@ struct WorkObject: Content {
         model.kind = self.kind
         model.license = self.license
         model.attributions = self.attributions
+        model.views = self.views
+        model.likes = self.likes
+        model.dislikes = self.dislikes
         model.createdAt = self.createdAt
         model.updatedAt = self.createdAt
 

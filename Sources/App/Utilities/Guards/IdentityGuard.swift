@@ -23,7 +23,7 @@ struct IdentityGuard: AsyncMiddleware {
                 }
 
                 guard let profile = try? await account.$profiles.query(on: request.db).filter(\.$id == profileId).first() else {
-                    request.logger.error("An attempt to authorize a profile's access level has failed. [Profile ID: \(profileId)] [Account ID: \(account.id)]")
+                    request.logger.error("An attempt to authorize a profile's access level has failed. [Profile ID: \(profileId)] [Account ID: \(account.id?.uuidString ?? "")]")
                     throw Abort(.unauthorized, reason: "You don't have permission to do that!")
                 }
 

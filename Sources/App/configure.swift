@@ -44,6 +44,7 @@ public func configure(_ app: Application) async throws {
         PasswordReset.Create(),
         ConfirmEmail.Create(),
         ContentRating.CreateEnum(),
+        Work.Create(),
     ])
     try await app.autoMigrate()
     
@@ -51,6 +52,7 @@ public func configure(_ app: Application) async throws {
     app.logger.notice("Initializing model middleware ...")
     app.databases.middleware.use(Account.Middleware(), on: .psql)
     app.databases.middleware.use(Profile.Middleware(), on: .psql)
+    app.databases.middleware.use(Work.Middleware(), on: .psql)
     
     // Registering Leaf templates
     app.logger.notice("Registering Leaf templates ...")
