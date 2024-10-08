@@ -236,12 +236,25 @@ extension Work {
     }
 
     enum License: String, Codable {
-        case publicDomain = "CC0"
-        case creditGiven = "CC BY"
-        case sameTerms = "CC BY-SA"
-        case noncommercial = "CC BY-NC"
-        case noncommercialSameTerms = "CC BY-NC-SA"
-        case noDerivatives = "CC BY-ND"
+        /// All legal rights waived. This work can be shared, remixed, and distributed in any fashion 
+        /// with or without attribution, with zero conditions.
+        case publicDomain = "CC0"       
+        /// Allows remixing and commercial use so long as attribution is given to the original author(s).                
+        case creditGiven = "CC BY"      
+        /// Allows remixing and commercial use so long as attribution is given to the original author(s),
+        /// and subsequent derivative works are licensed under the same terms.                
+        case sameTerms = "CC BY-SA"   
+        /// Allows remixing so long as attribution is given to the original author(s), but disallows 
+        /// commercial use.                  
+        case noncommercial = "CC BY-NC"         
+        /// Allows remixing so long as attribution is given to the original author(s), but disallows 
+        /// commercial use. All subsequent derivative works must be licensed under the same terms.        
+        case noncommercialSameTerms = "CC BY-NC-SA"    
+        ///  Allows commercial use, but only in an unmodified or unadapted form, with credit given to the 
+        /// original author(s).
+        case noDerivatives = "CC BY-ND"    
+        /// This work cannot be modified or adapted and cannot be used commercially, with credit given to 
+        /// the original author(s).
         case noncommercialNoDerivatives = "CC BY-NC-ND"
     }
 
