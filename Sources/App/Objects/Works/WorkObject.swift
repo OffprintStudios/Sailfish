@@ -10,6 +10,7 @@ struct WorkObject: Content {
     var blurb: String
     var desc: String
     var category: Work.Category
+    var genres: [Work.Genre]
     var rating: ContentRating
     var status: Work.Status
     var coverArt: String?
@@ -33,6 +34,7 @@ struct WorkObject: Content {
         model.blurb = self.blurb
         model.desc = self.desc
         model.category = self.category
+        model.genres = self.genres
         model.rating = self.rating
         model.status = self.status
         model.coverArt = self.coverArt

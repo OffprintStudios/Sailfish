@@ -28,7 +28,7 @@
             const scrollX = window.scrollX;
             const isMinWidth = window.matchMedia("(min-width: 768px)").matches;
             if (isMinWidth) {
-                $offset = `${button.getBoundingClientRect().left + scrollX - 335}px`;
+                $offset = `${button.getBoundingClientRect().left + scrollX - 325}px`;
                 return;
             }
         }
@@ -53,7 +53,7 @@
     popovertarget="guide-menu"
 >
     <div class="w-[40px] h-[40px] z-[1] relative rounded-full border-2 border-white overflow-hidden">
-        <img src={$auth.currProfile?.avatar} class="w-full h-full object-cover" />
+        <img src={$auth.currProfile?.avatar} class="w-full h-full object-cover" alt="avatar" />
     </div>
 </button>
 <div

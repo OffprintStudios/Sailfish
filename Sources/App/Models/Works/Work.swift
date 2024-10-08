@@ -24,6 +24,9 @@ final class Work: Model, @unchecked Sendable {
     @Enum(key: FieldKeys.category)
     var category: Category
 
+    @Field(key: FieldKeys.genres)
+    var genres: [Genre]
+
     @Enum(key: FieldKeys.rating)
     var rating: ContentRating
 
@@ -71,6 +74,7 @@ final class Work: Model, @unchecked Sendable {
         self.blurb = formInfo.blurb
         self.desc = formInfo.desc
         self.category = formInfo.category
+        self.genres = formInfo.genres
         self.rating = formInfo.rating
         self.status = formInfo.status
         self.kind = formInfo.kind
@@ -87,6 +91,7 @@ final class Work: Model, @unchecked Sendable {
             blurb: self.$blurb.value!, 
             desc: self.$desc.value!, 
             category: self.$category.value!, 
+            genres: self.$genres.value!,
             rating: self.$rating.value!, 
             status: self.$status.value!, 
             kind: self.$kind.value!, 
@@ -132,6 +137,7 @@ extension Work {
                 .field(FieldKeys.blurb, .string, .required)
                 .field(FieldKeys.desc, .string, .required)
                 .field(FieldKeys.category, categoryType, .required)
+                .field(FieldKeys.genres, .array(of: .string), .required)
                 .field(FieldKeys.rating, ratingType, .required)
                 .field(FieldKeys.status, statusType, .required)
                 .field(FieldKeys.coverArt, .string)
@@ -199,6 +205,7 @@ extension Work {
         var blurb: String
         var desc: String
         var category: Category
+        var genres: [Genre]
         var tags: [String]
         var rating: ContentRating
         var status: Status
@@ -217,6 +224,25 @@ extension Work {
         static let schema = "work_category"
         case original
         case fanwork
+    }
+
+    enum Genre: String, Codable {
+        static let schema = "genre"
+        case actionAdventure = "Action/Adventure"
+        case comedy = "Comedy"
+        case dark = "Dark"
+        case drama = "Drama"
+        case erotica = "Erotica"
+        case fantasy = "Fantasy"
+        case horror = "Horror"
+        case mystery = "Mystery"
+        case romance = "Romance"
+        case sad = "Sad"
+        case scienceFiction = "Science Fiction"
+        case sliceOfLife = "Slice of Life"
+        case speculativeFiction = "Speculative Fiction"
+        case thriller = "Thriller"
+        case tragedy = "Tragedy"
     }
 
     enum Status: String, Codable {
@@ -275,6 +301,7 @@ extension Work {
         static let blurb: FieldKey = "blurb"
         static let desc: FieldKey = "desc"
         static let category: FieldKey = "category"
+        static let genres: FieldKey = "genres"
         static let rating: FieldKey = "rating"
         static let status: FieldKey = "status"
         static let coverArt: FieldKey = "cover_art"
