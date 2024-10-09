@@ -58,11 +58,11 @@
             <h1 class="text-4xl">{data.profile.username}</h1>
             <div class="my-1"><!--<RoleBadge roles={data.roles} size="large" />--></div>
             <div class="flex items-center text-zinc-500 dark:text-zinc-400 text-xs md:text-sm">
-                <a href="/profile/{data.profile.id}/{slugify(data.profile.username)}/followers">
+                <a href="/profile/{data.profile.id}/{slugify(data.profile.username)}/followers" class="text-zinc-500 dark:text-zinc-400 hover:underline">
                     {abbreviate(data.profile.followers)} follower{pluralize(data.profile.followers)}
                 </a>
                 <span class="mx-1">•</span>
-                <a href="/profile/{data.profile.id}/{slugify(data.profile.username)}/following">
+                <a href="/profile/{data.profile.id}/{slugify(data.profile.username)}/following" class="text-zinc-500 dark:text-zinc-400 hover:underline">
                     {abbreviate(data.profile.following)} following
                 </a>
                 <span class="flex-1"><!--spacer--></span>
@@ -109,7 +109,7 @@
             {/if}
             <div class="hidden md:block my-2"><!--spacer--></div>
             <div class="md:flex items-center text-sm hidden">
-                <span class="mr-2 relative top-0.5"><IconCake size="22px" /></span>
+                <span class="mr-2 relative"><IconCake size="22px" /></span>
                 <span>Joined {localeDate(data.profile.createdAt, "mediumDate")}</span>
             </div>
             <div class="flex md:flex-col items-center md:items-baseline mt-4 md:mt-0">
@@ -181,6 +181,7 @@
 
     a.nav-link-mobile {
         @apply w-1/4 text-center py-2 mx-0.5 all-small-caps text-lg font-bold tracking-wide border-b-2 border-transparent;
+        color: var(--text-color);
     }
 
     a.nav-link-mobile.active {
