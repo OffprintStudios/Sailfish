@@ -30,6 +30,9 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^4.0.0
         version: 4.0.2(svelte@5.2.8)(vite@5.4.11(@types/node@22.10.0))
+      '@tabler/icons-svelte':
+        specifier: ^3.22.0
+        version: 3.22.0(svelte@5.2.8)
       '@types/node':
         specifier: ^22.10.0
         version: 22.10.0
@@ -451,6 +454,14 @@ packages:
     peerDependencies:
       svelte: ^5.0.0-next.96 || ^5.0.0
       vite: ^5.0.0
+
+  '@tabler/icons-svelte@3.22.0':
+    resolution: {integrity: sha512-msX4XWFB5ilk132DACL2q3zVTDrnE9tSOoof04gy+E7GOmFqt0mOzQgpWixI8/QkpxC6/jQSH+DwTV4rAmpUrQ==}
+    peerDependencies:
+      svelte: '>=3 <6 || >=5.0.0-next.0'
+
+  '@tabler/icons@3.22.0':
+    resolution: {integrity: sha512-IfgGzhFph5OBr2wTieWL/hyAs0FThnq9O155a6kfGYxqx7h5LQw91wnRswhEaGhXCcfmR7ZVDUr9H+x4b9Pb8g==}
 
   '@tailwindcss/container-queries@0.1.1':
     resolution: {integrity: sha512-p18dswChx6WnTSaJCSGx6lTmrGzNNvm2FtXmiO6AuA1V4U5REyoqwmT6kgAsIMdjo07QdAfYXHJ4hnMtfHzWgA==}
@@ -1972,6 +1983,13 @@ snapshots:
       vitefu: 1.0.3(vite@5.4.11(@types/node@22.10.0))
     transitivePeerDependencies:
       - supports-color
+
+  '@tabler/icons-svelte@3.22.0(svelte@5.2.8)':
+    dependencies:
+      '@tabler/icons': 3.22.0
+      svelte: 5.2.8
+
+  '@tabler/icons@3.22.0': {}
 
   '@tailwindcss/container-queries@0.1.1(tailwindcss@3.4.15)':
     dependencies:
