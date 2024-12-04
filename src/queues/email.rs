@@ -1,0 +1,102 @@
+use std::sync::Arc;
+use leptos::prelude::*;
+use serde::{Serialize, Deserialize};
+use lettre::{Transport, Message};
+use lettre::message::header::ContentType;
+use thiserror::Error;
+use crate::mailer::configure_mailer;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Email {
+    pub kind: EmailKind,
+    pub from: String,
+    pub to: String,
+    pub subject: String,
+    pub token: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum EmailKind {
+    ConfirmEmail,
+    PasswordReset,
+}
+
+#[derive(Debug, Error)]
+pub enum EmailError {
+    NoStorage,
+    SomeError(&'static str),
+}
+
+impl std::fmt::Display for EmailError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{self:?}")
+    }
+}
+
+pub async fn send_email(job: Email) -> Result<(), apalis::prelude::Error> {
+    let base_url = std::env::var("SITE_BASE_URL").expect("SITE_BASE_URL not found");
+    let mailer = configure_mailer();
+    
+    match mailer {
+        Some(mailer) => {
+            let token = job.token.expect("Token cannot be None.");
+            let message = match job.kind {
+                EmailKind::ConfirmEmail => get_confirm_message(base_url, token),
+                EmailKind::PasswordReset => get_reset_message(base_url, token),
+            };
+
+            let email = Message::builder()
+                .from(job.from.parse().unwrap())
+                .to(job.to.parse().unwrap())
+                .subject(job.subject)
+                .header(ContentType::TEXT_HTML)
+                .body(message)
+                .expect("Could not build message!");
+
+            _ = tokio::task::spawn_blocking(move || {
+                match mailer.send(&email) {
+                    Ok(_) => Ok(()),
+                    Err(e) => Err(e)
+                }
+            }).await.expect("Something went wrong!");
+
+            Ok(())
+        },
+        None => {
+            Err(apalis::prelude::Error::Abort(Arc::new(Box::new(EmailError::SomeError("Something went wrong!")))))
+        }
+    }
+}
+
+fn get_confirm_message(base_url: String, token: String) -> String {
+    view! {
+        <div>
+            <h1>"Welcome to Offprint!"</h1>
+            <p>
+                "On behalf of all of us on the dev team, we're so glad that you're here."
+            </p>
+            <p>
+                "But first, we're gonna need to confirm your account. To get started, click the link below to verify your email address. Won't take more than a few seconds."
+            </p>
+            <a href=format!("{base_url}/confirm-email?token={token}")>"Verify Your Email Address"</a>
+            <p>
+                "Just a reminder: this code expires in one hour. If you need a new one, just attempt a login and we'll send you a new one."
+            </p>
+        </div>
+    }.to_html()
+}
+
+fn get_reset_message(base_url: String, token: String) -> String {
+    view! {
+        <div>
+            <h1>"Reset your Offprint password"</h1>
+            <p>
+                "Hey there! We've gotten word that you want to reset your Offprint password. If that's what you want, hit the link below to get started."
+            </p>
+            <a href=format!("{base_url}/reset-password?token={token}")>"Reset Your Password"</a>
+            <p>
+                "If this wasn't requested by you, feel free to ignore this message. It'll expire after 1 hour."
+            </p>
+        </div>
+    }.to_html()
+}

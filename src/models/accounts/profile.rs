@@ -1,0 +1,80 @@
+use chrono::{DateTime, Utc};
+use serde::{Serialize, Deserialize};
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "ssr", derive(sqlx::FromRow))]
+pub struct Profile {
+    pub id: String,
+    pub account_id: String,
+    pub username: String,
+    pub avatar: String,
+    pub banner_art: Option<String>,
+    pub bio: String,
+    pub tagline: Option<String>,
+    pub links: Vec<String>,
+    pub default: bool,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+    pub deleted_at: Option<DateTime<Utc>>
+}
+
+impl Profile {
+    /// Creates a new profile belonging to the specified `account_id`, returning said profile on successful creation.
+    #[cfg(feature = "ssr")]
+    pub async fn new(account_id: String, new_username: String, new_bio: Option<String>, db: &sqlx::Pool<sqlx::Postgres>) -> Result<Self, crate::errors::AppError> {
+        let clean_username = ammonia::clean(&new_username);
+        let clean_bio = match new_bio {
+            Some(bio) => ammonia::clean(&bio),
+            None => ammonia::clean("Just another friendly face in the crowd")
+        };
+
+        let result: Self = sqlx::query_as!(
+            Self,
+            r#"INSERT INTO profiles (account_id, username, bio) VALUES ($1, $2, $3) RETURNING *;"#,
+            account_id,
+            clean_username,
+            clean_bio
+        ).fetch_one(db).await?;
+
+        Ok(result)
+    }
+
+    /// Fetches all profiles owned by a specific `account_id`.
+    #[cfg(feature = "ssr")]
+    pub async fn fetch_owned(account_id: String, db: &sqlx::Pool<sqlx::Postgres>) -> Result<Vec<Self>, crate::errors::AppError> {
+        let results: Vec<Self> = sqlx::query_as!(
+            Self,
+            r#"SELECT * FROM profiles WHERE account_id = $1 AND deleted_at IS NULL;"#,
+            account_id,
+        ).fetch_all(db).await?;
+
+        Ok(results)
+    }
+
+    /// Verifies a single profile ID to see if it's owned by the specified account.
+    #[cfg(feature = "ssr")]
+    pub async fn check_owned(profile_id: String, account_id: String, db: &sqlx::Pool<sqlx::Postgres>) -> Result<Self, crate::errors::AppError> {
+        let result: Self = sqlx::query_as!(
+            Self,
+            r#"SELECT * FROM profiles WHERE id = $1 AND account_id = $2 AND deleted_at IS NULL;"#,
+            profile_id,
+            account_id,
+        ).fetch_one(db).await?;
+
+        Ok(result)
+    }
+
+    /// Fetches a profile by its username
+    #[cfg(feature = "ssr")]
+    pub async fn fetch_by_username(username: String, db:&sqlx::Pool<sqlx::Postgres>) -> Option<Profile> {
+        use ammonia::clean;
+        
+        let result: Self = sqlx::query_as!(
+            Self,
+            r#"SELECT * FROM profiles WHERE username = $1 AND deleted_at IS NULL;"#,
+            clean(&username),
+        ).fetch_one(db).await.ok()?;
+
+        Some(result)
+    }
+}
