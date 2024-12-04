@@ -1,12 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{html,js,jsx,ts,tsx}"],
+    content: [],
 
-  darkMode: 'class',
+    darkMode: 'class',
 
-  theme: {
-    extend: {
-			colors: {
+    theme: {
+        extend: {
+            colors: {
                 "accent": "rgb(var(--accent))",
                 "accent-light": "rgb(var(--accent-light))",
                 "accent-dark": "rgb(var(--accent-dark))",
@@ -27,11 +27,22 @@ module.exports = {
             },
             keyframes: {
                 modalf: {
-                    "0%": { transform: "scale(0)", opacity: "0" },
-                    "100%": { transform: "scale(1)", opacity: "1" }
+                    "0%": {transform: "scale(0)", opacity: "0"},
+                    "100%": {transform: "scale(1)", opacity: "1"}
                 }
             }
-		}
-  },
-  plugins: []
-};
+        }
+    },
+
+    plugins: [
+        require("@tailwindcss/aspect-ratio"),
+        require("@tailwindcss/forms"),
+        require("@tailwindcss/typography"),
+        require("tailwindcss-opentype"),
+        require("tailwind-scrollbar"),
+        function ({addVariant}) {
+            addVariant('firefox', ':-moz-any(&)')
+        },
+    ]
+}
+

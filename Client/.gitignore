@@ -1,29 +1,42 @@
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
-dist
-.solid
-.output
-.vercel
-.netlify
-.vinxi
-app.config.timestamp_*.js
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
 
-# Environment
-.env
-.env*.local
-
-# dependencies
+# Node
 /node_modules
+npm-debug.log
+yarn-error.log
 
 # IDEs and editors
-/.idea
+.idea/
 .project
 .classpath
+.c9/
 *.launch
 .settings/
+*.sublime-workspace
 
-# Temp
-gitignore
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
 
-# System Files
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+
+# System files
 .DS_Store
 Thumbs.db

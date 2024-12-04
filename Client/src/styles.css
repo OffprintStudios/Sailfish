@@ -34,7 +34,6 @@ body, body.light {
     font-family: var(--body-text), sans-serif;
     background: var(--background);
     background-image: var(--pattern);
-    --dropshadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
 }
 
 body.dark {
