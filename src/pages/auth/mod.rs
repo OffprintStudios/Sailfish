@@ -35,7 +35,7 @@ pub fn AuthRoutes() -> impl MatchNestedRoutes + Clone {
             <Route path=path!("switch-profile") view=SwitchProfilePage ssr=SsrMode::Async />
             <ProtectedRoute
                 path=path!("create-profile")
-                condition=move || validate.get().map(|v| v.unwrap_or(false))
+                condition=move || validate.get().map(|v| v.ok().is_some())
                 view=CreateProfilePage
                 ssr=SsrMode::Async
                 redirect_path=|| "/log-in"
