@@ -1,5 +1,5 @@
 use std::sync::OnceLock;
-use tower_cookies::Key;
+use tower_sessions::cookie::Key;
 
 /// The secret key for securing session tokens
 pub static SECRET_KEY: OnceLock<Key> = OnceLock::new();

@@ -2,11 +2,11 @@ use axum::async_trait;
 use axum::extract::{FromRef, FromRequestParts};
 use http::request::Parts;
 use leptos::prelude::LeptosOptions;
-use sqlx::{Pool, Postgres};
+use sqlx::PgPool;
 
 #[derive(Clone, FromRef)]
 pub struct AppState {
-    pub db: Pool<Postgres>,
+    pub db: PgPool,
     pub leptos_options: LeptosOptions,
 }
 

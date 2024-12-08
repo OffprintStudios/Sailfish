@@ -1,6 +1,8 @@
+use axum::async_trait;
 use chrono::{DateTime, Utc};
-use sqlx::{Pool, Postgres, FromRow};
+use sqlx::{FromRow, PgPool};
 use serde::{Serialize, Deserialize};
+use tower_sessions::session_store::SessionStore;
 use crate::errors::AppError;
 
 #[derive(Debug, Clone, FromRow, Serialize, Deserialize)]
@@ -14,6 +16,25 @@ pub struct Session {
     pub created_at: DateTime<Utc>,
     pub expires_on: DateTime<Utc>,
 }
+
+#[derive(Debug, Clone)]
+pub struct SessionBackend {
+    pool: PgPool,
+}
+
+impl SessionBackend {
+    pub fn new(pool: PgPool) -> Self {
+        Self {
+            pool,
+        }
+    }
+}
+
+#[async_trait]
+impl SessionStore for SessionBackend {
+    
+}
+
 
 impl Session {
     /// Starts a new session, adding a `Session` to the database and returning its ID.

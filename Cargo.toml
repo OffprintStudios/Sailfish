@@ -22,7 +22,6 @@ tracing = { version = "0.1", optional = true }
 http = "1"
 cfg-if = "1.0.0"
 serde = { version = "1.0.215", features = ["derive"] }
-tower-cookies = { version = "0.10.0", features = ["private"], optional = true }
 sqlx = { version = "0.8.2", optional = true, features = ["runtime-tokio", "tls-native-tls", "postgres", "macros", "migrate", "uuid", "chrono", "json", "derive"] }
 lettre = { version = "0.11.10", optional = true, features = ["serde", "tokio1-native-tls"] }
 strum = { version = "0.26.3", features = ["derive"] }
@@ -41,6 +40,7 @@ apalis-redis = { version = "0.6.0", optional = true }
 anyhow = "1.0.94"
 codee = { version = "0.2.0", features = ["json_serde"] }
 email_address = { version = "0.2.9", optional = true }
+tower-sessions = { version = "0.13.0", features = ["signed"], optional = true }
 
 [features]
 hydrate = ["leptos/hydrate"]
@@ -55,7 +55,6 @@ ssr = [
     "leptos_router/ssr",
     "leptos-use/ssr",
     "leptos-use/axum",
-    "dep:tower-cookies",
     "dep:tracing",
     "dep:sqlx",
     "dep:lettre",
@@ -66,6 +65,7 @@ ssr = [
     "dep:apalis",
     "dep:apalis-redis",
     "dep:email_address",
+    "dep:tower-sessions",
 ]
 
 # Defines a size-optimized profile for the WASM bundle in release mode
