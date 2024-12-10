@@ -32,11 +32,6 @@ pub fn Button(
         ButtonType::Submit => "submit",
         ButtonType::Reset => "reset",
     };
-
-    let primary = match kind {
-        ButtonKind::Primary => true,
-        ButtonKind::Normal => false
-    };
     
     view! {
         <button
@@ -44,7 +39,7 @@ pub fn Button(
             title=title
             type=type_of_button
             class="btn"
-            class:primary=primary
+            class:primary=move || matches!(kind, ButtonKind::Primary)
             class:active=active
             class:w-full=full_width
             disabled=move || { disabled || loading }

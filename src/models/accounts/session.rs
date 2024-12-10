@@ -1,8 +1,6 @@
-use axum::async_trait;
 use chrono::{DateTime, Utc};
 use sqlx::{FromRow, PgPool};
 use serde::{Serialize, Deserialize};
-use tower_sessions::session_store::SessionStore;
 use crate::errors::AppError;
 
 #[derive(Debug, Clone, FromRow, Serialize, Deserialize)]
@@ -17,28 +15,9 @@ pub struct Session {
     pub expires_on: DateTime<Utc>,
 }
 
-#[derive(Debug, Clone)]
-pub struct SessionBackend {
-    pool: PgPool,
-}
-
-impl SessionBackend {
-    pub fn new(pool: PgPool) -> Self {
-        Self {
-            pool,
-        }
-    }
-}
-
-#[async_trait]
-impl SessionStore for SessionBackend {
-    
-}
-
-
 impl Session {
     /// Starts a new session, adding a `Session` to the database and returning its ID.
-    pub async fn start(account_id: String, expiration: DateTime<Utc>, db: &Pool<Postgres>) -> Result<String, AppError> {
+    pub async fn start(account_id: String, expiration: DateTime<Utc>, db: &PgPool) -> Result<String, AppError> {
         let record = sqlx::query!(
             r#"INSERT INTO sessions (account_id, expires_on) VALUES ($1, $2) RETURNING id;"#,
             account_id,
@@ -49,7 +28,7 @@ impl Session {
     }
 
     /// Verifies an active session via database lookup and returns the corresponding account ID.
-    pub async fn verify_session(session_id: String, db: &Pool<Postgres>) -> Result<String, AppError> {
+    pub async fn verify_session(session_id: String, db: &PgPool) -> Result<String, AppError> {
         let session: String = match sqlx::query!(
             r#"SELECT account_id FROM sessions WHERE id = $1 AND expires_on > $2;"#,
             session_id,
@@ -63,7 +42,7 @@ impl Session {
     }
 
     /// Authorizes an account based on a session 
-    pub async fn authorize(db: &Pool<Postgres>) -> Option<super::account::Account> {
+    pub async fn authorize(db: &PgPool) -> Option<super::account::Account> {
         use leptos_axum::extract;
         use tower_cookies::Cookies;
         use crate::constants::SECRET_KEY;

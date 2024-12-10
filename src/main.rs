@@ -13,7 +13,7 @@ async fn main() -> anyhow::Result<()> {
     use sailfish::constants::SECRET_KEY;
     use sailfish::database::connect_to_db;
     use sailfish::queues::email::send_email;
-    use tower_sessions::cookie::Key;
+    use tower_cookies::{CookieManagerLayer, Key};
 
     dotenvy::dotenv().ok();
 
