@@ -1,5 +1,8 @@
 mod home;
 pub mod auth;
+pub mod explore;
+pub mod search;
+pub mod social;
 
 pub use home::HomePage;
 

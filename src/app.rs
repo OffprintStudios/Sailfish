@@ -1,6 +1,7 @@
 use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title, Link, Body};
 use leptos_router::{
+    path,
     components::{Route, Router, Routes, ParentRoute},
     StaticSegment,
 };
@@ -14,6 +15,9 @@ use crate::models::util::themes::Brightness;
 /* Pages */
 use crate::pages::{BaseLayout, HomePage};
 use crate::pages::auth::AuthRoutes;
+use crate::pages::explore::ExplorePage;
+use crate::pages::social::SocialRoutes;
+use crate::pages::search::SearchPage;
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {
@@ -78,8 +82,11 @@ pub fn App() -> impl IntoView {
                         }.into_view()
                     }
                 >
-                    <ParentRoute path=StaticSegment("/") view=BaseLayout>
-                        <Route path=StaticSegment("") view=HomePage />
+                    <ParentRoute path=path!("/") view=BaseLayout>
+                        <Route path=path!("") view=HomePage />
+                        <Route path=path!("explore") view=ExplorePage />
+                        <SocialRoutes />
+                        <Route path=path!("search") view=SearchPage />
                     </ParentRoute>
                     <AuthRoutes />
                 </Routes>

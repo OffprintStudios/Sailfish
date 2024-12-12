@@ -17,7 +17,6 @@ use check_email::CheckEmailPage;
 use confirm_email::ConfirmEmailPage;
 use reset_password::ResetPasswordPage;
 use switch_profile::SwitchProfilePage;
-use validate::validate;
 
 #[component(transparent)]
 pub fn AuthRoutes() -> impl MatchNestedRoutes + Clone {
