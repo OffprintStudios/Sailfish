@@ -14,11 +14,11 @@ struct ConfirmEmailQuery {
 #[server(ConfirmEmail, "/api/auth/confirm-email")]
 pub async fn confirm_email(token: Option<String>) -> Result<Option<()>, ServerFnError<AppError>> {
     use crate::state::AppState;
-    use crate::models::accounts::ConfirmationCode;
+    use crate::models::accounts::{ValidationCode, ValidationKind};
 
     if let Some(token) = token {
         let state = expect_context::<AppState>();
-        let account = match ConfirmationCode::validate(token, &state.db).await {
+        let account = match ValidationCode::validate(token, ValidationKind::EmailConfirmation, &state.db).await {
             Ok(account) => account,
             Err(e) => return Err(ServerFnError::WrappedServerError(e))
         };

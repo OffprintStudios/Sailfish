@@ -4,13 +4,12 @@ mod check_email;
 mod confirm_email;
 mod reset_password;
 mod switch_profile;
-mod create_profile;
 mod validate;
 
 use leptos::prelude::*;
 use leptos_icons::*;
 use icondata as TablerIcon;
-use leptos_router::components::{ParentRoute, A, Outlet, Route, ProtectedRoute};
+use leptos_router::components::{ParentRoute, A, Outlet, Route};
 use leptos_router::{path, MatchNestedRoutes, SsrMode};
 use log_in::LogInPage;
 use sign_up::SignUpPage;
@@ -18,13 +17,10 @@ use check_email::CheckEmailPage;
 use confirm_email::ConfirmEmailPage;
 use reset_password::ResetPasswordPage;
 use switch_profile::SwitchProfilePage;
-use create_profile::CreateProfilePage;
 use validate::validate;
 
 #[component(transparent)]
 pub fn AuthRoutes() -> impl MatchNestedRoutes + Clone {
-    let validate = Resource::new(|| (), |_| validate());
-
     view! {
         <ParentRoute path=path!("/") view=AuthLayout>
             <Route path=path!("log-in") view=LogInPage />
@@ -33,13 +29,6 @@ pub fn AuthRoutes() -> impl MatchNestedRoutes + Clone {
             <Route path=path!("confirm-email") view=ConfirmEmailPage />
             <Route path=path!("reset-password") view=ResetPasswordPage />
             <Route path=path!("switch-profile") view=SwitchProfilePage ssr=SsrMode::Async />
-            <ProtectedRoute
-                path=path!("create-profile")
-                condition=move || validate.get().map(|v| v.ok().is_some())
-                view=CreateProfilePage
-                ssr=SsrMode::Async
-                redirect_path=|| "/log-in"
-            />
         </ParentRoute>
     }
     .into_inner()
