@@ -3,7 +3,6 @@ use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title, Link, Body}
 use leptos_router::{
     path,
     components::{Route, Router, Routes, ParentRoute},
-    StaticSegment,
 };
 use leptos_use::use_preferred_dark;
 use leptos_use::storage::use_local_storage;
@@ -49,7 +48,7 @@ pub fn App() -> impl IntoView {
         // determines which theme and brightness classes to use based on 
         // per-browser settings and dark mode preferences
         <Body attr:class=move || {
-            let theme = app().theme;
+            let theme = app.get().theme;
             if app().brightness == Brightness::System {
                 match is_preferred_dark() {
                     true => format!("{} {}", Brightness::Dark, theme),

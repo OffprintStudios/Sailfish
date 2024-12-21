@@ -7,12 +7,12 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-leptos = { version = "0.7.0", features = ["nightly"] }
-leptos_router = { version = "0.7.0", features = ["nightly"] }
+leptos = { version = "^0.7.0", features = ["nightly"] }
+leptos_router = { version = "^0.7.0", features = ["nightly"] }
 axum = { version = "0.7", features = ["macros", "tokio"], optional = true }
 console_error_panic_hook = "0.1"
-leptos_axum = { version = "0.7.0", optional = true }
-leptos_meta = { version = "0.7.0" }
+leptos_axum = { version = "^0.7.0", optional = true }
+leptos_meta = { version = "^0.7.0" }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"], optional = true }
 tower = { version = "0.4", optional = true }
 tower-http = { version = "0.5", features = ["fs"], optional = true }
@@ -27,11 +27,11 @@ lettre = { version = "0.11.10", optional = true, features = ["serde", "tokio1-na
 strum = { version = "0.26.3", features = ["derive"] }
 dotenvy = { version = "0.15.7", optional = true }
 argon2 = { version = "0.5.3", optional = true }
-leptos-use = { version = "0.14.0" }
+leptos-use = { version = "0.15.0" }
 axum-macros = { version = "0.4.2", optional = true }
 rand = { version = "0.8.5" }
 getrandom = { version = "0.2.15", features = ["js"] }
-leptos_icons = { git = "https://github.com/bicarlsen/leptos-icons", branch = "0.7" }
+leptos_icons = { version = "0.4.0" }
 icondata = { version = "0.5.0", default-features = false, features = ["tabler-icons"] }
 ammonia = { version = "4.0.0", optional = true }
 chrono = { version = "0.4.38", features = ["serde", "wasmbind"] }
