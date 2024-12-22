@@ -58,7 +58,7 @@ pub fn ConfirmEmailPage() -> impl IntoView {
                         <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold items-center pb-8 font-header">
                             "Getting all your ducks in a row ..."
                         </span>
-                        <span><Icon icon=TablerIcon::TbLoader width="150px" height="150px" class="animate-spin" /></span>
+                        <span><Icon icon=TablerIcon::TbLoader width="150px" height="150px" attr:class="animate-spin" /></span>
                     </div>
                 }
             >
@@ -71,7 +71,7 @@ pub fn ConfirmEmailPage() -> impl IntoView {
                                     <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold text-center pb-8 font-header">
                                         "You're all set to log on in."
                                     </span>
-                                    <span><Icon icon=TablerIcon::TbCircleCheck width="150px" height="150px" class="text-green-500" /></span>
+                                    <span><Icon icon=TablerIcon::TbCircleCheck width="150px" height="150px" attr:class="text-green-500" /></span>
                                     <A attr:class="text-center w-full pt-4 text-zinc-500 dark:text-zinc-400 text-sm hover:underline" href="/log-in">
                                         "Ready to get started?"
                                     </A>
@@ -82,7 +82,7 @@ pub fn ConfirmEmailPage() -> impl IntoView {
                                     <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold text-center pb-8 font-header">
                                         "Hey! Where's the code?"
                                     </span>
-                                    <span><Icon icon=TablerIcon::TbHelp width="150px" height="150px" class="text-yellow-500" /></span>
+                                    <span><Icon icon=TablerIcon::TbHelp width="150px" height="150px" attr:class="text-yellow-500" /></span>
                                 }.into_any()
                             } else {
                                 view! {
@@ -90,7 +90,7 @@ pub fn ConfirmEmailPage() -> impl IntoView {
                                     <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold text-center pb-8 font-header">
                                         "Seems like something went wrong on our end."
                                     </span>
-                                    <span><Icon icon=TablerIcon::TbAlertCircle width="150px" height="150px" class="text-red-500" /></span>
+                                    <span><Icon icon=TablerIcon::TbAlertCircle width="150px" height="150px" attr:class="text-red-500" /></span>
                                 }.into_any()
                             }
                         })
