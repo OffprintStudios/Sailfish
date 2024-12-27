@@ -48,7 +48,7 @@ pub fn App() -> impl IntoView {
         // determines which theme and brightness classes to use based on 
         // per-browser settings and dark mode preferences
         <Body attr:class=move || {
-            let theme = app.get().theme;
+            let theme = app().theme;
             if app().brightness == Brightness::System {
                 match is_preferred_dark() {
                     true => format!("{} {}", Brightness::Dark, theme),

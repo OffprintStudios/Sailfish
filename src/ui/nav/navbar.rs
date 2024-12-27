@@ -64,11 +64,11 @@ pub fn Nav() -> impl IntoView {
                     >
                         <button class="hidden md:flex items-center text-white mx-0.5 px-2 py-2 firefox:text-sm rounded-xl transition hover:bg-zinc-300/25 hover:backdrop-blur">
                             <span><Icon icon=TablerIcon::TbBooks width="24px" height="24px" /></span>
-                            <span class="top-0.5 ml-1.5 hidden lg:block">27</span>
+                            <span class="top-0.5 ml-1.5 hidden lg:block">"27"</span>
                         </button>
                         <button class="hidden md:flex items-center text-white mx-0.5 px-2 py-2 firefox:text-sm rounded-xl transition hover:bg-zinc-300/25 hover:backdrop-blur">
                             <span><Icon icon=TablerIcon::TbMailbox width="24px" height="24px" /></span>
-                            <span class="top-0.5 ml-1.5 hidden lg:block">1.2k</span>
+                            <span class="top-0.5 ml-1.5 hidden lg:block">"1.2k"</span>
                         </button>
                         <Guide profile=curr_profile().unwrap() />
                     </Show>

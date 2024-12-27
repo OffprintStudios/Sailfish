@@ -4,6 +4,7 @@ mod check_email;
 mod confirm_email;
 mod reset_password;
 mod switch_profile;
+mod create_profile;
 mod validate;
 
 use leptos::prelude::*;
@@ -17,6 +18,7 @@ use check_email::CheckEmailPage;
 use confirm_email::ConfirmEmailPage;
 use reset_password::ResetPasswordPage;
 use switch_profile::SwitchProfilePage;
+use create_profile::CreateProfilePage;
 
 #[component(transparent)]
 pub fn AuthRoutes() -> impl MatchNestedRoutes + Clone {
@@ -28,6 +30,7 @@ pub fn AuthRoutes() -> impl MatchNestedRoutes + Clone {
             <Route path=path!("confirm-email") view=ConfirmEmailPage />
             <Route path=path!("reset-password") view=ResetPasswordPage />
             <Route path=path!("switch-profile") view=SwitchProfilePage ssr=SsrMode::Async />
+            <Route path=path!("create-profile") view=CreateProfilePage ssr=SsrMode::Async />
         </ParentRoute>
     }
     .into_inner()
