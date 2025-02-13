@@ -58,7 +58,15 @@ async fn main() -> anyhow::Result<()> {
                 move || shell(leptos_options.clone())
             },
         )
-        .fallback(leptos_axum::file_and_error_handler::<AppState, _>(shell))
+        .fallback(
+            leptos_axum::file_and_error_handler_with_context::<AppState, _>(
+                {
+                    let state = app_state.clone();
+                    move || provide_context(state.clone())
+                },
+                shell
+            )
+        )
         .with_state(app_state.clone())
         .layer(CookieManagerLayer::new())
         .layer(Extension(storage.clone()));
