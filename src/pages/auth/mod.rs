@@ -7,11 +7,13 @@ mod switch_profile;
 mod create_profile;
 mod validate;
 
+use codee::string::JsonSerdeCodec;
 use leptos::prelude::*;
 use leptos_icons::*;
 use icondata as TablerIcon;
 use leptos_router::components::{ParentRoute, A, Outlet, Route, ProtectedRoute};
 use leptos_router::{path, MatchNestedRoutes, SsrMode};
+use leptos_use::storage::use_local_storage;
 use log_in::LogInPage;
 use sign_up::SignUpPage;
 use check_email::CheckEmailPage;
@@ -21,9 +23,12 @@ use switch_profile::SwitchProfilePage;
 use create_profile::CreateProfilePage;
 use validate::validate;
 
+use crate::store::auth_store::AuthStore;
+
 #[component(transparent)]
 pub fn AuthRoutes() -> impl MatchNestedRoutes + Clone {
-    let validate = Resource::new_blocking(|| (), |_| validate());
+    let (auth, _, _) = use_local_storage::<AuthStore, JsonSerdeCodec>("auth");
+    let validate = Resource::new(move || auth.get(), move |_| validate());
 
     view! {
         <ParentRoute path=path!("/") view=AuthLayout>

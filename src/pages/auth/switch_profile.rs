@@ -42,6 +42,9 @@ pub fn SwitchProfilePage() -> impl IntoView {
                 .await
                 .map(|profiles| {
                     count.set(profiles.len());
+                    set_auth.update(|auth| {
+                        auth.profiles = profiles.clone();
+                    });
 
                     if profiles.is_empty() {
                         Either::Left(view! {
@@ -59,7 +62,9 @@ pub fn SwitchProfilePage() -> impl IntoView {
                                             class="flex flex-col items-center rounded-xl p-4 mx-2 w-[180px] h-[210px] hover:bg-zinc-300 dark:bg-zinc-600 transition"
                                             on:click=move |_| {
                                                 let navigate = use_navigate();
-                                                set_auth(AuthStore { current_profile: Some(p.clone()) });
+                                                set_auth.update(|auth| {
+                                                    auth.current_profile = Some(p.clone());
+                                                });
                                                 navigate("/", Default::default());
                                             }
                                         >
