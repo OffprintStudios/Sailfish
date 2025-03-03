@@ -7,6 +7,9 @@ SHELL ["/bin/bash", "-c"]
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
 
+# Get BUN_VERSION from args
+ARG BUN_VERSION=1.2.4
+
 # If you’re using stable, use this instead
 # FROM rust:1.74-bullseye as builder
 
@@ -24,6 +27,10 @@ RUN apt-get update -y
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
 RUN apt-get install -y nodejs
 
+# Install Bun in the specified version
+RUN apt update && apt install -y bash curl unzip && \
+ curl https://bun.sh/install | bash -s -- bun-v${BUN_VERSION}
+
 # Install sqlx-cli
 RUN cargo install sqlx-cli --no-default-features --features native-tls,postgres
 
@@ -36,7 +43,7 @@ WORKDIR /app
 COPY . .
 
 # Installing JS dependencies
-RUN npm install
+RUN bun install
 
 # Build the app
 RUN sqlx migrate run
