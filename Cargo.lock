@@ -2989,7 +2989,6 @@ dependencies = [
  "console_error_panic_hook",
  "dotenvy",
  "email_address",
- "getrandom 0.2.15",
  "http",
  "icondata",
  "leptos",
@@ -3009,6 +3008,7 @@ dependencies = [
  "tower-cookies",
  "tower-http 0.5.2",
  "tracing",
+ "uuid",
  "wasm-bindgen",
 ]
 

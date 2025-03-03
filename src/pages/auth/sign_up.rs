@@ -37,7 +37,7 @@ pub async fn sign_up(
     use apalis::prelude::Storage;
     use apalis_redis::RedisStorage;
     use crate::state::AppState;
-    use crate::models::accounts::{Account, ValidationCode, ValidationKind};
+    use crate::models::accounts::{Account, Otp, OtpKind};
     use crate::queues::email::{Email, EmailKind};
 
     if password != repeat_password {
@@ -61,7 +61,7 @@ pub async fn sign_up(
     }
 
     let account = Account::new(email, password, &state.db).await?;
-    let confirmation_code = ValidationCode::new(account.id, ValidationKind::EmailConfirmation, Utc::now() + Duration::seconds(3600), &state.db).await?;
+    let confirmation_code = Otp::new(account.id, OtpKind::EmailConfirmation, Utc::now() + Duration::seconds(3600), &state.db).await?;
 
     let new_email = Email {
         kind: EmailKind::ConfirmEmail,

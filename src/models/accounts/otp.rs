@@ -1,50 +1,51 @@
 use chrono::{DateTime, Utc};
 use serde::{Serialize, Deserialize};
 use sqlx::{FromRow, PgPool, Type};
+use uuid::Uuid;
 use crate::errors::AppError;
 use super::account::Account;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
-pub enum ValidationKind {
+pub enum OtpKind {
     PasswordReset,
     EmailConfirmation,
 }
 
-impl From<String> for ValidationKind {
+impl From<String> for OtpKind {
     fn from(value: String) -> Self {
         match value.as_str() {
-            "EmailConfirmation" => ValidationKind::EmailConfirmation,
-            "PasswordReset" => ValidationKind::PasswordReset,
-            _ => ValidationKind::EmailConfirmation,
+            "EmailConfirmation" => OtpKind::EmailConfirmation,
+            "PasswordReset" => OtpKind::PasswordReset,
+            _ => OtpKind::EmailConfirmation,
         }
     }
 }
 
-impl std::fmt::Display for ValidationKind {
+impl std::fmt::Display for OtpKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            ValidationKind::EmailConfirmation => write!(f, "EmailConfirmation"),
-            ValidationKind::PasswordReset => write!(f, "PasswordReset")
+            OtpKind::EmailConfirmation => write!(f, "EmailConfirmation"),
+            OtpKind::PasswordReset => write!(f, "PasswordReset")
         }
     }
 }
 
 #[derive(Debug, Clone, FromRow, Serialize, Deserialize)]
-pub struct ValidationCode {
+pub struct Otp {
     pub id: String,
-    pub account_id: String,
+    pub account_id: Uuid,
     pub token: String,
-    pub kind: ValidationKind,
+    pub kind: OtpKind,
     pub expires_on: DateTime<Utc>,
     pub created_at: DateTime<Utc>
 }
 
-impl ValidationCode {
+impl Otp {
     /// Creates a new validation token
-    pub async fn new(account_id: String, kind: ValidationKind, expiration: DateTime<Utc>, db: &PgPool) -> Result<Self, AppError> {
+    pub async fn new(account_id: Uuid, kind: OtpKind, expiration: DateTime<Utc>, db: &PgPool) -> Result<Self, AppError> {
         let reset: Self = sqlx::query_as!(
             Self,
-            r#"INSERT INTO validation_codes (account_id, kind, expires_on) VALUES ($1, $2, $3) RETURNING *;"#,
+            r#"INSERT INTO otp (account_id, kind, expires_on) VALUES ($1, $2, $3) RETURNING *;"#,
             account_id,
             kind.to_string(),
             expiration,
@@ -54,10 +55,10 @@ impl ValidationCode {
     }
 
     /// Checks to see if a password reset code is valid, returning the related account if so
-    pub async fn validate(token: String, kind: ValidationKind, db: &PgPool) -> Result<Account, AppError> {
+    pub async fn validate(token: String, kind: OtpKind, db: &PgPool) -> Result<Account, AppError> {
         let code: Option<Self> = sqlx::query_as!(
             Self,
-            r#"SELECT * FROM validation_codes WHERE kind = $1 AND token = $2 AND expires_on > $3;"#,
+            r#"SELECT * FROM otp WHERE kind = $1 AND token = $2 AND expires_on > $3;"#,
             kind.to_string(),
             token,
             Utc::now(),
@@ -65,11 +66,11 @@ impl ValidationCode {
 
         if let Some(code) = code {
             _ = sqlx::query!(
-                r#"DELETE FROM validation_codes WHERE id = $1;"#,
+                r#"DELETE FROM otp WHERE id = $1;"#,
                 code.id
             ).execute(db).await?;
             
-            Account::fetch_by_id(code.account_id, db)
+            Account::fetch_by_id(code.account_id.to_string(), db)
                 .await
                 .ok_or(AppError::Unauthorized)
         } else {

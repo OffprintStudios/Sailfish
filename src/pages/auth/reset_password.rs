@@ -17,12 +17,12 @@ pub async fn send_reset_code(email: String) -> Result<(), ServerFnError> {
     use apalis_redis::RedisStorage;
     use crate::state::AppState;
     use crate::queues::email::{Email, EmailKind};
-    use crate::models::accounts::{Account, ValidationCode, ValidationKind};
+    use crate::models::accounts::{Account, Otp, OtpKind};
 
     let state = expect_context::<AppState>();
     if let Some(account) = Account::fetch_by_email(email, &state.db).await {
         let Extension(mut queue) = leptos_axum::extract::<Extension<RedisStorage<Email>>>().await?;
-        let reset_code = ValidationCode::new(account.id, ValidationKind::PasswordReset, chrono::Utc::now() + chrono::Duration::seconds(3600), &state.db).await?;
+        let reset_code = Otp::new(account.id, OtpKind::PasswordReset, chrono::Utc::now() + chrono::Duration::seconds(3600), &state.db).await?;
 
         let new_email = Email {
             kind: EmailKind::PasswordReset,
@@ -45,14 +45,14 @@ pub async fn send_reset_code(email: String) -> Result<(), ServerFnError> {
 #[server(ResetPassword, "/api/auth/reset-password")]
 pub async fn reset_password(new_password: String, repeat_password: String, token: String) -> Result<(), ServerFnError> {
     use crate::state::AppState;
-    use crate::models::accounts::{ValidationCode, ValidationKind};
+    use crate::models::accounts::{Otp, OtpKind};
 
     let state = expect_context::<AppState>();
 
     if new_password != repeat_password {
         return Err(ServerFnError::new("Your passwords don't match!"));
     }
-    if let Ok(valid_account) = ValidationCode::validate(token, ValidationKind::PasswordReset, &state.db).await {
+    if let Ok(valid_account) = Otp::validate(token, OtpKind::PasswordReset, &state.db).await {
         valid_account.reset_password(new_password, &state.db).await.unwrap_or(());
         leptos_axum::redirect("/log-in");
         Ok(())

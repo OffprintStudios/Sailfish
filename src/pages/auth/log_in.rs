@@ -28,7 +28,7 @@ pub async fn log_in(email: String, password: String, remember_me: Option<String>
     use tower_cookies::cookie::SameSite;
     use crate::constants::{SECRET_KEY, MIN_SESSION_DURATION, MAX_SESSION_DURATION};
     use crate::state::AppState;
-    use crate::models::accounts::{Account, Session, ValidationCode, ValidationKind};
+    use crate::models::accounts::{Account, Session, Otp, OtpKind};
     use crate::queues::email::{Email, EmailKind};
 
     let key = SECRET_KEY.get().unwrap();
@@ -43,7 +43,7 @@ pub async fn log_in(email: String, password: String, remember_me: Option<String>
 
     if !account.email_confirmed {
         let Extension(mut queue) = leptos_axum::extract::<Extension<RedisStorage<Email>>>().await?;
-        let code = ValidationCode::new(account.id, ValidationKind::EmailConfirmation, chrono::Utc::now() + chrono::Duration::seconds(3600), &state.db).await?;
+        let code = Otp::new(account.id, OtpKind::EmailConfirmation, chrono::Utc::now() + chrono::Duration::seconds(3600), &state.db).await?;
 
         let new_email = Email {
             kind: EmailKind::ConfirmEmail,

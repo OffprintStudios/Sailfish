@@ -4,12 +4,13 @@ use chrono::{DateTime, Utc};
 use sqlx::{Pool, Postgres, FromRow};
 use serde::{Serialize, Deserialize};
 use rand::rngs::OsRng;
+use uuid::Uuid;
 use crate::errors::AppError;
 use super::role::Role;
 
 #[derive(Debug, Clone, FromRow, Serialize, Deserialize)]
 pub struct Account {
-    pub id: String,
+    pub id: Uuid,
     pub email: String,
     pub password: String,
     pub roles: Vec<Role>,
@@ -120,7 +121,7 @@ impl Account {
                     updated_at
                 FROM accounts WHERE id = $1
             "#,
-            id
+            Uuid::parse_str(&id).ok()?
         ).fetch_optional(db).await.ok()?
     }
 
