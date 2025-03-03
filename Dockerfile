@@ -31,6 +31,8 @@ RUN apt-get install -y nodejs
 RUN apt update && apt install -y bash curl unzip && \
  curl https://bun.sh/install | bash -s -- bun-v${BUN_VERSION}
 
+ENV PATH="${PATH}:/root/.bun/bin"
+
 # Install sqlx-cli
 RUN cargo install sqlx-cli --no-default-features --features native-tls,postgres
 
