@@ -1,6 +1,6 @@
 -- Add up migration script here
 CREATE TABLE IF NOT EXISTS sessions (
-    id VARCHAR(21) PRIMARY KEY DEFAULT nanoid(),
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     account_id VARCHAR(21) NOT NULL REFERENCES accounts (id) ON DELETE CASCADE,
     ip_addr TEXT DEFAULT NULL,
     browser TEXT DEFAULT NULL,
