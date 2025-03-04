@@ -6,6 +6,7 @@
     "@tailwindcss/typography": "^0.5.15",
     "tailwind-scrollbar": "^3.1.0",
     "tailwindcss": "^3.4.16",
+    "tailwindcss-motion": "^1.1.0",
     "tailwindcss-opentype": "^1.1.0"
   }
 }

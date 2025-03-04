@@ -4,6 +4,7 @@ use leptos::reactive::computed;
 use leptos_icons::*;
 use icondata as TablerIcon;
 use crate::models::accounts::Profile;
+use crate::ui::misc::RoleBadge;
 
 #[derive(Debug, Clone)]
 pub enum Panel {
@@ -27,7 +28,7 @@ pub fn Guide(profile: Profile) -> impl IntoView {
             if !is_min_width() {
                 set_offset("0px".into());
             } else {
-                set_offset(format!("{}px", left() + scroll_x - 335.0));
+                set_offset(format!("{}px", left() + scroll_x - 635.0));
             }
         } else {
             set_offset("0px".into());
@@ -47,7 +48,7 @@ pub fn Guide(profile: Profile) -> impl IntoView {
         </button>
         <div
             id="guide-menu"
-            class="[&:popover-open]:inset-[unset] [&:popover-open]:top-[66px] md:[&:popover-open]:top-[70px] md:[&:popover-open]:w-[375px] [&:popover-open]:w-full [&:popover-open]:m-0 p-2 bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur border-b md:border border-zinc-600/25 dark:border-zinc-300/25 md:rounded-xl"
+            class="[&:popover-open]:inset-[unset] [&:popover-open]:top-[66px] md:[&:popover-open]:top-[70px] md:[&:popover-open]:w-[675px] [&:popover-open]:w-full [&:popover-open]:m-0 p-2 bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur border-b md:border border-zinc-600/25 dark:border-zinc-300/25 md:rounded-xl motion-opacity-in-0 motion-translate-y-in-100 motion-blur-in-md motion-duration-200"
             style="box-shadow: var(--dropshadow); color: var(--text-color);"
             style:left=move || offset()
             popover="auto"
@@ -63,8 +64,19 @@ pub fn Guide(profile: Profile) -> impl IntoView {
 #[component]
 pub fn MainPanel(profile: Profile, set_curr_panel: WriteSignal<Panel>) -> impl IntoView {
     view! {
-        <div class="flex flex-col w-full overflow-hidden rounded-xl bg-zinc-400/25 dark:bg-zinc-500/25">
-            "hi"
+        <div class="flex items-center w-full overflow-hidden">
+            <div class="h-full bg-zinc-300/75 dark:bg-zinc-600/75 rounded-xl w-1/2 mr-1 p-4">
+                "hi"
+            </div>
+            <div class="flex flex-col items-center justify-center w-1/2 ml-1">
+                <div class="flex items-center w-full">
+                    <img src=profile.avatar.clone() class="w-[50px] h-[50px] object-cover rounded-full mr-2" />
+                    <div class="relative">
+                        <h3 class="text-2xl relative top-2">{profile.username.clone()}</h3>
+                        <RoleBadge roles=profile.roles />
+                    </div>
+                </div>
+            </div>
         </div>
     }
 }

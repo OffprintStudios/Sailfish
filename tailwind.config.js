@@ -39,6 +39,7 @@ module.exports = {
         require("@tailwindcss/typography"),
         require("tailwindcss-opentype"),
         require("tailwind-scrollbar"),
+        require("tailwindcss-motion"),
         function({ addVariant }) {
             addVariant('firefox', ':-moz-any(&)')
         }

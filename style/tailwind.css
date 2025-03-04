@@ -202,3 +202,44 @@ article {
         color: rgb(var(--accent)) !important;
     }
 }
+
+/* Role Badge */
+div.role {
+    @apply text-white rounded-md p-1 m-0.5 flex items-center w-fit;
+    &.admin {
+        @apply bg-red-700;
+    }
+
+    &.moderator {
+        @apply bg-yellow-400;
+    }
+
+    &.chat-moderator {
+        @apply bg-yellow-700;
+    }
+
+    &.maintainer {
+        @apply bg-green-800;
+    }
+
+    &.contributor {
+        @apply bg-blue-500;
+    }
+
+    &.work-approver {
+        @apply bg-purple-600;
+    }
+
+    &.vip {
+        @apply bg-green-400;
+    }
+
+    &.supporter {
+        @apply bg-pink-600;
+    }
+
+    &.user {
+        @apply bg-transparent;
+        color: var(--text-color) !important;
+    }
+}

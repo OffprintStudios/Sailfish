@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 use strum::Display;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Display)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Display)]
 #[cfg_attr(feature = "ssr", derive(sqlx::Type))]
 pub enum Role {
     Admin,
@@ -10,6 +10,20 @@ pub enum Role {
     WorkApprover,
     Contributor,
     User,
+}
+
+impl Role {
+    /// Translates enum item into its respective, *themed* counterpart
+    pub fn into_themed(&self) -> String {
+        match self {
+            Role::Admin => "Bartender",
+            Role::Moderator => "Barback",
+            Role::ChatModerator => "Bouncer",
+            Role::WorkApprover => "Server",
+            Role::Contributor => "Comrade",
+            Role::User => "Patron",
+        }.into()
+    }
 }
 
 impl From<String> for Role {
