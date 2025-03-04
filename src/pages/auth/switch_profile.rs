@@ -59,7 +59,7 @@ pub fn SwitchProfilePage() -> impl IntoView {
 
                                     view! {
                                         <button
-                                            class="flex flex-col items-center rounded-xl p-4 mx-2 w-[180px] h-[210px] hover:bg-zinc-300 dark:bg-zinc-600 transition"
+                                            class="flex flex-col items-center rounded-xl p-4 mx-2 w-[180px] h-[210px] hover:bg-zinc-300 dark:hover:bg-zinc-600 transition"
                                             on:click=move |_| {
                                                 let navigate = use_navigate();
                                                 set_auth.update(|auth| {
