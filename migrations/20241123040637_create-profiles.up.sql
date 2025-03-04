@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS profiles (
     tagline TEXT DEFAULT NULL,
     links TEXT[] NOT NULL DEFAULT '{}',
     "default" BOOLEAN NOT NULL DEFAULT false,
+    roles TEXT[] NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp,
     deleted_at TIMESTAMPTZ DEFAULT NULL

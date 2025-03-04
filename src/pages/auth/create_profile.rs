@@ -40,7 +40,7 @@ pub async fn create_profile(username: String) -> Result<(), ServerFnError> {
         return Err(ServerFnError::new(CreateProfileError::UsernameTaken));
     }
 
-    match Profile::new(account.id, username, None, &state.db).await {
+    match Profile::new(account.id, username, None, account.roles, &state.db).await {
         Ok(_) => {
             leptos_axum::redirect("/switch-profile");
             Ok(())

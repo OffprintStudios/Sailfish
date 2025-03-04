@@ -1,6 +1,7 @@
 use serde::{Serialize, Deserialize};
+use strum::Display;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Display)]
 #[cfg_attr(feature = "ssr", derive(sqlx::Type))]
 pub enum Role {
     Admin,
