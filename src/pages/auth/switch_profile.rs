@@ -11,7 +11,7 @@ use crate::store::auth_store::AuthStore;
 use crate::ui::misc::MetaTags;
 use crate::errors::{AppError, ErrorTemplate};
 
-#[server(prefix = "/account", endpoint = "profiles")]
+#[server(prefix = "/api/account/profiles", endpoint = "all")]
 pub async fn load_profiles() -> Result<Vec<Profile>, ServerFnError<AppError>> {
     use crate::state::AppState;
     use crate::models::accounts::Session;

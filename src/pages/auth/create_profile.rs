@@ -20,7 +20,7 @@ pub enum CreateProfileError {
     ServerError,
 }
 
-#[server(CreateProfile, "/api/account/profiles/new")]
+#[server(CreateProfile, prefix = "/api/account/profiles", endpoint = "new")]
 pub async fn create_profile(username: String) -> Result<(), ServerFnError> {
     use crate::state::AppState;
     use crate::models::accounts::{Session, Profile};
