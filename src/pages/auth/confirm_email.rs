@@ -11,7 +11,7 @@ struct ConfirmEmailQuery {
     token: String
 }
 
-#[server(ConfirmEmail, "/api/auth/confirm-email")]
+#[server(ConfirmEmail, prefix = "/api/auth", endpoint = "confirm-email")]
 pub async fn confirm_email(token: Option<String>) -> Result<Option<()>, ServerFnError<AppError>> {
     use crate::state::AppState;
     use crate::models::accounts::{Otp, OtpKind};

@@ -10,7 +10,7 @@ struct ResetPasswordQuery {
     token: String
 }
 
-#[server(SendResetCode, "/api/auth/send-reset-code")]
+#[server(SendResetCode, prefix = "/api/auth", endpoint = "send-reset-code")]
 pub async fn send_reset_code(email: String) -> Result<(), ServerFnError> {
     use axum::Extension;
     use apalis::prelude::Storage;

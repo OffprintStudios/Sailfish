@@ -23,7 +23,7 @@ pub enum SignUpError {
     ServerError,
 }
 
-#[server(SignUp, "/api/auth/sign-up")]
+#[server(SignUp, prefix = "/api/auth", endpoint = "sign-up")]
 pub async fn sign_up(
     email: String,
     password: String,

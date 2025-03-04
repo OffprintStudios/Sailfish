@@ -17,7 +17,7 @@ pub enum LogInError {
     ServerError,
 }
 
-#[server(LogIn, "/api/auth/log-in")]
+#[server(LogIn, prefix = "/api/auth", endpoint = "log-in")]
 pub async fn log_in(email: String, password: String, remember_me: Option<String>) -> Result<(), ServerFnError> {
     use std::ops::Add;
     use apalis::prelude::Storage;

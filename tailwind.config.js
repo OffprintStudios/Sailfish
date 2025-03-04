@@ -2,6 +2,9 @@
 module.exports = {
     content: {
         files: ["*.html", "./src/**/*.rs", "./assets/docfiles/**/*.md"],
+        transform: {
+            rs: (content) => content.replace(/(?:^|\s)class:/g, ' '),
+        },
     },
     darkMode: 'class',
     theme: {
