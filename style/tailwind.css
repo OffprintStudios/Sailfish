@@ -239,7 +239,6 @@ div.role {
     }
 
     &.user {
-        @apply bg-transparent;
-        color: var(--text-color) !important;
+        @apply bg-slate-400/50 backdrop-blur;
     }
 }

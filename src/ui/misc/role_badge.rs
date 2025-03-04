@@ -18,7 +18,7 @@ pub fn RoleBadge(
             class=("user", role == Role::User)
             title=role.into_themed()
         >
-            <span class="font-bold tracking-wider uppercase text-[0.625rem] mr-1">
+            <span class="font-bold tracking-wider uppercase text-[0.625rem] mx-1 relative top-[0.075rem]">
                 {role.into_themed()}
             </span>
         </div>
