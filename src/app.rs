@@ -1,10 +1,10 @@
 use leptos::prelude::*;
-use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title, Link, Body};
+use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title, Link, Body, Meta};
 use leptos_router::{
     path,
     components::{Route, Router, Routes, ParentRoute},
 };
-use leptos_use::use_preferred_dark;
+use leptos_use::{use_css_var, use_preferred_dark};
 use leptos_use::storage::use_local_storage;
 use codee::string::JsonSerdeCodec;
 use crate::errors::{AppError, ErrorTemplate};
@@ -25,6 +25,7 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
             <head>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <meta name="theme-color" content="rgb(205, 86, 84)" />
                 <AutoReload options=options.clone() />
                 <HydrationScripts options/>
                 <MetaTags/>
@@ -40,6 +41,7 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
 pub fn App() -> impl IntoView {
     let (app, _, _) = use_local_storage::<AppStore, JsonSerdeCodec>("app");
     let is_preferred_dark = use_preferred_dark();
+    let (accent, _) = use_css_var("--accent");
 
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
@@ -67,6 +69,9 @@ pub fn App() -> impl IntoView {
 
         // sets the document title
         <Title text="Offprint"/>
+
+        // sets the theme color
+        <Meta name="theme-color" content=move || format!("rgb({})", accent()) />
 
         // content for this welcome page
         <Router>
