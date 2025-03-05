@@ -109,26 +109,65 @@ pub fn MainPanel(profile: Profile, set_curr_panel: WriteSignal<Panel>) -> impl I
                 </LinkBlock>
             </div>
             <div class="flex flex-col w-full px-4 pt-4">
-                <div class="flex items-center w-full">
-                    <span class="mr-1"><Icon icon=TablerIcon::TbBook width="1.25rem" height="1.25rem" /></span>
-                    <span class="all-small-caps font-bold tracking-wide text-base">"Continue Reading"</span>
-                </div>
-                <div class="flex flex-col w-full rounded-xl bg-zinc-300/75 dark:bg-zinc-600/75">
-                    <div class="flex items-center w-full p-2 border-b border-zinc-500 dark:border-zinc-400">
+                <div class="flex flex-col w-full rounded-xl bg-zinc-300/75 dark:bg-zinc-600/75 overflow-hidden">
+                    <div class="flex items-center w-full px-2 pt-2 pb-3 border-b border-zinc-500/50 dark:border-zinc-400/50">
                         <img src="/images/ashtree-lane.jpg" class="max-w-[50px] object-contain rounded-md mr-2" />
                         <div class="flex flex-col w-full">
-                            <h6 class="text-lg">"The Chronicles of Ashtree Lane"</h6>
-                            <span class="text-sm text-zinc-500 dark:text-zinc-400 relative -top-0.5">"by Figments"</span>
-                            <span class="my-1"></span>
-                            <progress value="73" max="100" class="w-full h-2 [&::-webkit-progress-bar]:rounded-lg [&::-webkit-progress-value]:rounded-lg [&::-webkit-progress-bar]:bg-zinc-500 dark:[&::-webkit-progress-bar]:bg-zinc-400 [&::-webkit-progress-value]:bg-accent [&::-moz-progress-bar]:bg-accent">"73%"</progress>
+                            <div class="flex items-center">
+                                <span class="all-small-caps font-bold tracking-wide text-base">"Continue Reading"</span>
+                                <span class="mx-1 relative top-0.5">"•"</span>
+                                <span class="text-xs text-zinc-500 dark:text-zinc-400 font-default">"3 chapters left"</span>
+                            </div>
+                            <h6 class="text-lg relative -top-0.5">"The Chronicles of Ashtree Lane"</h6>
+                            <span class="text-sm text-zinc-500 dark:text-zinc-400 relative -top-1.5">"by Figments"</span>
+                            <progress id="reading-progress" value="73" max="100" class="w-full h-2 [&::-webkit-progress-bar]:rounded-lg [&::-webkit-progress-value]:rounded-lg [&::-webkit-progress-bar]:bg-zinc-500 dark:[&::-webkit-progress-bar]:bg-zinc-400 [&::-webkit-progress-value]:bg-accent [&::-moz-progress-bar]:bg-accent">"73%"</progress>
                         </div>
                     </div>
-                    <A href="/library" attr:class="flex items-center px-4 py-2.5">
+                    <A href="/library" attr:class="flex items-center px-4 py-2.5 hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 transition">
                         <span class="all-small-caps tracking-wide font-bold">"View Library"</span>
                         <span class="flex-1"></span>
                         <span class="text-xs font-default text-zinc-500 dark:text-zinc-400">"27 updates"</span>
                         <span class="ml-0.5 text-zinc-500 dark:text-zinc-400 "><Icon icon=TablerIcon::TbBooks width="1.25rem" height="1.25rem" /></span>
                     </A>
+                </div>
+                <div class="my-1"></div>
+                <div class="flex flex-col w-full rounded-xl bg-zinc-300/75 dark:bg-zinc-600/75 overflow-hidden">
+                    <A href="/messages" attr:class="flex items-center px-4 py-2.5 border-b border-zinc-500/50 dark:border-zinc-400/50 hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 transition">
+                        <span class="mr-1"><Icon icon=TablerIcon::TbMailbox width="1.25rem" height="1.25rem" /></span>
+                        <span class="relative top-0.5">"1.2k messages"</span>
+                        <span class="flex-1"></span>
+                        <span class="text-xs font-default text-zinc-500 dark:text-zinc-400">"8 unread"</span>
+                    </A>
+                    <A href="/notifications" attr:class="flex items-center px-4 py-2.5 hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 transition">
+                        <span class="mr-1"><Icon icon=TablerIcon::TbBellExclamation width="1.25rem" height="1.25rem" /></span>
+                        <span class="relative top-0.5">"18 nudges"</span>
+                        <span class="flex-1"></span>
+                        <span class="text-xs font-default text-zinc-500 dark:text-zinc-400">"3 unchecked"</span>
+                    </A>
+                </div>
+                <div class="my-1"></div>
+                <div class="flex flex-col w-full rounded-xl bg-zinc-300/75 dark:bg-zinc-600/75 overflow-hidden">
+                    <A href="/switch-profile" attr:class="flex items-center px-4 py-2.5 hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 transition">
+                        <span class="mr-1"><Icon icon=TablerIcon::TbSwitch3 width="1.25rem" height="1.25rem" /></span>
+                        <span class="relative top-0.5">"Switch Profile"</span>
+                        <span class="flex-1"></span>
+                        <span class="text-zinc-500 dark:text-zinc-400"><Icon icon=TablerIcon::TbLink width="1.25rem" height="1.25rem" /></span>
+                    </A>
+                </div>
+                <div class="my-1"></div>
+                <div class="flex flex-col w-full rounded-xl bg-zinc-300/75 dark:bg-zinc-600/75 overflow-hidden">
+                    <button class="flex items-center px-4 py-2.5 border-b border-zinc-500/50 dark:border-zinc-400/50 hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 transition">
+                        <span class="mr-1"><Icon icon=TablerIcon::TbSettings width="1.25rem" height="1.25rem" /></span>
+                        <span class="relative top-0.5">"Settings"</span>
+                        <span class="flex-1"></span>
+                        <span class="text-zinc-500 dark:text-zinc-400"><Icon icon=TablerIcon::TbChevronRight width="1.25rem" height="1.25rem" /></span>
+                    </button>
+                    <button class="flex items-center px-4 py-2.5 hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 transition">
+                        <span class="mr-1"><Icon icon=TablerIcon::TbLogout2 width="1.25rem" height="1.25rem" /></span>
+                        <span class="relative top-0.5">"Log Out"</span>
+                        <span class="flex-1"></span>
+                        <span class="text-zinc-500 dark:text-zinc-400"><Icon icon=TablerIcon::TbChevronRight width="1.25rem" height="1.25rem" /></span>
+                    </button>
                 </div>
             </div>
         </div>
