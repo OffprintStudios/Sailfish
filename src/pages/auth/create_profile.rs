@@ -88,7 +88,7 @@ pub fn CreateProfilePage() -> impl IntoView {
         />
 
         <ErrorBoundary fallback=move |errors| view! { <ErrorTemplate errors /> }.into_view()>
-            <div class="bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur-lg border border-zinc-300/25 dark:border-zinc-600/25 md:rounded-xl max-w-md p-6 md:p-12 w-full h-full md:h-fit" style="box-shadow: var(--dropshadow);">
+            <div class="flex flex-col items-center justify-center bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur-lg border border-zinc-300/25 dark:border-zinc-600/25 md:rounded-xl max-w-md p-6 md:p-12 w-full h-full md:h-fit" style="box-shadow: var(--dropshadow);">
                 <div class="flex flex-col items-center justify-center">
                     <h1 class="text-3xl">"Create a Profile"</h1>
                     <span class="text-zinc-500 dark:text-zinc-400 text-lg font-bold font-header">
