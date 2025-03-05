@@ -1,10 +1,12 @@
+use leptos::either::Either;
 use leptos::prelude::*;
 use leptos::html::Button;
+use leptos_router::components::A;
 use leptos::reactive::computed;
 use leptos_icons::*;
 use icondata as TablerIcon;
 use crate::models::accounts::Profile;
-use crate::ui::misc::RoleBadge;
+use crate::ui::misc::{RoleBadge, LinkBlock, LinkKind};
 
 #[derive(Debug, Clone)]
 pub enum Panel {
@@ -48,7 +50,7 @@ pub fn Guide(profile: Profile) -> impl IntoView {
         </button>
         <div
             id="guide-menu"
-            class="[&:popover-open]:inset-[unset] [&:popover-open]:top-[66px] md:[&:popover-open]:top-[70px] md:[&:popover-open]:w-[375px] [&:popover-open]:w-full [&:popover-open]:m-0 p-2 bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur border-b md:border border-zinc-600/25 dark:border-zinc-300/25 md:rounded-xl motion-opacity-in-0 motion-blur-in-md motion-duration-200"
+            class="[&:popover-open]:inset-[unset] [&:popover-open]:top-[66px] md:[&:popover-open]:w-[375px] [&:popover-open]:w-full [&:popover-open]:m-0 p-0 bg-zinc-200/75 dark:bg-zinc-700/75 backdrop-blur border-b md:border-x border-zinc-600/25 dark:border-zinc-300/25 md:rounded-b-xl motion-opacity-in-0 motion-blur-in-md motion-duration-200"
             style="box-shadow: var(--dropshadow); color: var(--text-color);"
             style:left=move || offset()
             popover="auto"
@@ -64,10 +66,71 @@ pub fn Guide(profile: Profile) -> impl IntoView {
 #[component]
 pub fn MainPanel(profile: Profile, set_curr_panel: WriteSignal<Panel>) -> impl IntoView {
     view! {
-        <div class="flex flex-col items-center justify-center w-full ml-1">
-            <img src=profile.avatar.clone() class="w-[100px] h-[100px] object-cover rounded-full mr-2" />
-            <h3 class="text-3xl relative top-0.5">{profile.username.clone()}</h3>
-            <RoleBadge roles=profile.roles />
+        <div class="flex flex-col items-center justify-center w-full pb-4">
+            <div class="h-16 w-full">
+                {if let Some(banner_art) = profile.banner_art{
+                    Either::Left(view! {
+                        <img src=banner_art class="w-full h-16 object-cover" />
+                    })
+                } else {
+                    Either::Right(view! {
+                        <div class="w-full h-28 bg-gradient-to-b from-accent to-transparent"></div>
+                    })
+                }}
+            </div>
+            <div class="flex items-center w-full px-4">
+                <img src=profile.avatar.clone() class="block w-[80px] h-[80px] object-cover rounded-full mr-2" />
+                <div>
+                    <h3 class="text-3xl relative top-0.5">{profile.username.clone()}</h3>
+                    <RoleBadge roles=profile.roles />
+                </div>
+            </div>
+            <div class="flex items-center w-full px-4 py-4 border-b border-zinc-300/75 dark:border-zinc-600/75">
+                <LinkBlock
+                    id="create-work"
+                    title="Create Work"
+                    href="/profile/id/username/works"
+                    kind=LinkKind::Primary
+                    full_width=true
+                >
+                    <span class="button-icon"><Icon icon=TablerIcon::TbWriting /></span>
+                    <span class="button-text">"Create Work"</span>
+                </LinkBlock>
+                <div class="mx-1"></div>
+                <LinkBlock
+                    id="create-blog"
+                    title="Create Blog"
+                    href="/profile/id/username/blogs"
+                    kind=LinkKind::Primary
+                    full_width=true
+                >
+                    <span class="button-icon"><Icon icon=TablerIcon::TbCoffee /></span>
+                    <span class="button-text">"Create Blog"</span>
+                </LinkBlock>
+            </div>
+            <div class="flex flex-col w-full px-4 pt-4">
+                <div class="flex items-center w-full">
+                    <span class="mr-1"><Icon icon=TablerIcon::TbBook width="1.25rem" height="1.25rem" /></span>
+                    <span class="all-small-caps font-bold tracking-wide text-base">"Continue Reading"</span>
+                </div>
+                <div class="flex flex-col w-full rounded-xl bg-zinc-300/75 dark:bg-zinc-600/75">
+                    <div class="flex items-center w-full p-2 border-b border-zinc-500 dark:border-zinc-400">
+                        <img src="/images/ashtree-lane.jpg" class="max-w-[50px] object-contain rounded-md mr-2" />
+                        <div class="flex flex-col w-full">
+                            <h6 class="text-lg">"The Chronicles of Ashtree Lane"</h6>
+                            <span class="text-sm text-zinc-500 dark:text-zinc-400 relative -top-0.5">"by Figments"</span>
+                            <span class="my-1"></span>
+                            <progress value="73" max="100" class="w-full h-2 [&::-webkit-progress-bar]:rounded-lg [&::-webkit-progress-value]:rounded-lg [&::-webkit-progress-bar]:bg-zinc-500 dark:[&::-webkit-progress-bar]:bg-zinc-400 [&::-webkit-progress-value]:bg-accent [&::-moz-progress-bar]:bg-accent">"73%"</progress>
+                        </div>
+                    </div>
+                    <A href="/library" attr:class="flex items-center px-4 py-2.5">
+                        <span class="all-small-caps tracking-wide font-bold">"View Library"</span>
+                        <span class="flex-1"></span>
+                        <span class="text-xs font-default text-zinc-500 dark:text-zinc-400">"27 updates"</span>
+                        <span class="ml-0.5 text-zinc-500 dark:text-zinc-400 "><Icon icon=TablerIcon::TbBooks width="1.25rem" height="1.25rem" /></span>
+                    </A>
+                </div>
+            </div>
         </div>
     }
 }
