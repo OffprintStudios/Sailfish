@@ -2,15 +2,15 @@ use leptos::either::Either;
 use leptos::prelude::*;
 use leptos::html::Button;
 use leptos_router::components::A;
-use leptos::reactive::computed;
 use leptos_icons::*;
 use icondata as TablerIcon;
 use crate::models::accounts::Profile;
-use crate::ui::misc::{RoleBadge, LinkBlock, LinkKind};
+use crate::ui::misc::{RoleBadge, LinkBlock, LinkKind, Button as AppButton};
 
 #[derive(Debug, Clone)]
 pub enum Panel {
     Main,
+    Settings,
     LogOut
 }
 
@@ -57,6 +57,7 @@ pub fn Guide(profile: Profile) -> impl IntoView {
         >
             {move || match curr_panel() {
                 Panel::Main => view! { <MainPanel profile=profile.clone() set_curr_panel /> }.into_any(),
+                Panel::Settings => view! { <SettingsPanel set_curr_panel /> }.into_any(),
                 Panel::LogOut => view! { <LogOutPanel set_curr_panel /> }.into_any()
             }}
         </div>
@@ -156,13 +157,19 @@ pub fn MainPanel(profile: Profile, set_curr_panel: WriteSignal<Panel>) -> impl I
                 </div>
                 <div class="my-1"></div>
                 <div class="flex flex-col w-full rounded-xl bg-zinc-300/75 dark:bg-zinc-600/75 overflow-hidden">
-                    <button class="flex items-center px-4 py-2.5 border-b border-zinc-500/50 dark:border-zinc-400/50 hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 transition">
+                    <button 
+                        class="flex items-center px-4 py-2.5 border-b border-zinc-500/50 dark:border-zinc-400/50 hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 transition"
+                        on:click=move |_| set_curr_panel(Panel::Settings)
+                    >
                         <span class="mr-1"><Icon icon=TablerIcon::TbSettings width="1.25rem" height="1.25rem" /></span>
                         <span class="relative top-0.5">"Settings"</span>
                         <span class="flex-1"></span>
                         <span class="text-zinc-500 dark:text-zinc-400"><Icon icon=TablerIcon::TbChevronRight width="1.25rem" height="1.25rem" /></span>
                     </button>
-                    <button class="flex items-center px-4 py-2.5 hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 transition">
+                    <button
+                        class="flex items-center px-4 py-2.5 hover:bg-zinc-400/50 dark:hover:bg-zinc-500/50 transition"
+                        on:click=move |_| set_curr_panel(Panel::LogOut)
+                    >
                         <span class="mr-1"><Icon icon=TablerIcon::TbLogout2 width="1.25rem" height="1.25rem" /></span>
                         <span class="relative top-0.5">"Log Out"</span>
                         <span class="flex-1"></span>
@@ -175,10 +182,33 @@ pub fn MainPanel(profile: Profile, set_curr_panel: WriteSignal<Panel>) -> impl I
 }
 
 #[component]
+pub fn SettingsPanel(set_curr_panel: WriteSignal<Panel>) -> impl IntoView {
+    view! {
+        <div class="flex flex-col items-center justify-center w-full p-4">
+            <AppButton
+                id="back-button"
+                title="Back"
+                on:click=move |_| set_curr_panel(Panel::Main)
+            >
+                <span class="button-icon"><Icon icon=TablerIcon::TbChevronLeft /></span>
+                <span class="button-text">"Back"</span>
+            </AppButton>
+        </div>
+    }
+}
+
+#[component]
 pub fn LogOutPanel(set_curr_panel: WriteSignal<Panel>) -> impl IntoView {
     view! {
-        <div class="flex flex-col w-full overflow-hidden rounded-xl bg-zinc-400/25 dark:bg-zinc-500/25">
-            "hi"
+        <div class="flex flex-col items-center justify-center w-full p-4">
+            <AppButton
+                id="back-button"
+                title="Back"
+                on:click=move |_| set_curr_panel(Panel::Main)
+            >
+                <span class="button-icon"><Icon icon=TablerIcon::TbChevronLeft /></span>
+                <span class="button-text">"Back"</span>
+            </AppButton>
         </div>
     }
 }
