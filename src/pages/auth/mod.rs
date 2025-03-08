@@ -23,7 +23,6 @@ use validate::validate;
 
 #[component(transparent)]
 pub fn AuthRoutes() -> impl MatchNestedRoutes + Clone {
-
     view! {
         <ParentRoute path=path!("/") view=AuthLayout>
             <Route path=path!("log-in") view=LogInPage />

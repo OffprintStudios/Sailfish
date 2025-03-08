@@ -42,6 +42,7 @@ codee = { version = "0.2.0", features = ["json_serde"] }
 email_address = { version = "0.2.9", optional = true }
 tower-cookies = { version = "0.10.0", features = ["private"], optional = true }
 uuid = { version = "1.12.1", features = ["v4", "serde", "js"] }
+slug = "0.1.6"
 
 [features]
 hydrate = ["leptos/hydrate"]

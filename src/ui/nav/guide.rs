@@ -82,7 +82,7 @@ pub fn MainPanel(profile: Profile, set_curr_panel: WriteSignal<Panel>) -> impl I
             <div class="flex items-center w-full px-4">
                 <img src=profile.avatar.clone() class="block w-[80px] h-[80px] object-cover rounded-full mr-2" />
                 <div>
-                    <h3 class="text-3xl relative top-0.5">{profile.username.clone()}</h3>
+                    <A href=format!("/profile/{}/{}", profile.id.clone(), slug::slugify(profile.username.clone()))><h3 class="text-3xl relative top-0.5">{profile.username.clone()}</h3></A>
                     <RoleBadge roles=profile.roles />
                 </div>
             </div>
@@ -185,14 +185,17 @@ pub fn MainPanel(profile: Profile, set_curr_panel: WriteSignal<Panel>) -> impl I
 pub fn SettingsPanel(set_curr_panel: WriteSignal<Panel>) -> impl IntoView {
     view! {
         <div class="flex flex-col items-center justify-center w-full p-4">
-            <AppButton
-                id="back-button"
-                title="Back"
-                on:click=move |_| set_curr_panel(Panel::Main)
-            >
-                <span class="button-icon"><Icon icon=TablerIcon::TbChevronLeft /></span>
-                <span class="button-text">"Back"</span>
-            </AppButton>
+            <div class="flex items-center">
+                <AppButton
+                    id="back-button"
+                    title="Back"
+                    on:click=move |_| set_curr_panel(Panel::Main)
+                >
+                    <span class="button-icon"><Icon icon=TablerIcon::TbChevronLeft /></span>
+                    <span class="button-text">"Back"</span>
+                </AppButton>
+                <span class="flex-1"></span>
+            </div>
         </div>
     }
 }
@@ -201,14 +204,17 @@ pub fn SettingsPanel(set_curr_panel: WriteSignal<Panel>) -> impl IntoView {
 pub fn LogOutPanel(set_curr_panel: WriteSignal<Panel>) -> impl IntoView {
     view! {
         <div class="flex flex-col items-center justify-center w-full p-4">
-            <AppButton
-                id="back-button"
-                title="Back"
-                on:click=move |_| set_curr_panel(Panel::Main)
-            >
-                <span class="button-icon"><Icon icon=TablerIcon::TbChevronLeft /></span>
-                <span class="button-text">"Back"</span>
-            </AppButton>
+            <div class="flex items-center">
+                <AppButton
+                    id="back-button"
+                    title="Back"
+                    on:click=move |_| set_curr_panel(Panel::Main)
+                >
+                    <span class="button-icon"><Icon icon=TablerIcon::TbChevronLeft /></span>
+                    <span class="button-text">"Back"</span>
+                </AppButton>
+                <span class="flex-1"></span>
+            </div>
         </div>
     }
 }

@@ -17,6 +17,7 @@ use crate::pages::auth::AuthRoutes;
 use crate::pages::explore::ExplorePage;
 use crate::pages::social::SocialRoutes;
 use crate::pages::search::SearchPage;
+use crate::pages::profile::ProfileRoutes;
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {
@@ -91,6 +92,7 @@ pub fn App() -> impl IntoView {
                         <Route path=path!("explore") view=ExplorePage />
                         <SocialRoutes />
                         <Route path=path!("search") view=SearchPage />
+                        <ProfileRoutes />
                     </ParentRoute>
                     <AuthRoutes />
                 </Routes>
