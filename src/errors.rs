@@ -37,8 +37,11 @@ cfg_if::cfg_if! {
         use tokio::task::JoinError;
         
         impl From<SqlxError> for AppError {
-            fn from(_: SqlxError) -> Self {
-                Self::ServerError
+            fn from(e: SqlxError) -> Self {
+                match e {
+                    SqlxError::RowNotFound => Self::NotFound,
+                    _ => Self::ServerError,
+                }
             }
         }
         

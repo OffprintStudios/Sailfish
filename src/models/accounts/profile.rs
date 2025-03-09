@@ -62,6 +62,33 @@ impl Profile {
         Ok(result)
     }
 
+    #[cfg(feature = "ssr")]
+    pub async fn fetch_one(profile_id: String, db: &sqlx::Pool<sqlx::Postgres>) -> Result<Self, crate::errors::AppError> {
+        let result: Self = sqlx::query_as!(
+            Self,
+            r#"
+                SELECT 
+                    id,
+                    account_id,
+                    username,
+                    avatar,
+                    banner_art,
+                    bio,
+                    tagline,
+                    links,
+                    "default",
+                    roles as "roles: Vec<Role>",
+                    created_at,
+                    updated_at,
+                    deleted_at
+                FROM profiles WHERE id = $1 AND deleted_at IS NULL;
+            "#,
+            profile_id,
+        ).fetch_one(db).await?;
+
+        Ok(result)
+    }
+
     /// Fetches all profiles owned by a specific `account_id`.
     #[cfg(feature = "ssr")]
     pub async fn fetch_owned(account_id: Uuid, db: &sqlx::Pool<sqlx::Postgres>) -> Result<Vec<Self>, crate::errors::AppError> {
