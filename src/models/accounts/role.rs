@@ -16,10 +16,10 @@ impl Role {
     /// Translates enum item into its respective, *themed* counterpart
     pub fn into_themed(&self) -> String {
         match self {
-            Role::Admin => "Bartender",
-            Role::Moderator => "Barback",
-            Role::ChatModerator => "Bouncer",
-            Role::WorkApprover => "Server",
+            Role::Admin => "Manager",
+            Role::Moderator => "Barista",
+            Role::ChatModerator => "Attendant",
+            Role::WorkApprover => "Quality Control",
             Role::Contributor => "Comrade",
             Role::User => "Patron",
         }.into()

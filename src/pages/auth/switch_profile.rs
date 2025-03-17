@@ -32,7 +32,7 @@ pub async fn load_profiles() -> Result<Vec<Profile>, ServerFnError<AppError>> {
 
 #[component]
 pub fn SwitchProfilePage() -> impl IntoView {
-    let load_profiles = Resource::new(|| (), |_| load_profiles());
+    let load_profiles = Resource::new_blocking(|| (), |_| load_profiles());
     let (_, set_auth, _) = use_local_storage::<AuthStore, JsonSerdeCodec>("auth");
     let count = RwSignal::<usize>::new(0);
 

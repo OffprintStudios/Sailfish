@@ -30,8 +30,8 @@ pub fn AuthRoutes() -> impl MatchNestedRoutes + Clone {
             <Route path=path!("check-email") view=CheckEmailPage />
             <Route path=path!("confirm-email") view=ConfirmEmailPage />
             <Route path=path!("reset-password") view=ResetPasswordPage />
-            <Route path=path!("switch-profile") view=SwitchProfilePage ssr=SsrMode::Async />
-            <Route path=path!("create-profile") view=CreateProfilePage ssr=SsrMode::Async />
+            <Route path=path!("switch-profile") view=SwitchProfilePage ssr=SsrMode::PartiallyBlocked />
+            <Route path=path!("create-profile") view=CreateProfilePage ssr=SsrMode::PartiallyBlocked />
         </ParentRoute>
     }
     .into_inner()

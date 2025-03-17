@@ -51,7 +51,7 @@ pub async fn create_profile(username: String) -> Result<(), ServerFnError> {
 
 #[component]
 pub fn CreateProfilePage() -> impl IntoView {
-    let validation = Resource::new(|| (), |_| validate());
+    let validation = Resource::new_blocking(|| (), |_| validate());
 
     let is_valid = move || {
         Suspend::new(async move { 
