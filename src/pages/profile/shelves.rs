@@ -1,8 +1,8 @@
 use leptos::prelude::*;
 
 #[component]
-pub fn ProfileHomePage() -> impl IntoView {
-    view! {
+pub fn ProfileShelvesPage() -> impl IntoView {
+    view! { 
         <div class="empty">
             <h3>"Nothing To See Here"</h3>
             <p>"This page is still under construction!"</p>

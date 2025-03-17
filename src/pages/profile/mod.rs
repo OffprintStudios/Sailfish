@@ -2,9 +2,16 @@ mod followers;
 mod following;
 mod works;
 mod blogs;
+mod blog;
+mod shelves;
 mod home;
 
 use home::ProfileHomePage;
+use works::ProfileWorksPage;
+use blogs::ProfileBlogsPage;
+use shelves::ProfileShelvesPage;
+use followers::ProfileFollowersPage;
+use following::ProfileFollowingPage;
 
 use leptos::prelude::*;
 use leptos::server_fn::codec::GetUrl;
@@ -30,6 +37,11 @@ pub fn ProfileRoutes() -> impl MatchNestedRoutes + Clone {
     view! {
         <ParentRoute path=path!("/profile/:id/:username") view=ProfileLayout ssr=SsrMode::PartiallyBlocked>
             <Route path=path!("") view=ProfileHomePage />
+            <Route path=path!("works") view=ProfileWorksPage />
+            <Route path=path!("blogs") view=ProfileBlogsPage />
+            <Route path=path!("shelves") view=ProfileShelvesPage />
+            <Route path=path!("followers") view=ProfileFollowersPage />
+            <Route path=path!("following") view=ProfileFollowingPage />
         </ParentRoute>
     }
     .into_inner()
@@ -144,10 +156,14 @@ pub fn ProfileLayout() -> impl IntoView {
                                     {if auth().current_profile.is_some_and(|c| c.id == page_info.profile.id) {
                                         Either::Left(view! {
                                             <div class="hidden md:flex items-center w-full bg-zinc-300/50 dark:bg-zinc-600/50 backdrop-blur-sm rounded-xl overflow-hidden">
-                                                <A href=format!("/settings/profiles") attr:class="flex items-center justify-center py-2 px-3.5 all-small-caps font-bold text-lg tracking-wide transition w-full">
-                                                    <span><Icon icon=TablerIcon::TbSettings /></span>
-                                                    <span>"Settings"</span>
-                                                </A>
+                                                <LinkBlock
+                                                    id="profile-settings-link"
+                                                    title="Profile Settings"
+                                                    href="/settings/profiles"
+                                                >
+                                                    <span class="button-icon"><Icon icon=TablerIcon::TbSettings /></span>
+                                                    <span class="button-text">"Settings"</span>
+                                                </LinkBlock>
                                             </div>
                                         })
                                     } else {
@@ -222,6 +238,7 @@ pub fn ProfileLayout() -> impl IntoView {
                                         class="hidden md:flex items-center justify-center w-full py-2 bg-zinc-200/50 dark:bg-zinc-700/50 backdrop-blur-lg rounded-xl border border-zinc-600/25 dark:border-zinc-300/25 transition"
                                         class:rounded-b-none=move || { url().path().contains("/works") || url().path().contains("/blogs") }
                                         class:border-b-0=move || { url().path().contains("/works") || url().path().contains("/blogs") }
+                                        style="box-shadow: var(--dropshadow);"
                                     >
                                         <A
                                             href=format!("/profile/{}/{}", &page_info.profile.id, slug::slugify(&page_info.profile.username))
