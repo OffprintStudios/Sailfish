@@ -1,5 +1,5 @@
 # Get started with a build env with Rust nightly
-FROM rustlang/rust:nightly-bullseye as builder
+FROM rustlang/rust:nightly-bookworm as builder
 
 SHELL ["/bin/bash", "-c"]
 
@@ -18,6 +18,10 @@ ARG BUN_VERSION=1.2.4
 RUN wget https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tgz
 RUN tar -xvf cargo-binstall-x86_64-unknown-linux-musl.tgz
 RUN cp cargo-binstall /usr/local/cargo/bin
+
+# Install required tools
+RUN apt-get update -y \
+  && apt-get install -y --no-install-recommends clang
 
 # Install cargo-leptos
 RUN cargo binstall cargo-leptos -y
@@ -51,7 +55,7 @@ RUN bun install
 RUN sqlx migrate run
 RUN cargo leptos build --release -vv
 
-FROM debian:bullseye-slim as runtime
+FROM debian:bookworm-slim as runtime
 WORKDIR /app
 RUN apt-get update -y \
   && apt-get install -y --no-install-recommends openssl ca-certificates \
