@@ -5,6 +5,7 @@ pub mod search;
 pub mod social;
 pub mod profile;
 pub mod create;
+pub mod dashboard;
 
 pub use home::HomePage;
 
