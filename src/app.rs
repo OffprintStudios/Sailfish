@@ -16,6 +16,7 @@ use crate::pages::{
     auth::AuthRoutes,
     profile::ProfileRoutes,
     create::CreateRoutes,
+    dashboard::DashboardRoutes,
 };
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
@@ -93,6 +94,7 @@ pub fn App() -> impl IntoView {
                         <SocialRoutes />
                         <ProfileRoutes />
                         <CreateRoutes />
+                        <DashboardRoutes />
                         <Route path=path!("") view=HomePage />
                     </ParentRoute>
                     <AuthRoutes />
