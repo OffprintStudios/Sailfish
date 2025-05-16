@@ -50,3 +50,18 @@ where
         false => "s".into()
     }
 }
+
+// Finds the intersection of two vectors
+pub fn intersection<T: PartialEq + Clone>(vec1: &[T], vec2: &[T]) -> Vec<T> {
+    let mut intersection = Vec::new();
+    for item1 in vec1 {
+        for item2 in vec2 {
+            if item1 == item2 {
+                intersection.push(item1.clone());
+                break;
+            }
+        }
+    }
+
+    intersection
+}

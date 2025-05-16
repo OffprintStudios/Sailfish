@@ -4,6 +4,8 @@ use serde::{Serialize, Deserialize};
 use uuid::Uuid;
 use crate::errors::AppError;
 use crate::constants::SESSION_TOKEN_NAME;
+use super::account::Account;
+use super::role::Role;
 
 #[derive(Debug, Clone, FromRow, Serialize, Deserialize)]
 pub struct Session {
@@ -30,8 +32,8 @@ impl Session {
     }
 
     /// Verifies an active session via database lookup and returns the corresponding account ID.
-    pub async fn verify_session(session_id: Uuid, db: &PgPool) -> Result<String, AppError> {
-        let session: String = match sqlx::query!(
+    pub async fn verify_session(session_id: Uuid, db: &PgPool) -> Result<Account, AppError> {
+        let account_id: String = match sqlx::query!(
             r#"SELECT account_id FROM sessions WHERE id = $1 AND expires_on > $2;"#,
             session_id,
             Utc::now(),
@@ -40,23 +42,30 @@ impl Session {
             Err(_) => return Err(AppError::Unauthorized)
         };
 
-        Ok(session)
+        let account = Account::fetch_by_id(account_id, db).await;
+        match account {
+            Some(a) => Ok(a),
+            None => Err(AppError::ServerError)
+        }
     }
 
     /// Authorizes an account based on a session 
-    pub async fn authorize(db: &PgPool) -> Option<super::account::Account> {
+    pub async fn authorize(required_roles: Vec<Role>, db: &PgPool) -> Option<super::account::Account> {
         use leptos_axum::extract;
         use tower_cookies::Cookies;
         use crate::constants::SECRET_KEY;
-        use super::account::Account;
+        use crate::util::functions::intersection;
 
         let key = SECRET_KEY.get()?;
         let cookies = extract::<Cookies>().await.ok()?.private(key);
     
         let token = Uuid::parse_str(cookies.get(SESSION_TOKEN_NAME)?.value()).ok()?;
 
-        let account_id = Self::verify_session(token, db).await.ok()?;
+        let account = Self::verify_session(token, db).await.ok()?;
         
-        Account::fetch_by_id(account_id, db).await
+        match intersection(&required_roles, &account.roles).is_empty() {
+            true => Some(account),
+            false => None,
+        }
     }
 }

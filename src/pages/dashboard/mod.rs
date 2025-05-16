@@ -6,8 +6,11 @@ mod tags;
 
 use leptos::prelude::*;
 use leptos_router::{MatchNestedRoutes, path, SsrMode};
-use leptos_router::components::{ParentRoute, Route, A, Outlet};
+use leptos_router::components::{ParentRoute, Route, Outlet};
 use overview::DashboardOverviewPage;
+use crate::errors::ErrorTemplate;
+use crate::pages::auth::validate_moderator;
+use crate::ui::misc::MetaTags;
 
 #[component(transparent)]
 pub fn DashboardRoutes() -> impl MatchNestedRoutes + Clone {
@@ -20,8 +23,30 @@ pub fn DashboardRoutes() -> impl MatchNestedRoutes + Clone {
 
 #[component]
 pub fn DashboardLayout() -> impl IntoView {
+    let validation = Resource::new_blocking(|| (), |_| validate_moderator());
+
+    let is_valid = move || {
+        Suspend::new(async move {
+            validation.await.map(|_| {
+                view! {
+                    <span class="hidden">"authorized"</span>
+                }
+            })
+        })
+    };
+
     view! {
-        <span>"hi"</span>
-        <Outlet />
+        <MetaTags
+            url="https://offprint.cafe/dashboard"
+            title="Dashboard — Offprint"
+            description="For The Stories Left Untold"
+            image_url="/images/beatriz.png"
+        />
+
+        <ErrorBoundary fallback=move |errors| view! { <ErrorTemplate errors /> }.into_view()>
+            <span>"hi"</span>
+            <Outlet />
+            {is_valid}
+        </ErrorBoundary>        
     }
 }

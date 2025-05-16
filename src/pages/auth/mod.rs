@@ -18,7 +18,7 @@ use forgot_password::ForgotPasswordPage;
 use switch_profile::SwitchProfilePage;
 use create_profile::CreateProfilePage;
 
-pub use validate::validate;
+pub use validate::{validate, validate_approver, validate_moderator, validate_admin};
 
 #[component(transparent)]
 pub fn AuthRoutes() -> impl MatchNestedRoutes + Clone {

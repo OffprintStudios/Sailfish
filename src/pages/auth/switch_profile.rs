@@ -14,10 +14,10 @@ use crate::errors::{AppError, ErrorTemplate};
 #[server(prefix = "/api/account/profiles", endpoint = "all")]
 pub async fn load_profiles() -> Result<Vec<ProfileObject>, AppError> {
     use crate::state::AppState;
-    use crate::models::accounts::{Profile, Session};
+    use crate::models::accounts::{Profile, Session, Role};
 
     let state = expect_context::<AppState>();
-    let account = match Session::authorize(&state.db).await {
+    let account = match Session::authorize(vec![Role::User], &state.db).await {
         Some(account) => account,
         None => return Err(AppError::Unauthorized)
     };

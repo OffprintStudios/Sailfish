@@ -34,11 +34,11 @@ impl FromServerFnError for CreateProfileError {
 #[server(CreateProfile, prefix = "/api/account/profiles", endpoint = "new")]
 pub async fn create_profile(username: String) -> Result<(), CreateProfileError> {
     use crate::state::AppState;
-    use crate::models::accounts::{Session, Profile};
+    use crate::models::accounts::{Session, Profile, Role};
 
     let state = expect_context::<AppState>();
 
-    let account = match Session::authorize(&state.db).await {
+    let account = match Session::authorize(vec![Role::User], &state.db).await {
         Some(account) => account,
         None => return Err(CreateProfileError::AuthFail)
     };
