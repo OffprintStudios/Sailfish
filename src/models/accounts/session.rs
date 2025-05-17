@@ -64,8 +64,8 @@ impl Session {
         let account = Self::verify_session(token, db).await.ok()?;
         
         match intersection(&required_roles, &account.roles).is_empty() {
-            true => Some(account),
-            false => None,
+            true => None,
+            false => Some(account),
         }
     }
 }

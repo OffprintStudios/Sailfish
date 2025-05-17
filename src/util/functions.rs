@@ -52,16 +52,11 @@ where
 }
 
 // Finds the intersection of two vectors
-pub fn intersection<T: PartialEq + Clone>(vec1: &[T], vec2: &[T]) -> Vec<T> {
-    let mut intersection = Vec::new();
-    for item1 in vec1 {
-        for item2 in vec2 {
-            if item1 == item2 {
-                intersection.push(item1.clone());
-                break;
-            }
-        }
-    }
+pub fn intersection<T: PartialEq + Clone + Eq + std::hash::Hash>(vec1: &[T], vec2: &[T]) -> Vec<T> {
+    use std::collections::HashSet;
 
-    intersection
+    let a: HashSet<T> = vec1.iter().cloned().collect();
+    let b: HashSet<T> = vec2.iter().cloned().collect();
+
+    a.intersection(&b).cloned().collect()
 }
