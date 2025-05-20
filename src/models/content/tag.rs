@@ -78,7 +78,7 @@ impl Tag {
     }
 
     #[cfg(feature = "ssr")]
-    pub async fn fetch_tags(kind: TagKind, page: i64, per: i64,  db: &sqlx::PgPool) -> Result<Vec<Self>, crate::errors::AppError> {
+    pub async fn fetch(kind: TagKind, page: i64, per: i64,  db: &sqlx::PgPool) -> Result<Vec<Self>, crate::errors::AppError> {
         let result = sqlx::query_as!(
             Self,
             r#"
