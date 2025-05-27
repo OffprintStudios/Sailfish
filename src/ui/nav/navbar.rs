@@ -4,8 +4,10 @@ use leptos_icons::*;
 use icondata as TablerIcon;
 use leptos_router::components::A;
 use leptos_use::storage::use_local_storage;
-use crate::models::accounts::ProfileObject;
+use std::ops::Not;
+use crate::models::accounts::{ProfileObject, Role};
 use crate::store::auth_store::AuthStore;
+use crate::util::functions::intersection;
 use super::search_bar::SearchBar;
 use super::guide::Guide;
 use crate::ui::misc::Modal;
@@ -102,6 +104,16 @@ pub fn Nav() -> impl IntoView {
                                 </A>
                             </div>
                         </Modal>
+                        <Show
+                            when=move || curr_profile().is_some_and(|p| intersection(&[Role::Admin, Role::Moderator], &p.roles).is_empty().not())
+                        >
+                            <A
+                                attr:class="flex items-center justify-center text-white mx-1.5 w-[44px] h-[44px] firefox:text-sm rounded-full transition bg-zinc-300/25 hover:bg-zinc-300/50 hover:backdrop-blur cursor-pointer"
+                                href="/dashboard"
+                            >
+                                <span class="relative"><Icon icon=TablerIcon::TbDashboard width="20px" height="20px" /></span>
+                            </A>
+                        </Show>
                         <Guide profile=curr_profile().unwrap() />
                     </Show>
                 </div>
