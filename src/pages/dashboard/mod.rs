@@ -8,6 +8,7 @@ use leptos::prelude::*;
 use leptos_router::{MatchNestedRoutes, path, SsrMode};
 use leptos_router::components::{ParentRoute, Route, A, Outlet};
 use overview::DashboardOverviewPage;
+use tags::DashboardTagsPage;
 use crate::errors::ErrorTemplate;
 use crate::pages::auth::validate_moderator;
 use crate::ui::misc::MetaTags;
@@ -17,6 +18,7 @@ pub fn DashboardRoutes() -> impl MatchNestedRoutes + Clone {
     view! {
         <ParentRoute path=path!("/dashboard") view=DashboardLayout ssr=SsrMode::PartiallyBlocked>
             <Route path=path!("") view=DashboardOverviewPage />
+            <Route path=path!("tags") view=DashboardTagsPage />
         </ParentRoute>
     }.into_inner()
 }
