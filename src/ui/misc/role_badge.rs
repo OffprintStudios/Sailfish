@@ -2,9 +2,7 @@ use leptos::prelude::*;
 use crate::{models::accounts::Role, util::functions::get_prominent_role};
 
 #[component]
-pub fn RoleBadge(
-    roles: Vec<Role>,
-) -> impl IntoView {
+pub fn RoleBadge(roles: Vec<Role>) -> impl IntoView {
     let role = get_prominent_role(roles);
 
     view! {

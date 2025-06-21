@@ -27,16 +27,23 @@ pub fn DashboardTagsPage() -> impl IntoView {
     let derived = Memo::new(move |_| (curr_type(), page(), per()));
 
     let tags = Resource::new(derived, move |_| load_tags(curr_type(), page(), per()));
-    
+
     view! {
         <ErrorBoundary fallback=move |errors| view! { <ErrorTemplate errors /> }.into_view()>
-            
+
 
             <Suspense>
                 {move || Suspend::new(async move {
                     tags.await.map(|tags| {
-                        let parents: Vec<Tag> = tags.iter().filter(|t| t.parent_id.is_none()).cloned().collect();
-                        let children: Vec<Tag> = tags.iter().filter(|t| t.parent_id.is_some()).cloned().collect();
+                        let (active_id, set_active_id) = signal::<Option<String>>(None);
+                        let (parents, set_parents) = signal::<Vec<Tag>>(tags.iter().filter(|t| t.parent_id.is_none()).cloned().collect::<Vec<Tag>>());
+                        let (children, set_children) = signal::<Vec<Tag>>(Vec::new());
+
+                        Effect::new(move |_| {
+                            if active_id().is_some() {
+                                set_children(tags.iter().filter(|t| t.parent_id == active_id()).cloned().collect::<Vec<Tag>>());
+                            }
+                        });
 
                         view! {
                             <MetaTags
@@ -48,13 +55,29 @@ pub fn DashboardTagsPage() -> impl IntoView {
 
                             <div class="grid grid-cols-5 gap-4 max-w-6xl mx-auto w-full">
                                 <div class="flex col-span-2 bg-zinc-200/25 dark:bg-zinc-700/25 backdrop-blur rounded-xl border border-white/25 default-shadow">
-                                    "hi"
+                                    <For
+                                        each=move || parents()
+                                        key=|parent| parent.id.clone()
+                                        children=move |parent| {
+                                            view! {
+                                                "hi"
+                                            }
+                                        }
+                                    />
                                 </div>
                                 <div class="flex flex-col items-center justify-center col-span-1">
                                     ">"
                                 </div>
                                 <div class="flex col-span-2 bg-zinc-200/25 dark:bg-zinc-700/25 backdrop-blur rounded-xl border border-white/25 default-shadow">
-                                    "hi"
+                                    <For
+                                        each=move || children()
+                                        key=|child| child.id.clone()
+                                        children=move |child| {
+                                            view! {
+                                                "hi"
+                                            }
+                                        }
+                                    />
                                 </div>
                             </div>
                         }
