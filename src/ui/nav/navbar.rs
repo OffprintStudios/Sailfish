@@ -4,6 +4,7 @@ use leptos_icons::*;
 use icondata as TablerIcon;
 use leptos_router::components::A;
 use leptos_use::storage::use_local_storage;
+use leptos_use::use_window_scroll;
 use std::ops::Not;
 use crate::models::accounts::{ProfileObject, Role};
 use crate::store::auth_store::AuthStore;
@@ -16,6 +17,7 @@ use crate::ui::misc::Modal;
 pub fn Nav() -> impl IntoView {
     let (curr_profile, set_curr_profile) = signal::<Option<ProfileObject>>(None);
     let (open_create, set_open_create) = signal(false);
+    let (_, scroll_y) = use_window_scroll();
 
     Effect::new(move |_| {
         let (auth, _, _) = use_local_storage::<AuthStore, JsonSerdeCodec>("auth");
@@ -24,7 +26,10 @@ pub fn Nav() -> impl IntoView {
 
     view! {
         <div
-            class="sticky top-0 w-full z-50 drop-shadow-2xl border-b border-white/25 backdrop-blur-lg bg-accent shadow-small-shadow"
+            class="sticky top-0 w-full 2xl:top-8 2xl:rounded-t-4xl z-50 drop-shadow-2xl border-b border-white/25 backdrop-blur-lg bg-accent shadow-small-shadow transition-[border-radius]"
+            class=("2xl:rounded-b-4xl", move || scroll_y() > 0.0)
+            class=("2xl:default-shadow", move || scroll_y() > 0.0)
+            class=("2xl:bg-accent/95", move || scroll_y() > 0.0)
         >
             <nav class="flex items-center max-w-[90rem] h-[65px] w-full md:w-11/12 pl-4 pr-2 md:px-0 mx-auto relative">
                 <div class="flex items-center w-1/3 text-white">

@@ -3,7 +3,7 @@ use leptos::prelude::*;
 #[component]
 pub fn Jumbotron() -> impl IntoView {
     view! {
-        <div class="relative w-full h-[16rem] md:h-[28rem]" style="box-shadow: var(--dropshadow);">
+        <div class="relative w-full h-[16rem] md:h-[28rem] 2xl:rounded-b-4xl overflow-hidden" style="box-shadow: var(--dropshadow);">
             <img src="https://images.offprint.net/blog-banners/gi03BYkC8o-4A0938CB-1399-49D4-AC57-AAB60A187DC3.jpeg" class="object-cover w-full h-full" />
             <div 
                 class="absolute bottom-0 pt-4 pb-2 flex flex-col items-center w-full bg-gradient-to-b from-transparent to-black"

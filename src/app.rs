@@ -77,7 +77,7 @@ pub fn App() -> impl IntoView {
 
         // content for this welcome page
         <Router>
-            <main>
+            <main class="w-full 2xl:max-w-[100rem] 2xl:pt-8 mx-auto">
                 <Routes
                     transition=true
                     fallback=|| {
