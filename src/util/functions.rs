@@ -27,14 +27,14 @@ where
         let decimal_part = (number % thousand) / hundred;
         
         if decimal_part == T::from(0) {
-            return format!("{}k", whole_part);
+            return format!("{whole_part}k");
         } else {
-            return format!("{}.{}k", whole_part, decimal_part);
+            return format!("{whole_part}.{decimal_part}k");
         }
     }
 
     let thousands = number / thousand;
-    format!("{}k", thousands)
+    format!("{thousands}k")
 }
 
 /// Determines whether or not to add an `s` at the end of a word to pluralize it
