@@ -66,8 +66,8 @@ pub fn Nav() -> impl IntoView {
                                 attr:class="flex items-center text-white px-3 py-2 firefox:text-sm rounded-xl transition hover:bg-zinc-300/25 hover:backdrop-blur"
                                 href="/log-in"
                             >
-                                <span class="relative"><Icon icon=TablerIcon::TbLogin2 width="20px" height="20px" /></span>
-                                <span class="hidden md:block all-small-caps font-semibold tracking-wider ml-1.5 text-sm">"Log In"</span>
+                                <span class="relative"><Icon icon=TablerIcon::TbLogin2 width="24px" height="24px" /></span>
+                                <span class="hidden md:block relative all-small-caps font-header font-semibold ml-1.5 text-lg top-0.5">"Log In"</span>
                             </A>
                         }
                     >
