@@ -127,9 +127,9 @@ checksum = "e16d2d3311acee920a9eb8d33b8cbc1787ce4a264e85f964c2404b969bdcd487"
 
 [[package]]
 name = "apalis"
-version = "0.7.1"
+version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5bf157b59923258974a886572a18fe47b401daeca43b44c719b73736d8788840"
+checksum = "23f330bf01eb81cc310733c141749e3c3da04db9cb59425ee8537073b3a4bd48"
 dependencies = [
  "apalis-core",
  "futures",
@@ -148,9 +148,9 @@ dependencies = [
 
 [[package]]
 name = "apalis-core"
-version = "0.7.1"
+version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9fbbc8dc67f007145277cb5977c730c4fa7fb07244e83d69d1c5a43cb4d124fa"
+checksum = "83dc559004ae0a16a7467f10adae65703f865785282e80ca1ce88905571f5ebd"
 dependencies = [
  "futures",
  "futures-timer",
@@ -164,9 +164,9 @@ dependencies = [
 
 [[package]]
 name = "apalis-redis"
-version = "0.7.1"
+version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62be206ac6ab9e295b2657f72c0c14598b38efb4f1e7ed09064ae010f2459beb"
+checksum = "8bd3f93c09ff967665b80ab8a7820a5733d30b27f4ada1be1a824692ab1da2d9"
 dependencies = [
  "apalis-core",
  "chrono",
@@ -2889,13 +2889,14 @@ dependencies = [
 
 [[package]]
 name = "redis"
-version = "0.29.5"
+version = "0.31.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1bc42f3a12fd4408ce64d8efef67048a924e543bd35c6591c0447fda9054695f"
+checksum = "0bc1ea653e0b2e097db3ebb5b7f678be339620b8041f66b30a308c1d45d36a7f"
 dependencies = [
  "arc-swap",
  "backon",
  "bytes",
+ "cfg-if",
  "combine",
  "futures-channel",
  "futures-util",
@@ -3135,11 +3136,10 @@ dependencies = [
 
 [[package]]
 name = "sentry-core"
-version = "0.37.0"
+version = "0.38.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a6409d845707d82415c800290a5d63be5e3df3c2e417b0997c60531dfbd35ef"
+checksum = "7426d4beec270cfdbb50f85f0bb2ce176ea57eed0b11741182a163055a558187"
 dependencies = [
- "once_cell",
  "sentry-types",
  "serde",
  "serde_json",
@@ -3147,16 +3147,16 @@ dependencies = [
 
 [[package]]
 name = "sentry-types"
-version = "0.37.0"
+version = "0.38.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3d3f117b8755dbede8260952de2aeb029e20f432e72634e8969af34324591631"
+checksum = "04b6c9287202294685cb1f749b944dbbce8160b81a1061ecddc073025fed129f"
 dependencies = [
  "debugid",
  "hex",
- "rand 0.8.5",
+ "rand 0.9.1",
  "serde",
  "serde_json",
- "thiserror 1.0.69",
+ "thiserror 2.0.12",
  "time",
  "url",
  "uuid",
