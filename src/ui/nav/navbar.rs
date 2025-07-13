@@ -63,19 +63,19 @@ pub fn Nav() -> impl IntoView {
                         when=move || curr_profile().is_some()
                         fallback=|| view! {
                             <A
-                                attr:class="flex items-center text-white px-3 py-2 firefox:text-sm rounded-xl transition hover:bg-zinc-300/25 hover:backdrop-blur"
+                                attr:class="flex items-center text-white p-2 rounded-xl transition hover:bg-zinc-300/25 hover:backdrop-blur"
                                 href="/log-in"
                             >
-                                <span class="relative"><Icon icon=TablerIcon::TbLogin2 width="24px" height="24px" /></span>
-                                <span class="hidden md:block relative all-small-caps font-header font-semibold ml-1.5 text-lg top-0.5">"Log In"</span>
+                                <span class="relative"><Icon icon=TablerIcon::TbLogin2 width="20px" height="20px" /></span>
+                                <span class="hidden md:block relative all-small-caps font-header font-semibold ml-1.5 text-lg top-[0.075rem]">"Log In"</span>
                             </A>
                         }
                     >
                         <button 
-                            class="hidden md:flex items-center text-white mx-1.5 px-4 py-2 firefox:text-sm rounded-full transition bg-zinc-300/25 hover:bg-zinc-300/50 hover:backdrop-blur cursor-pointer"
+                            class="hidden md:flex items-center text-white mx-1.5 px-4 py-2 rounded-full transition bg-zinc-300/25 hover:bg-zinc-300/50 hover:backdrop-blur cursor-pointer"
                             on:click=move |_| set_open_create(true)
                         >
-                            <span><Icon icon=TablerIcon::TbLoader width="24px" height="24px" /></span>
+                            <span><Icon icon=TablerIcon::TbLoader width="20px" height="20px" /></span>
                             <span class="top-[0.075rem] relative ml-1.5 hidden lg:block all-small-caps font-semibold text-lg font-header">"Create"</span>
                         </button>
                         <Modal
