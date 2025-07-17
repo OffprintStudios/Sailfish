@@ -20,9 +20,9 @@ pub async fn load_tags(kind: TagKind, page: i64, per: i64) -> Result<Vec<Tag>, A
 
 #[component]
 pub fn DashboardTagsPage() -> impl IntoView {
-    let (curr_type, set_curr_type) = signal(TagKind::Genre);
-    let (page, set_page) = signal(1);
-    let (per, set_per) = signal(15);
+    let (curr_type, _set_curr_type) = signal(TagKind::Genre);
+    let (page, _set_page) = signal(1);
+    let (per, _set_per) = signal(15);
 
     let derived = Memo::new(move |_| (curr_type(), page(), per()));
 
@@ -35,8 +35,8 @@ pub fn DashboardTagsPage() -> impl IntoView {
             <Suspense>
                 {move || Suspend::new(async move {
                     tags.await.map(|tags| {
-                        let (active_id, set_active_id) = signal::<Option<String>>(None);
-                        let (parents, set_parents) = signal::<Vec<Tag>>(tags.iter().filter(|t| t.parent_id.is_none()).cloned().collect::<Vec<Tag>>());
+                        let (active_id, _set_active_id) = signal::<Option<String>>(None);
+                        let (parents, _set_parents) = signal::<Vec<Tag>>(tags.iter().filter(|t| t.parent_id.is_none()).cloned().collect::<Vec<Tag>>());
                         let (children, set_children) = signal::<Vec<Tag>>(Vec::new());
 
                         Effect::new(move |_| {
@@ -58,7 +58,7 @@ pub fn DashboardTagsPage() -> impl IntoView {
                                     <For
                                         each=move || parents()
                                         key=|parent| parent.id.clone()
-                                        children=move |parent| {
+                                        children=move |_parent| {
                                             view! {
                                                 "hi"
                                             }
@@ -72,7 +72,7 @@ pub fn DashboardTagsPage() -> impl IntoView {
                                     <For
                                         each=move || children()
                                         key=|child| child.id.clone()
-                                        children=move |child| {
+                                        children=move |_child| {
                                             view! {
                                                 "hi"
                                             }
