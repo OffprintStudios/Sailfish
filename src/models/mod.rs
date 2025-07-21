@@ -6,5 +6,6 @@
 //! use case.
 
 pub mod accounts;
+pub mod activity;
 pub mod content;
 pub mod util;
